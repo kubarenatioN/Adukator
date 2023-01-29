@@ -1,5 +1,7 @@
+@import 'colors';
+
 :host {
-    background-color: #e1e1e1;
+    background-color: $accent-color-200;
 }
 
 nav {
