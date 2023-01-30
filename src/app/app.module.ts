@@ -4,13 +4,20 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NavComponent } from './components/nav/nav.component';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MainComponent } from './components/main/main.component';
-import {MatButtonModule} from '@angular/material/button';
+import { SharedModule } from './modules/shared/shared.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
 	declarations: [AppComponent, NavComponent, MainComponent],
-	imports: [BrowserModule, AppRoutingModule, NoopAnimationsModule, MatButtonModule],
+	imports: [
+		BrowserModule,
+		AppRoutingModule,
+		BrowserAnimationsModule,
+		HttpClientModule,
+		SharedModule,
+	],
 	providers: [],
 	bootstrap: [AppComponent],
 })

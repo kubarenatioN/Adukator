@@ -7,15 +7,12 @@
 
     </div>
     <div class="profile">
-        <a [routerLink]="['profile']" class="profile-btn">Мой профиль</a>
+        <a *ngIf="user$ | async as user" [routerLink]="['profile', user.id]" class="profile-btn">{{user.username}}</a>
     </div>
 </header>
 <main class="main">
     <app-nav class="nav"></app-nav>
     <div class="content">
-        <button mat-button color="primary">Primary</button>
-        <button mat-raised-button color="primary">Primary</button>
-        <button mat-raised-button color="accent">Accent</button>
         <router-outlet></router-outlet>
     </div>
 </main>

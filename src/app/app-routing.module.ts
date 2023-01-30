@@ -14,7 +14,7 @@ const routes: Routes = [
 		component: MainComponent,
 		children: [
 			{
-				path: 'profile',
+				path: 'profile/:id',
 				loadChildren: () =>
 					import('./modules/user-profile/user-profile.module').then(
 						(m) => m.UserProfileModule
