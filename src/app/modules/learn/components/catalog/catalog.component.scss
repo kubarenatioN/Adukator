@@ -1,0 +1,21 @@
+.catalog-content {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.catalog-filters {
+    padding: 40px 0;
+}
+
+.catalog-item {
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #eee;
+    text-decoration: none;
+}
+
+.catalog-item__footer {
+    display: flex;
+    justify-content: space-around;
+}

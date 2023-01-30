@@ -20,6 +20,13 @@ const routes: Routes = [
 						(m) => m.UserProfileModule
 					),
 			},
+			{
+				path: 'learn',
+				loadChildren: () =>
+					import('./modules/learn/learn.module').then(
+						(m) => m.LearnModule
+					),
+			},
 		],
 	},
 	{
