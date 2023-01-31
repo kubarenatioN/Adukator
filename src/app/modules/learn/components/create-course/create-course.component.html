@@ -1,2 +1,42 @@
 <a [routerLink]="['../']" mat-stroked-button color="primary">Назад</a>
-<h1 class="title">Здесь будет здоровенная форма с полями для создания курса</h1>
+
+<h1 class="title">Создание курса</h1>
+<p>Пожалуйста, заполните данные о курсе в форму ниже</p>
+
+<form class="course-form" [formGroup]="courseForm">
+	<mat-form-field appearance="fill">
+		<mat-label>Input</mat-label>
+		<input matInput formControlName="title" />
+	</mat-form-field>
+
+	<mat-form-field appearance="fill">
+		<mat-label>Enter a date range</mat-label>
+		<mat-date-range-input [rangePicker]="picker">
+			<input matStartDate placeholder="Start date" />
+			<input matEndDate placeholder="End date" />
+		</mat-date-range-input>
+		<mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+		<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+		<mat-date-range-picker #picker></mat-date-range-picker>
+	</mat-form-field>
+
+	<h2>Модули курса</h2>
+	
+	<button (click)="addModule()">Добавить модуль</button>
+
+	<mat-accordion multi cdkDropList (cdkDropListDropped)="drop($event)">
+		<mat-expansion-panel *ngFor="let moduleForm of modules.value.controls; let i = index" cdkDrag>
+            <mat-expansion-panel-header cdkDragHandle>
+				<mat-panel-title>{{i + 1}}. {{module.title}}</mat-panel-title>
+			</mat-expansion-panel-header>
+			<app-course-module
+                #module
+				[form]="moduleForm"
+                [index]="i"
+			></app-course-module>
+            <mat-action-row>
+                <button mat-stroked-button color="primary" [disabled]="i === 0 && modules.value.controls.length === 1" (click)="removeModule(i)">Удалить</button>
+            </mat-action-row>
+		</mat-expansion-panel>
+	</mat-accordion>
+</form>
