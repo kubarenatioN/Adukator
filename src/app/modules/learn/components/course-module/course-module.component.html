@@ -3,4 +3,28 @@
 		<mat-label>Название модуля</mat-label>
         <input matInput formControlName="title">
 	</mat-form-field>
+
+    <mat-form-field appearance="fill">
+        <mat-label>Описание модуля</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+	</mat-form-field>
+
+    <h3 class="title">Темы модуля</h3>
+
+    <button mat-raised-button color="primary" (click)="openCreateTopicDialog()">Добавить тему</button>
+    <div class="topics-container" formArrayName="topics" cdkDropList (cdkDropListDropped)="drop($event)">
+        <ng-container *ngFor="let topicForm of topics.controls; let i = index">
+            <div class="topic-item" cdkDrag>
+                <span class="topic-item-title">    
+                    Тема {{i + 1}}. {{ topicForm.value.title }}
+                </span>
+                <div class="topic-item-actions">
+                    <!-- Add Icons -->
+                    <button mat-stroked-button color="primary" (click)="onEditTopic(i)">Edit</button>
+                    <button mat-button (click)="onRemoveTopic(i)">Remove</button>
+                    <span cdkDragHandle>Handle</span>
+                </div>
+            </div>
+        </ng-container>
+    </div>
 </form>

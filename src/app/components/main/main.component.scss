@@ -3,7 +3,8 @@
 :host {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .header {
@@ -34,6 +35,12 @@
 .main {
     display: flex;
     flex-grow: 1;
+    min-height: 600px;
+}
+
+.container {
+    overflow-y: auto;
+    width: 100%;
 }
 
 .content {

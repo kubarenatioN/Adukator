@@ -1,5 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 html,
 body {
 	height: 100%;
@@ -16,4 +20,13 @@ ul {
 
 h1.title {
     font-weight: 700;
+}
+
+h3.title {
+    font-weight: 700;
+}
+
+.create-topic-panel mat-dialog-container {
+    width: 700px;
+    height: 800px;
 }

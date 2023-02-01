@@ -20,6 +20,10 @@ export class CreateCourseComponent implements OnInit {
 		return this.courseForm.get('modules') as FormArray;
 	}
 
+	public get modulesControls(): FormGroup[] {
+		return this.modules.controls as FormGroup[];
+	}
+
 	constructor(private fb: FormBuilder, private cd: ChangeDetectorRef) {
 		this.courseForm = this.fb.group({
 			title: ['', Validators.required],
@@ -29,7 +33,7 @@ export class CreateCourseComponent implements OnInit {
 			category: ['', Validators.required],
 			subcategory: ['', Validators.required],
 			advantages: [null],
-			modules: [this.fb.array([])],
+			modules: this.fb.array([]),
 		});
 	}
 
@@ -46,21 +50,25 @@ export class CreateCourseComponent implements OnInit {
 		const moduleControl = this.fb.group({
 			title: ['', Validators.required],
 			description: ['', Validators.required],
+            topics: this.fb.array([])
 		});
 
-		this.modules.value.push(moduleControl);
-		// console.log(this.modules.value.controls);
+		this.modules.push(moduleControl);
 	}
 
 	public removeModule(index: number): void {
-		this.modules.value.removeAt(index);
+		this.modules.removeAt(index);
 	}
 
 	public drop(event: CdkDragDrop<FormGroup[]>) {
 		moveItemInArray(
-			this.modules.value.controls,
+			this.modules.controls,
 			event.previousIndex,
 			event.currentIndex
 		);
 	}
+
+    public onSubmit(action: 'draft' | 'publish'): void {
+        console.log(action, this.courseForm);
+    }
 }

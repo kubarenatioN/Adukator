@@ -5,8 +5,13 @@
 
 <form class="course-form" [formGroup]="courseForm">
 	<mat-form-field appearance="fill">
-		<mat-label>Input</mat-label>
+		<mat-label>Название курса</mat-label>
 		<input matInput formControlName="title" />
+	</mat-form-field>
+
+	<mat-form-field appearance="fill">
+		<mat-label>Описание курса</mat-label>
+		<textarea matInput formControlName="description" ></textarea>
 	</mat-form-field>
 
 	<mat-form-field appearance="fill">
@@ -22,21 +27,27 @@
 
 	<h2>Модули курса</h2>
 	
-	<button (click)="addModule()">Добавить модуль</button>
+    <!-- TODO: Add Icon instead of text  -->
+    <button mat-stroked-button color="primary" (click)="addModule()">Добавить модуль</button>
 
 	<mat-accordion multi cdkDropList (cdkDropListDropped)="drop($event)">
-		<mat-expansion-panel *ngFor="let moduleForm of modules.value.controls; let i = index" cdkDrag>
+		<mat-expansion-panel *ngFor="let moduleForm of modulesControls; let i = index" cdkDrag [expanded]="i === 0">
             <mat-expansion-panel-header cdkDragHandle>
-				<mat-panel-title>{{i + 1}}. {{module.title}}</mat-panel-title>
+				<mat-panel-title>{{i + 1}}. {{module.title !== '' ? module.title : 'Модуль ' + (i + 1)}}</mat-panel-title>
 			</mat-expansion-panel-header>
 			<app-course-module
                 #module
 				[form]="moduleForm"
-                [index]="i"
 			></app-course-module>
             <mat-action-row>
-                <button mat-stroked-button color="primary" [disabled]="i === 0 && modules.value.controls.length === 1" (click)="removeModule(i)">Удалить</button>
+                <!-- TODO: Add Trash Icon instead of text  -->
+                <button mat-stroked-button color="primary" [disabled]="i === 0 && modulesControls.length === 1" (click)="removeModule(i)">Удалить</button>
             </mat-action-row>
 		</mat-expansion-panel>
 	</mat-accordion>
+
+    <div class="footer">
+        <button mat-stroked-button color="primary" (click)="onSubmit('draft')">Сохранить черновик</button>
+        <button mat-stroked-button color="primary" (click)="onSubmit('publish')">Опубликовать</button>
+    </div>
 </form>

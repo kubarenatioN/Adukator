@@ -9,9 +9,12 @@ import { CreateCourseComponent } from './components/create-course/create-course.
 import { CourseModuleComponent } from './components/course-module/course-module.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import { ModuleTopicComponent } from './components/module-topic/module-topic.component';
+import { CreateTopicDialogComponent } from './components/create-topic-dialog/create-topic-dialog.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
-	declarations: [LearnComponent, CatalogComponent, CreateCourseComponent, CourseModuleComponent],
-	imports: [CommonModule, LearnRoutingModule, SharedModule, ReactiveFormsModule, DragDropModule],
+	declarations: [LearnComponent, CatalogComponent, CreateCourseComponent, CourseModuleComponent, ModuleTopicComponent, CreateTopicDialogComponent],
+	imports: [CommonModule, LearnRoutingModule, SharedModule, ReactiveFormsModule, DragDropModule, MatDialogModule],
 })
 export class LearnModule {}
