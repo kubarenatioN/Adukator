@@ -6,6 +6,8 @@ import {
 	OnInit,
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox';
+import { moduleTopicsCountValidator } from 'src/app/helpers/course-validation';
 
 @Component({
 	selector: 'app-create-course',
@@ -28,10 +30,12 @@ export class CreateCourseComponent implements OnInit {
 		this.courseForm = this.fb.group({
 			title: ['', Validators.required],
 			description: ['', Validators.required],
-			startDate: ['', Validators.required],
-			endDate: ['', Validators.required],
+			startDate: [null, Validators.required],
+			endDate: [null, Validators.required],
 			category: ['', Validators.required],
 			subcategory: ['', Validators.required],
+			userCategory: [null],
+			userSubcategory: [null],
 			advantages: [null],
 			modules: this.fb.array([]),
 		});
@@ -39,7 +43,7 @@ export class CreateCourseComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.courseForm.valueChanges.subscribe((res) => {
-			console.log('111 course form changed', res);
+			console.log('111 course form changed', res, this.courseForm);
 		});
 
 		this.addModule();
@@ -53,6 +57,9 @@ export class CreateCourseComponent implements OnInit {
             topics: this.fb.array([])
 		});
 
+        moduleControl.controls['topics'].setValidators([
+            moduleTopicsCountValidator()
+        ])
 		this.modules.push(moduleControl);
 	}
 
@@ -69,6 +76,19 @@ export class CreateCourseComponent implements OnInit {
 	}
 
     public onSubmit(action: 'draft' | 'publish'): void {
-        console.log(action, this.courseForm);
+        const {valid: isValid, value, errors} = this.courseForm;
+        if (isValid) {
+            console.log(action, value);
+        }
+        else {
+            console.log(action, errors);
+        }
+    }
+
+    public onChangeCustomCategory(change: MatCheckboxChange, field: 'userCategory' | 'userSubcategory') {
+        const { checked } = change;
+        if(!checked) {
+            this.courseForm?.get(field)?.setValue('');
+        }
     }
 }

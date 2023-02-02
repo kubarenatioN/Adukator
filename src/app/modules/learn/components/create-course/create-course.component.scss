@@ -5,7 +5,7 @@ form {
 }
 
 mat-form-field {
-    max-width: 400px;
+    max-width: 370px;
     width: 100%;
 }
 
@@ -21,4 +21,25 @@ mat-accordion {
     & button {
         margin-left: 10px;
     }
+}
+
+.categories-container {
+    width: 100%;
+
+    & mat-form-field {
+        max-width: 240px;
+        margin-bottom: -1.3em;
+    }
+
+    & mat-checkbox {
+        padding-left: 20px;
+    }
+}
+
+.category-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 20px;
 }

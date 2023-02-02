@@ -7,6 +7,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import {MatExpansionModule} from '@angular/material/expansion';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 @NgModule({
 	declarations: [],
@@ -17,6 +19,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
 		MatDatepickerModule,
 		MatNativeDateModule,
         MatExpansionModule,
+        MatCheckboxModule,
+        MatAutocompleteModule,
 		MatFormFieldModule,
 	],
 	exports: [
@@ -24,6 +28,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
 		MatInputModule,
 		MatDatepickerModule,
         MatExpansionModule,
+        MatCheckboxModule,
+        MatAutocompleteModule,
 		MatFormFieldModule,
 	],
 })
