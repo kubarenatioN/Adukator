@@ -44,7 +44,7 @@ export interface Course {
 	modules: CourseModule[];
 }
 
-export interface CourseDraft extends Course {
+export interface CreateCourseFormData extends Course {
 	userCategory?: string;
 	userSubcategory?: string;
 }

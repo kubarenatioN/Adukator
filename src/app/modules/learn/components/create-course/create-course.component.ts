@@ -8,6 +8,8 @@ import {
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { moduleTopicsCountValidator } from 'src/app/helpers/course-validation';
+import { DataRequestPayload, DataService, DATA_ENDPOINTS } from 'src/app/services/data.service';
+import { CreateCourseFormData } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-create-course',
@@ -26,7 +28,7 @@ export class CreateCourseComponent implements OnInit {
 		return this.modules.controls as FormGroup[];
 	}
 
-	constructor(private fb: FormBuilder, private cd: ChangeDetectorRef) {
+	constructor(private fb: FormBuilder, private cd: ChangeDetectorRef, private dataService: DataService) {
 		this.courseForm = this.fb.group({
 			title: ['', Validators.required],
 			description: ['', Validators.required],
@@ -78,6 +80,9 @@ export class CreateCourseComponent implements OnInit {
     public onSubmit(action: 'draft' | 'publish'): void {
         const {valid: isValid, value, errors} = this.courseForm;
         if (isValid) {
+            if (action === 'publish') {
+                this.publishCourse(value)
+            }
             console.log(action, value);
         }
         else {
@@ -90,5 +95,23 @@ export class CreateCourseComponent implements OnInit {
         if(!checked) {
             this.courseForm?.get(field)?.setValue('');
         }
+    }
+
+    private processCourseFormData(data: CreateCourseFormData): CreateCourseFormData {
+        return data;
+    }
+
+    private publishCourse(data: CreateCourseFormData) {
+        const processedCourseData = this.processCourseFormData(data);
+        const payload: DataRequestPayload = {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.course}/create`,
+            body: {
+                course: processedCourseData
+            }
+        }
+        this.dataService.send(payload).subscribe(res => {
+            console.log('111 create course response', res)
+        })
     }
 }

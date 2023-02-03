@@ -25,7 +25,7 @@ export class AuthService {
 	public login(user: { email: string; password: string }): Observable<User> {
 		const payload: DataRequestPayload = {
 			method: 'POST',
-			url: `${DATA_ENDPOINTS.auth}/login/jwt`,
+			url: `${DATA_ENDPOINTS.auth.login}`,
 			body: {
 				...user,
 			},
@@ -65,7 +65,7 @@ export class AuthService {
 	private getUserByToken(token: string): Observable<User | null> {
 		const payload: DataRequestPayload = {
 			method: 'POST',
-			url: `${DATA_ENDPOINTS.auth}/user`,
+			url: `${DATA_ENDPOINTS.auth.user}`,
 			headers: new HttpHeaders({
 				Authorization: token,
 			}),

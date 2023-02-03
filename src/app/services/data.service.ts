@@ -12,8 +12,14 @@ export interface DataRequestPayload {
 const apiUrl = 'http://localhost:8080';
 
 export const DATA_ENDPOINTS = {
-	auth: `${apiUrl}/auth`,
-	api: `${apiUrl}/api`,
+	auth: {
+        login: `${apiUrl}/auth/login/jwt`,
+        user: `${apiUrl}/auth/user`,
+    },
+	api: {
+        course: `${apiUrl}/api/courses`,
+    },
+    admin: `${apiUrl}/admin`,
 };
 
 @Injectable({
