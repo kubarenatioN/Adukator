@@ -1,1 +1,5 @@
-<p>admin works!</p>
+<h1>Админ панель</h1>
+
+<ng-container *ngIf="courses$ | async as courses">
+    <app-admin-courses-review [courses]="courses"></app-admin-courses-review>
+</ng-container>

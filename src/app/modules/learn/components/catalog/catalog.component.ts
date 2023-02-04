@@ -1,17 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { of } from 'rxjs';
-
-const items = Array(10)
-	.fill({
-		title: 'Course Name',
-		description: 'Course description long and interesting',
-	})
-	.map((it, i) => ({
-		...it,
-		id: i + 1,
-		views: Math.floor(Math.random() * 100) + 100,
-		participants: Math.floor(Math.random() * 30) + 5,
-	}));
+import {
+	ChangeDetectionStrategy,
+	Component,
+	OnDestroy,
+	OnInit,
+} from '@angular/core';
+import { map, Observable, takeUntil, tap } from 'rxjs';
+import { CoursesService } from 'src/app/services/courses.service';
+import { UserService } from 'src/app/services/user.service';
+import { BaseComponent } from 'src/app/shared/base.component';
+import { Course } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-courses-catalog',
@@ -19,12 +16,29 @@ const items = Array(10)
 	styleUrls: ['./catalog.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CatalogComponent implements OnInit {
-	public courses$ = of<any[]>([]);
+export class CatalogComponent
+	extends BaseComponent
+	implements OnInit, OnDestroy
+{
+	public courses$: Observable<Course[]>;
 
-	constructor() {}
+	public isTeacherUser$ = this.userService.user$.pipe(
+		map((user) => user?.role === 'teacher')
+	);
+
+	constructor(
+		private coursesService: CoursesService,
+		private userService: UserService
+	) {
+		super();
+		this.courses$ = this.coursesService.courses$;
+	}
 
 	ngOnInit(): void {
-		this.courses$ = of(items);
+		this.coursesService.courses$
+			.pipe(takeUntil(this.componentLifecycle$))
+			.subscribe((c) => {
+				console.log('catalog courses', c);
+			});
 	}
 }

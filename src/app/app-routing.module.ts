@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
 import { MainComponent } from './components/main/main.component';
+import { AdminGuardService } from './guards/admin-guard.service';
 
 const routes: Routes = [
 	{
@@ -27,6 +28,16 @@ const routes: Routes = [
 						(m) => m.LearnModule
 					),
 			},
+			{
+				path: 'admin',
+                canActivate: [
+                    AdminGuardService,
+                ],
+				loadChildren: () =>
+					import('./modules/admin/admin.module').then(
+						(m) => m.AdminModule
+					),
+			},
 		],
 	},
 	{
@@ -34,7 +45,10 @@ const routes: Routes = [
 		loadChildren: () =>
 			import('./modules/auth/auth.module').then((m) => m.AuthModule),
 	},
-	{ path: 'admin', loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule) },
+    {
+        path: '**',
+        redirectTo: 'app'
+    }
 ];
 
 @NgModule({

@@ -9,12 +9,6 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent {
 	constructor(private authService: AuthService, private router: Router) {
-		this.checkAccess();
-	}
-
-	private checkAccess(): void {
-		if (!this.authService.hasUserToken()) {
-			this.router.navigate(['auth']);
-		}
+		this.authService.initUser()
 	}
 }

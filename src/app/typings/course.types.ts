@@ -33,7 +33,7 @@ export interface CourseModule {
 }
 
 export interface Course {
-	id: string;
+	id: number;
 	title: string;
 	description: string;
 	startTime: string;

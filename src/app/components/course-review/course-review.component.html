@@ -1,0 +1,22 @@
+<a mat-stroked-button color="primary" [routerLink]="'../'">Назад</a>
+<ng-container *ngIf="course$ | async as course">
+    <div class="course-content">
+        <span>Название</span>
+        <h1>{{course.title}}</h1>
+        <span>Описание</span>
+        <p>{{course.description}}</p>
+        <span>Начало</span>
+        <span>{{course.startTime}}</span>
+        <span>Окончание</span>
+        <span>{{course.endTime}}</span>
+        <span>Длительность</span>
+        <span>{{course.startTime}}</span>
+        <span>Категория</span>
+        <span>{{course.category}}</span>
+        <span>Подкатегория</span>
+        <span>{{course.subcategory}}</span>
+        <span>Преимущества</span>
+        <span>{{course.advantages}}</span>
+    </div>
+    <button mat-stroked-button color="primary" (click)="onPublish(course.id)">Опубликовать</button>
+</ng-container>

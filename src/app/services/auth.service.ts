@@ -2,12 +2,10 @@ import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { first, map, Observable, take, tap } from 'rxjs';
+import { DATA_ENDPOINTS } from '../constants/network.constants';
+import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { LoginResponse, User } from '../typings/user.types';
-import {
-	DataRequestPayload,
-	DataService,
-	DATA_ENDPOINTS,
-} from './data.service';
+import { DataRequestPayload, DataService } from './data.service';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -17,59 +15,42 @@ export class AuthService {
 	constructor(
 		private dataService: DataService,
 		private userService: UserService,
-		private router: Router
-	) {
-		this.initUser();
-	}
+        private router: Router,
+	) {	}
 
 	public login(user: { email: string; password: string }): Observable<User> {
-		const payload: DataRequestPayload = {
-			method: 'POST',
-			url: `${DATA_ENDPOINTS.auth.login}`,
-			body: {
-				...user,
-			},
-		};
+		const payload: DataRequestPayload = NetworkHelper.createRequestPayload(
+			NetworkRequestKey.LoginUser,
+			user
+		);
 		return this.dataService.send<LoginResponse>(payload).pipe(
 			tap(({ token, user }) => {
-				this.storeUserToken(token);
-				this.userService.setUser(user);
+				this.userService.setUser(user, token);
 			}),
 			map((res) => res.user)
 		);
 	}
 
-	public hasUserToken(): boolean {
-		return this.getUserToken() !== null;
+	public register() {}
+
+	public logOut() {
+		this.userService.clearUser();
 	}
 
-	private getUserToken(): string | null {
-		return localStorage.getItem('token');
+	public initUser(): void {
+		this.getUserByToken().subscribe((res) => {
+            if (res !== null) {
+                this.userService.setUser(res)
+            }
+        }, (err) => {
+            this.router.navigateByUrl('/auth')
+        });
 	}
 
-	private storeUserToken(token: string) {
-		localStorage.setItem('token', token);
-	}
-
-	private initUser(): void {
-		const token = this.getUserToken();
-		if (token) {
-			this.getUserByToken(token)
-				.pipe(take(1))
-				.subscribe((res) => this.userService.setUser(res));
-		} else {
-			this.userService.setUser(null);
-		}
-	}
-
-	private getUserByToken(token: string): Observable<User | null> {
-		const payload: DataRequestPayload = {
-			method: 'POST',
-			url: `${DATA_ENDPOINTS.auth.user}`,
-			headers: new HttpHeaders({
-				Authorization: token,
-			}),
-		};
+	private getUserByToken(): Observable<User | null> {
+		const payload = NetworkHelper.createRequestPayload(
+			NetworkRequestKey.GetUserByToken
+		);
 		return this.dataService
 			.send<{ user: User | null; message: string }>(payload)
 			.pipe(map((res) => res.user));

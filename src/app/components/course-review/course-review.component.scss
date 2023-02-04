@@ -1,0 +1,12 @@
+.course-content {
+    max-width: 600px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px 20px;
+    align-items: baseline;
+
+    & h1, p {
+        margin: 0;
+    }
+}

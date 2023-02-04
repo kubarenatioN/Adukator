@@ -1,4 +1,5 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { HttpHeaders } from '@angular/common/http';
 import {
 	ChangeDetectionStrategy,
 	ChangeDetectorRef,
@@ -7,8 +8,10 @@ import {
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { DATA_ENDPOINTS } from 'src/app/constants/network.constants';
 import { moduleTopicsCountValidator } from 'src/app/helpers/course-validation';
-import { DataRequestPayload, DataService, DATA_ENDPOINTS } from 'src/app/services/data.service';
+import { NetworkHelper, NetworkRequestKey } from 'src/app/helpers/network.helper';
+import { DataRequestPayload, DataService } from 'src/app/services/data.service';
 import { CreateCourseFormData } from 'src/app/typings/course.types';
 
 @Component({
@@ -103,13 +106,9 @@ export class CreateCourseComponent implements OnInit {
 
     private publishCourse(data: CreateCourseFormData) {
         const processedCourseData = this.processCourseFormData(data);
-        const payload: DataRequestPayload = {
-            method: 'POST',
-            url: `${DATA_ENDPOINTS.api.course}/create`,
-            body: {
-                course: processedCourseData
-            }
-        }
+        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.CreateCourse, {
+            course: processedCourseData
+        })
         this.dataService.send(payload).subscribe(res => {
             console.log('111 create course response', res)
         })

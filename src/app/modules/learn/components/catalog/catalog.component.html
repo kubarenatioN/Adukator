@@ -1,6 +1,7 @@
 <div class="catalog-wrapper">
 	<h1 class="title">Каталог курсов</h1>
-	<a [routerLink]="['create']" mat-raised-button color="primary"
+	
+    <a *ngIf="isTeacherUser$ | async" [routerLink]="['../create']" mat-raised-button color="primary"
 		>Создать курс</a
 	>
     
@@ -8,15 +9,15 @@
 	<div class="catalog-content">
 		<a
 			class="catalog-item"
-			[routerLink]="[item.id]"
+			[routerLink]="['../course', 'overview', item.id]"
 			*ngFor="let item of courses$ | async"
 		>
 			<h3>{{ item.title }} {{ item.id }}</h3>
 			<p>{{ item.description }}</p>
 			<div class="catalog-item__footer">
-				<span class="catalog-item__views">Views: {{ item.views }}</span
+				<span class="catalog-item__views">Views: 2.3k</span
 				><span class="catalog-item__participants"
-					>Participants: {{ item.participants }}</span
+					>Participants: 123</span
 				>
 			</div>
 		</a>

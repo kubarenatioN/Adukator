@@ -7,7 +7,10 @@
 
     </div>
     <div class="profile">
-        <a *ngIf="user$ | async as user" [routerLink]="['profile', user.id]" class="profile-btn">{{user.username}}</a>
+        <ng-container *ngIf="user$ | async as user">
+            <a mat-raised-button color="primary" [routerLink]="['profile', user.id]" class="profile-btn">Профиль</a>
+            <a mat-raised-button color="accent" *ngIf="isAdmin$ | async" [routerLink]="['admin']" class="profile-btn">Администрирование</a>
+        </ng-container>
     </div>
 </header>
 <main class="main">
