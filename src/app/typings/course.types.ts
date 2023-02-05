@@ -48,3 +48,8 @@ export interface CreateCourseFormData extends Course {
 	userCategory?: string;
 	userSubcategory?: string;
 }
+
+export interface CoursesResponse {
+    published?: Course[]
+    review?: Course[]
+}

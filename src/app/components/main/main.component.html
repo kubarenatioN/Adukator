@@ -9,7 +9,7 @@
     <div class="profile">
         <ng-container *ngIf="user$ | async as user">
             <a mat-raised-button color="primary" [routerLink]="['profile', user.id]" class="profile-btn">Профиль</a>
-            <a mat-raised-button color="accent" *ngIf="isAdmin$ | async" [routerLink]="['admin']" class="profile-btn">Администрирование</a>
+            <a mat-raised-button color="accent" *ngIf="isAdmin$ | async" [routerLink]="['admin']" class="profile-btn">Админ панель</a>
         </ng-container>
     </div>
 </header>

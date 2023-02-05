@@ -1,5 +1,9 @@
 <h1>Админ панель</h1>
 
-<ng-container *ngIf="courses$ | async as courses">
+<ng-container *ngIf="courses$ | async as courses; else loader">
     <app-admin-courses-review [courses]="courses"></app-admin-courses-review>
 </ng-container>
+
+<ng-template #loader>
+    Loading...
+</ng-template>

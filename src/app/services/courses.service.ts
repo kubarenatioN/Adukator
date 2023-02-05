@@ -1,40 +1,32 @@
 import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, map, Observable, shareReplay, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, map, merge, Observable, ReplaySubject, shareReplay, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { DATA_ENDPOINTS } from '../constants/network.constants';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { Course, CreateCourseFormData } from '../typings/course.types';
+import { Course, CoursesResponse, CreateCourseFormData } from '../typings/course.types';
 import { DataRequestPayload, DataService } from './data.service';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class CoursesService {
-    // private coursesStore$ = new BehaviorSubject<Course[]>([]);
-    // private coursesForReviewStore$ = new BehaviorSubject<Course[]>([]);
-
-    // public courses$ = this.coursesStore$.asObservable().pipe(
-    //     shareReplay()
-    // );
-    // public coursesForReview$ = this.coursesForReviewStore$.asObservable().pipe(
-    //     shareReplay()
-    // );
-
-    private coursesStore$ = new BehaviorSubject<Course[]>([]);
-    private coursesForReviewStore$ = new BehaviorSubject<Course[]>([]);
+    private coursesStore$ = new Subject<Course[]>();
+    private coursesForReviewStore$ = new Subject<Course[]>();
 
     public courses$: Observable<Course[]>
     public coursesForReview$: Observable<Course[]>
-    // public courses$ = this.coursesStore$.asObservable().pipe(shareReplay())
-    // public coursesForReview$ = this.coursesForReviewStore$.asObservable().pipe(shareReplay())
 
     private resetCoursesCaching$ = new BehaviorSubject<void>(undefined);
     private resetCoursesForReviewCaching$ = new BehaviorSubject<void>(undefined);
 
 	constructor(private dataService: DataService, private router: Router) {
         this.courses$ = this.getCourses()
-        this.coursesForReview$ = this.getCoursesForReview()
+        this.coursesForReview$ = merge(this.getCoursesForReview(), this.coursesForReviewStore$.asObservable()).pipe(
+            shareReplay(1),
+        )
+        // this.courses$ = this.getCourses()
+        // this.coursesForReview$ = this.getCoursesForReview()
 
         this.resetCoursesCaching$.next();
         this.resetCoursesForReviewCaching$.next();
@@ -43,32 +35,19 @@ export class CoursesService {
 	public getCourses() {
         const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetCourse)
 		return this.resetCoursesCaching$.pipe(
-            tap(() => { 
-                console.log('111 fire reset')
-            }),
-            switchMap(() => {
-                return this.dataService.send<Course[]>(payload).pipe(
-                    tap(() => { 
-                        console.log('111 send courses request')
-                    }),
-                )
-            }),
+            switchMap(() => this.dataService.send<CoursesResponse>(payload)),
+            map(courses => courses.published || []),
             shareReplay(1)
         )
 	}
 
     public getCoursesForReview() {
         const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetCourse, {
-            status: 'review',
+            status: ['review'],
         })
         return this.resetCoursesForReviewCaching$.pipe(
-            switchMap(() => {
-                return this.dataService.send<Course[]>(payload).pipe(
-                    tap(() => { 
-                        console.log('111 send review courses request')
-                    }),
-                )
-            }),
+            switchMap(() => this.dataService.send<CoursesResponse>(payload)),
+            map(courses => courses.review || []),
             shareReplay(1)
         )
 	}
@@ -79,21 +58,26 @@ export class CoursesService {
 
     public publishCourse(id: number) {
         const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.PublishCourse, { id })
-        this.dataService.send(payload).subscribe(res => {
-            console.log('111 publish course', res);
-            this.resetCoursesCaching$.next()
-            this.resetCoursesForReviewCaching$.next()
+        this.dataService.send<CoursesResponse>(payload)
+        .pipe(
+            tap((res) => {
+                this.resetCoursesCaching$.next()
+                console.log('111 publish course', res);
+            }),
+            switchMap(res => {
+                this.coursesForReviewStore$.next(res.review || []);
+                return this.coursesForReview$
+            })
+        )
+        .subscribe(res => {
+            // console.log('111 publish course', res);
+            // this.resetCoursesCaching$.next()
+            // this.resetCoursesForReviewCaching$.next()
             this.router.navigate(['/app/admin'])
         })
     }
 
     public editCourse(id: number, form: CreateCourseFormData) {
-        const payload: DataRequestPayload = {
-			method: 'POST',
-			url: `${DATA_ENDPOINTS.api.course}/update`,
-			body: {
-				status: 'published',
-			},
-		};
+        
     }
 }
