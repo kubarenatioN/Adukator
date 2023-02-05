@@ -9,3 +9,7 @@
 	</mat-form-field>
     <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitDisabled">Войти</button>
 </form>
+
+<p>Либо используйте другой способ входа</p>
+<button mat-raised-button color="primary" (click)="login('google')">Google</button>
+<a mat-raised-button color="primary" (click)="login('twitter')">Twitter</a>

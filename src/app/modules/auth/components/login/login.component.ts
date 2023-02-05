@@ -36,7 +36,7 @@ export class LoginComponent {
 			],
 			password: ['', Validators.required],
 		});
-	}
+    }
 
 	public onSubmit(): void {
 		const { value, valid } = this.form;
@@ -54,4 +54,14 @@ export class LoginComponent {
 			);
 		}
 	}
+
+    public login(method: 'google' | 'twitter') {
+        switch (method) {
+            case 'google':
+                window.open('http://localhost:8080/auth/login/google', '_blank', 'popup')
+                break;
+            default:
+                break;
+        }
+    }
 }

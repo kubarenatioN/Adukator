@@ -9,6 +9,28 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent {
 	constructor(private authService: AuthService, private router: Router) {
-		this.authService.initUser()
+		window.addEventListener('message', (e) => this.setToken(e));
+		this.authService.initUser();
+	}
+
+	private setToken(e: MessageEvent) {
+		console.log(e);
+		if (
+			e.data &&
+			e.data.command === 'token-ready' &&
+			e.data.info &&
+			e.data.info.token
+		) {
+			localStorage.setItem('token', e.data.info.token);
+
+			e.source?.postMessage({
+                command: 'info',
+                info: {
+                    complete: true,
+                },
+            }, {
+                targetOrigin: e.origin
+            })
+		}
 	}
 }
