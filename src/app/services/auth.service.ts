@@ -41,6 +41,7 @@ export class AuthService {
 		this.getUserByToken().subscribe((res) => {
             if (res !== null) {
                 this.userService.setUser(res)
+                this.router.navigateByUrl('/app')
             }
         }, (err) => {
             this.router.navigateByUrl('/auth')

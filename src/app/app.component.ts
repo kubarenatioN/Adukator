@@ -14,14 +14,15 @@ export class AppComponent {
 	}
 
 	private setToken(e: MessageEvent) {
-		console.log(e);
 		if (
 			e.data &&
 			e.data.command === 'token-ready' &&
 			e.data.info &&
 			e.data.info.token
 		) {
-			localStorage.setItem('token', e.data.info.token);
+            console.log(e);
+            localStorage.setItem('token', e.data.info.token);
+            this.authService.initUser();
 
 			e.source?.postMessage({
                 command: 'info',

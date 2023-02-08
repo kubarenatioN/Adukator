@@ -1,3 +1,9 @@
+<div>
+    <span>
+        User: {{(userService.user$ | async)?.username ?? 'no user'}}
+    </span>
+    <img referrerpolicy="no-referrer" style="width: 100px" [src]="(userService.user$ | async)?.photo ?? ''" alt="User avatar photo">
+</div>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
 	<mat-form-field class="example-full-width">
 		<mat-label>Email</mat-label>

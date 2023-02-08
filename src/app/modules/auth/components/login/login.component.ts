@@ -2,16 +2,16 @@ import {
 	ChangeDetectionStrategy,
 	ChangeDetectorRef,
 	Component,
-	OnInit,
 } from '@angular/core';
 import {
 	FormBuilder,
 	FormGroup,
 	Validators,
-	FormControl,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
+import { UserService } from 'src/app/services/user.service';
+import { BaseComponent } from 'src/app/shared/base.component';
 
 @Component({
 	selector: 'app-login',
@@ -19,16 +19,19 @@ import { AuthService } from 'src/app/services/auth.service';
 	styleUrls: ['./login.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginComponent {
+export class LoginComponent extends BaseComponent {
 	public form: FormGroup;
 	public isSubmitDisabled = false;
 
 	constructor(
 		private fb: FormBuilder,
 		private authService: AuthService,
+        // TODO: remove UserService
+        public userService: UserService,
 		private cd: ChangeDetectorRef,
 		private router: Router
 	) {
+        super();
 		this.form = this.fb.group({
 			email: [
 				'',
