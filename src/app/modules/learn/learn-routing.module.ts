@@ -30,6 +30,10 @@ const routes: Routes = [
 				path: 'overview/:id',
 				component: CourseOverviewComponent,
 			},
+			{
+				path: 'review/:id',
+				component: CourseOverviewComponent,
+			},
 		],
 	},
 	{

@@ -17,12 +17,13 @@ export class AdminGuardService implements CanActivate {
 	public canActivate(
 		route: ActivatedRouteSnapshot,
 		state: RouterStateSnapshot
-	): Observable<boolean> {
+	) {
 		return this.userService.isAdmin$.pipe(
-            tap(isAdmin => {
+            map(isAdmin => {
                 if (!isAdmin) {
-                    this.router.navigateByUrl('/');
+                    return this.router.parseUrl('/app')
                 }
+                return true
             })
         );
 	}

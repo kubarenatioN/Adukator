@@ -8,17 +8,18 @@ export interface CourseTopicTask {
     difficulty: number;
 }
 
+// TODO: check fields optionality
 export interface CourseTopic {
-    id: string;
+    // id: string;
     title: string;
     description: string;
-    resources: string[];
+    resources?: string[];
     theory?: string;
     practice?: {
         description: string;
         tasks: CourseTopicTask[]
     },
-    results: {
+    results?: {
         test: string;
         report: boolean;
         offline: boolean;
@@ -26,7 +27,7 @@ export interface CourseTopic {
 }
 
 export interface CourseModule {
-	id: string;
+	// id: string;
 	title: string;
 	description: string;
     topics: CourseTopic[]
@@ -42,9 +43,10 @@ export interface Course {
 	subcategory: string;
 	advantages?: string;
 	modules: CourseModule[];
+    authorId: number;
 }
 
-export interface CreateCourseFormData extends Course {
+export interface CourseFormData extends Course {
 	userCategory?: string;
 	userSubcategory?: string;
 }

@@ -6,7 +6,8 @@ export enum NetworkRequestKey {
     LoginUser = 'LoginUser',
     RegisterUser = 'RegisterUser',
     GetUserByToken = 'GetUserByToken',
-    GetCourse = 'GetCourse',
+    GetAllCourses = 'GetAllCourses',
+    GetUserCourses = 'GetUserCourses',
     CreateCourse = 'CreateCourse',
     PublishCourse = 'PublishCourse',
     UpdateCourse = 'UpdateCourse',
@@ -39,9 +40,13 @@ export class NetworkHelper {
             method: 'POST',
             url: `${DATA_ENDPOINTS.auth.user}`,
         },
-        [NetworkRequestKey.GetCourse]: {
+        [NetworkRequestKey.GetAllCourses]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.course}`,
+        },
+        [NetworkRequestKey.GetUserCourses]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.course}/author`,
         },
         [NetworkRequestKey.CreateCourse]: {
             method: 'POST',

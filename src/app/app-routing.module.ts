@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
 import { MainComponent } from './components/main/main.component';
 import { AdminGuardService } from './guards/admin-guard.service';
+import { AuthGuardService } from './guards/auth-guard.service';
+import { AppGuardService } from './guards/app-guard.service';
 
 const routes: Routes = [
 	{
@@ -13,6 +15,9 @@ const routes: Routes = [
 	{
 		path: 'app',
 		component: MainComponent,
+        canActivate: [
+            AppGuardService,
+        ],
 		children: [
 			{
 				path: 'profile/:id',
@@ -42,6 +47,9 @@ const routes: Routes = [
 	},
 	{
 		path: 'auth',
+        canActivate: [
+            AuthGuardService,
+        ],
 		loadChildren: () =>
 			import('./modules/auth/auth.module').then((m) => m.AuthModule),
 	},

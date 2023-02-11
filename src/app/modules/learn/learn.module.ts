@@ -14,9 +14,10 @@ import { CreateTopicDialogComponent } from './components/create-topic-dialog/cre
 import {MatDialogModule} from '@angular/material/dialog';
 import { CourseOverviewComponent } from './components/course-overview/course-overview.component';
 import { CourseTrainingComponent } from './components/course-training/course-training.component';
+import { CourseFormComponent } from './components/course-form/course-form.component';
 
 @NgModule({
-	declarations: [LearnComponent, CatalogComponent, CreateCourseComponent, CourseModuleComponent, ModuleTopicComponent, CreateTopicDialogComponent, CourseOverviewComponent, CourseTrainingComponent],
+	declarations: [LearnComponent, CatalogComponent, CreateCourseComponent, CourseModuleComponent, ModuleTopicComponent, CreateTopicDialogComponent, CourseOverviewComponent, CourseTrainingComponent, CourseFormComponent],
 	imports: [CommonModule, LearnRoutingModule, SharedModule, ReactiveFormsModule, DragDropModule, MatDialogModule],
 })
 export class LearnModule {}

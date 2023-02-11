@@ -1,30 +1,39 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, ReplaySubject, Subject } from 'rxjs';
 import { User } from '../typings/user.types';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class UserService {
-	private userStore$ = new BehaviorSubject<User | null>(null);
+	// private userStore$ = new Subject<User | null>();
+	private userStore$ = new ReplaySubject<User | null>(1);
 
 	public user$: Observable<User | null>;
 
     public isAdmin$: Observable<boolean>;
+
+    public get token() : string | null {
+        return this.getUserToken()
+    }
 
 	constructor() {
 		this.user$ = this.userStore$.asObservable();
         this.isAdmin$ = this.user$.pipe(map(user => user !== null && user.role === 'admin'));
 	}
 
-	public setUser(user: User, token?: string) {
+	public setUser(user: User | null, token?: string) {
 		this.userStore$.next(user);
         if (token) {
             this.storeUserToken(token)
         }
 	}
 
-    public clearUser(): void {
+    public logout() {
+        this.clearUser();
+    }
+
+    private clearUser(): void {
         this.userStore$.next(null)
         this.clearUserToken()
     }
@@ -33,7 +42,7 @@ export class UserService {
 		return this.getUserToken() !== null;
 	}
 
-	public getUserToken(): string | null {
+	private getUserToken(): string | null {
 		return localStorage.getItem('token');
 	}
 

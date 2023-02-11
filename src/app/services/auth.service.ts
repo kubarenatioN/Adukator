@@ -18,37 +18,31 @@ export class AuthService {
         private router: Router,
 	) {	}
 
-	public login(user: { email: string; password: string }): Observable<User> {
+	public login(user: { email: string; password: string }) {
 		const payload: DataRequestPayload = NetworkHelper.createRequestPayload(
 			NetworkRequestKey.LoginUser,
 			user
 		);
-		return this.dataService.send<LoginResponse>(payload).pipe(
-			tap(({ token, user }) => {
+		this.dataService.send<LoginResponse>(payload)
+            .subscribe(({ token, user }) => {
 				this.userService.setUser(user, token);
-			}),
-			map((res) => res.user)
-		);
+			});
 	}
 
 	public register() {}
-
-	public logOut() {
-		this.userService.clearUser();
-	}
 
 	public initUser(): void {
 		this.getUserByToken().subscribe((res) => {
             if (res !== null) {
                 this.userService.setUser(res)
-                this.router.navigateByUrl('/app')
             }
         }, (err) => {
-            this.router.navigateByUrl('/auth')
+            console.error('Error when getting user information...');
+            this.userService.setUser(null)
         });
 	}
 
-	private getUserByToken(): Observable<User | null> {
+	public getUserByToken(): Observable<User | null> {
 		const payload = NetworkHelper.createRequestPayload(
 			NetworkRequestKey.GetUserByToken
 		);

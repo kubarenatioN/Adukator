@@ -20,7 +20,6 @@ export class AppComponent {
 			e.data.info &&
 			e.data.info.token
 		) {
-            console.log(e);
             localStorage.setItem('token', e.data.info.token);
             this.authService.initUser();
 

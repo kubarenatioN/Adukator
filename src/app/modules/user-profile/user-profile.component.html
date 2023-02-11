@@ -1,2 +1,33 @@
-<p>user-profile works!</p>
-<button mat-raised-button color="primary" (click)="logOut()">Log Out</button>
+<ng-container *ngIf="user$ | async as user">
+    <p>Role: {{user?.role}}</p>
+    <ng-container *ngIf="user.role === 'teacher'">
+        <div class="user-courses">
+            <h2>Мои курсы</h2>
+            <div class="user-courses-container">
+                <ng-container *ngIf="userCourses$ | async as courses; else loader">
+                    <h3>На рассмотрении</h3>
+                    <div class="user-courses-list">
+                        <div *ngFor="let course of courses">
+                            <a [routerLink]="['app/learn/course/overview', course.id]">Курс {{course.title}}</a>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+            <div class="user-courses-container">
+                <ng-container *ngIf="userCoursesOnReview$ | async as coursesOnReview; else loader">
+                    <h3>Опубликованные</h3>
+                    <div class="user-courses-list">
+                        <div *ngFor="let course of coursesOnReview">
+                            <a [routerLink]="['app/learn/course/overview', course.id]">Курс {{course.title}}</a>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </ng-container>
+</ng-container>
+<button mat-raised-button color="primary" (click)="logOut()">Выйти</button>
+
+<ng-template #loader>
+    Loading...
+</ng-template>
