@@ -11,13 +11,7 @@ import {
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { moduleTopicsCountValidator } from 'src/app/helpers/course-validation';
-import {
-	NetworkHelper,
-	NetworkRequestKey,
-} from 'src/app/helpers/network.helper';
-import { CoursesService } from 'src/app/services/courses.service';
-import { DataService } from 'src/app/services/data.service';
-import { CourseFormData, CourseModule } from 'src/app/typings/course.types';
+import { CourseFormData, CourseModule, CourseTopic } from 'src/app/typings/course.types';
 
 export const testFormData = {
     id: 123,
@@ -47,8 +41,8 @@ export const testFormData = {
 			description: 'фыв',
 			topics: [
 				{
-					title: 'йцу',
-					description: '',
+					title: 'йцу 2',
+					description: 'qweqweqwe asd zxczxc',
 				},
 			],
 		},
@@ -78,8 +72,8 @@ export class CourseFormComponent implements OnInit {
 
     @Input() public set formData(data: CourseFormData | null) {
         if (data) {
-            this.setCourseModel(data);
             this.mode = 'update'
+            this.setCourseModel(data);
         }
     }
 
@@ -197,19 +191,25 @@ export class CourseFormComponent implements OnInit {
 			advantages: course.advantages,
 		})
 
-        const controls = this.getModulesFormArray(modules)
-        console.log(controls);
-        this.modules.controls = controls
-        console.log(this.modules.controls);
-        // this.modules.setValue(modules)
+        this.modules.controls = this.getModulesFormArray(modules)
     }
 
-    private getModulesFormArray(modules: CourseModule[]) {
-        return modules.map(module => {
+    private getModulesFormArray(modulesData: CourseModule[]) {
+        return modulesData.map(module => {
+            const topics = this.getTopicsFormArray(module.topics)
             return this.fb.group({
                 title: module.title,
                 description: module.description,
-                topics: this.fb.array([])
+                topics: this.fb.array(topics)
+            })
+        })
+    }
+
+    private getTopicsFormArray(topics: CourseTopic[]) {
+        return topics.map(topic => {
+            return this.fb.group({
+                title: topic.title,
+                description: topic.description
             })
         })
     }

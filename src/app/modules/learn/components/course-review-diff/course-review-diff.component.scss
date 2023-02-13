@@ -1,0 +1,28 @@
+::ng-deep .toolbar .mat-form-field-wrapper .mat-form-field-flex {
+    padding-top: 0;
+}
+
+.property {
+    display: grid;
+    align-items: baseline;
+    grid-template-columns: 1fr 3fr 3fr;
+    border-bottom: 1px solid #333;
+    padding: 10px 0;
+
+    & h1, h2, p {
+        margin-bottom: 0;
+    }
+}
+
+.toolbar {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.versions-select {
+    display: flex;
+    align-items: baseline;
+    & .mat-form-field {
+        margin-left: 10px;
+    }
+}

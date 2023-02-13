@@ -12,8 +12,4 @@ export class AdminService {
 	constructor(private coursesService: CoursesService) {
         this.courses$ = this.coursesService.coursesForReview$;
     }
-
-    public getCourseById(id: number): Observable<Course | null> {
-        return this.courses$.pipe(map(courses => courses.find(c => c.id === id) ?? null))
-    }
 }

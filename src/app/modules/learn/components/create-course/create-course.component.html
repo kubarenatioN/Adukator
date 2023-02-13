@@ -1,6 +1,12 @@
-<a [routerLink]="['../']" mat-stroked-button color="primary">Назад</a>
+<ng-container *ngIf="(showLoading$ | async) !== true; else loading">
+    <a [routerLink]="['../']" mat-stroked-button color="primary">Назад</a>
+    
+    <h1 class="title">Создание курса</h1>
+    <p>Пожалуйста, заполните данные о курсе в форму ниже</p>
+    
+    <app-course-form (publish)="onPulish($event)" (saveDraft)="onSaveDraft($event)"></app-course-form>
+</ng-container>
 
-<h1 class="title">Создание курса</h1>
-<p>Пожалуйста, заполните данные о курсе в форму ниже</p>
-
-<app-course-form (publish)="onPulish($event)" (saveDraft)="onSaveDraft($event)" [formData]="formData"></app-course-form>
+<ng-template #loading>
+    Course sent to admin on review.
+</ng-template>

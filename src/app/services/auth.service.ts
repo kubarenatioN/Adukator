@@ -15,16 +15,17 @@ export class AuthService {
 	constructor(
 		private dataService: DataService,
 		private userService: UserService,
-        private router: Router,
-	) {	}
+		private router: Router
+	) {}
 
 	public login(user: { email: string; password: string }) {
 		const payload: DataRequestPayload = NetworkHelper.createRequestPayload(
 			NetworkRequestKey.LoginUser,
-			user
+			{ body: user }
 		);
-		this.dataService.send<LoginResponse>(payload)
-            .subscribe(({ token, user }) => {
+		this.dataService
+			.send<LoginResponse>(payload)
+			.subscribe(({ token, user }) => {
 				this.userService.setUser(user, token);
 			});
 	}
@@ -32,14 +33,17 @@ export class AuthService {
 	public register() {}
 
 	public initUser(): void {
-		this.getUserByToken().subscribe((res) => {
-            if (res !== null) {
-                this.userService.setUser(res)
-            }
-        }, (err) => {
-            console.error('Error when getting user information...');
-            this.userService.setUser(null)
-        });
+		this.getUserByToken().subscribe(
+			(res) => {
+				if (res !== null) {
+					this.userService.setUser(res);
+				}
+			},
+			(err) => {
+				console.error('Error when getting user information...');
+				this.userService.setUser(null);
+			}
+		);
 	}
 
 	public getUserByToken(): Observable<User | null> {

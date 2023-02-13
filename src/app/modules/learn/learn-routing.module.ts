@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { CourseReviewComponent } from 'src/app/modules/learn/components/course-review/course-review.component';
+import { CourseReviewGuardService } from 'src/app/guards/course-review-guard.service';
 import { CatalogComponent } from './components/catalog/catalog.component';
 import { CourseOverviewComponent } from './components/course-overview/course-overview.component';
 import { CourseTrainingComponent } from './components/course-training/course-training.component';
@@ -31,8 +33,11 @@ const routes: Routes = [
 				component: CourseOverviewComponent,
 			},
 			{
-				path: 'review/:id',
-				component: CourseOverviewComponent,
+                path: 'review/:id',
+				component: CourseReviewComponent,
+                canActivate: [
+                    CourseReviewGuardService,
+                ],
 			},
 		],
 	},

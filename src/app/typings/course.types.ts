@@ -35,7 +35,20 @@ export interface CourseModule {
 
 export interface Course {
 	id: number;
-	title: string;
+    title: string;
+	description: string;
+	startTime: string;
+	endTime: string;
+	category: string;
+	subcategory: string;
+	advantages?: string;
+    modulesJson: string;
+    authorId: number;
+    createdAt?: string;
+}
+
+export interface CourseFormData {
+    title: string;
 	description: string;
 	startTime: string;
 	endTime: string;
@@ -43,10 +56,6 @@ export interface Course {
 	subcategory: string;
 	advantages?: string;
 	modules: CourseModule[];
-    authorId: number;
-}
-
-export interface CourseFormData extends Course {
 	userCategory?: string;
 	userSubcategory?: string;
 }

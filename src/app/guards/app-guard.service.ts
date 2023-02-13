@@ -13,13 +13,16 @@ export class AppGuardService implements CanActivate {
 		route: ActivatedRouteSnapshot,
 		state: RouterStateSnapshot
 	) {
-		const user$ = this.userService.user$;
-		return user$.pipe(map((user) => {
+		return this.hasUser()
+	}
+
+    private hasUser() {
+        return this.userService.user$.pipe(map((user) => {
             const hasUser = user !== null
             if (hasUser) {
                 return true
             }
             return this.router.parseUrl('/auth/login')
         }));
-	}
+    }
 }

@@ -17,6 +17,10 @@ export class UserService {
         return this.getUserToken()
     }
 
+    public get role(): Observable<string> {
+        return this.user$.pipe(map(user => user?.role ?? ''))
+    }
+
 	constructor() {
 		this.user$ = this.userStore$.asObservable();
         this.isAdmin$ = this.user$.pipe(map(user => user !== null && user.role === 'admin'));

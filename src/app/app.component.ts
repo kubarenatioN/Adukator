@@ -11,6 +11,7 @@ export class AppComponent {
 	constructor(private authService: AuthService, private router: Router) {
 		window.addEventListener('message', (e) => this.setToken(e));
 		this.authService.initUser();
+        (window as any).__localeId__ = 'ru'
 	}
 
 	private setToken(e: MessageEvent) {

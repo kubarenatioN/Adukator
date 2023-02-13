@@ -18,7 +18,11 @@ export class AdminGuardService implements CanActivate {
 		route: ActivatedRouteSnapshot,
 		state: RouterStateSnapshot
 	) {
-		return this.userService.isAdmin$.pipe(
+		return this.isAdmin()
+	}
+
+    private isAdmin() {
+        return this.userService.isAdmin$.pipe(
             map(isAdmin => {
                 if (!isAdmin) {
                     return this.router.parseUrl('/app')
@@ -26,5 +30,5 @@ export class AdminGuardService implements CanActivate {
                 return true
             })
         );
-	}
+    }
 }

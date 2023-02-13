@@ -1,4 +1,4 @@
-import { HttpHeaders } from "@angular/common/http";
+import { HttpHeaders, HttpParams } from "@angular/common/http";
 import { DATA_ENDPOINTS } from "../constants/network.constants";
 import { DataRequestPayload } from "../services/data.service";
 
@@ -7,21 +7,27 @@ export enum NetworkRequestKey {
     RegisterUser = 'RegisterUser',
     GetUserByToken = 'GetUserByToken',
     GetAllCourses = 'GetAllCourses',
+    GetAllReviewCourses = 'GetAllReviewCourses',
+    GetReviewCourseHistory = 'GetReviewCourseHistory',
     GetUserCourses = 'GetUserCourses',
     CreateCourse = 'CreateCourse',
     PublishCourse = 'PublishCourse',
     UpdateCourse = 'UpdateCourse',
 }
 
-interface RequestMetadata {
+interface RequestCoreMetadata {
     method: string,
     url: string,
-    body?: object,
+}
+
+interface RequestMetadata {
+    body?: Record<string, string | number | object | undefined>;
+    params?: Record<string, string | number>
     headers?: HttpHeaders
 }
 
 interface RequestsMetadataMap {
-    [key: string]: RequestMetadata
+    [key: string]: RequestCoreMetadata
 }
 
 export class NetworkHelper {
@@ -41,8 +47,16 @@ export class NetworkHelper {
             url: `${DATA_ENDPOINTS.auth.user}`,
         },
         [NetworkRequestKey.GetAllCourses]: {
-            method: 'POST',
+            method: 'GET',
             url: `${DATA_ENDPOINTS.api.course}`,
+        },
+        [NetworkRequestKey.GetAllReviewCourses]: {
+            method: 'GET',
+            url: `${DATA_ENDPOINTS.api.course}/review`,
+        },
+        [NetworkRequestKey.GetReviewCourseHistory]: {
+            method: 'GET',
+            url: `${DATA_ENDPOINTS.api.course}/review/history`,
         },
         [NetworkRequestKey.GetUserCourses]: {
             method: 'POST',
@@ -62,16 +76,28 @@ export class NetworkHelper {
         },
     }
 
-    public static createRequestPayload(key: string, body?: object, headers?: HttpHeaders): DataRequestPayload {
-        const configBody = NetworkHelper.requestsMetadataMap[key].body;
-        const expandBody = configBody ? {
-            ...configBody,
-            ...body
-        } : body
-        return {
-            ...NetworkHelper.requestsMetadataMap[key],
-            body: expandBody,
-            headers
+    public static createRequestPayload(key: string, extendedPayload?: RequestMetadata): DataRequestPayload {
+        const basePayload = this.requestsMetadataMap[key];
+        const { method } = basePayload;
+        const headers = extendedPayload?.headers;
+        if (method === 'POST') {
+            return {
+                ...basePayload,
+                body: extendedPayload?.body,
+                headers,
+            }
+        }
+        else {
+            let searchParams = new HttpParams()
+            const params = extendedPayload?.params
+            if (params) {
+                searchParams = new HttpParams({ fromObject: params })
+            }
+            return {
+                ...NetworkHelper.requestsMetadataMap[key],
+                params: searchParams,
+                headers
+            }
         }
     }
 }

@@ -1,0 +1,44 @@
+<div class="toolbar">
+    <div class="versions-select">
+        <span>Сравнение версий:</span>
+        <mat-form-field appearance="standard">
+            <mat-select [(value)]="selectedOptions[0]" (selectionChange)="onVersionChange(0, $event.value)">
+                <mat-option *ngFor="let version of versionOptions[0]; let i = index" [value]="version.id">
+                    {{version.date}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="standard">
+            <mat-select [(value)]="selectedOptions[1]" (selectionChange)="onVersionChange(1, $event.value)">
+                <mat-option *ngFor="let version of versionOptions[1]" [value]="version.id">
+                    {{version.date}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="applyDefaultVersions()">Сбросить</button>
+    </div>
+	
+</div>
+
+<div class="course-content">
+    <mat-checkbox (change)="onEditModeChange($event)">Редактировать</mat-checkbox>
+	<div class="property">
+		<span>Название</span>
+		<h2>{{ versionsPair[0].title }}</h2>
+		<h2>{{ versionsPair[1].title }}</h2>
+	</div>
+	<div class="property">
+		<span>Описание</span>
+		<p>{{ versionsPair[0].description }}</p>
+		<p>{{ versionsPair[1].description }}</p>
+	</div>
+	<div class="property">
+		<span>Модули</span>
+        <div>
+            <span>{{ versionsPair[0].modulesJson }}</span>
+        </div>
+        <div>
+            <span>{{ versionsPair[1].modulesJson }}</span>
+        </div>
+	</div>
+</div>

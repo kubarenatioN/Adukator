@@ -1,0 +1,7 @@
+<button mat-stroked-button color="primary" (click)="goBack()">Назад</button>
+<div *ngIf="courseHistory$ | async as reviewItems" class="review-content">
+
+    <app-course-review-diff [courseVersions]="reviewItems"></app-course-review-diff>
+
+    <!-- <button mat-stroked-button color="primary" (click)="onPublish()">Опубликовать</button> -->
+</div>

@@ -32,64 +32,30 @@ export class CoursesService {
         this.resetCoursesForReviewCaching$.next();
     }
 
-	public getCourses() {
-        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetAllCourses)
-		return this.resetCoursesCaching$.pipe(
-            switchMap(() => this.dataService.send<CoursesResponse>(payload)),
-            map(courses => courses.published || []),
-            shareReplay(1)
-        )
-	}
-
-    public getCoursesForReview() {
-        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetAllCourses, {
-            status: ['review'],
-        })
-        return this.resetCoursesForReviewCaching$.pipe(
-            switchMap(() => this.dataService.send<CoursesResponse>(payload)),
-            map(courses => courses.review || []),
-            shareReplay(1)
-        )
-	}
-
-    public getUserCourses(): Observable<CoursesResponse | null> {
-        return this.userService.user$.pipe(
-            switchMap(user => {
-                if (user === null) {
-                    return of(null);
-                }
-                const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetUserCourses, {
-                    id: user.id,
-                    status: ['review', 'published']
-                })
-
-                return this.dataService.send<CoursesResponse>(payload)
-            }),
-            shareReplay(1),
-        )
-	}
-
     public getCourseById(id: number): Observable<Course | null> {
         return this.courses$.pipe(map(courses => courses.find(c => c.id === id) ?? null));
     }
 
+    public getCourseReviewHistory(courseId: number): Observable<Course[]> {
+        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetReviewCourseHistory, {
+            params: {
+                id: courseId
+            }
+        })
+        return this.dataService.send<Course[]>(payload)
+    }
+
     public publishCourse(id: number) {
-        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.PublishCourse, { id })
+        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.PublishCourse, { body: { id } })
         this.dataService.send<CoursesResponse>(payload)
         .pipe(
-            tap((res) => {
-                this.resetCoursesCaching$.next()
-                console.log('111 publish course', res);
-            }),
-            switchMap(res => {
-                this.coursesForReviewStore$.next(res.review || []);
+            switchMap(() => {
                 return this.coursesForReview$
-            })
+            }),
+            take(1)
         )
-        .subscribe(res => {
-            // console.log('111 publish course', res);
-            // this.resetCoursesCaching$.next()
-            // this.resetCoursesForReviewCaching$.next()
+        .subscribe(courses => {
+            this.coursesForReviewStore$.next(courses.filter(course => course.id !== id))
             this.router.navigate(['/app/admin'])
         })
     }
@@ -97,4 +63,39 @@ export class CoursesService {
     public editCourse(id: number, form: CourseFormData) {
         
     }
+
+    private getCourses() {
+        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetAllCourses)
+		return this.resetCoursesCaching$.pipe(
+            switchMap(() => this.dataService.send<Course[]>(payload)),
+            shareReplay(1)
+        )
+	}
+
+    private getCoursesForReview() {
+        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetAllReviewCourses)
+        return this.resetCoursesForReviewCaching$.pipe(
+            switchMap(() => this.dataService.send<Course[]>(payload)),
+            shareReplay(1)
+        )
+	}
+
+    private getUserCourses(): Observable<CoursesResponse | null> {
+        return this.userService.user$.pipe(
+            switchMap(user => {
+                if (user === null) {
+                    return of(null);
+                }
+                const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetUserCourses, {
+                    body: {
+                        id: user.id,
+                        role: user.role
+                    }
+                })
+
+                return this.dataService.send<CoursesResponse>(payload)
+            }),
+            shareReplay(1),
+        )
+	}
 }

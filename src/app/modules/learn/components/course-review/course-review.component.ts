@@ -1,6 +1,7 @@
+import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { EMPTY, map, Observable, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { EMPTY, map, Observable, shareReplay, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { AdminService } from 'src/app/services/admin.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UserService } from 'src/app/services/user.service';
@@ -14,33 +15,24 @@ import { Course } from 'src/app/typings/course.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseReviewComponent extends BaseComponent implements OnInit {
-	public course$: Observable<Course | null>;
+	public courseHistory$: Observable<Course[]>;
+    public parentCourseId: number = -1;
 
 	constructor(
-		private adminService: AdminService,
-        private userService: UserService,
-		private activatedRoute: ActivatedRoute,
+        private location: Location,
+        private activatedRoute: ActivatedRoute,
         private coursesService: CoursesService,
 		private router: Router
 	) {
         super();
-        this.course$ = this.activatedRoute.params.pipe(
+        this.courseHistory$ = this.activatedRoute.params.pipe(
             takeUntil(this.componentLifecycle$),
 			switchMap((params) => {
-                return this.adminService.getCourseById(Number(params['id']))
+                const courseId = Number(params['id'])
+                this.parentCourseId = courseId
+                return this.coursesService.getCourseReviewHistory(courseId)
             }),
-            withLatestFrom(this.userService.isAdmin$),
-            tap(([course, isAdmin]) => {
-                if (!course) {
-                    if (isAdmin) {
-                        this.router.navigate(['/app/admin']);
-                    }
-                    else {
-                        this.router.navigate(['/app']);
-                    }
-                }
-            }),
-            map(([course]) => course)
+            shareReplay(1),
 		);
     }
 
@@ -48,11 +40,15 @@ export class CourseReviewComponent extends BaseComponent implements OnInit {
 		
 	}
 
-    public onPublish(id: number) {
-        this.coursesService.publishCourse(id);
+    public onPublish() {
+        this.coursesService.publishCourse(this.parentCourseId)
     }
 
     public onEdit(id: number) {
         
+    }
+
+    public goBack(): void {
+        this.location.back()
     }
 }
