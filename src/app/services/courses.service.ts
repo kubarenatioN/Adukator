@@ -34,6 +34,15 @@ export class CoursesService {
         return this.courses$.pipe(map(courses => courses.find(c => c.id === id) ?? null));
     }
 
+    public getUserCourse(courseId: number, status: 'published' | 'review' | 'reviewChildren' = 'review'): Observable<Course | null> {
+        return this.userCourses$.pipe(map(userCourses => {
+            const courses: Course[] = []
+            return courses.concat(
+                userCourses?.[status] ?? [],
+            ).find(course => course.id === courseId) ?? null
+        }))
+    }
+
     public getCourseReviewHistory(courseId: number): Observable<Course[]> {
         const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetReviewCourseHistory, {
             params: {

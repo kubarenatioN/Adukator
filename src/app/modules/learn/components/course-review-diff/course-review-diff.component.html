@@ -21,7 +21,19 @@
 </div>
 
 <div class="course-content">
-    <mat-checkbox (change)="onEditModeChange($event)">Редактировать</mat-checkbox>
+    <!-- <mat-checkbox (change)="onEditModeChange($event)">Редактировать</mat-checkbox> -->
+	<div class="property">
+		<span>Статус</span>
+		<p>Проверено редактором</p>
+		<p>
+            <span>
+                Ожидает исправления
+            </span>
+            <a [routerLink]="['/app/learn/create']" [queryParams]="{id: versionsPair[1].id}" *ngIf="isLastVersion(versionsPair[1])">
+                Исправить
+            </a>
+        </p>
+	</div>
 	<div class="property">
 		<span>Название</span>
 		<h2>{{ versionsPair[0].title }}</h2>

@@ -1,12 +1,18 @@
-<ng-container *ngIf="(showLoading$ | async) !== true; else loading">
+<ng-container *ngIf="(showLoading$ | async) !== true; else sentOnReview">
     <a [routerLink]="['../']" mat-stroked-button color="primary">Назад</a>
     
     <h1 class="title">Создание курса</h1>
     <p>Пожалуйста, заполните данные о курсе в форму ниже</p>
     
-    <app-course-form (publish)="onPulish($event)" (saveDraft)="onSaveDraft($event)"></app-course-form>
+    <ng-container *ngIf="(showLoading$ | async) !== true; else loading">
+        <app-course-form (publish)="onPulish($event)" (saveDraft)="onSaveDraft($event)" [formData]="formData$ | async"></app-course-form>
+    </ng-container>
 </ng-container>
 
 <ng-template #loading>
+    Loading course data...
+</ng-template>
+
+<ng-template #sentOnReview>
     Course sent to admin on review.
 </ng-template>

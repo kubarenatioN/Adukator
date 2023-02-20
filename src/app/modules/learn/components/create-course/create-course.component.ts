@@ -3,10 +3,11 @@ import {
 	Component,
 	OnInit,
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject, EMPTY, switchMap, tap, throwError } from 'rxjs';
-import { stringifyModules } from 'src/app/helpers/courses.helper';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, EMPTY, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
+import { convertCourseToCourseFormData, stringifyModules } from 'src/app/helpers/courses.helper';
 import { NetworkHelper, NetworkRequestKey } from 'src/app/helpers/network.helper';
+import { CoursesService } from 'src/app/services/courses.service';
 import { DataService } from 'src/app/services/data.service';
 import { UserService } from 'src/app/services/user.service';
 import { CourseFormData } from 'src/app/typings/course.types';
@@ -18,13 +19,35 @@ import { testFormData } from '../course-form/course-form.component';
 	styleUrls: ['./create-course.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CreateCourseComponent {
+export class CreateCourseComponent implements OnInit {
 	private courseData?: CourseFormData;
 
-    public formData: CourseFormData = testFormData;
+    public formData$!: Observable<CourseFormData | null>;
     public showLoading$ = new BehaviorSubject<boolean>(false);
 
-	constructor(private dataService: DataService, private userService: UserService, private router: Router) {}
+	constructor(private dataService: DataService, private userService: UserService, private router: Router, private activatedRoute: ActivatedRoute, private coursesService: CoursesService) {}
+    
+    public ngOnInit(): void {
+        this.activatedRoute.queryParams.pipe(
+            take(1),
+            switchMap(params => {
+                const courseId = Number(params['id'])
+                if (courseId) {
+                    this.showLoading$.next(true)
+                    return this.coursesService.getUserCourse(courseId, 'reviewChildren')
+                }
+                return of(null)
+            }),
+            map(course => {
+                this.showLoading$.next(false)
+                return course !== null 
+                    ? convertCourseToCourseFormData(course)
+                    : null
+            })
+        ).subscribe(course => {
+            this.formData$ = of(course)
+        })
+    }
 
     public onPulish(courseData: CourseFormData): void {
         console.log('111 on change form Data', courseData);

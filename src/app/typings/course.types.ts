@@ -63,4 +63,5 @@ export interface CourseFormData {
 export interface CoursesResponse {
     published?: Course[]
     review?: Course[]
+    reviewChildren?: Course[]
 }

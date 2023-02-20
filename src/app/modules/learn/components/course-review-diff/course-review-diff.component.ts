@@ -35,6 +35,10 @@ export class CourseReviewDiffComponent implements OnInit {
 	public versionOptions!: VersionSelect[];
     public selectedOptions = Array.from({ length: 2 }) as number[];
 
+    public isLastVersion(course: Course): boolean {
+        return this._courseVerions[0].id === course.id
+    }
+
 	constructor() {}
 
 	ngOnInit(): void {}
