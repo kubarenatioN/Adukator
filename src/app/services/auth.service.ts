@@ -1,8 +1,6 @@
-import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { first, map, Observable, take, tap } from 'rxjs';
-import { DATA_ENDPOINTS } from '../constants/network.constants';
+import { map, Observable } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { LoginResponse, User } from '../typings/user.types';
 import { DataRequestPayload, DataService } from './data.service';

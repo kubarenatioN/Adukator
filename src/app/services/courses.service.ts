@@ -1,11 +1,9 @@
-import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, map, merge, Observable, of, ReplaySubject, shareReplay, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
-import { DATA_ENDPOINTS } from '../constants/network.constants';
+import { BehaviorSubject, map, merge, Observable, of, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { Course, CoursesResponse, CourseFormData } from '../typings/course.types';
-import { DataRequestPayload, DataService } from './data.service';
+import { DataService } from './data.service';
 import { UserService } from './user.service';
 
 @Injectable({

@@ -36,11 +36,11 @@ export class NetworkHelper {
     private static requestsMetadataMap: RequestsMetadataMap = {
         [NetworkRequestKey.LoginUser]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.auth.login}`,
+            url: `${DATA_ENDPOINTS.auth.login.jwt}`,
         },
         [NetworkRequestKey.RegisterUser]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.auth.login}`,
+            url: `${DATA_ENDPOINTS.auth.register}`,
         },
         [NetworkRequestKey.GetUserByToken]: {
             method: 'POST',

@@ -7,6 +7,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs';
+import { DATA_ENDPOINTS } from 'src/app/constants/network.constants';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from 'src/app/shared/base.component';
@@ -67,7 +68,7 @@ export class LoginComponent extends BaseComponent implements OnInit {
 		switch (method) {
 			case 'google':
 				window.open(
-					'http://localhost:8080/auth/login/google',
+					DATA_ENDPOINTS.auth.login.google,
 					'_blank',
 					'popup'
 				);
