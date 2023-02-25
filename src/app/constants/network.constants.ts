@@ -1,5 +1,4 @@
-const apiUrl = 'http://localhost:8080';
-// const apiUrl = 'https://expensive-pink-goshawk.cyclic.app';
+import { apiUrl } from "./urls";
 
 export const DATA_ENDPOINTS = {
 	auth: {
