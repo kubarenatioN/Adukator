@@ -6,11 +6,15 @@ export enum NetworkRequestKey {
     LoginUser = 'LoginUser',
     RegisterUser = 'RegisterUser',
     GetUserByToken = 'GetUserByToken',
+    
     GetAllCourses = 'GetAllCourses',
-    GetAllReviewCourses = 'GetAllReviewCourses',
+    GetCoursesByUser = 'GetCoursesByUser',
     GetReviewCourseHistory = 'GetReviewCourseHistory',
-    GetUserCourses = 'GetUserCourses',
     CreateCourse = 'CreateCourse',
+
+    GetAllAdminReviewCourses = 'GetAllAdminReviewCourses',
+    GetAdminReviewCourseById = 'GetAdminReviewCourseById',
+    
     PublishCourse = 'PublishCourse',
     UpdateCourse = 'UpdateCourse',
 }
@@ -23,6 +27,7 @@ interface RequestCoreMetadata {
 interface RequestMetadata {
     body?: Record<string, string | number | object | undefined>;
     params?: Record<string, string | number>
+    urlId?: string | number;
     headers?: HttpHeaders
 }
 
@@ -34,6 +39,15 @@ export class NetworkHelper {
     public static authorizationHeader = 'Authorization';
     
     private static requestsMetadataMap: RequestsMetadataMap = {
+        [NetworkRequestKey.GetAdminReviewCourseById]: {
+            method: 'GET',
+            url: `${DATA_ENDPOINTS.admin.courses}/review`,
+        },
+        [NetworkRequestKey.GetAllAdminReviewCourses]: {
+            method: 'GET',
+            url: `${DATA_ENDPOINTS.admin.courses}/review`,
+        },
+
         [NetworkRequestKey.LoginUser]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.auth.login.jwt}`,
@@ -48,31 +62,27 @@ export class NetworkHelper {
         },
         [NetworkRequestKey.GetAllCourses]: {
             method: 'GET',
-            url: `${DATA_ENDPOINTS.api.course}`,
-        },
-        [NetworkRequestKey.GetAllReviewCourses]: {
-            method: 'GET',
-            url: `${DATA_ENDPOINTS.api.course}/review`,
+            url: `${DATA_ENDPOINTS.api.courses}`,
         },
         [NetworkRequestKey.GetReviewCourseHistory]: {
             method: 'GET',
-            url: `${DATA_ENDPOINTS.api.course}/review/history`,
+            url: `${DATA_ENDPOINTS.api.courses}/review/history`,
         },
-        [NetworkRequestKey.GetUserCourses]: {
+        [NetworkRequestKey.GetCoursesByUser]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.course}/author`,
+            url: `${DATA_ENDPOINTS.api.courses}/author`,
         },
         [NetworkRequestKey.CreateCourse]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.course}/create`,
+            url: `${DATA_ENDPOINTS.api.courses}/create`,
         },
         [NetworkRequestKey.PublishCourse]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.course}/publish`,
+            url: `${DATA_ENDPOINTS.api.courses}/publish`,
         },
         [NetworkRequestKey.UpdateCourse]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.course}/update`,
+            url: `${DATA_ENDPOINTS.api.courses}/update`,
         },
     }
 
@@ -89,12 +99,15 @@ export class NetworkHelper {
         }
         else {
             let searchParams = new HttpParams()
-            const params = extendedPayload?.params
+            const { params, urlId } = extendedPayload ?? {}
             if (params) {
                 searchParams = new HttpParams({ fromObject: params })
             }
+            if (urlId) {
+                basePayload.url = `${basePayload.url}/${String(urlId)}`
+            }
             return {
-                ...NetworkHelper.requestsMetadataMap[key],
+                ...basePayload,
                 params: searchParams,
                 headers
             }

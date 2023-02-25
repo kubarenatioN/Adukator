@@ -1,16 +1,16 @@
-import { SelectionChange } from '@angular/cdk/collections';
 import {
 	ChangeDetectionStrategy,
 	Component,
 	Input,
 	OnInit,
 } from '@angular/core';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatSelectChange } from '@angular/material/select';
-import { breakReferece } from 'src/app/helpers/common.helpers';
+import { map, Observable } from 'rxjs';
+import { breakObjectReference } from 'src/app/helpers/common.helpers';
+import { convertCourseToCourseFormData } from 'src/app/helpers/courses.helper';
 import { formatDate } from 'src/app/helpers/date-fns.helper';
-import { Course } from 'src/app/typings/course.types';
+import { UserService } from 'src/app/services/user.service';
+import { Course, CourseFormData, CourseReview, CourseReviewStatus, CourseReviewStatusMap } from 'src/app/typings/course.types';
 
 interface VersionOption { id: number; date: string, checked?: boolean }
 type VersionSelect = VersionOption[] 
@@ -22,24 +22,32 @@ type VersionSelect = VersionOption[]
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseReviewDiffComponent implements OnInit {
-	private _courseVerions: Course[] = [];
+	private _hasMoreThanOneVersion: boolean = false;
+	private _courseVerions: CourseFormData[] = [];
 	private _immutableVerionOptions: VersionOption[] = [];
 
-	@Input() public set courseVersions(value: Course[]) {
-		this._courseVerions = this.formatVersionsDates(value);
+	@Input() public set courseVersions(value: CourseReview[]) {
+        this._hasMoreThanOneVersion = value.length > 1
+        if (!this.hasMoreThanOneVersion) {
+            value.push({isDummy: true} as unknown as CourseReview)
+        }
+		this._courseVerions = this.formatVersions(value);
         this.applyDefaultVersions()
         this.prepareVersionOptions(value);
 	}
 
-	public versionsPair!: Course[];
-	public versionOptions!: VersionSelect[];
+	public versionsPair: CourseFormData[] = [];
+	public versionOptions: VersionSelect[] = [];
     public selectedOptions = Array.from({ length: 2 }) as number[];
 
-    public isLastVersion(course: Course): boolean {
-        return this._courseVerions[0].id === course.id
+    public courseReviewStatuses = CourseReviewStatus
+    public statusesMap = CourseReviewStatusMap
+
+    public get hasMoreThanOneVersion(): boolean {
+        return this._hasMoreThanOneVersion
     }
 
-	constructor() {}
+	constructor(private userService: UserService) {}
 
 	ngOnInit(): void {}
 
@@ -60,7 +68,7 @@ export class CourseReviewDiffComponent implements OnInit {
 
 	private prepareVersionOptions(versions: Course[]) {
 		const versionsForSelection = versions
-			.filter((course) => course.createdAt !== undefined)
+			.filter((course) => course.createdAt !== undefined || (course as any).isDummy)
 			.map((course, i) => {
 				return {
 					id: course.id,
@@ -69,19 +77,37 @@ export class CourseReviewDiffComponent implements OnInit {
 			});
 		this.versionOptions = Array.from({ length: 2 }, () => [...versionsForSelection])
 
-        this._immutableVerionOptions = breakReferece(this.versionOptions[0])
+        // get second item with index 1, because the first one (index = 0) can be dummy
+        this._immutableVerionOptions = breakObjectReference(this.versionOptions[1])
 
         // Artificially select last and one before last versions
         this.onVersionChange(0, this._immutableVerionOptions[1].id)
         this.onVersionChange(1, this._immutableVerionOptions[0].id)
 	}
 
-    private formatVersionsDates(versions: Course[]) {
+    public canShowCourseVersionActionButton(status: CourseReviewStatus, course: CourseFormData): Observable<boolean> {
+        return this.userService.user$.pipe(
+            map(user => {
+                const isVisibleForTeacher = user?.role === 'teacher' && status === CourseReviewStatus.ReadyForUpdate
+                const isVisibleForEditor = user?.role === 'admin' && status === CourseReviewStatus.ReadyForReview
+                
+                const isLastVersion = this.isLastVersion(course)
+
+                return isLastVersion && (isVisibleForTeacher || isVisibleForEditor)
+            })
+        )
+    }
+
+    private isLastVersion(course: CourseFormData): boolean {
+        return this._courseVerions[0].id === course.id
+    }
+
+    private formatVersions(versions: CourseReview[]): CourseFormData[] {
         return versions.map(version => {
             if (version.createdAt) {
                 version.createdAt = formatDate(version.createdAt)
             }
-            return version
+            return (version as any).isDummy ? {} as CourseFormData : convertCourseToCourseFormData(version)
         })
     }
 

@@ -9,17 +9,21 @@ mat-form-field {
     width: 100%;
 }
 
+app-module-topic {
+    display: block;
+}
+
 .topics-container {
     max-width: 600px;
     width: 100%;
 }
 
-.topic-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-radius: 8px;
-    background-color: #eee;
-    margin: 10px 0;
-}
+// .topic-item {
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+//     padding: 10px;
+//     border-radius: 8px;
+//     background-color: #eee;
+//     margin: 10px 0;
+// }

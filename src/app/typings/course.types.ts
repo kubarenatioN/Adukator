@@ -33,8 +33,8 @@ export interface CourseModule {
     topics: CourseTopic[]
 }
 
-export interface Course {
-	id: number;
+interface CourseCore {
+    id: number;
     title: string;
 	description: string;
 	startTime: string;
@@ -42,26 +42,52 @@ export interface Course {
 	category: string;
 	subcategory: string;
 	advantages?: string;
+}
+
+export interface Course extends CourseCore {
     modulesJson: string;
     authorId: number;
     createdAt?: string;
 }
 
-export interface CourseFormData {
-    title: string;
-	description: string;
-	startTime: string;
-	endTime: string;
-	category: string;
-	subcategory: string;
-	advantages?: string;
-	modules: CourseModule[];
+export interface CourseFormData extends CourseCore {
 	userCategory?: string;
 	userSubcategory?: string;
+    status: string;
+	modules: CourseModule[];
+    editorComments?: {
+        [field: string]: string;
+    }
+}
+
+export interface CourseReview extends Course {
+    parentId: number | null;
+    status: CourseReviewStatus;
+    editorCommentsJson: string;
+}
+
+export enum CourseReviewStatus {
+    ReadyForReview = 'ReadyForReview',
+    ReadyForUpdate = 'ReadyForUpdate',
+    Reviewed = 'Reviewed'
+}
+
+export const CourseReviewStatusMap = {
+    [CourseReviewStatus.ReadyForReview]: 'Ожидает проверки',
+    [CourseReviewStatus.ReadyForUpdate]: 'Ожидает исправлений',
+    [CourseReviewStatus.Reviewed]: 'Проверено'
 }
 
 export interface CoursesResponse {
     published?: Course[]
-    review?: Course[]
-    reviewChildren?: Course[]
+    review?: CourseReview[]
+    // reviewChildren?: Course[]
 }
+
+export enum CourseFormViewMode {
+    Create = 'create',
+    Update = 'update',
+    Edit = 'edit',
+    Review = 'review',
+    Default = 'default',
+};

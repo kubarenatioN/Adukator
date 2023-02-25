@@ -11,7 +11,9 @@ export const DATA_ENDPOINTS = {
         register: `${apiUrl}/auth/register`,
     },
 	api: {
-        course: `${apiUrl}/api/courses`,
+        courses: `${apiUrl}/api/courses`,
     },
-    admin: `${apiUrl}/admin`,
+    admin: {
+        courses: `${apiUrl}/admin/courses`
+    },
 };

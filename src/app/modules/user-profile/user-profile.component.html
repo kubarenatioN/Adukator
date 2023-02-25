@@ -8,7 +8,7 @@
                     <h3>Опубликованные</h3>
                     <div class="user-courses-list">
                         <div *ngFor="let course of courses">
-                            <a [routerLink]="['/app/learn/course/overview', course.id]">Курс {{course.title}}</a>
+                            <a [routerLink]="['/app/learn/course/overview', course.id]">Курс {{course.id}} {{course.title}}</a>
                         </div>
                     </div>
                 </ng-container>
@@ -18,7 +18,7 @@
                     <h3>На рассмотрении</h3>
                     <div class="user-courses-list">
                         <div *ngFor="let course of coursesOnReview">
-                            <a [routerLink]="['/app/learn/course/review', course.id]">Курс {{course.title}}</a>
+                            <a [routerLink]="['/app/learn/course/review', course.id]">Курс {{course.id}} {{course.title}}</a>
                         </div>
                     </div>
                 </ng-container>

@@ -1,13 +1,63 @@
-<ng-container *ngIf="(showLoading$ | async) !== true; else sentOnReview">
-    <a [routerLink]="['../']" mat-stroked-button color="primary">Назад</a>
-    
-    <h1 class="title">Создание курса</h1>
-    <p>Пожалуйста, заполните данные о курсе в форму ниже</p>
-    
-    <ng-container *ngIf="(showLoading$ | async) !== true; else loading">
-        <app-course-form (publish)="onPulish($event)" (saveDraft)="onSaveDraft($event)" [formData]="formData$ | async"></app-course-form>
+<a [routerLink]="['../']" mat-stroked-button color="primary">Назад</a>
+
+<ng-container *ngIf="formData$ | async as formData; else loading">
+    <ng-container *ngIf="viewMode$ | async as viewMode">
+        <p>
+            {{viewMode}}
+        </p>
+        <ng-container [ngSwitch]="viewMode">
+            
+            <ng-container 
+                *ngSwitchCase="viewModes.Create" 
+                [ngTemplateOutlet]="createHeader"
+            ></ng-container>
+            <ng-container 
+                *ngSwitchCase="viewModes.Update" 
+                [ngTemplateOutlet]="updateHeader"
+            ></ng-container>
+            <ng-container 
+                *ngSwitchCase="viewModes.Edit" 
+                [ngTemplateOutlet]="editHeader"
+            ></ng-container>
+            <ng-container 
+                *ngSwitchCase="viewModes.Review" 
+                [ngTemplateOutlet]="reviewHeader"
+            ></ng-container>
+
+        </ng-container>
+
+        <ng-container *ngIf="viewMode !== viewModes.Default">
+            <app-course-form 
+                (publish)="onPulish($event)"
+                [mode]="viewMode"
+                [formData]="formData">
+            </app-course-form>
+        </ng-container>
+
     </ng-container>
 </ng-container>
+
+<ng-template #createHeader>
+    <h1 class="title">Создание курса</h1>
+    <p>Пожалуйста, заполните данные о курсе в форму ниже.</p>
+</ng-template>
+
+<ng-template #updateHeader>
+    <h1 class="title">Редактирование курса</h1>
+    <p>Внесите необходимые правки в текущую версию курса.</p>
+</ng-template>
+
+<ng-template #editHeader>
+    <h1 class="title">Исправление курса</h1>
+    <p>Обновите содержание курса в соответствии с советами редакции.</p>
+</ng-template>
+
+<ng-template #reviewHeader>
+    <h1 class="title">Проверка курса</h1>
+    <p>
+        Проверьте содержание курса на соответствие <a href="#">политики о содержимом</a>
+    </p>
+</ng-template>
 
 <ng-template #loading>
     Loading course data...

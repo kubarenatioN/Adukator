@@ -10,6 +10,12 @@ body {
 }
 body {
 	margin: 0;
+    font-size: 14px;
+}
+
+body,
+.mat-form-field-label-wrapper,
+input.mat-input-element {
 	font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 

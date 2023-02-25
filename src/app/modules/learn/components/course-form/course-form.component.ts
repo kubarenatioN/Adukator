@@ -10,8 +10,9 @@ import {
 } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { EmptyCourseFormDataType, EMPTY_COURSE_FORM_DATA } from 'src/app/constants/common.constants';
 import { moduleTopicsCountValidator } from 'src/app/helpers/course-validation';
-import { CourseFormData, CourseModule, CourseTopic } from 'src/app/typings/course.types';
+import { CourseFormData, CourseFormViewMode, CourseModule, CourseTopic } from 'src/app/typings/course.types';
 
 export const testFormData = {
     id: 123,
@@ -68,11 +69,11 @@ export class CourseFormComponent implements OnInit {
 		return this.modules.controls as FormGroup[];
 	}
 
-    public mode: 'create' | 'update' = 'create'
+    @Input() public mode: CourseFormViewMode = CourseFormViewMode.Create;
 
-    @Input() public set formData(data: CourseFormData | null) {
-        if (data) {
-            this.mode = 'update'
+    @Input() public set formData(data: CourseFormData | EmptyCourseFormDataType) {
+        console.log(data);
+        if (data !== EMPTY_COURSE_FORM_DATA) {   
             this.setCourseModel(data);
         }
     }
@@ -105,7 +106,6 @@ export class CourseFormComponent implements OnInit {
 		});
 
         if (this.mode === 'create') {
-            console.log(this.modules.value);
             this.addModule();
             this.cd.markForCheck();
         }

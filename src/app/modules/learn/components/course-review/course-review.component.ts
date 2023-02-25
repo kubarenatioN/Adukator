@@ -1,12 +1,10 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { EMPTY, map, Observable, shareReplay, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
-import { AdminService } from 'src/app/services/admin.service';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable, shareReplay, switchMap, takeUntil } from 'rxjs';
 import { CoursesService } from 'src/app/services/courses.service';
-import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { Course } from 'src/app/typings/course.types';
+import { CourseReview } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-course-review',
@@ -15,7 +13,7 @@ import { Course } from 'src/app/typings/course.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseReviewComponent extends BaseComponent implements OnInit {
-	public courseHistory$: Observable<Course[]>;
+	public courseHistory$: Observable<CourseReview[]>;
     public parentCourseId: number = -1;
 
 	constructor(
@@ -40,8 +38,9 @@ export class CourseReviewComponent extends BaseComponent implements OnInit {
 		
 	}
 
-    public onPublish() {
-        this.coursesService.publishCourse(this.parentCourseId)
+    public onPublish() {        
+        // TODO: create method like below
+        // this.adminCoursesService.publish(this.parentCourseId)
     }
 
     public onEdit(id: number) {

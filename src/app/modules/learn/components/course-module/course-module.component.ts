@@ -8,7 +8,7 @@ import {
 	Output,
 } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { FormArray, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
 	MatDialog,
 	MAT_DIALOG_DATA,
@@ -31,6 +31,10 @@ export class CourseModuleComponent implements OnInit {
 		return this.form.get('topics') as FormArray;
 	}
 
+	public get topicsFormGroups(): FormGroup[] {
+		return this.topics.controls as FormGroup[];
+	}
+
 	public get title(): string {
 		if (this.form) {
 			return this.form.get('title')?.value || '';
@@ -40,6 +44,7 @@ export class CourseModuleComponent implements OnInit {
 
 	constructor(
 		private dialog: MatDialog,
+        private fb: FormBuilder,
 		private cd: ChangeDetectorRef
 	) {}
 
@@ -48,6 +53,11 @@ export class CourseModuleComponent implements OnInit {
 			console.log('111 module form changed', res);
 		});
 	}
+
+    public addTopic(): void {
+        const newTopic = this.createNewTopicFormModel();
+        this.topics.push(newTopic);
+    }
 
 	public openCreateTopicDialog(form: FormGroup | null = null): void {
 		const isNewForm = form === null;
@@ -94,4 +104,11 @@ export class CourseModuleComponent implements OnInit {
             [...this.topics.controls],
         )
 	}
+
+    private createNewTopicFormModel() {
+        return this.fb.group({
+            title: ['', Validators.required],
+            description: [''],
+        })
+    }
 }

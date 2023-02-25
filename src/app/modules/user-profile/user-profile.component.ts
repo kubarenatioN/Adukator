@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, Observable, of, shareReplay, switchMap } from 'rxjs';
-import { AuthService } from 'src/app/services/auth.service';
+import { map, Observable } from 'rxjs';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UserService } from 'src/app/services/user.service';
-import { Course } from 'src/app/typings/course.types';
+import { Course, CourseReview } from 'src/app/typings/course.types';
 import { User } from 'src/app/typings/user.types';
 
 @Component({
@@ -16,7 +15,7 @@ import { User } from 'src/app/typings/user.types';
 export class UserProfileComponent {
     public user$: Observable<User | null>;
     public userCourses$!: Observable<Course[]>
-    public userCoursesOnReview$!: Observable<Course[]>
+    public userCoursesOnReview$!: Observable<CourseReview[]>
 
 	constructor(private userService: UserService, private router: Router, private coursesService: CoursesService) {
         this.user$ = this.userService.user$
@@ -27,11 +26,16 @@ export class UserProfileComponent {
         )
 
         this.userCoursesOnReview$ = userCourses.pipe(
-            map(courses => courses?.review ?? [])
+            map(courses => {
+                if (courses?.review) {
+                    return courses.review.filter(course => course.parentId === null)
+                }
+                return []
+            }),
         )
     }
 
-    public logOut() {
+    public logOut(): void {
         this.userService.logout()
         this.router.navigate(['/auth'])
     }

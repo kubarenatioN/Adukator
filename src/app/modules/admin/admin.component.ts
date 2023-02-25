@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AdminService } from 'src/app/services/admin.service';
-import { Course } from 'src/app/typings/course.types';
+import { Course, CourseReview } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-admin',
@@ -10,16 +10,15 @@ import { Course } from 'src/app/typings/course.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminComponent implements OnInit {
-    public courses$!: Observable<Course[]>
+    public reviewCoursesList$!: Observable<CourseReview[]>
 
-	constructor(private adminService: AdminService) {
-    }
+	constructor(private adminService: AdminService) {}
 
 	ngOnInit(): void {
-		this.courses$ = this.adminService.courses$;
+		this.reviewCoursesList$ = this.adminService.reviewCoursesList$;
 	}
 
     public publishCourse(id: number) {
-        
+        this.adminService.publishCourse(id)
     }
 }

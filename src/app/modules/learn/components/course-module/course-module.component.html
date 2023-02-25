@@ -11,19 +11,18 @@
 
     <h3 class="title">Темы модуля</h3>
 
-    <button mat-raised-button color="primary" (click)="openCreateTopicDialog()">Добавить тему</button>
-    <div class="topics-container" formArrayName="topics" cdkDropList (cdkDropListDropped)="drop($event)">
-        <ng-container *ngFor="let topicForm of topics.controls; let i = index">
-            <div class="topic-item" cdkDrag>
-                <span class="topic-item-title">    
-                    Тема {{i + 1}}. {{ topicForm.value.title }}
-                </span>
-                <div class="topic-item-actions">
-                    <!-- Add Icons -->
-                    <button mat-stroked-button color="primary" (click)="onEditTopic(i)">Edit</button>
-                    <button mat-button (click)="onRemoveTopic(i)">Remove</button>
-                    <span cdkDragHandle>Handle</span>
-                </div>
+    <button mat-stroked-button color="primary" (click)="addTopic()">Добавить тему</button>
+    <div class="topics-container" formArrayName="topics">
+        <ng-container *ngFor="let topicForm of topicsFormGroups; let i = index">
+            <div class="topic-item">
+                <mat-expansion-panel hideToggle>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <p>Тема {{ i + 1 }}. {{topicForm.value.title}}</p>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <app-module-topic [order]="i" [form]="topicForm" (removeTopic)="onRemoveTopic(i)"></app-module-topic>                    
+                </mat-expansion-panel>
             </div>
         </ng-container>
     </div>

@@ -8,12 +8,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModuleTopicComponent implements OnInit {
+	@Input() public order: number;
 	@Input() public form!: FormGroup;
 
     @Output() public saveTopic = new EventEmitter<FormGroup>();
+    @Output() public removeTopic = new EventEmitter<void>();
 
 	constructor(private fb: FormBuilder) {
-        
+        this.order = 0;
     }
 
 	ngOnInit(): void {
@@ -23,12 +25,13 @@ export class ModuleTopicComponent implements OnInit {
                 description: [''],
             })
         }
+
+        this.form.valueChanges.subscribe(value => {
+            
+        })
     }
 
-    public onSaveTopic(): void {
-        const { valid: isValid } = this.form;
-        if (isValid) {
-            this.saveTopic.emit(this.form);
-        }
+    public onRemove(): void {
+        this.removeTopic.emit();
     }
 }

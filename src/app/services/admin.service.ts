@@ -1,15 +1,20 @@
 import { Injectable } from '@angular/core';
 import { map, Observable, shareReplay } from 'rxjs';
-import { Course } from '../typings/course.types';
+import { Course, CourseReview } from '../typings/course.types';
+import { AdminCoursesService } from './admin-courses.service';
 import { CoursesService } from './courses.service';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class AdminService {
-    public courses$ = new Observable<Course[]>()
+    public reviewCoursesList$: Observable<CourseReview[]>
 
-	constructor(private coursesService: CoursesService) {
-        this.courses$ = this.coursesService.coursesForReview$;
+	constructor(private adminCoursesService: AdminCoursesService) {
+        this.reviewCoursesList$ = this.adminCoursesService.reviewCoursesList$;
+    }
+
+    public publishCourse(id: number) {
+        this.adminCoursesService.publish(id)
     }
 }

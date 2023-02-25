@@ -6,9 +6,8 @@ import {
 } from '@angular/core';
 import { takeUntil } from 'rxjs';
 import { AdminService } from 'src/app/services/admin.service';
-import { CoursesService } from 'src/app/services/courses.service';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { Course } from 'src/app/typings/course.types';
+import { Course, CourseReview } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-admin-courses-review',
@@ -17,19 +16,13 @@ import { Course } from 'src/app/typings/course.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminCoursesReviewComponent extends BaseComponent implements OnInit {
-	@Input() public courses: Course[] = [];
+	@Input() public courses: CourseReview[] = [];
 
 	constructor(private adminService: AdminService) {
         super()
     }
 
 	ngOnInit(): void {
-        this.adminService.courses$
-        .pipe(
-            takeUntil(this.componentLifecycle$)
-        )
-        .subscribe(c => {
-            console.log('admin courses', c);
-        })
+        
     }
 }

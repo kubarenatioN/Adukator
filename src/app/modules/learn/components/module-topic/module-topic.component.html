@@ -1,16 +1,13 @@
 <form [formGroup]="form">
-    <mat-form-field appearance="fill">
+	<mat-form-field appearance="fill">
 		<mat-label>Название темы</mat-label>
-        <input matInput formControlName="title">
+		<input matInput formControlName="title" />
 	</mat-form-field>
 
-    <mat-form-field appearance="fill">
-        <mat-label>Описание темы</mat-label>
-        <textarea matInput formControlName="description"></textarea>
+	<mat-form-field appearance="fill">
+		<mat-label>Описание темы</mat-label>
+		<textarea matInput formControlName="description"></textarea>
 	</mat-form-field>
-
-    <div class="footer">
-        <button mat-button [mat-dialog-close]="{form: null}">Отмена</button>
-        <button mat-raised-button color="primary" (click)="onSaveTopic()">Сохранить</button>
-    </div>
 </form>
+
+<button (click)="onRemove()">Удалить</button>
