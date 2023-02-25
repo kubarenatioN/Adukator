@@ -1,17 +1,163 @@
 <form class="course-form" [formGroup]="courseForm">
-	<mat-form-field appearance="fill">
-		<mat-label>Название курса</mat-label>
-		<input matInput formControlName="title" />
-	</mat-form-field>
 
-	<mat-form-field appearance="fill">
+    <ng-container 
+        [ngTemplateOutlet]="form"
+        [ngTemplateOutletContext]="{ viewMode, form: courseForm }"
+    ></ng-container>
+	
+</form>
+
+<ng-template #form let-viewMode="viewMode" let-form="form">
+    <p>viewMode: {{viewMode}} - {{viewModes.Review}}</p>
+    <ng-container [ngSwitch]="viewMode">
+        
+        <!-- Template for review mode -->
+        <ng-container *ngSwitchCase="viewModes.Review">
+            <ng-container
+                [ngTemplateOutlet]="adminForm"
+                [ngTemplateOutletContext]="{ form }"
+            ></ng-container>
+        </ng-container>
+
+        <!-- Template for editable mode (create, update, edit) -->
+        <ng-container *ngSwitchDefault>
+            <ng-container
+                [ngTemplateOutlet]="changableForm"
+                [ngTemplateOutletContext]="{ form }"
+            ></ng-container>
+        </ng-container>
+
+    </ng-container>
+</ng-template>
+
+<ng-template #changableForm let-form="form">
+    
+    <mat-form-field appearance="fill" [formGroup]="form">
+        <mat-label>Название курса</mat-label>
+        <input matInput formControlName="title" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" [formGroup]="form">
 		<mat-label>Описание курса</mat-label>
 		<textarea matInput formControlName="description"></textarea>
 	</mat-form-field>
 
-	<div class="categories-container">
+    <ng-container 
+        [ngTemplateOutlet]="categories"
+        [ngTemplateOutletContext]="{ form }"
+    ></ng-container>
+
+    <ng-container 
+        [ngTemplateOutlet]="dates"
+        [ngTemplateOutletContext]="{ form }"
+    ></ng-container>
+
+    <ng-container 
+        [ngTemplateOutlet]="modules"
+        [ngTemplateOutletContext]="{ form }"
+    ></ng-container>
+
+</ng-template>
+
+<ng-template #adminForm let-form="form">
+    <app-form-element-review-wrapper>
+        <div class="property">
+            <span>Название курса</span>
+            <div>
+                {{form.value.title}}
+            </div>
+        </div>
+    </app-form-element-review-wrapper>
+
+    <app-form-element-review-wrapper>
+        <div class="property">
+            <span>Описание курса</span>
+            <div>
+                {{form.value.description}}
+            </div>
+        </div>
+    </app-form-element-review-wrapper>
+
+    <app-form-element-review-wrapper type="checkbox">
+        <div class="categories">
+            <div class="property _category-row">
+                <span>Категория</span>
+                <span>{{form.value.category}}</span>
+            </div>
+            <div class="property _category-row">
+                <span>Подкатегория</span>
+                <span>{{form.value.subcategory}}</span>
+            </div>
+        </div>
+    </app-form-element-review-wrapper>
+
+    <app-form-element-review-wrapper type="dates">
+        <div class="dates">
+            <div class="property">
+                <span>Начало</span>
+                <span>{{form.value.startTime}}</span>
+            </div>
+            <div class="property">
+                <span>Окончание</span>
+                <span>{{form.value.endTime}}</span>
+            </div>
+            <div class="property">
+                <span>Длительность</span>
+                <span>8 недель</span>
+            </div>
+        </div>
+    </app-form-element-review-wrapper>
+
+    
+<!-- <pre>
+    Modules: {{form.value | json}}
+</pre> -->
+    <h2>Модули</h2>
+    <div class="modules">
+        <div *ngFor="let module of form.value.modules; let i = index"
+        class="admin-module">
+            <h3>Модуль {{i + 1}}.</h3>
+            <app-form-element-review-wrapper>
+                <div class="property">
+                    <span>Название</span>
+                    <p class="">{{module.title}}</p>
+                </div>
+            </app-form-element-review-wrapper>
+            <app-form-element-review-wrapper>
+                <div class="property">
+                    <span>Описание</span>
+                    <p class="">{{module.description}}</p>
+                </div>
+            </app-form-element-review-wrapper>
+            
+            <div class="module-topics">
+                <div *ngFor="let topic of module.topics; let i = index" class="admin-module-topic">
+                    <h4>Тема {{i + 1}}.</h4>
+
+                    <app-form-element-review-wrapper>
+                        <div class="property">
+                            <span>Название</span>
+                            <p class="">{{topic.title}}</p>
+                        </div>
+                    </app-form-element-review-wrapper>
+                    
+                    <app-form-element-review-wrapper>
+                        <div class="property">
+                            <span>Описание</span>
+                            <p class="">{{topic.description}}</p>
+                        </div>
+                    </app-form-element-review-wrapper>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #categories let-form="form">
+    <div class="categories-container" [formGroup]="form">
 		<div class="category-row">
-			<mat-form-field appearance="fill">
+	        <mat-form-field appearance="fill">
 				<mat-label>Категория</mat-label>
 				<input
 					type="text"
@@ -58,8 +204,10 @@
 			</mat-form-field>
 		</div>
 	</div>
+</ng-template>
 
-	<mat-form-field appearance="fill">
+<ng-template #dates let-form="form">
+    <mat-form-field appearance="fill" [formGroup]="form">
 		<mat-label>Длительность курса</mat-label>
 		<mat-date-range-input [rangePicker]="picker">
 			<input
@@ -77,21 +225,21 @@
 		<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
 		<mat-date-range-picker #picker></mat-date-range-picker>
 	</mat-form-field>
+</ng-template>
 
-	<h2>Модули курса</h2>
+<ng-template #modules let-form="form">
+    <h2>Модули курса</h2>
 
-	<!-- TODO: Add Icon instead of text  -->
+    <!-- TODO: Add Icon instead of text  -->
 	<button mat-stroked-button color="primary" (click)="addModule()">
 		Добавить модуль
 	</button>
-
-	<mat-accordion multi cdkDropList (cdkDropListDropped)="drop($event)">
+	<mat-accordion multi [formGroup]="form">
 		<mat-expansion-panel
 			*ngFor="let moduleForm of modulesControls; let i = index"
-			cdkDrag
 			[expanded]="i === 0"
 		>
-			<mat-expansion-panel-header cdkDragHandle>
+			<mat-expansion-panel-header>
 				<mat-panel-title
 					>{{ i + 1 }}.
 					{{
@@ -113,23 +261,9 @@
 			</mat-action-row>
 		</mat-expansion-panel>
 	</mat-accordion>
-
-	<div class="footer">
-        <ng-container [ngSwitch]="mode">
-            <ng-container *ngSwitchCase="'create'">
-                <ng-container *ngTemplateOutlet="createFormFooter"></ng-container>
-            </ng-container>
-            <ng-container *ngSwitchCase="'update'">
-                <ng-container *ngTemplateOutlet="updateFormFooter"></ng-container>
-            </ng-container>
-        </ng-container>
-	</div>
-</form>
+</ng-template>
 
 <ng-template #createFormFooter>
-    <!-- <button mat-stroked-button color="primary" (click)="onSubmit('draft')">
-        Сохранить черновик
-    </button> -->
     <button
         mat-stroked-button
         color="primary"

@@ -1,0 +1,24 @@
+<ng-content></ng-content>
+
+<button mat-raised-button (click)="onToggle()">
+    Add comment
+</button>
+
+<ng-container *ngIf="isActive" [ngSwitch]="type">
+    <ng-container *ngSwitchCase="'input'">
+        <ng-container
+            [ngTemplateOutlet]="input"
+            [ngTemplateOutletContext]="{ form }"
+        ></ng-container>
+    </ng-container>
+</ng-container>
+
+<ng-template #input>
+    <mat-form-field appearance="standard" [formGroup]="form">
+        <mat-select (selectionChange)="onChange($event)" multiple formControlName="options">
+            <mat-option *ngFor="let option of items" [value]="option.id">
+                {{option.label}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</ng-template>

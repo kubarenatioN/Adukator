@@ -1,0 +1,6 @@
+:host {
+    min-width: 600px;
+    display: grid;
+    align-items: flex-start;
+    grid-template-columns: 1fr 50px 1fr;
+}

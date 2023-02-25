@@ -57,9 +57,12 @@ export const testFormData = {
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseFormComponent implements OnInit {
-    private _formData: CourseFormData | null = null
+    private _mode: CourseFormViewMode = CourseFormViewMode.Create
+    private _formData: CourseFormData | EmptyCourseFormDataType = 'EmptyCourse'
     
 	public courseForm: FormGroup;
+    public viewModes = CourseFormViewMode
+    public isReadonly = false;
 
 	public get modules(): FormArray {
 		return this.courseForm.get('modules') as FormArray;
@@ -69,13 +72,32 @@ export class CourseFormComponent implements OnInit {
 		return this.modules.controls as FormGroup[];
 	}
 
-    @Input() public mode: CourseFormViewMode = CourseFormViewMode.Create;
+	public get viewMode(): CourseFormViewMode {
+        return this._mode;
+	}
+
+    @Input() public set mode(value: CourseFormViewMode) {
+        this._mode = value;
+
+        if (value === CourseFormViewMode.Review) {
+            this.disableReviewForm()
+        }
+    }
 
     @Input() public set formData(data: CourseFormData | EmptyCourseFormDataType) {
         console.log(data);
         if (data !== EMPTY_COURSE_FORM_DATA) {   
+            this._formData = data
             this.setCourseModel(data);
         }
+        else {
+            this.addModule();
+            // this.cd.markForCheck();
+        }
+    }
+
+    public get formData() {
+        return this._formData
     }
 
     @Output() public publish = new EventEmitter<CourseFormData>();
@@ -104,11 +126,6 @@ export class CourseFormComponent implements OnInit {
 		this.courseForm.valueChanges.subscribe((res) => {
 			console.log('111 course form changed', res, this.courseForm);
 		});
-
-        if (this.mode === 'create') {
-            this.addModule();
-            this.cd.markForCheck();
-        }
 	}
 
 	public addModule(): void {
@@ -155,9 +172,6 @@ export class CourseFormComponent implements OnInit {
             case 'publish':
 				this.publishCourse(value);                
                 break;
-            case 'draft':
-				this.saveDraftCourse(value);                
-                break;
             case 'update':
 				this.updateCourse(value);                
                 break;
@@ -165,10 +179,6 @@ export class CourseFormComponent implements OnInit {
 	}
 
 	private publishCourse(data: CourseFormData) {
-		this.publish.emit(data)
-	}
-
-	private saveDraftCourse(data: CourseFormData) {
 		this.publish.emit(data)
 	}
 
@@ -213,4 +223,12 @@ export class CourseFormComponent implements OnInit {
             })
         })
     }
+
+    private disableReviewForm(): void {
+        // const group = this.courseForm.controls
+        // for (const key in this.courseForm.controls) {
+        //     group[key]
+        // }
+        this.isReadonly = true
+    } 
 }

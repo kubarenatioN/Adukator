@@ -123,7 +123,6 @@ export class CreateCourseComponent implements OnInit {
 		]).pipe(
             map(([formData, userInfo, action]) => {
                 const { isValid: isValidUser, role: userRole } = userInfo
-                console.log('111 result', formData, isValidUser, action);
                 if (formData === 'EmptyCourse' && !action && userRole === 'teacher') {
                     return CourseFormViewMode.Create
                 }

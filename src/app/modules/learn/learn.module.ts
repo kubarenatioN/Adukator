@@ -17,6 +17,7 @@ import { CourseTrainingComponent } from './components/course-training/course-tra
 import { CourseFormComponent } from './components/course-form/course-form.component';
 import { CourseReviewDiffComponent } from './components/course-review-diff/course-review-diff.component';
 import { CourseReviewComponent } from './components/course-review/course-review.component';
+import { FormElementReviewWrapperComponent } from './components/form-element-review-wrapper/form-element-review-wrapper.component';
 
 @NgModule({
 	declarations: [
@@ -31,6 +32,7 @@ import { CourseReviewComponent } from './components/course-review/course-review.
 		CourseFormComponent,
 		CourseReviewDiffComponent,
 		CourseReviewComponent,
+  FormElementReviewWrapperComponent,
 	],
 	imports: [
 		CommonModule,

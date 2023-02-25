@@ -43,3 +43,32 @@ mat-accordion {
     width: 100%;
     margin-bottom: 20px;
 }
+
+
+.property {
+    // display: flex;
+    align-items: baseline;
+    padding: 5px 0;
+    & *:first-child {
+        padding-right: 10px;
+    }
+}
+
+.admin-module-topic,
+.admin-module {
+    padding-left: 20px;
+}
+
+.admin-module {
+    border-bottom: 1px solid #333;
+    margin-bottom: 20px;
+}
+
+.admin-module-topic {
+    padding: 10px;
+    background-color: #eee;
+}
+
+p {
+    margin: 0;
+}
