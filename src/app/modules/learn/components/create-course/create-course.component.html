@@ -29,6 +29,7 @@
         <ng-container *ngIf="viewMode !== viewModes.Default">
             <app-course-form 
                 (publish)="onPulish($event)"
+                (saveReview)="onSaveReview($event)"
                 [mode]="viewMode"
                 [formData]="formData">
             </app-course-form>

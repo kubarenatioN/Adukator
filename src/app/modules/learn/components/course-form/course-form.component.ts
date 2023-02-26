@@ -12,7 +12,8 @@ import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { EmptyCourseFormDataType, EMPTY_COURSE_FORM_DATA } from 'src/app/constants/common.constants';
 import { moduleTopicsCountValidator } from 'src/app/helpers/course-validation';
-import { CourseFormData, CourseFormViewMode, CourseModule, CourseTopic } from 'src/app/typings/course.types';
+import { getEmptyEditorComments } from 'src/app/helpers/courses.helper';
+import { CourseEditorComments, CourseFormData, CourseFormViewMode, CourseModule, CourseTopic } from 'src/app/typings/course.types';
 
 export const testFormData = {
     id: 123,
@@ -68,6 +69,14 @@ export class CourseFormComponent implements OnInit {
 		return this.courseForm.get('modules') as FormArray;
 	}
 
+	public get editorModules(): FormArray {
+		return this.editorComments.get('modules') as FormArray;
+	}
+
+    private get editorComments() {
+        return this.courseForm.get('editorComments') as FormGroup
+    }
+
 	public get modulesControls(): FormGroup[] {
 		return this.modules.controls as FormGroup[];
 	}
@@ -78,30 +87,23 @@ export class CourseFormComponent implements OnInit {
 
     @Input() public set mode(value: CourseFormViewMode) {
         this._mode = value;
-
-        if (value === CourseFormViewMode.Review) {
-            this.disableReviewForm()
-        }
     }
 
     @Input() public set formData(data: CourseFormData | EmptyCourseFormDataType) {
         console.log(data);
+        
         if (data !== EMPTY_COURSE_FORM_DATA) {   
             this._formData = data
             this.setCourseModel(data);
         }
         else {
             this.addModule();
-            // this.cd.markForCheck();
         }
-    }
-
-    public get formData() {
-        return this._formData
+        console.log(this.courseForm);
     }
 
     @Output() public publish = new EventEmitter<CourseFormData>();
-    @Output() public saveDraft = new EventEmitter<CourseFormData>();
+    @Output() public saveReview = new EventEmitter<CourseFormData>();
     @Output() public update = new EventEmitter<CourseFormData>();
 
 	constructor(
@@ -119,12 +121,17 @@ export class CourseFormComponent implements OnInit {
 			userSubcategory: [null],
 			advantages: [null],
 			modules: this.fb.array([]),
+            editorComments: this.fb.group({
+                ...getEmptyEditorComments(),
+                modules: this.fb.array([])
+            })
 		});
 	}
 
 	ngOnInit(): void {
 		this.courseForm.valueChanges.subscribe((res) => {
-			console.log('111 course form changed', res, this.courseForm);
+			console.log('111 course form changed value', res);
+			// console.log('111 course form changed form', this.courseForm);
 		});
 	}
 
@@ -132,7 +139,12 @@ export class CourseFormComponent implements OnInit {
 		const moduleControl = this.fb.group({
 			title: ['', Validators.required],
 			description: ['', Validators.required],
-			topics: this.fb.array([]),
+			topics: this.fb.array([
+                this.fb.group({
+                    title: ['', Validators.required],
+                    description: ''
+                })
+            ]),
 		});
 
 		moduleControl.controls['topics'].setValidators([
@@ -155,25 +167,25 @@ export class CourseFormComponent implements OnInit {
 		}
 	}
 
-	public drop(event: CdkDragDrop<FormGroup[]>) {
-		moveItemInArray(
-			this.modules.controls,
-			event.previousIndex,
-			event.currentIndex
-		);
-	}
-
-	public onSubmit(action: 'draft' | 'publish' | 'update'): void {
-		const { valid: isValid, value, errors } = this.courseForm;
-		if (!isValid) {
-            return;
-        } 
+	public onSubmit(action: 'review' | 'publish' | 'create' | 'update'): void {
+        const { valid: isValid, value, errors } = this.courseForm;
         switch (action) {
+            case 'create':
+				this.publishCourse(value);                
+                break;
             case 'publish':
 				this.publishCourse(value);                
                 break;
-            case 'update':
-				this.updateCourse(value);                
+            case 'review':
+                const { valid: isValid } = this.editorComments
+                if (isValid) {
+                    if (this._formData === 'EmptyCourse') {
+                        throw new Error('Cannot update empty course.')
+                        return;
+                    }
+                    value.id = this._formData.id;
+                    this.saveReview.emit(value)
+                }
                 break;
         }
 	}
@@ -182,12 +194,11 @@ export class CourseFormComponent implements OnInit {
 		this.publish.emit(data)
 	}
 
-	private updateCourse(data: CourseFormData) {
-		this.publish.emit(data)
-	}
-
     private setCourseModel(course: CourseFormData): void {
-        const { modules } = course
+        const { modules, editorComments } = course
+
+        const modulesArray = this.getModulesFormArray(modules)
+        const editorModulesArray = this.prepareEditorComments(editorComments, modules)
 
         this.courseForm.patchValue({
 			title: course.title,
@@ -199,20 +210,31 @@ export class CourseFormComponent implements OnInit {
 			userCategory: course.userCategory,
 			userSubcategory: course.userSubcategory,
 			advantages: course.advantages,
+            editorComments: editorComments ?? getEmptyEditorComments(),
 		})
 
-        this.modules.controls = this.getModulesFormArray(modules)
+        modulesArray.controls.forEach(control => {
+            this.modules.push(control)
+        })
+
+        editorModulesArray.forEach(control => {
+            this.editorModules.push(control)
+        })
     }
 
-    private getModulesFormArray(modulesData: CourseModule[]) {
-        return modulesData.map(module => {
+    private getModulesFormArray(modulesData: CourseModule[]): FormArray {
+        const array = this.fb.array<FormGroup>([])
+        modulesData.forEach(module => {
             const topics = this.getTopicsFormArray(module.topics)
-            return this.fb.group({
+            const moduleGroup = this.fb.group({
                 title: module.title,
                 description: module.description,
                 topics: this.fb.array(topics)
             })
+            array.push(moduleGroup)
         })
+        
+        return array;
     }
 
     private getTopicsFormArray(topics: CourseTopic[]) {
@@ -224,11 +246,32 @@ export class CourseFormComponent implements OnInit {
         })
     }
 
-    private disableReviewForm(): void {
-        // const group = this.courseForm.controls
-        // for (const key in this.courseForm.controls) {
-        //     group[key]
-        // }
-        this.isReadonly = true
-    } 
+    private prepareEditorComments(editorComments: CourseEditorComments | null, modules: CourseModule[]) {
+        if (editorComments?.modules.length === 0) {
+            return this.getEditorCommentsModules(editorComments.modules);
+        }
+        return this.getEditorCommentsModules(modules, {
+            isEmpty: true
+        })    
+    }
+
+    private getEditorCommentsModules(modules: Record<string, any>[], { isEmpty }: { isEmpty: boolean } = { isEmpty: false }) {
+        return modules.map(module => {
+            const topics = this.getEditorCommentsModuleTopics(module['topics'], { isEmpty })
+            return this.fb.group({
+                title: isEmpty ? null : module['title'],
+                description: isEmpty ? null : module['description'],
+                topics: this.fb.array(topics)
+            })
+        })
+    }
+
+    private getEditorCommentsModuleTopics(topics: Record<string, any>[], { isEmpty }: { isEmpty: boolean }) {
+        return topics.map(topic => {
+            return this.fb.group({
+                title: isEmpty ? null : topic['title'],
+                description: isEmpty ? null : topic['description'],
+            })
+        })
+    }
 }

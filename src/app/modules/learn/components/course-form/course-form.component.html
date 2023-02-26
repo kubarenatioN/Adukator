@@ -8,18 +8,16 @@
 </form>
 
 <ng-template #form let-viewMode="viewMode" let-form="form">
-    <p>viewMode: {{viewMode}} - {{viewModes.Review}}</p>
     <ng-container [ngSwitch]="viewMode">
         
         <!-- Template for review mode -->
         <ng-container *ngSwitchCase="viewModes.Review">
             <ng-container
-                [ngTemplateOutlet]="adminForm"
+                [ngTemplateOutlet]="editorForm"
                 [ngTemplateOutletContext]="{ form }"
             ></ng-container>
         </ng-container>
 
-        <!-- Template for editable mode (create, update, edit) -->
         <ng-container *ngSwitchDefault>
             <ng-container
                 [ngTemplateOutlet]="changableForm"
@@ -30,6 +28,7 @@
     </ng-container>
 </ng-template>
 
+<!-- Template for editable mode (create, update, edit) -->
 <ng-template #changableForm let-form="form">
     
     <mat-form-field appearance="fill" [formGroup]="form">
@@ -59,26 +58,33 @@
 
 </ng-template>
 
-<ng-template #adminForm let-form="form">
-    <app-form-element-review-wrapper>
+<ng-template 
+    #editorForm 
+    let-form="form" 
+    let-editorForm="form.controls.editorComments"
+    let-editorFormModules="form.controls.editorComments.controls.modules">
+    <app-form-element-review-wrapper 
+        [form]="editorForm" 
+        control="title">
         <div class="property">
             <span>Название курса</span>
-            <div>
-                {{form.value.title}}
-            </div>
+            <h2>{{form.value.title}}</h2>
         </div>
     </app-form-element-review-wrapper>
 
-    <app-form-element-review-wrapper>
+    <app-form-element-review-wrapper
+        [form]="editorForm" 
+        control="description">
         <div class="property">
             <span>Описание курса</span>
-            <div>
-                {{form.value.description}}
-            </div>
+            <p>{{form.value.description}}</p>
         </div>
     </app-form-element-review-wrapper>
 
-    <app-form-element-review-wrapper type="checkbox">
+    <app-form-element-review-wrapper 
+        [form]="editorForm" 
+        control="categories"
+        type="checkbox">
         <div class="categories">
             <div class="property _category-row">
                 <span>Категория</span>
@@ -91,7 +97,10 @@
         </div>
     </app-form-element-review-wrapper>
 
-    <app-form-element-review-wrapper type="dates">
+    <app-form-element-review-wrapper 
+        [form]="editorForm" 
+        control="dates"
+        type="dates">
         <div class="dates">
             <div class="property">
                 <span>Начало</span>
@@ -108,22 +117,24 @@
         </div>
     </app-form-element-review-wrapper>
 
-    
-<!-- <pre>
-    Modules: {{form.value | json}}
-</pre> -->
     <h2>Модули</h2>
     <div class="modules">
-        <div *ngFor="let module of form.value.modules; let i = index"
-        class="admin-module">
+        <div 
+            *ngFor="let module of form.value.modules; let i = index"
+            class="admin-module">
             <h3>Модуль {{i + 1}}.</h3>
-            <app-form-element-review-wrapper>
+            <app-form-element-review-wrapper
+                [form]="editorFormModules.controls[i]"
+                control="title">
                 <div class="property">
                     <span>Название</span>
                     <p class="">{{module.title}}</p>
                 </div>
             </app-form-element-review-wrapper>
-            <app-form-element-review-wrapper>
+
+            <app-form-element-review-wrapper
+                [form]="editorFormModules.controls[i]"
+                control="description">
                 <div class="property">
                     <span>Описание</span>
                     <p class="">{{module.description}}</p>
@@ -131,17 +142,21 @@
             </app-form-element-review-wrapper>
             
             <div class="module-topics">
-                <div *ngFor="let topic of module.topics; let i = index" class="admin-module-topic">
-                    <h4>Тема {{i + 1}}.</h4>
+                <div *ngFor="let topic of module.topics; let j = index" class="admin-module-topic">
+                    <h4>Тема {{j + 1}}.</h4>
 
-                    <app-form-element-review-wrapper>
+                    <app-form-element-review-wrapper
+                        [form]="editorFormModules.controls[i].controls.topics.controls[j]"
+                        control="title">
                         <div class="property">
                             <span>Название</span>
                             <p class="">{{topic.title}}</p>
                         </div>
                     </app-form-element-review-wrapper>
                     
-                    <app-form-element-review-wrapper>
+                    <app-form-element-review-wrapper
+                        [form]="editorFormModules.controls[i].controls.topics.controls[j]"
+                        control="description">
                         <div class="property">
                             <span>Описание</span>
                             <p class="">{{topic.description}}</p>
@@ -152,6 +167,8 @@
             </div>
         </div>
     </div>
+
+    <button mat-raised-button color="parimary" (click)="onSubmit('review')">Сохранить</button>
 </ng-template>
 
 <ng-template #categories let-form="form">
@@ -238,14 +255,15 @@
 		<mat-expansion-panel
 			*ngFor="let moduleForm of modulesControls; let i = index"
 			[expanded]="i === 0"
+            [formGroup]="moduleForm"
 		>
 			<mat-expansion-panel-header>
-				<mat-panel-title
-					>{{ i + 1 }}.
+				<mat-panel-title>
+                    {{ i + 1 }}.
 					{{
 						module.title !== '' ? module.title : 'Модуль ' + (i + 1)
-					}}</mat-panel-title
-				>
+					}}
+                </mat-panel-title>
 			</mat-expansion-panel-header>
 			<app-course-module #module [form]="moduleForm"></app-course-module>
 			<mat-action-row>

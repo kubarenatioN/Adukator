@@ -14,7 +14,7 @@ import {
 } from 'src/app/constants/common.constants';
 import {
 	convertCourseToCourseFormData,
-	stringifyModules,
+	stringify,
 } from 'src/app/helpers/courses.helper';
 import {
 	NetworkHelper,
@@ -148,7 +148,7 @@ export class CreateCourseComponent implements OnInit {
 					if (user && user.role === 'teacher') {
 						const course = {
 							...courseData,
-							modules: stringifyModules(courseData.modules),
+							modules: stringify(courseData.modules),
 							authorId: user.id,
 						};
 						const payload = NetworkHelper.createRequestPayload(
@@ -177,24 +177,11 @@ export class CreateCourseComponent implements OnInit {
 			});
 	}
 
-	public onSaveDraft(courseDraft: CourseFormData): void {
-		console.log('111 on save draft', courseDraft);
-	}
-
-	public publishCourse() {
-		// const processedCourseData = this.processCourseFormData(data);
-	}
-
-	public onSubmit(action: 'draft' | 'publish'): void {
-		// const { valid: isValid, value, errors } = this.courseForm;
-		// if (isValid) {
-		// 	if (action === 'publish') {
-		// 		this.publishCourse(value);
-		// 	}
-		// 	console.log(action, value);
-		// } else {
-		// 	console.log(action, errors);
-		// }
+	public onSaveReview(formData: CourseFormData): void {
+        this.adminCoursesService.saveCourseReview(formData)
+            .subscribe(() => {
+                console.log('course review updated');
+            });
 	}
 
 	private showLoading() {

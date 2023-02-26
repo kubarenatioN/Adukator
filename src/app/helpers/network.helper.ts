@@ -14,6 +14,7 @@ export enum NetworkRequestKey {
 
     GetAllAdminReviewCourses = 'GetAllAdminReviewCourses',
     GetAdminReviewCourseById = 'GetAdminReviewCourseById',
+    UpdateCourseReview = 'UpdateCourseReview',
     
     PublishCourse = 'PublishCourse',
     UpdateCourse = 'UpdateCourse',
@@ -46,6 +47,10 @@ export class NetworkHelper {
         [NetworkRequestKey.GetAllAdminReviewCourses]: {
             method: 'GET',
             url: `${DATA_ENDPOINTS.admin.courses}/review`,
+        },
+        [NetworkRequestKey.UpdateCourseReview]: {
+            method: 'PUT',
+            url: `${DATA_ENDPOINTS.admin.courses}/review/update`,
         },
 
         [NetworkRequestKey.LoginUser]: {
@@ -90,27 +95,32 @@ export class NetworkHelper {
         const basePayload = this.requestsMetadataMap[key];
         const { method } = basePayload;
         const headers = extendedPayload?.headers;
-        if (method === 'POST') {
+        if (method === 'POST' || method === 'PUT') {
             return {
                 ...basePayload,
                 body: extendedPayload?.body,
                 headers,
             }
         }
-        else {
+        else if (method === 'GET') {
             let searchParams = new HttpParams()
+            let { url } = basePayload
             const { params, urlId } = extendedPayload ?? {}
             if (params) {
                 searchParams = new HttpParams({ fromObject: params })
             }
             if (urlId) {
-                basePayload.url = `${basePayload.url}/${String(urlId)}`
+                url = `${url}/${String(urlId)}`
             }
             return {
                 ...basePayload,
+                url,
                 params: searchParams,
                 headers
             }
+        }
+        else {
+            throw new Error('Unknown request method.')
         }
     }
 }

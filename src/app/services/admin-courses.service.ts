@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, shareReplay } from 'rxjs';
+import { stringify } from '../helpers/courses.helper';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { CourseReview } from '../typings/course.types';
+import { CourseEditorComments, CourseFormData, CourseReview } from '../typings/course.types';
 import { DataService } from './data.service';
 
 @Injectable({
@@ -24,6 +25,14 @@ export class AdminCoursesService {
 
     public publish(id: number) {
         console.log('111 publish course with ID', id);
+    }
+
+    public saveCourseReview(courseForm: CourseFormData): Observable<unknown> {
+        const comments = stringify(courseForm.editorComments);
+        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.UpdateCourseReview, {
+            body: { id: courseForm.id, comments }
+        })
+        return this.dataService.send(payload);
     }
 
 	private getReviewCourses(): Observable<CourseReview[]> {

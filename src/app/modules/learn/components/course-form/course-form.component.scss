@@ -66,9 +66,15 @@ mat-accordion {
 
 .admin-module-topic {
     padding: 10px;
-    background-color: #eee;
+    background-color: #fafafa;
+    margin: 10px 0;
+    border-radius: 6px;
 }
 
 p {
     margin: 0;
+}
+
+app-form-element-review-wrapper {
+    margin: 15px 0;
 }

@@ -11,6 +11,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatSelectModule} from '@angular/material/select';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+// import {MatIconModule} from '@angular/material/icon';
 
 @NgModule({
 	declarations: [],
@@ -25,6 +26,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
         MatAutocompleteModule,
         MatSelectModule,
         MatButtonToggleModule,
+        // MatIconModule,
 		MatFormFieldModule,
 	],
 	exports: [
@@ -36,6 +38,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
         MatAutocompleteModule,
         MatSelectModule,
         MatButtonToggleModule,
+        // MatIconModule,
 		MatFormFieldModule,
 	],
 })

@@ -1,7 +1,10 @@
-import { Course, CourseFormData, CourseModule, CourseReview } from "../typings/course.types";
+import { Course, CourseEditorComments, CourseFormData, CourseModule, CourseReview } from "../typings/course.types";
 
-export const stringifyModules = (modules: CourseModule[]): string => {
-    return JSON.stringify(modules)
+export const stringify = (data: any): string => {
+    if (!data) {
+        return ''
+    }
+    return JSON.stringify(data)
 }
 
 export const parseModules = (modulesString: string): CourseModule[] => {
@@ -12,10 +15,10 @@ export const parseModules = (modulesString: string): CourseModule[] => {
     return modules
 }
 
-export const parseEditorComments = (commentsString: string): { [field: string]: string } => {
+export const parseEditorComments = (commentsString: string): CourseEditorComments | null => {
     const comments = JSON.parse(commentsString);
     if (comments === null) {
-        return {}
+        return null
     }
     return comments
 }
@@ -34,5 +37,14 @@ export const convertCourseToCourseFormData = (course: CourseReview): CourseFormD
         modules: parseModules(modulesJson),
         editorComments: parseEditorComments(editorCommentsJson),
         status,
+    }
+}
+
+export const getEmptyEditorComments = () => {
+    return {
+        title: null,
+        description: null,
+        dates: null,
+        categories: null,
     }
 }

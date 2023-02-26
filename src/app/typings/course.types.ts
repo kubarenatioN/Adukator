@@ -33,6 +33,21 @@ export interface CourseModule {
     topics: CourseTopic[]
 }
 
+export interface CourseEditorComments {
+    title: string;
+    description: string;
+    categories: string;
+    dates: string;
+    modules: {
+        title: string;
+        description: string;
+        topics: {
+            title: string;
+            description?: string;    
+        }[]
+    }[]
+}
+
 interface CourseCore {
     id: number;
     title: string;
@@ -55,9 +70,7 @@ export interface CourseFormData extends CourseCore {
 	userSubcategory?: string;
     status: string;
 	modules: CourseModule[];
-    editorComments?: {
-        [field: string]: string;
-    }
+    editorComments: CourseEditorComments | null;
 }
 
 export interface CourseReview extends Course {

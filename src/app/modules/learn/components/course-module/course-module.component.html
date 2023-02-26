@@ -12,10 +12,10 @@
     <h3 class="title">Темы модуля</h3>
 
     <button mat-stroked-button color="primary" (click)="addTopic()">Добавить тему</button>
-    <div class="topics-container" formArrayName="topics">
+    <div class="topics-container">
         <ng-container *ngFor="let topicForm of topicsFormGroups; let i = index">
             <div class="topic-item">
-                <mat-expansion-panel hideToggle>
+                <mat-expansion-panel>
                     <mat-expansion-panel-header>
                         <mat-panel-title>
                             <p>Тема {{ i + 1 }}. {{topicForm.value.title}}</p>

@@ -7,14 +7,10 @@ import {
 	OnInit,
 	Output,
 } from '@angular/core';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
 	MatDialog,
-	MAT_DIALOG_DATA,
-	MatDialogRef,
 } from '@angular/material/dialog';
-import { CreateTopicDialogComponent } from '../create-topic-dialog/create-topic-dialog.component';
 
 @Component({
 	selector: 'app-course-module',
@@ -59,50 +55,8 @@ export class CourseModuleComponent implements OnInit {
         this.topics.push(newTopic);
     }
 
-	public openCreateTopicDialog(form: FormGroup | null = null): void {
-		const isNewForm = form === null;
-		const dialogRef = this.dialog.open(CreateTopicDialogComponent, {
-			data: {
-				form,
-				isNewForm,
-			},
-			panelClass: 'create-topic-panel',
-		});
-
-		dialogRef
-			.afterClosed()
-			.subscribe((result: { form: FormGroup | null }) => {
-                if (result === undefined) {
-                    return;
-                }
-				const { form } = result;
-				if (form !== null) {
-					if (isNewForm) {
-						this.topics.push(form);
-					}
-					this.cd.markForCheck();
-				}
-			});
-	}
-
-	public onEditTopic(index: number) {
-		const topicForm = this.topics.at(index) as FormGroup;
-		this.openCreateTopicDialog(topicForm);
-	}
-
 	public onRemoveTopic(index: number) {
 		this.topics.removeAt(index);
-	}
-
-    public drop(event: CdkDragDrop<FormGroup[]>) {
-		moveItemInArray(
-			this.topics.controls,
-			event.previousIndex,
-			event.currentIndex
-		);
-        this.form.controls['topics'].patchValue(
-            [...this.topics.controls],
-        )
 	}
 
     private createNewTopicFormModel() {
