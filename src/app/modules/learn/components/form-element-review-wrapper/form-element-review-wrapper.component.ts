@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { TitleStrategy } from '@angular/router';
 
-const textItems = [
+const textItems: CommentItem[] = [
     {
         id: 1,
         label: 'Слишком много символов',
@@ -22,6 +22,13 @@ const textItems = [
     },
 ]
 
+interface CommentItem {
+    id: number,
+    label: string
+}
+type WrapperType = 'review' | 'edit';
+type ReviewType = 'text' | 'category' | 'dates' | 'checkbox';
+
 @Component({
 	selector: 'app-form-element-review-wrapper',
 	templateUrl: './form-element-review-wrapper.component.html',
@@ -29,17 +36,35 @@ const textItems = [
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormElementReviewWrapperComponent implements OnInit {
-    private _isActive = false;
+    private _isReviewActive = false;
+    private _isEditDone = false;
     private textItems = textItems
     
+    @Input() public type!: WrapperType;
     @Input() public form!: FormGroup
     @Input() public control!: string
+    @Input() public reviewType: ReviewType = 'text'
     
-    public get isActive() {
-        return this._isActive
+    public get isReviewActive(): boolean {
+        return this._isReviewActive
     }
     
-    @Input() public type: 'text' | 'category' | 'dates' | 'checkbox' = 'text'
+    public get isEditDone(): boolean {
+        return this._isEditDone
+    }
+    
+    public get hasComments(): boolean {
+        return this.comments.length > 0
+    }
+
+    public get comments(): CommentItem[] {
+        let value = this.form.controls[this.control].value
+        if (value === null) {
+            return []
+        }
+
+        return Array.isArray(value) ? value : [value]
+    }
 
 	constructor(private fb: FormBuilder) {
        
@@ -58,8 +83,17 @@ export class FormElementReviewWrapperComponent implements OnInit {
         
     }
 
-    public onToggle(): void {
-        this._isActive = !this._isActive
+    public onToggle(type: WrapperType): void {
+        if (type === 'review') {
+            this._isReviewActive = !this._isReviewActive
+        }
+        else if (type === 'edit') {
+            this._isEditDone = !this._isEditDone
+        }
+    }
+
+    public getCommentsLabel(comments: CommentItem[]) {
+        return comments
     }
 
     public getItems() {

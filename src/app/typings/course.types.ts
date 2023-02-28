@@ -57,26 +57,25 @@ interface CourseCore {
 	category: string;
 	subcategory: string;
 	advantages?: string;
+    parentId: number | null;
+    status: CourseReviewStatus;
+    authorId: number;
+    createdAt?: string;
 }
 
 export interface Course extends CourseCore {
     modulesJson: string;
-    authorId: number;
-    createdAt?: string;
+}
+
+export interface CourseReview extends Course {
+    editorCommentsJson: string | null;
 }
 
 export interface CourseFormData extends CourseCore {
 	userCategory?: string;
 	userSubcategory?: string;
-    status: string;
 	modules: CourseModule[];
     editorComments: CourseEditorComments | null;
-}
-
-export interface CourseReview extends Course {
-    parentId: number | null;
-    status: CourseReviewStatus;
-    editorCommentsJson: string;
 }
 
 export enum CourseReviewStatus {

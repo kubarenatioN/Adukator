@@ -1,13 +1,24 @@
 <form [formGroup]="form">
-    <mat-form-field appearance="fill">
-		<mat-label>Название модуля</mat-label>
-        <input matInput formControlName="title">
-	</mat-form-field>
 
-    <mat-form-field appearance="fill">
-        <mat-label>Описание модуля</mat-label>
-        <textarea matInput formControlName="description"></textarea>
-	</mat-form-field>
+    <app-form-element-review-wrapper
+        type="edit"
+        [form]="editorModulesForm"
+        control="title">
+        <mat-form-field appearance="fill">
+            <mat-label>Название модуля</mat-label>
+            <input matInput formControlName="title">
+        </mat-form-field>
+    </app-form-element-review-wrapper>
+
+    <app-form-element-review-wrapper
+        type="edit"
+        [form]="editorModulesForm"
+        control="description">
+        <mat-form-field appearance="fill">
+            <mat-label>Описание модуля</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+        </mat-form-field>
+    </app-form-element-review-wrapper>
 
     <h3 class="title">Темы модуля</h3>
 
@@ -21,7 +32,11 @@
                             <p>Тема {{ i + 1 }}. {{topicForm.value.title}}</p>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
-                    <app-module-topic [order]="i" [form]="topicForm" (removeTopic)="onRemoveTopic(i)"></app-module-topic>                    
+                    <app-module-topic 
+                        [order]="i" 
+                        [form]="topicForm" 
+                        [editorForm]="topicsEditorCommentsForm(i)" 
+                        (removeTopic)="onRemoveTopic(i)"></app-module-topic>                    
                 </mat-expansion-panel>
             </div>
         </ng-container>

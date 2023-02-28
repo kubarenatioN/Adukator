@@ -1,4 +1,4 @@
-import { Course, CourseEditorComments, CourseFormData, CourseModule, CourseReview } from "../typings/course.types";
+import { CourseEditorComments, CourseFormData, CourseModule, CourseReview } from "../typings/course.types";
 
 export const stringify = (data: any): string => {
     if (!data) {
@@ -23,10 +23,21 @@ export const parseEditorComments = (commentsString: string): CourseEditorComment
     return comments
 }
 
+export const getEmptyEditorComments = () => {
+    return {
+        title: null,
+        description: null,
+        dates: null,
+        categories: null,
+    }
+}
+
 export const convertCourseToCourseFormData = (course: CourseReview): CourseFormData => {
-    const { id, title, description, startTime, endTime, category, subcategory, advantages, modulesJson, editorCommentsJson, status } = course
+    const { id, authorId, parentId, title, description, startTime, endTime, category, subcategory, advantages, modulesJson, editorCommentsJson, status } = course
     return {
         id,
+        authorId,
+        parentId,
         title,
         description,
         startTime,
@@ -35,16 +46,26 @@ export const convertCourseToCourseFormData = (course: CourseReview): CourseFormD
         subcategory,
         advantages,
         modules: parseModules(modulesJson),
-        editorComments: parseEditorComments(editorCommentsJson),
+        editorComments: editorCommentsJson === null ? editorCommentsJson : parseEditorComments(editorCommentsJson),
         status,
     }
 }
 
-export const getEmptyEditorComments = () => {
+export const convertCourseFormDataToCourseReview = (formData: CourseFormData): CourseReview => {
+    const { id, parentId, title, description, startTime, endTime, category, subcategory, advantages, modules, editorComments, status, authorId } = formData
     return {
-        title: null,
-        description: null,
-        dates: null,
-        categories: null,
+        id,
+        parentId,
+        authorId,
+        title,
+        description,
+        startTime,
+        endTime,
+        category,
+        subcategory,
+        advantages,
+        modulesJson: stringify(modules),
+        editorCommentsJson: stringify(editorComments),
+        status,
     }
 }

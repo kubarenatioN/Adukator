@@ -6,7 +6,7 @@ export interface DataRequestPayload {
 	url: string;
 	method: string;
 	headers?: HttpHeaders;
-	body?: Record<string, string | number | object | undefined>;
+	body?: Record<string, string | number | object | boolean | undefined>;
     params?: HttpParams
 }
 

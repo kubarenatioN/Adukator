@@ -26,7 +26,7 @@ interface RequestCoreMetadata {
 }
 
 interface RequestMetadata {
-    body?: Record<string, string | number | object | undefined>;
+    body?: Record<string, string | number | object | boolean | undefined>;
     params?: Record<string, string | number>
     urlId?: string | number;
     headers?: HttpHeaders

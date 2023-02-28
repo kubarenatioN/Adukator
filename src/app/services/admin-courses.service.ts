@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, shareReplay } from 'rxjs';
-import { stringify } from '../helpers/courses.helper';
+import { Observable, of, shareReplay } from 'rxjs';
+import { convertCourseFormDataToCourseReview, stringify } from '../helpers/courses.helper';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { CourseEditorComments, CourseFormData, CourseReview } from '../typings/course.types';
 import { DataService } from './data.service';
@@ -21,6 +21,21 @@ export class AdminCoursesService {
             urlId: id
         })
         return this.dataService.send<CourseReview>(payload)
+    }
+
+    public createCourseReviewVersion(formData: CourseFormData, { isParent }: { isParent: boolean }): Observable<unknown> {
+        console.log('111 formData', formData);
+        
+        const courseData = convertCourseFormDataToCourseReview(formData);
+        courseData.editorCommentsJson = null;
+
+        // TODO: delegate hadling of this logic to smarter typings & converters
+        courseData.createdAt = undefined;
+
+        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.CreateCourse, {
+            body: { course: courseData, isParent }
+        })
+        return this.dataService.send<unknown>(payload)
     }
 
     public publish(id: number) {

@@ -11,6 +11,9 @@ export class ModuleTopicComponent implements OnInit {
 	@Input() public order: number;
 	@Input() public form!: FormGroup;
 
+    // form for editor comments
+	@Input() public editorForm!: FormGroup;
+
     @Output() public saveTopic = new EventEmitter<FormGroup>();
     @Output() public removeTopic = new EventEmitter<void>();
 

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Observable, BehaviorSubject, of, throwError } from 'rxjs';
 import {
+    catchError,
 	map,
 	shareReplay,
 	switchMap,
@@ -24,7 +25,7 @@ import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { DataService } from 'src/app/services/data.service';
 import { UserService } from 'src/app/services/user.service';
-import { CourseFormData, CourseFormViewMode } from 'src/app/typings/course.types';
+import { CourseFormData, CourseFormViewMode, CourseReview } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-create-course',
@@ -35,7 +36,7 @@ import { CourseFormData, CourseFormViewMode } from 'src/app/typings/course.types
 export class CreateCourseComponent implements OnInit {
 	private courseData?: CourseFormData;
 
-	public formData$!: Observable<CourseFormData | EmptyCourseFormDataType>;
+	public formData$!: Observable<CourseReview | EmptyCourseFormDataType>;
 	public viewMode$!: Observable<CourseFormViewMode | null>;
 	public showLoading$ = new BehaviorSubject<boolean>(false);
 
@@ -78,14 +79,14 @@ export class CreateCourseComponent implements OnInit {
                         return this.coursesService.getUserReviewCourse(courseId);
                     }
                 }
-                else {
-                    throw new Error('Try to get course form data with no user.');
-                }
-				return of(null);
+                throw new Error('Try to get course form data with no user.');
 			}),
+            catchError(err => {
+                return of(null);
+            }),
 			map((course) => {
 				return course !== null
-					? convertCourseToCourseFormData(course)
+					? course
 					: EMPTY_COURSE_FORM_DATA;
 			}),
             shareReplay(1),
@@ -181,6 +182,15 @@ export class CreateCourseComponent implements OnInit {
         this.adminCoursesService.saveCourseReview(formData)
             .subscribe(() => {
                 console.log('course review updated');
+            });
+	}
+
+	public onCreateReviewVersion(formData: CourseFormData): void {
+        this.adminCoursesService.createCourseReviewVersion(formData, {
+            isParent: false,
+        })
+            .subscribe(() => {
+                console.log('course review new version created!');
             });
 	}
 

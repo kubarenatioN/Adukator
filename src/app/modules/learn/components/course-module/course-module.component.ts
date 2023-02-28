@@ -1,6 +1,5 @@
 import {
 	ChangeDetectionStrategy,
-	ChangeDetectorRef,
 	Component,
 	EventEmitter,
 	Input,
@@ -8,9 +7,6 @@ import {
 	Output,
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {
-	MatDialog,
-} from '@angular/material/dialog';
 
 @Component({
 	selector: 'app-course-module',
@@ -20,6 +16,9 @@ import {
 })
 export class CourseModuleComponent implements OnInit {
 	@Input() public form!: FormGroup;
+
+    // form for editor comments
+	@Input() public editorModulesForm!: FormGroup;
 
 	@Output() public changeTitle = new EventEmitter<string>();
 
@@ -31,6 +30,10 @@ export class CourseModuleComponent implements OnInit {
 		return this.topics.controls as FormGroup[];
 	}
 
+    public topicsEditorCommentsForm(i: number): FormGroup {
+        return (this.editorModulesForm.controls['topics'] as FormArray).at(i) as FormGroup
+    }
+
 	public get title(): string {
 		if (this.form) {
 			return this.form.get('title')?.value || '';
@@ -39,9 +42,7 @@ export class CourseModuleComponent implements OnInit {
 	}
 
 	constructor(
-		private dialog: MatDialog,
-        private fb: FormBuilder,
-		private cd: ChangeDetectorRef
+		private fb: FormBuilder,
 	) {}
 
 	public ngOnInit(): void {

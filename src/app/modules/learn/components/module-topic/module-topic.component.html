@@ -1,13 +1,25 @@
 <form [formGroup]="form">
-	<mat-form-field appearance="fill">
-		<mat-label>Название темы</mat-label>
-		<input matInput formControlName="title" />
-	</mat-form-field>
 
-	<mat-form-field appearance="fill">
-		<mat-label>Описание темы</mat-label>
-		<textarea matInput formControlName="description"></textarea>
-	</mat-form-field>
+    <app-form-element-review-wrapper
+        type="edit"
+        [form]="editorForm"
+        control="title">
+        <mat-form-field appearance="fill">
+            <mat-label>Название</mat-label>
+            <input matInput formControlName="title" />
+        </mat-form-field>
+    </app-form-element-review-wrapper>
+
+    <app-form-element-review-wrapper
+        type="edit"
+        [form]="editorForm"
+        control="description">
+        <mat-form-field appearance="fill">
+            <mat-label>Описание</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+        </mat-form-field>
+    </app-form-element-review-wrapper>
+
 </form>
 
 <button (click)="onRemove()">Удалить</button>

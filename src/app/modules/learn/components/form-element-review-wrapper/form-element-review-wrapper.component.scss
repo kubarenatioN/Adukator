@@ -1,14 +1,15 @@
 :host {
-    min-width: 600px;
+    width: 100%;
     display: grid;
     align-items: flex-start;
-    grid-template-columns: 1fr 50px 1fr;
+    grid-template-columns: 4fr 40px 2fr;
     gap: 10px;
 }
 
 .action-btn {
-    min-width: 50px;
-    height: 50px;
+    min-width: 40px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     padding: 0;
 
