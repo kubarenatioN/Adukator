@@ -58,7 +58,7 @@
 </div>
 
 <ng-template #versionStatus let-course="course">
-    <ng-container [ngSwitch]="course.status">
+    <ng-container [ngSwitch]="course.metadata.status">
         <p>
             <ng-container *ngSwitchCase="courseReviewStatuses.Reviewed">
                 <span>

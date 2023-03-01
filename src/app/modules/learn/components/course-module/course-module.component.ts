@@ -6,7 +6,7 @@ import {
 	OnInit,
 	Output,
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Form, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
 	selector: 'app-course-module',
@@ -15,10 +15,14 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseModuleComponent implements OnInit {
+    private _editorCommentsForm: FormGroup | null = null;
+    
 	@Input() public form!: FormGroup;
 
     // form for editor comments
-	@Input() public editorModulesForm!: FormGroup;
+	@Input() public set editorModulesForm(value: FormGroup | null) {
+        this._editorCommentsForm = value;
+    }
 
 	@Output() public changeTitle = new EventEmitter<string>();
 
@@ -30,7 +34,14 @@ export class CourseModuleComponent implements OnInit {
 		return this.topics.controls as FormGroup[];
 	}
 
-    public topicsEditorCommentsForm(i: number): FormGroup {
+    public get editorModulesForm() {
+        return this._editorCommentsForm;
+    }
+
+    public topicsEditorCommentsForm(i: number): FormGroup | null {
+        if (this.editorModulesForm === null) {
+            return null;
+        }
         return (this.editorModulesForm.controls['topics'] as FormArray).at(i) as FormGroup
     }
 

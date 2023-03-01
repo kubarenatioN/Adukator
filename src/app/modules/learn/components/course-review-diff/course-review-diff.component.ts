@@ -66,7 +66,8 @@ export class CourseReviewDiffComponent implements OnInit {
         this.selectedOptions = this.versionsPair.map(version => version.id)
     }
 
-	private prepareVersionOptions(versions: Course[]) {
+	private prepareVersionOptions(versions: CourseReview[]) {
+        console.log(versions);
 		const versionsForSelection = versions
 			.filter((course) => course.createdAt !== undefined || (course as any).isDummy)
 			.map((course, i) => {

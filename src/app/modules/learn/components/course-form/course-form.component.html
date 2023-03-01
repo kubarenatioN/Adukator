@@ -144,7 +144,7 @@
             <h3>Модуль {{i + 1}}.</h3>
             <app-form-element-review-wrapper
                 type="review"
-                [form]="editorFormModules.controls[i]"
+                [form]="getModuleEditorCommentsForm(i)"
                 control="title">
                 <div class="property">
                     <span>Название</span>
@@ -154,7 +154,7 @@
 
             <app-form-element-review-wrapper
                 type="review"
-                [form]="editorFormModules.controls[i]"
+                [form]="getModuleEditorCommentsForm(i)"
                 control="description">
                 <div class="property">
                     <span>Описание</span>
@@ -168,7 +168,7 @@
 
                     <app-form-element-review-wrapper
                         type="review"
-                        [form]="editorFormModules.controls[i].controls.topics.controls[j]"
+                        [form]="getTopicEditorCommentsForm(i, j)"
                         control="title">
                         <div class="property">
                             <span>Название</span>
@@ -277,13 +277,14 @@
     </app-form-element-review-wrapper>
 </ng-template>
 
-<ng-template #modules let-form="form" let-editorForm="editorForm">
+<ng-template #modules let-form="form">
     <h2>Модули курса</h2>
 
     <!-- TODO: Add Icon instead of text  -->
-	<button mat-stroked-button color="primary" (click)="addModule()">
+	<button mat-stroked-button color="primary" (click)="addStartModule()">
 		Добавить модуль
 	</button>
+
 	<mat-accordion multi [formGroup]="form">
 		<mat-expansion-panel
 			*ngFor="let moduleForm of modulesControls; let i = index"
@@ -298,7 +299,7 @@
 					}}
                 </mat-panel-title>
 			</mat-expansion-panel-header>
-			<app-course-module #module [form]="moduleForm" [editorModulesForm]="editorForm.controls.modules.controls[i]"></app-course-module>
+			<app-course-module #module [form]="moduleForm" [editorModulesForm]="getModuleEditorCommentsForm(i)"></app-course-module>
 			<mat-action-row>
 				<!-- TODO: Add Trash Icon instead of text  -->
 				<button

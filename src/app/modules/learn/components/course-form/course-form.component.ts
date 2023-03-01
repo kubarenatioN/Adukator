@@ -20,6 +20,7 @@ import { convertCourseToCourseFormData, getEmptyEditorComments } from 'src/app/h
 import {
 	CourseEditorComments,
 	CourseFormData,
+	CourseFormMetadata,
 	CourseFormViewMode,
 	CourseModule,
 	CourseReview,
@@ -71,6 +72,7 @@ export const testFormData = {
 export class CourseFormComponent implements OnInit {
 	private _mode: CourseFormViewMode = CourseFormViewMode.Create;
 	private course: CourseReview | null = null;
+	private courseMetadata: CourseFormMetadata | null = null;
 
 	public courseForm: FormGroup;
 	public viewModes = CourseFormViewMode;
@@ -80,7 +82,7 @@ export class CourseFormComponent implements OnInit {
 		return this.courseForm.get('modules') as FormArray;
 	}
 
-	public get editorModules(): FormArray {
+	private get editorModules(): FormArray {
 		return this.editorComments.get('modules') as FormArray;
 	}
 
@@ -107,9 +109,10 @@ export class CourseFormComponent implements OnInit {
 		if (data !== EMPTY_COURSE_FORM_DATA) {
 			this.course = data;
             const courseFormData = convertCourseToCourseFormData(data);
+            this.courseMetadata = courseFormData.metadata;
 			this.setCourseModel(courseFormData);
 		} else {
-			this.addModule();
+			this.addStartModule();
 		}
 	}
 
@@ -144,7 +147,7 @@ export class CourseFormComponent implements OnInit {
 		});
 	}
 
-	public addModule(): void {
+	public addStartModule(): void {
 		const moduleControl = this.fb.group({
 			title: ['', Validators.required],
 			description: ['', Validators.required],
@@ -160,6 +163,9 @@ export class CourseFormComponent implements OnInit {
 			moduleTopicsCountValidator(),
 		]);
 		this.modules.push(moduleControl);
+
+        const moduleCommentsForm = this.getEditorCommentsModules([moduleControl.value], { isEmpty: true });
+        this.editorModules.push(moduleCommentsForm[0]);
 	}
 
 	public removeModule(index: number): void {
@@ -179,10 +185,11 @@ export class CourseFormComponent implements OnInit {
 	public onSubmit(
 		action: 'review' | 'publish' | 'create' | 'edit' | 'update'
 	): void {
-		const { valid: isValid, value, errors } = this.courseForm;
+		const { valid: isValid } = this.courseForm;
+        const { value }: { value: CourseFormData } = this.courseForm;
 
-		if (this.course?.id != null && action === 'create') {
-			throw new Error('Cannot update empty course.');
+		if (this.courseMetadata !== null && action === 'create') {
+			throw new Error('Cannot create not empty course.');
 		}
 
 		switch (action) {
@@ -196,8 +203,8 @@ export class CourseFormComponent implements OnInit {
 			}
 			case 'review': {
 				const { valid: isValid } = this.editorComments;
-				if (isValid && this.course) {
-					value.id = this.course.id;
+				if (isValid && this.courseMetadata) {
+					value.id = this.courseMetadata.id;
 					this.saveReview.emit(value);
 				} else {
 					console.error('Invalid review form');
@@ -205,12 +212,8 @@ export class CourseFormComponent implements OnInit {
 				break;
 			}
 			case 'edit': {
-				if (isValid && this.course) {
-					value.id = this.course.id;
-                    // TODO: Refactor me
-                    value.parentId = this.course.parentId === null ? this.course.id : this.course.parentId;
-                    value.authorId = this.course.authorId
-
+				if (isValid && this.courseMetadata) {
+                    value.metadata = this.courseMetadata;
 					this.createReviewVersion.emit(value);
 				}
 				break;
@@ -221,6 +224,24 @@ export class CourseFormComponent implements OnInit {
 		}
 	}
 
+    public getTopicEditorCommentsForm(moduleIndex: number, topicIndex: number): FormGroup | null {
+        if (this.editorModules === null) {
+            return null;
+        }
+        const topic = ((this.editorModules.at(moduleIndex) as FormGroup).get('topics') as FormArray).at(topicIndex) as FormGroup
+        if (topic === null) {
+            return null;
+        }
+        return topic;
+    }
+
+    public getModuleEditorCommentsForm(moduleIndex: number): FormGroup | null {
+        if (this.editorModules === null) {
+            return null;
+        }
+        return this.editorModules.at(moduleIndex) as FormGroup;
+    }
+
 	private publishCourse(data: CourseFormData) {
 		this.publish.emit(data);
 	}
@@ -229,7 +250,7 @@ export class CourseFormComponent implements OnInit {
 		const { modules, editorComments } = course;
 
 		const modulesArray = this.getModulesFormArray(modules);
-		const editorModulesArray = this.prepareEditorComments(editorComments);
+		const editorModulesArray = this.prepareEditorComments(editorComments, modules);
 
 		this.courseForm.patchValue({
 			title: course.title,
@@ -238,8 +259,8 @@ export class CourseFormComponent implements OnInit {
 			endDate: course.endTime,
 			category: course.category,
 			subcategory: course.subcategory,
-			userCategory: course.userCategory,
-			userSubcategory: course.userSubcategory,
+			// userCategory: course.userCategory,
+			// userSubcategory: course.userSubcategory,
 			advantages: course.advantages,
 			editorComments: editorComments ?? getEmptyEditorComments(),
 		});
@@ -277,11 +298,11 @@ export class CourseFormComponent implements OnInit {
 		});
 	}
 
-	private prepareEditorComments(editorComments: CourseEditorComments | null) {
+	private prepareEditorComments(editorComments: CourseEditorComments | null, modules: CourseModule[]) {
 		if (editorComments?.modules && editorComments.modules.length > 0) {
 			return this.getEditorCommentsModules(editorComments.modules);
 		}
-		return [];
+        return this.getEditorCommentsModules(modules, { isEmpty: true });
 	}
 
 	private getEditorCommentsModules(

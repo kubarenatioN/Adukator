@@ -12,7 +12,7 @@ export class ModuleTopicComponent implements OnInit {
 	@Input() public form!: FormGroup;
 
     // form for editor comments
-	@Input() public editorForm!: FormGroup;
+	@Input() public editorForm: FormGroup | null = null;
 
     @Output() public saveTopic = new EventEmitter<FormGroup>();
     @Output() public removeTopic = new EventEmitter<void>();

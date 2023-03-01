@@ -46,7 +46,7 @@
 </ng-template>
 
 <ng-template #commentOptions let-items="items">
-    <mat-form-field appearance="standard" [formGroup]="form">
+    <mat-form-field *ngIf="form !== null" appearance="standard" [formGroup]="form">
         <mat-select 
             (selectionChange)="onChange($event)"    
             multiple 

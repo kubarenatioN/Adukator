@@ -1,4 +1,4 @@
-import { CourseEditorComments, CourseFormData, CourseModule, CourseReview } from "../typings/course.types";
+import { CourseEditorComments, CourseFormData, CourseFormMetadata, CourseModule, CourseReview } from "../typings/course.types";
 
 export const stringify = (data: any): string => {
     if (!data) {
@@ -33,11 +33,15 @@ export const getEmptyEditorComments = () => {
 }
 
 export const convertCourseToCourseFormData = (course: CourseReview): CourseFormData => {
-    const { id, authorId, parentId, title, description, startTime, endTime, category, subcategory, advantages, modulesJson, editorCommentsJson, status } = course
-    return {
+    const { id, authorId, masterId, title, description, startTime, endTime, category, subcategory, advantages, modulesJson, editorCommentsJson, status } = course
+    const metadata: CourseFormMetadata = {
         id,
         authorId,
-        parentId,
+        masterCourseId: masterId,
+        status
+    }
+    return {
+        id,
         title,
         description,
         startTime,
@@ -47,15 +51,16 @@ export const convertCourseToCourseFormData = (course: CourseReview): CourseFormD
         advantages,
         modules: parseModules(modulesJson),
         editorComments: editorCommentsJson === null ? editorCommentsJson : parseEditorComments(editorCommentsJson),
-        status,
+        metadata,
     }
 }
 
 export const convertCourseFormDataToCourseReview = (formData: CourseFormData): CourseReview => {
-    const { id, parentId, title, description, startTime, endTime, category, subcategory, advantages, modules, editorComments, status, authorId } = formData
+    const { title, description, startTime, endTime, category, subcategory, advantages, modules, editorComments, metadata } = formData
+    const { masterCourseId: masterId, authorId, status, id } = metadata;
     return {
         id,
-        parentId,
+        masterId,
         authorId,
         title,
         description,

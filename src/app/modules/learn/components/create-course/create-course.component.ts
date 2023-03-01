@@ -25,7 +25,7 @@ import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { DataService } from 'src/app/services/data.service';
 import { UserService } from 'src/app/services/user.service';
-import { CourseFormData, CourseFormViewMode, CourseReview } from 'src/app/typings/course.types';
+import { CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseReview } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-create-course',
@@ -34,7 +34,7 @@ import { CourseFormData, CourseFormViewMode, CourseReview } from 'src/app/typing
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateCourseComponent implements OnInit {
-	private courseData?: CourseFormData;
+	private courseMetadata: CourseFormMetadata | null = null;
 
 	public formData$!: Observable<CourseReview | EmptyCourseFormDataType>;
 	public viewMode$!: Observable<CourseFormViewMode | null>;
@@ -82,12 +82,21 @@ export class CreateCourseComponent implements OnInit {
                 throw new Error('Try to get course form data with no user.');
 			}),
             catchError(err => {
+                console.error(err);
                 return of(null);
             }),
 			map((course) => {
-				return course !== null
-					? course
-					: EMPTY_COURSE_FORM_DATA;
+                if (course !== null) {
+                    this.courseMetadata = {
+                        id: course.id,
+                        authorId: course.authorId,
+                        masterCourseId: course.masterId,
+                        status: course.status,
+                    }
+                    return course;
+                }
+                this.courseMetadata = null;
+                return EMPTY_COURSE_FORM_DATA;
 			}),
             shareReplay(1),
 		);
@@ -186,11 +195,9 @@ export class CreateCourseComponent implements OnInit {
 	}
 
 	public onCreateReviewVersion(formData: CourseFormData): void {
-        this.adminCoursesService.createCourseReviewVersion(formData, {
-            isParent: false,
-        })
-            .subscribe(() => {
-                console.log('course review new version created!');
+        this.coursesService.createCourseReviewVersion(formData, { isMaster: false })
+            .subscribe((res) => {
+                console.log('course review new version created!', res);
             });
 	}
 

@@ -1,8 +1,9 @@
 :host {
+    min-width: 600px;
     width: 100%;
     display: grid;
     align-items: flex-start;
-    grid-template-columns: 4fr 40px 2fr;
+    grid-template-columns: 4fr 40px 3fr;
     gap: 10px;
 }
 

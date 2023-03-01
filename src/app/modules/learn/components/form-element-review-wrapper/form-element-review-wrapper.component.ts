@@ -36,12 +36,15 @@ type ReviewType = 'text' | 'category' | 'dates' | 'checkbox';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormElementReviewWrapperComponent implements OnInit {
+    private _form: FormGroup | null = null;
     private _isReviewActive = false;
     private _isEditDone = false;
     private textItems = textItems
     
     @Input() public type!: WrapperType;
-    @Input() public form!: FormGroup
+    @Input() public set form(value: FormGroup | null) {
+        this._form = value;
+    }
     @Input() public control!: string
     @Input() public reviewType: ReviewType = 'text'
     
@@ -57,8 +60,16 @@ export class FormElementReviewWrapperComponent implements OnInit {
         return this.comments.length > 0
     }
 
+    public get form(): FormGroup | null {
+        return this._form;
+    }
+
     public get comments(): CommentItem[] {
-        let value = this.form.controls[this.control].value
+        if (this._form === null) {
+            return [];
+        }
+    
+        let value = this._form.controls[this.control].value
         if (value === null) {
             return []
         }
@@ -71,9 +82,9 @@ export class FormElementReviewWrapperComponent implements OnInit {
     }
 
 	ngOnInit(): void {
-        if (!this.form || !this.control) {
+        if (!this._form || !this.control) {
             this.control = 'options'
-            this.form = this.fb.group({
+            this._form = this.fb.group({
                 [this.control]: new FormControl([])
             })
         }

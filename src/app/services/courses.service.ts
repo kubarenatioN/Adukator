@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, map, merge, Observable, of, shareReplay, Subject, switchMap, take } from 'rxjs';
+import { convertCourseFormDataToCourseReview } from '../helpers/courses.helper';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { Course, CoursesResponse, CourseFormData, CourseReview } from '../typings/course.types';
 import { DataService } from './data.service';
@@ -18,7 +19,7 @@ export class CoursesService {
     private resetCoursesCaching$ = new BehaviorSubject<void>(undefined);
     private resetCoursesForReviewCaching$ = new BehaviorSubject<void>(undefined);
 
-	constructor(private dataService: DataService, private userService: UserService, private router: Router) {
+	constructor(private dataService: DataService, private userService: UserService) {
         this.courses$ = this.getCourses()
         this.userCourses$ = this.getAllUserCourses()
 
@@ -44,6 +45,20 @@ export class CoursesService {
             }
         })
         return this.dataService.send<CourseReview[]>(payload)
+    }
+
+    public createCourseReviewVersion(formData: CourseFormData, { isMaster }: { isMaster: boolean }): Observable<unknown> {
+        console.log('111 formData', formData);
+        
+        const courseData = convertCourseFormDataToCourseReview(formData);
+        
+        // reset comments for new version
+        courseData.editorCommentsJson = null;
+
+        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.CreateCourse, {
+            body: { course: courseData, isMaster }
+        })
+        return this.dataService.send<unknown>(payload)
     }
 
     // public publishCourse(id: number) {

@@ -23,21 +23,6 @@ export class AdminCoursesService {
         return this.dataService.send<CourseReview>(payload)
     }
 
-    public createCourseReviewVersion(formData: CourseFormData, { isParent }: { isParent: boolean }): Observable<unknown> {
-        console.log('111 formData', formData);
-        
-        const courseData = convertCourseFormDataToCourseReview(formData);
-        courseData.editorCommentsJson = null;
-
-        // TODO: delegate hadling of this logic to smarter typings & converters
-        courseData.createdAt = undefined;
-
-        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.CreateCourse, {
-            body: { course: courseData, isParent }
-        })
-        return this.dataService.send<unknown>(payload)
-    }
-
     public publish(id: number) {
         console.log('111 publish course with ID', id);
     }

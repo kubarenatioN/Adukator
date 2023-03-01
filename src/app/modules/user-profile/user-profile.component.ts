@@ -28,7 +28,7 @@ export class UserProfileComponent {
         this.userCoursesOnReview$ = userCourses.pipe(
             map(courses => {
                 if (courses?.review) {
-                    return courses.review.filter(course => course.parentId === null)
+                    return courses.review.filter(course => course.masterId === null)
                 }
                 return []
             }),
