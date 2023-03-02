@@ -1,4 +1,4 @@
-import { CourseEditorComments, CourseFormData, CourseFormMetadata, CourseModule, CourseReview } from "../typings/course.types";
+import { Course, CourseEditorComments, CourseFormData, CourseFormMetadata, CourseModule, CourseReview } from "../typings/course.types";
 
 export const stringify = (data: any): string => {
     if (!data) {
@@ -41,7 +41,6 @@ export const convertCourseToCourseFormData = (course: CourseReview): CourseFormD
         status
     }
     return {
-        id,
         title,
         description,
         startTime,
@@ -57,7 +56,7 @@ export const convertCourseToCourseFormData = (course: CourseReview): CourseFormD
 
 export const convertCourseFormDataToCourseReview = (formData: CourseFormData): CourseReview => {
     const { title, description, startTime, endTime, category, subcategory, advantages, modules, editorComments, metadata } = formData
-    const { masterCourseId: masterId, authorId, status, id } = metadata;
+    const { id, masterCourseId: masterId, authorId, status } = metadata;
     return {
         id,
         masterId,
@@ -70,7 +69,24 @@ export const convertCourseFormDataToCourseReview = (formData: CourseFormData): C
         subcategory,
         advantages,
         modulesJson: stringify(modules),
-        editorCommentsJson: stringify(editorComments),
+        editorCommentsJson: editorComments ? stringify(editorComments) : null,
         status,
+    }
+}
+
+export const convertCourseFormDataToCourse = (formData: CourseFormData): Course => {
+    const { title, description, startTime, endTime, category, subcategory, advantages, modules, metadata } = formData
+    const { id, authorId } = metadata;
+    return {
+        id,
+        title,
+        description,
+        startTime,
+        endTime,
+        category,
+        subcategory,
+        advantages,
+        modulesJson: stringify(modules),
+        authorId,
     }
 }

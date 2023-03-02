@@ -63,7 +63,7 @@ export class CourseReviewDiffComponent implements OnInit {
     public applyDefaultVersions() {
         this.versionsPair = this._courseVerions.slice(0, 2);
         this.versionsPair.reverse()
-        this.selectedOptions = this.versionsPair.map(version => version.id)
+        this.selectedOptions = this.versionsPair.map(version => version.metadata.id)
     }
 
 	private prepareVersionOptions(versions: CourseReview[]) {
@@ -100,7 +100,7 @@ export class CourseReviewDiffComponent implements OnInit {
     }
 
     private isLastVersion(course: CourseFormData): boolean {
-        return this._courseVerions[0].id === course.id
+        return this._courseVerions[0].metadata.id === course.metadata.id
     }
 
     private formatVersions(versions: CourseReview[]): CourseFormData[] {
@@ -108,7 +108,7 @@ export class CourseReviewDiffComponent implements OnInit {
             if (version.createdAt) {
                 version.createdAt = formatDate(version.createdAt)
             }
-            return (version as any).isDummy ? {} as CourseFormData : convertCourseToCourseFormData(version)
+            return (version as any).isDummy ? {metadata: {}} as CourseFormData : convertCourseToCourseFormData(version)
         })
     }
 
@@ -124,7 +124,7 @@ export class CourseReviewDiffComponent implements OnInit {
     }
 
     private applyCourseVersion(position: number, versionId: number) {
-        const versionIndex = this._courseVerions.findIndex(course => course.id === versionId)
+        const versionIndex = this._courseVerions.findIndex(course => course.metadata.id === versionId)
         if (versionIndex !== -1) {
             this.versionsPair[position] = this._courseVerions[versionIndex]
         }

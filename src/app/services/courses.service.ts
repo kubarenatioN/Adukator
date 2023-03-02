@@ -47,36 +47,14 @@ export class CoursesService {
         return this.dataService.send<CourseReview[]>(payload)
     }
 
-    public createCourseReviewVersion(formData: CourseFormData, { isMaster }: { isMaster: boolean }): Observable<unknown> {
-        console.log('111 formData', formData);
-        
-        const courseData = convertCourseFormDataToCourseReview(formData);
-        
-        // reset comments for new version
-        courseData.editorCommentsJson = null;
-
+    public createCourseReviewVersion(courseData: CourseReview, { isMaster }: { isMaster: boolean }): Observable<unknown> {
         const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.CreateCourse, {
             body: { course: courseData, isMaster }
         })
         return this.dataService.send<unknown>(payload)
     }
 
-    // public publishCourse(id: number) {
-    //     const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.PublishCourse, { body: { id } })
-    //     this.dataService.send<CoursesResponse>(payload)
-    //     .pipe(
-    //         switchMap(() => {
-    //             return this.coursesForReview$
-    //         }),
-    //         take(1)
-    //     )
-    //     .subscribe(courses => {
-    //         this.coursesForReviewStore$.next(courses.filter(course => course.id !== id))
-    //         this.router.navigate(['/app/admin'])
-    //     })
-    // }
-
-    public editCourse(id: number, form: CourseFormData) {
+    public updateCourse(id: number, form: CourseFormData) {
         
     }
 

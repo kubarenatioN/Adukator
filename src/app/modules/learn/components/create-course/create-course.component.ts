@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Observable, BehaviorSubject, of, throwError } from 'rxjs';
@@ -14,6 +15,8 @@ import {
 	EMPTY_COURSE_FORM_DATA,
 } from 'src/app/constants/common.constants';
 import {
+    convertCourseFormDataToCourse,
+    convertCourseFormDataToCourseReview,
 	convertCourseToCourseFormData,
 	stringify,
 } from 'src/app/helpers/courses.helper';
@@ -25,7 +28,8 @@ import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { DataService } from 'src/app/services/data.service';
 import { UserService } from 'src/app/services/user.service';
-import { CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseReview } from 'src/app/typings/course.types';
+import { CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseReview, CourseReviewStatus } from 'src/app/typings/course.types';
+import { User } from 'src/app/typings/user.types';
 
 @Component({
 	selector: 'app-create-course',
@@ -34,7 +38,7 @@ import { CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseReview } 
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateCourseComponent implements OnInit {
-	private courseMetadata: CourseFormMetadata | null = null;
+	private courseMetadata!: CourseFormMetadata;
 
 	public formData$!: Observable<CourseReview | EmptyCourseFormDataType>;
 	public viewMode$!: Observable<CourseFormViewMode | null>;
@@ -48,7 +52,8 @@ export class CreateCourseComponent implements OnInit {
 		private router: Router,
 		private activatedRoute: ActivatedRoute,
 		private coursesService: CoursesService,
-		private adminCoursesService: AdminCoursesService
+		private adminCoursesService: AdminCoursesService,
+        private location: Location,
 	) {}
 
 	public ngOnInit(): void {
@@ -75,8 +80,14 @@ export class CreateCourseComponent implements OnInit {
                     if (role === 'admin' && courseId) {
                         return this.adminCoursesService.getReviewCourse(courseId)
                     }
-                    if (courseId && action) {
-                        return this.coursesService.getUserReviewCourse(courseId);
+                    if (role === 'teacher') {
+                        if (!courseId && (!action || action === CourseFormViewMode.Create)) {
+                            this.courseMetadata = this.getMasterCourseMetadata(user);              
+                            return of(null);
+                        }
+                        if (courseId && action) {
+                            return this.coursesService.getUserReviewCourse(courseId);
+                        }
                     }
                 }
                 throw new Error('Try to get course form data with no user.');
@@ -87,15 +98,9 @@ export class CreateCourseComponent implements OnInit {
             }),
 			map((course) => {
                 if (course !== null) {
-                    this.courseMetadata = {
-                        id: course.id,
-                        authorId: course.authorId,
-                        masterCourseId: course.masterId,
-                        status: course.status,
-                    }
+                    this.courseMetadata = this.getCourseMetadata(course);
                     return course;
                 }
-                this.courseMetadata = null;
                 return EMPTY_COURSE_FORM_DATA;
 			}),
             shareReplay(1),
@@ -150,56 +155,41 @@ export class CreateCourseComponent implements OnInit {
         );
 	}
 
-	public onPulish(courseData: CourseFormData): void {
-		console.log('111 on change form Data', courseData);
-		this.userService.user$
-			.pipe(
-				switchMap((user) => {
-					if (user && user.role === 'teacher') {
-						const course = {
-							...courseData,
-							modules: stringify(courseData.modules),
-							authorId: user.id,
-						};
-						const payload = NetworkHelper.createRequestPayload(
-							NetworkRequestKey.CreateCourse,
-							{
-								body: { course },
-							}
-						);
-						this.showLoading();
-						return this.dataService.send(payload);
-					} else {
-						return throwError(
-							() =>
-								new Error(
-									'User has no permission to create a course.'
-								)
-						);
-					}
-				})
-			)
-			.subscribe({
-				next: (res) => {
-					console.log('111 create course response', res);
-				},
-				error: (err) => console.error(err),
-			});
+	public onPulish(formData: CourseFormData): void {
+        formData = this.restoreCourseMetadata(formData, this.courseMetadata)
+        const courseData = convertCourseFormDataToCourse(formData)
+        const masterId = formData.metadata.masterCourseId || formData.metadata.id
+        this.adminCoursesService.publish(courseData, masterId)
+            .subscribe(res => {
+                console.log('111 course published', res);
+            })
 	}
 
 	public onSaveReview(formData: CourseFormData): void {
-        this.adminCoursesService.saveCourseReview(formData)
+        const id = this.courseMetadata.id;
+        const comments = stringify(formData.editorComments)
+        this.adminCoursesService.saveCourseReview(id, comments)
             .subscribe(() => {
                 console.log('course review updated');
             });
 	}
 
-	public onCreateReviewVersion(formData: CourseFormData): void {
-        this.coursesService.createCourseReviewVersion(formData, { isMaster: false })
+	public onCreateReviewVersion({ formData, isMaster }: { formData: CourseFormData, isMaster: boolean }): void {
+        if (isMaster) {
+            formData.editorComments = null;
+        }
+        this.restoreCourseMetadata(formData, this.courseMetadata);
+
+        const courseData = convertCourseFormDataToCourseReview(formData);
+        this.coursesService.createCourseReviewVersion(courseData, { isMaster })
             .subscribe((res) => {
                 console.log('course review new version created!', res);
             });
 	}
+
+    public goBack() {
+        this.location.back();
+    }
 
 	private showLoading() {
 		this.showLoading$.next(true);
@@ -207,4 +197,27 @@ export class CreateCourseComponent implements OnInit {
 			this.router.navigate(['/app/learn']);
 		}, 2000);
 	}
+
+    private restoreCourseMetadata(formData: CourseFormData, metadata: CourseFormMetadata): CourseFormData {
+        formData.metadata = metadata
+        return formData
+    }
+
+    private getMasterCourseMetadata(author: User): CourseFormMetadata {
+        return {
+            id: -1,
+            authorId: author.id,
+            masterCourseId: null,
+            status: CourseReviewStatus.Default
+        }
+    }
+
+    private getCourseMetadata(course: CourseReview): CourseFormMetadata {
+        return {
+            id: course.id,
+            authorId: course.authorId,
+            masterCourseId: course.masterId === null ? course.id : course.masterId, // if get master course, correct new course version masterId value
+            status: course.status
+        }
+    }
 }

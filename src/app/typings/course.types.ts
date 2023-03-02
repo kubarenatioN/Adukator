@@ -73,12 +73,11 @@ export interface CourseReview extends CourseCore {
     editorCommentsJson: string | null;
     masterId: number | null;
     createdAt?: string;
-    status: CourseReviewStatus;
+    status?: CourseReviewStatus;
 }
 
 // data for course on review
 export interface CourseFormData {
-    id: number;
     title: string;
 	description: string;
 	startTime: string;
@@ -96,10 +95,11 @@ export interface CourseFormMetadata {
     id: number;
     authorId: number;
     masterCourseId: number | null;
-    status: CourseReviewStatus;
+    status?: CourseReviewStatus;
 }
 
 export enum CourseReviewStatus {
+    Default = 'ReadyForReview',
     ReadyForReview = 'ReadyForReview',
     ReadyForUpdate = 'ReadyForUpdate',
     Reviewed = 'Reviewed'

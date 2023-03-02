@@ -69,7 +69,9 @@
         [ngTemplateOutletContext]="{ form, editorForm }"
     ></ng-container>
 
-    <button mat-raised-button color="primary" (click)="onSubmit('edit')">Отправить</button>
+    <div class="form-footer">
+        <ng-container [ngTemplateOutlet]="actionButtons" [ngTemplateOutletContext]="{ viewMode }"></ng-container>
+    </div>
 </ng-template>
 
 <ng-template 
@@ -191,7 +193,9 @@
         </div>
     </div>
 
-    <button mat-raised-button color="primary" (click)="onSubmit('review')">Сохранить</button>
+    <div class="form-footer">
+        <ng-container [ngTemplateOutlet]="actionButtons" [ngTemplateOutletContext]="{ viewMode }"></ng-container>
+    </div>
 </ng-template>
 
 <ng-template #categories let-form="form" let-editorForm="editorForm">
@@ -315,22 +319,33 @@
 	</mat-accordion>
 </ng-template>
 
-<ng-template #createFormFooter>
-    <button
-        mat-stroked-button
-        color="primary"
-        (click)="onSubmit('publish')"
-    >
-        Опубликовать
-    </button>
+
+<ng-template #actionButtons>
+    <ng-container [ngSwitch]="viewMode">
+        <ng-template 
+            *ngSwitchCase="viewModes.Review" 
+            [ngTemplateOutlet]="reviewCourseActionButtons"
+        ></ng-template>
+        <ng-template 
+            *ngSwitchCase="viewModes.Create" 
+            [ngTemplateOutlet]="createCourseActionButtons"
+        ></ng-template>
+        <ng-template 
+            *ngSwitchCase="viewModes.Edit" 
+            [ngTemplateOutlet]="editCourseActionButtons"
+        ></ng-template>
+    </ng-container>
 </ng-template>
 
-<ng-template #updateFormFooter>
-    <button
-        mat-stroked-button
-        color="primary"
-        (click)="onSubmit('update')"
-    >
-        Сохранить
-    </button>
+<ng-template #reviewCourseActionButtons>
+    <button mat-raised-button color="primary" (click)="onSubmit(viewModes.Review)">Сохранить</button>
+    <button mat-raised-button color="primary" (click)="onSubmit('publish')">Опубликовать</button>
+</ng-template>
+
+<ng-template #createCourseActionButtons>
+    <button mat-raised-button color="primary" (click)="onSubmit(viewModes.Create)">Создать</button>
+</ng-template>
+
+<ng-template #editCourseActionButtons>
+    <button mat-raised-button color="primary" (click)="onSubmit(viewModes.Edit)">Сохранить</button>
 </ng-template>

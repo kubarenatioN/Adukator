@@ -27,41 +27,6 @@ import {
 	CourseTopic,
 } from 'src/app/typings/course.types';
 
-export const testFormData = {
-	id: 123,
-	title: 'йцу',
-	description: 'фывфы',
-	startTime: '2023-02-07T21:00:00.000Z',
-	endTime: '2023-02-22T21:00:00.000Z',
-	category: 'ячячс',
-	subcategory: 'ываыва',
-	userCategory: 'zxc',
-	userSubcategory: 'xc',
-	advantages: 'qewe',
-	authorId: 3,
-	modules: [
-		{
-			title: 'фыв',
-			description: 'фыв',
-			topics: [
-				{
-					title: 'йцу',
-					description: 'фв\n\n',
-				},
-			],
-		},
-		{
-			title: 'Тест 123',
-			description: 'фыв',
-			topics: [
-				{
-					title: 'йцу 2',
-					description: 'qweqweqwe asd zxczxc',
-				},
-			],
-		},
-	],
-};
 
 @Component({
 	selector: 'app-course-form',
@@ -71,8 +36,7 @@ export const testFormData = {
 })
 export class CourseFormComponent implements OnInit {
 	private _mode: CourseFormViewMode = CourseFormViewMode.Create;
-	private course: CourseReview | null = null;
-	private courseMetadata: CourseFormMetadata | null = null;
+	private courseFormData: CourseFormData | null = null;
 
 	public courseForm: FormGroup;
 	public viewModes = CourseFormViewMode;
@@ -107,9 +71,8 @@ export class CourseFormComponent implements OnInit {
 	) {
         console.log('111 form data', data);
 		if (data !== EMPTY_COURSE_FORM_DATA) {
-			this.course = data;
             const courseFormData = convertCourseToCourseFormData(data);
-            this.courseMetadata = courseFormData.metadata;
+			this.courseFormData = courseFormData;
 			this.setCourseModel(courseFormData);
 		} else {
 			this.addStartModule();
@@ -118,7 +81,10 @@ export class CourseFormComponent implements OnInit {
 
 	@Output() public publish = new EventEmitter<CourseFormData>();
 	@Output() public saveReview = new EventEmitter<CourseFormData>();
-	@Output() public createReviewVersion = new EventEmitter<CourseFormData>();
+	@Output() public createReviewVersion = new EventEmitter<{
+        isMaster: boolean;
+        formData: CourseFormData;
+    }>();
 	@Output() public update = new EventEmitter<CourseFormData>();
 
 	constructor(private fb: FormBuilder, private cd: ChangeDetectorRef) {
@@ -182,29 +148,24 @@ export class CourseFormComponent implements OnInit {
 		}
 	}
 
-	public onSubmit(
-		action: 'review' | 'publish' | 'create' | 'edit' | 'update'
-	): void {
+	public onSubmit(action: CourseFormViewMode | 'publish'): void {
 		const { valid: isValid } = this.courseForm;
         const { value }: { value: CourseFormData } = this.courseForm;
 
-		if (this.courseMetadata !== null && action === 'create') {
+		if (this.courseFormData !== null && action === 'create') {
 			throw new Error('Cannot create not empty course.');
 		}
 
 		switch (action) {
 			case 'create': {
-				this.publishCourse(value);
-				break;
-			}
-			case 'publish': {
-				this.publishCourse(value);
+                if (isValid && this.courseFormData === null) {
+                    this.onCreateReviewVersion(value, true)
+				}
 				break;
 			}
 			case 'review': {
 				const { valid: isValid } = this.editorComments;
-				if (isValid && this.courseMetadata) {
-					value.id = this.courseMetadata.id;
+				if (isValid && this.courseFormData) {
 					this.saveReview.emit(value);
 				} else {
 					console.error('Invalid review form');
@@ -212,10 +173,18 @@ export class CourseFormComponent implements OnInit {
 				break;
 			}
 			case 'edit': {
-				if (isValid && this.courseMetadata) {
-                    value.metadata = this.courseMetadata;
-					this.createReviewVersion.emit(value);
+				if (isValid && this.courseFormData) {
+					this.onCreateReviewVersion(value, false)
 				}
+				break;
+			}
+			case 'publish': {
+				// TEMP: skip validation
+                // TODO: uncomment later
+                // if (isValid && this.courseFormData && this.viewMode === this.viewModes.Review) {
+				// 	this.publish.emit(value)
+				// }
+				this.publish.emit(value)
 				break;
 			}
 
@@ -223,6 +192,13 @@ export class CourseFormComponent implements OnInit {
 				break;
 		}
 	}
+
+    private onCreateReviewVersion(formData: CourseFormData, isMaster: boolean): void {
+        this.createReviewVersion.emit({
+            isMaster,
+            formData,
+        });
+    }
 
     public getTopicEditorCommentsForm(moduleIndex: number, topicIndex: number): FormGroup | null {
         if (this.editorModules === null) {
@@ -241,10 +217,6 @@ export class CourseFormComponent implements OnInit {
         }
         return this.editorModules.at(moduleIndex) as FormGroup;
     }
-
-	private publishCourse(data: CourseFormData) {
-		this.publish.emit(data);
-	}
 
 	private setCourseModel(course: CourseFormData): void {
 		const { modules, editorComments } = course;

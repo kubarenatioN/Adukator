@@ -73,7 +73,7 @@
                     *ngIf="canShowCourseVersionActionButton(courseReviewStatuses.ReadyForReview, course) | async"
                     [routerLink]="['/app/learn/create']" 
                     [queryParams]="{
-                        id: course.id,
+                        id: course.metadata.id,
                         action: 'review'
                     }" 
                     mat-stroked-button
@@ -90,7 +90,7 @@
                     *ngIf="canShowCourseVersionActionButton(courseReviewStatuses.ReadyForUpdate, course) | async"
                     [routerLink]="['/app/learn/create']" 
                     [queryParams]="{
-                        id: course.id,
+                        id: course.metadata.id,
                         action: 'edit'
                     }" 
                     mat-stroked-button

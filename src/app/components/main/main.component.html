@@ -8,11 +8,11 @@
     </div>
     <div class="profile">
         <ng-container *ngIf="user$ | async as user">
-            <div>
-                <span>
+            <div class="user-info">
+                <span class="user-name">
                     {{user.username}}
                 </span>
-                <img referrerpolicy="no-referrer" style="width: 50px; border-radius: 50%;" [src]="user.photo ?? ''" alt="User avatar photo">
+                <img class="user-photo" crossorigin="anonymous" referrerpolicy="no-referrer" [src]="user.photo ?? ''" alt="User avatar photo">
             </div>
             <a mat-raised-button color="primary" [routerLink]="['profile', user.id]" class="profile-btn">Профиль</a>
             <a mat-raised-button color="accent" *ngIf="isAdmin$ | async" [routerLink]="['admin']" class="profile-btn">Админ панель</a>

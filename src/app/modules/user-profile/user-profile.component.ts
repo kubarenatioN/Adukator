@@ -19,13 +19,13 @@ export class UserProfileComponent {
 
 	constructor(private userService: UserService, private router: Router, private coursesService: CoursesService) {
         this.user$ = this.userService.user$
-        const userCourses = this.coursesService.userCourses$
+        const userCourses$ = this.coursesService.userCourses$
 
-        this.userCourses$ = userCourses.pipe(
+        this.userCourses$ = userCourses$.pipe(
             map(courses => courses?.published ?? [])
         )
 
-        this.userCoursesOnReview$ = userCourses.pipe(
+        this.userCoursesOnReview$ = userCourses$.pipe(
             map(courses => {
                 if (courses?.review) {
                     return courses.review.filter(course => course.masterId === null)

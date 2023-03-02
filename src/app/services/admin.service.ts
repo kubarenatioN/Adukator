@@ -13,8 +13,4 @@ export class AdminService {
 	constructor(private adminCoursesService: AdminCoursesService) {
         this.reviewCoursesList$ = this.adminCoursesService.reviewCoursesList$;
     }
-
-    public publishCourse(id: number) {
-        this.adminCoursesService.publish(id)
-    }
 }

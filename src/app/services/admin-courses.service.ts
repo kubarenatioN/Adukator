@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of, shareReplay } from 'rxjs';
 import { convertCourseFormDataToCourseReview, stringify } from '../helpers/courses.helper';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { CourseEditorComments, CourseFormData, CourseReview } from '../typings/course.types';
+import { Course, CourseEditorComments, CourseFormData, CourseReview } from '../typings/course.types';
 import { DataService } from './data.service';
 
 @Injectable({
@@ -23,14 +23,16 @@ export class AdminCoursesService {
         return this.dataService.send<CourseReview>(payload)
     }
 
-    public publish(id: number) {
-        console.log('111 publish course with ID', id);
+    public publish(course: Course, masterId: number): Observable<unknown> {
+        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.PublishCourse, {
+            body: { course, masterId },
+        });
+        return this.dataService.send(payload);
     }
 
-    public saveCourseReview(courseForm: CourseFormData): Observable<unknown> {
-        const comments = stringify(courseForm.editorComments);
+    public saveCourseReview(id: number, comments: string): Observable<unknown> {
         const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.UpdateCourseReview, {
-            body: { id: courseForm.id, comments }
+            body: { id, comments }
         })
         return this.dataService.send(payload);
     }

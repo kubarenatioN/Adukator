@@ -1,8 +1,14 @@
 <ng-container *ngIf="user$ | async as user">
     <p>Role: {{user?.role}}</p>
+
     <ng-container *ngIf="user.role === 'teacher'">
         <div class="user-courses">
             <h2>Мои курсы</h2>
+ 
+            <a [routerLink]="['/app/learn/create']" mat-raised-button color="primary">
+                Создать курс
+            </a>
+ 
             <div class="user-courses-container">
                 <ng-container *ngIf="userCourses$ | async as courses; else loader">
                     <h3>Опубликованные</h3>
@@ -13,6 +19,7 @@
                     </div>
                 </ng-container>
             </div>
+ 
             <div class="user-courses-container">
                 <ng-container *ngIf="userCoursesOnReview$ | async as coursesOnReview; else loader">
                     <h3>На рассмотрении</h3>

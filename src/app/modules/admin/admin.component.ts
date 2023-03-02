@@ -17,8 +17,4 @@ export class AdminComponent implements OnInit {
 	ngOnInit(): void {
 		this.reviewCoursesList$ = this.adminService.reviewCoursesList$;
 	}
-
-    public publishCourse(id: number) {
-        this.adminService.publishCourse(id)
-    }
 }

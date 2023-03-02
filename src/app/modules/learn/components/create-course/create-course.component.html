@@ -1,4 +1,4 @@
-<a [routerLink]="['../']" mat-stroked-button color="primary">Назад</a>
+<button mat-stroked-button color="primary" (click)="goBack()">Назад</button>
 
 <ng-container *ngIf="formData$ | async as formData; else loading">
     <ng-container *ngIf="viewMode$ | async as viewMode">
