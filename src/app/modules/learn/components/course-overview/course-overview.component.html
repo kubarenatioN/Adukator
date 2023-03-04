@@ -1,1 +1,54 @@
-<p>course-overview works!</p>
+<ng-container *ngIf="course$ | async as course; else loader">
+    <div class="course-banner-wrapper" style="background-image: url('http://localhost:8080/static/images/course-bg-1.jpg');">
+        <app-back-btn class="back-btn">
+            Назад
+        </app-back-btn>
+    </div>
+    <div class="course-banner-content">
+        <div class="info">
+            <h1 class="title">{{ course.title }}</h1>
+            <p class="descr">{{ course.description }}</p>
+        </div>
+    </div>
+    
+    <div class="course-content">
+    
+        <div class="info-items">
+    
+            <div class="info-item">
+                <div>
+                    <span>Начало</span>
+                    <span>{{course.startDate | date : 'dd.MM.yyyy'}}</span>
+                </div>
+                <div>
+                    <span>Окончание</span>
+                    <span>{{course.endDate | date : 'dd.MM.yyyy'}}</span>
+                </div>
+                <div>
+                    <span>Длительность</span>
+                    <span>{{course | timeDuration}}</span>
+                </div>
+            </div>
+    
+            <div class="info-item">
+                <span>Категория</span>
+                <p>{{course.categoryLabel}}</p>
+            </div>
+    
+            <div class="info-item">
+                <span>Тип обучения</span>
+                <p>Самостоятельное</p>
+            </div>
+    
+        </div>
+    
+    </div>    
+</ng-container>
+
+<ng-template #loader>
+    Loading course...
+</ng-template>
+
+<ng-template #noCourse>
+    No such course
+</ng-template>

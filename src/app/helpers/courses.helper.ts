@@ -33,7 +33,7 @@ export const getEmptyEditorComments = () => {
 }
 
 export const convertCourseToCourseFormData = (course: CourseReview): CourseFormData => {
-    const { id, authorId, masterId, title, description, startTime, endTime, category, subcategory, advantages, modulesJson, editorCommentsJson, status } = course
+    const { id, authorId, masterId, title, description, startDate, endDate, category, categoryLabel, subcategory, advantages, modulesJson, editorCommentsJson, status } = course
     const metadata: CourseFormMetadata = {
         id,
         authorId,
@@ -43,9 +43,10 @@ export const convertCourseToCourseFormData = (course: CourseReview): CourseFormD
     return {
         title,
         description,
-        startTime,
-        endTime,
+        startDate,
+        endDate,
         category,
+        categoryLabel,
         subcategory,
         advantages,
         modules: parseModules(modulesJson),
@@ -55,7 +56,7 @@ export const convertCourseToCourseFormData = (course: CourseReview): CourseFormD
 }
 
 export const convertCourseFormDataToCourseReview = (formData: CourseFormData): CourseReview => {
-    const { title, description, startTime, endTime, category, subcategory, advantages, modules, editorComments, metadata } = formData
+    const { title, description, startDate, endDate, category, subcategory, advantages, modules, editorComments, metadata } = formData
     const { id, masterCourseId: masterId, authorId, status } = metadata;
     return {
         id,
@@ -63,8 +64,8 @@ export const convertCourseFormDataToCourseReview = (formData: CourseFormData): C
         authorId,
         title,
         description,
-        startTime,
-        endTime,
+        startDate,
+        endDate,
         category,
         subcategory,
         advantages,
@@ -75,18 +76,22 @@ export const convertCourseFormDataToCourseReview = (formData: CourseFormData): C
 }
 
 export const convertCourseFormDataToCourse = (formData: CourseFormData): Course => {
-    const { title, description, startTime, endTime, category, subcategory, advantages, modules, metadata } = formData
+    const { title, description, startDate, endDate, category, subcategory, advantages, modules, metadata } = formData
     const { id, authorId } = metadata;
     return {
         id,
         title,
         description,
-        startTime,
-        endTime,
+        startDate,
+        endDate,
         category,
         subcategory,
         advantages,
         modulesJson: stringify(modules),
         authorId,
     }
+}
+
+export const getCategory = (categories: {key: string; name: string}[], key: string): string | null  => {
+    return categories.find(c => c.key === key)?.name ?? null 
 }

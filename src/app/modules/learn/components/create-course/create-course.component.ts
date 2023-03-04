@@ -181,6 +181,7 @@ export class CreateCourseComponent implements OnInit {
         this.restoreCourseMetadata(formData, this.courseMetadata);
 
         const courseData = convertCourseFormDataToCourseReview(formData);
+        console.log(courseData);
         this.coursesService.createCourseReviewVersion(courseData, { isMaster })
             .subscribe((res) => {
                 console.log('course review new version created!', res);

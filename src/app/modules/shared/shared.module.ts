@@ -11,10 +11,13 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatSelectModule} from '@angular/material/select';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { BackBtnComponent } from 'src/app/components/back-btn/back-btn.component';
+import { DatePipe } from 'src/app/pipes/date.pipe';
+import { TimeDurationPipe } from 'src/app/pipes/time-duration.pipe';
 // import {MatIconModule} from '@angular/material/icon';
 
 @NgModule({
-	declarations: [],
+	declarations: [BackBtnComponent, DatePipe, TimeDurationPipe],
 	imports: [
 		CommonModule,
 		MatButtonModule,
@@ -39,7 +42,10 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
         MatSelectModule,
         MatButtonToggleModule,
         // MatIconModule,
+        BackBtnComponent,
 		MatFormFieldModule,
+        DatePipe,
+        TimeDurationPipe,
 	],
 })
 export class SharedModule {}

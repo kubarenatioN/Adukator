@@ -1,4 +1,4 @@
-import { HttpHeaders, HttpParams } from "@angular/common/http";
+import { HttpContext, HttpContextToken, HttpHeaders, HttpParams } from "@angular/common/http";
 import { DATA_ENDPOINTS } from "../constants/network.constants";
 import { DataRequestPayload } from "../services/data.service";
 
@@ -8,17 +8,20 @@ export enum NetworkRequestKey {
     GetUserByToken = 'GetUserByToken',
     
     GetAllCourses = 'GetAllCourses',
+    GetCourseById = 'GetCourseById',
     GetCoursesByUser = 'GetCoursesByUser',
     GetReviewCourseHistory = 'GetReviewCourseHistory',
     CreateCourse = 'CreateCourse',
-    PublishCourse = 'PublishCourse',
 
     GetAllAdminReviewCourses = 'GetAllAdminReviewCourses',
     GetAdminReviewCourseById = 'GetAdminReviewCourseById',
     UpdateCourseReview = 'UpdateCourseReview',
+    PublishCourse = 'PublishCourse',
     
     UpdateCourse = 'UpdateCourse',
 }
+
+export const REQUEST_TYPE = new HttpContextToken<string>(() => '');
 
 interface RequestCoreMetadata {
     method: string,
@@ -69,7 +72,12 @@ export class NetworkHelper {
             method: 'POST',
             url: `${DATA_ENDPOINTS.auth.user}`,
         },
+
         [NetworkRequestKey.GetAllCourses]: {
+            method: 'GET',
+            url: `${DATA_ENDPOINTS.api.courses}`,
+        },
+        [NetworkRequestKey.GetCourseById]: {
             method: 'GET',
             url: `${DATA_ENDPOINTS.api.courses}`,
         },
@@ -95,12 +103,15 @@ export class NetworkHelper {
         const basePayload = this.requestsMetadataMap[key];
         const { method } = basePayload;
         const headers = extendedPayload?.headers;
+        const context = new HttpContext().set(REQUEST_TYPE, key);
+
+        const request: DataRequestPayload = {
+            ...basePayload,
+            headers,
+            context,
+        }
         if (method === 'POST' || method === 'PUT') {
-            return {
-                ...basePayload,
-                body: extendedPayload?.body,
-                headers,
-            }
+            request.body = extendedPayload?.body;
         }
         else if (method === 'GET') {
             let searchParams = new HttpParams()
@@ -112,15 +123,13 @@ export class NetworkHelper {
             if (urlId) {
                 url = `${url}/${String(urlId)}`
             }
-            return {
-                ...basePayload,
-                url,
-                params: searchParams,
-                headers
-            }
+            request.params = searchParams;
+            request.url = url
         }
         else {
             throw new Error('Unknown request method.')
         }
+
+        return request;
     }
 }

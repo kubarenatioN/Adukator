@@ -1,4 +1,6 @@
-<button mat-stroked-button color="primary" (click)="goBack()">Назад</button>
+<app-back-btn class="back-btn">
+    Назад
+</app-back-btn>
 <div *ngIf="courseHistory$ | async as reviewItems" class="review-content">
 
     <app-course-review-diff [courseVersions]="reviewItems"></app-course-review-diff>

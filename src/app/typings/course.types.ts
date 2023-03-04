@@ -52,9 +52,10 @@ interface CourseCore {
     id: number;
     title: string;
 	description: string;
-	startTime: string;
-	endTime: string;
+	startDate: string;
+	endDate: string;
 	category: string;
+	categoryLabel?: string;
 	subcategory: string;
 	// userCategory?: string;
 	// userSubcategory?: string;
@@ -80,9 +81,10 @@ export interface CourseReview extends CourseCore {
 export interface CourseFormData {
     title: string;
 	description: string;
-	startTime: string;
-	endTime: string;
+	startDate: string;
+	endDate: string;
 	category: string;
+	categoryLabel?: string;
 	subcategory: string;
     advantages?: string;
 	modules: CourseModule[];
@@ -111,7 +113,7 @@ export const CourseReviewStatusMap = {
     [CourseReviewStatus.Reviewed]: 'Проверено'
 }
 
-export interface CoursesResponse {
+export interface UserCourses {
     published?: Course[]
     review?: CourseReview[]
     // reviewChildren?: Course[]

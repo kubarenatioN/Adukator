@@ -12,7 +12,7 @@ import { UserService } from '../services/user.service';
 @Injectable({
 	providedIn: 'root',
 })
-export class TokenInterceptorService implements HttpInterceptor {
+export class TokenInterceptor implements HttpInterceptor {
 	constructor(private userService: UserService) {}
 	intercept(
 		req: HttpRequest<any>,
@@ -23,7 +23,6 @@ export class TokenInterceptorService implements HttpInterceptor {
             const clone = req.clone({
                 setHeaders: {
                     [NetworkHelper.authorizationHeader]: token,
-                    'X-Test': '123'
                 }
             });
             return next.handle(clone);

@@ -1,4 +1,6 @@
-<button mat-stroked-button color="primary" (click)="goBack()">Назад</button>
+<app-back-btn class="back-btn">
+    Назад
+</app-back-btn>
 
 <ng-container *ngIf="formData$ | async as formData; else loading">
     <ng-container *ngIf="viewMode$ | async as viewMode">

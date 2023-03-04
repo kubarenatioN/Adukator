@@ -35,12 +35,13 @@
 .main {
     display: flex;
     flex-grow: 1;
-    min-height: 600px;
+    min-height: 200px;
 }
 
 .container {
     overflow-y: auto;
     width: 100%;
+    position: relative;
 }
 
 .content {

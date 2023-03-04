@@ -10,13 +10,16 @@ import {
 } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { map, Observable, of, tap } from 'rxjs';
 import {
 	EmptyCourseFormDataType,
 	EMPTY_COURSE_FORM_DATA,
 	isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
 import { moduleTopicsCountValidator } from 'src/app/helpers/course-validation';
-import { convertCourseToCourseFormData, getEmptyEditorComments } from 'src/app/helpers/courses.helper';
+import { convertCourseToCourseFormData, getCategory, getEmptyEditorComments } from 'src/app/helpers/courses.helper';
+import { CourseFormDataMock } from 'src/app/mocks/course-form-data';
+import { ConfigService } from 'src/app/services/config.service';
 import {
 	CourseEditorComments,
 	CourseFormData,
@@ -37,6 +40,8 @@ import {
 export class CourseFormComponent implements OnInit {
 	private _mode: CourseFormViewMode = CourseFormViewMode.Create;
 	private courseFormData: CourseFormData | null = null;
+
+    public categories$ = this.configService.loadCourseCategories();
 
 	public courseForm: FormGroup;
 	public viewModes = CourseFormViewMode;
@@ -61,6 +66,10 @@ export class CourseFormComponent implements OnInit {
 	public get viewMode(): CourseFormViewMode {
 		return this._mode;
 	}
+
+    public get category(): string {
+        return this.courseFormData?.categoryLabel || ''
+    }
 
 	@Input() public set mode(value: CourseFormViewMode) {
 		this._mode = value;
@@ -87,17 +96,17 @@ export class CourseFormComponent implements OnInit {
     }>();
 	@Output() public update = new EventEmitter<CourseFormData>();
 
-	constructor(private fb: FormBuilder, private cd: ChangeDetectorRef) {
+	constructor(private fb: FormBuilder, private configService: ConfigService) {
 		this.courseForm = this.fb.group({
-			title: ['', Validators.required],
-			description: ['', Validators.required],
+			title: [CourseFormDataMock.title, Validators.required],
+			description: [CourseFormDataMock.descr, Validators.required],
 			startDate: [null, Validators.required],
 			endDate: [null, Validators.required],
 			category: ['', Validators.required],
-			subcategory: ['', Validators.required],
-			userCategory: [null],
-			userSubcategory: [null],
-			advantages: [null],
+			// subcategory: ['', Validators.required],
+			// userCategory: [null],
+			// userSubcategory: [null],
+			// advantages: [null],
 			modules: this.fb.array([]),
 			editorComments: this.fb.group({
 				...getEmptyEditorComments(),
@@ -115,12 +124,12 @@ export class CourseFormComponent implements OnInit {
 
 	public addStartModule(): void {
 		const moduleControl = this.fb.group({
-			title: ['', Validators.required],
-			description: ['', Validators.required],
+			title: ['Module Title 1', Validators.required],
+			description: ['Module descr...', Validators.required],
 			topics: this.fb.array([
 				this.fb.group({
-					title: ['', Validators.required],
-					description: '',
+					title: ['Topic Title 1', Validators.required],
+					description: 'Topic descr...',
 				}),
 			]),
 		});
@@ -160,7 +169,9 @@ export class CourseFormComponent implements OnInit {
 			case 'create': {
                 if (isValid && this.courseFormData === null) {
                     this.onCreateReviewVersion(value, true)
-				}
+				} else {
+                    console.warn('Invalid form data.');
+                }
 				break;
 			}
 			case 'review': {
@@ -227,13 +238,13 @@ export class CourseFormComponent implements OnInit {
 		this.courseForm.patchValue({
 			title: course.title,
 			description: course.description,
-			startDate: course.startTime,
-			endDate: course.endTime,
+			startDate: course.startDate,
+			endDate: course.endDate,
 			category: course.category,
-			subcategory: course.subcategory,
+			// subcategory: course.subcategory,
 			// userCategory: course.userCategory,
 			// userSubcategory: course.userSubcategory,
-			advantages: course.advantages,
+			// advantages: course.advantages,
 			editorComments: editorComments ?? getEmptyEditorComments(),
 		});
 

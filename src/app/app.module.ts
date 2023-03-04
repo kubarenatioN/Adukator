@@ -8,7 +8,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MainComponent } from './components/main/main.component';
 import { SharedModule } from './modules/shared/shared.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { TokenInterceptorService } from './interceptors/token-interceptor.service';
+import { TokenInterceptor } from './interceptors/token-interceptor.service';
+import { BackBtnComponent } from './components/back-btn/back-btn.component';
+import { DatePipe } from './pipes/date.pipe';
+import { TimeDurationPipe } from './pipes/time-duration.pipe';
+import { ResponseTransformationInterceptor } from './interceptors/response-transformation-interceptor.service';
 
 @NgModule({
 	declarations: [AppComponent, NavComponent, MainComponent],
@@ -19,11 +23,18 @@ import { TokenInterceptorService } from './interceptors/token-interceptor.servic
 		HttpClientModule,
 		SharedModule,
 	],
-	providers: [{
-        provide: HTTP_INTERCEPTORS,
-        useClass: TokenInterceptorService,
-        multi: true,
-    }],
+	providers: [
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: TokenInterceptor,
+			multi: true,
+		},
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: ResponseTransformationInterceptor,
+			multi: true,
+		},
+	],
 	bootstrap: [AppComponent],
 })
 export class AppModule {}

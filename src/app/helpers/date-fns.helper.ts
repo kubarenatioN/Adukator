@@ -1,5 +1,6 @@
 import { format } from 'date-fns'
 import { enGB, eo, ru } from 'date-fns/locale'
+import differenceInMilliseconds from 'date-fns/differenceInMilliseconds'
 
 const locales: {
     [key: string]: Locale
@@ -16,4 +17,11 @@ export const formatDate = (date: number | Date | string, formatStr = 'Pp') => {
     return format(value, formatStr, {
         locale: locales[(window as any).__localeId__]
     })
+}
+
+export const getDurationInMilliseconds = (from: number | Date | string, to: number | Date | string): number => {
+    from = typeof from === 'string' ? new Date(from) : from;
+    to = typeof to === 'string' ? new Date(to) : to;
+
+    return differenceInMilliseconds(to, from);
 }

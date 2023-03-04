@@ -74,130 +74,6 @@
     </div>
 </ng-template>
 
-<ng-template 
-    #reviewForm 
-    let-form="form" 
-    let-editorForm="form.controls.editorComments"
-    let-editorFormModules="form.controls.editorComments.controls.modules">
-
-    <app-form-element-review-wrapper 
-        type="review"
-        [form]="editorForm" 
-        control="title">
-        <div class="property">
-            <span>Название курса</span>
-            <h2>{{form.value.title}}</h2>
-        </div>
-    </app-form-element-review-wrapper>
-
-    <app-form-element-review-wrapper
-        type="review"
-        [form]="editorForm" 
-        control="description">
-        <div class="property">
-            <span>Описание курса</span>
-            <p>{{form.value.description}}</p>
-        </div>
-    </app-form-element-review-wrapper>
-
-    <app-form-element-review-wrapper 
-        type="review"
-        [form]="editorForm" 
-        control="categories"
-        reviewType="checkbox">
-        <div class="categories">
-            <div class="property _category-row">
-                <span>Категория</span>
-                <span>{{form.value.category}}</span>
-            </div>
-            <div class="property _category-row">
-                <span>Подкатегория</span>
-                <span>{{form.value.subcategory}}</span>
-            </div>
-        </div>
-    </app-form-element-review-wrapper>
-
-    <app-form-element-review-wrapper 
-        type="review"
-        [form]="editorForm" 
-        control="dates"
-        reviewType="dates">
-        <div class="dates">
-            <div class="property">
-                <span>Начало</span>
-                <span>{{form.value.startTime}}</span>
-            </div>
-            <div class="property">
-                <span>Окончание</span>
-                <span>{{form.value.endTime}}</span>
-            </div>
-            <div class="property">
-                <span>Длительность</span>
-                <span>8 недель</span>
-            </div>
-        </div>
-    </app-form-element-review-wrapper>
-
-    <h2>Модули</h2>
-    <div class="modules">
-        <div 
-            *ngFor="let module of form.value.modules; let i = index"
-            class="admin-module">
-            <h3>Модуль {{i + 1}}.</h3>
-            <app-form-element-review-wrapper
-                type="review"
-                [form]="getModuleEditorCommentsForm(i)"
-                control="title">
-                <div class="property">
-                    <span>Название</span>
-                    <p class="">{{module.title}}</p>
-                </div>
-            </app-form-element-review-wrapper>
-
-            <app-form-element-review-wrapper
-                type="review"
-                [form]="getModuleEditorCommentsForm(i)"
-                control="description">
-                <div class="property">
-                    <span>Описание</span>
-                    <p class="">{{module.description}}</p>
-                </div>
-            </app-form-element-review-wrapper>
-            
-            <div class="module-topics">
-                <div *ngFor="let topic of module.topics; let j = index" class="admin-module-topic">
-                    <h4>Тема {{j + 1}}.</h4>
-
-                    <app-form-element-review-wrapper
-                        type="review"
-                        [form]="getTopicEditorCommentsForm(i, j)"
-                        control="title">
-                        <div class="property">
-                            <span>Название</span>
-                            <p class="">{{topic.title}}</p>
-                        </div>
-                    </app-form-element-review-wrapper>
-                    
-                    <app-form-element-review-wrapper
-                        type="review"
-                        [form]="editorFormModules.controls[i].controls.topics.controls[j]"
-                        control="description">
-                        <div class="property">
-                            <span>Описание</span>
-                            <p class="">{{topic.description}}</p>
-                        </div>
-                    </app-form-element-review-wrapper>
-                    
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-footer">
-        <ng-container [ngTemplateOutlet]="actionButtons" [ngTemplateOutletContext]="{ viewMode }"></ng-container>
-    </div>
-</ng-template>
-
 <ng-template #categories let-form="form" let-editorForm="editorForm">
     <app-form-element-review-wrapper
         type="edit"
@@ -207,22 +83,14 @@
             <div class="category-row">
                 <mat-form-field appearance="fill">
                     <mat-label>Категория</mat-label>
-                    <input
-                        type="text"
-                        aria-label="Number"
-                        matInput
-                        formControlName="category"
-                        [matAutocomplete]="categoriesAutocomplete"
-                    />
-                    <mat-autocomplete #categoriesAutocomplete="matAutocomplete">
-                        <mat-option value="test1">Test 1</mat-option>
-                        <mat-option value="test2">Test 2</mat-option>
-                        <mat-option value="test3">Test 3</mat-option>
-                        <mat-option value="test4">Test 4</mat-option>
-                    </mat-autocomplete>
+                    <mat-select formControlName="category">
+                        <mat-option *ngFor="let category of categories$ | async" [value]="category.key">
+                            {{category.name}}
+                        </mat-option>
+                    </mat-select>
                 </mat-form-field>
 
-                <mat-checkbox
+                <!-- <mat-checkbox
                     #customCategory
                     (change)="onChangeCustomCategory($event, 'userCategory')"
                     >Свой вариант</mat-checkbox
@@ -231,10 +99,10 @@
                 <mat-form-field *ngIf="customCategory.checked" appearance="fill">
                     <mat-label>Своя категория</mat-label>
                     <input matInput formControlName="userCategory" />
-                </mat-form-field>
+                </mat-form-field> -->
             </div>
 
-            <div class="category-row">
+            <!-- <div class="category-row">
                 <mat-form-field appearance="fill">
                     <mat-label>Подкатегория</mat-label>
                     <input matInput formControlName="subcategory" />
@@ -250,7 +118,7 @@
                     <mat-label>Своя подкатегория</mat-label>
                     <input matInput formControlName="userSubcategory" />
                 </mat-form-field>
-            </div>
+            </div> -->
         </div>
     </app-form-element-review-wrapper>
 </ng-template>
@@ -319,6 +187,129 @@
 	</mat-accordion>
 </ng-template>
 
+<ng-template 
+    #reviewForm 
+    let-form="form" 
+    let-editorForm="form.controls.editorComments"
+    let-editorFormModules="form.controls.editorComments.controls.modules">
+
+    <app-form-element-review-wrapper 
+        type="review"
+        [form]="editorForm" 
+        control="title">
+        <div class="property">
+            <span>Название курса</span>
+            <h2>{{form.value.title}}</h2>
+        </div>
+    </app-form-element-review-wrapper>
+
+    <app-form-element-review-wrapper
+        type="review"
+        [form]="editorForm" 
+        control="description">
+        <div class="property">
+            <span>Описание курса</span>
+            <p>{{form.value.description}}</p>
+        </div>
+    </app-form-element-review-wrapper>
+
+    <app-form-element-review-wrapper 
+        type="review"
+        [form]="editorForm" 
+        control="categories"
+        reviewType="checkbox">
+        <div class="categories">
+            <div class="property _category-row">
+                <span>Категория</span>
+                <span>{{category}}</span>
+            </div>
+            <!-- <div class="property _category-row">
+                <span>Подкатегория</span>
+                <span>{{form.value.subcategory}}</span>
+            </div> -->
+        </div>
+    </app-form-element-review-wrapper>
+
+    <app-form-element-review-wrapper 
+        type="review"
+        [form]="editorForm" 
+        control="dates"
+        reviewType="dates">
+        <div class="dates">
+            <div class="property">
+                <span>Начало</span>
+                <span>{{form.value.startDate}}</span>
+            </div>
+            <div class="property">
+                <span>Окончание</span>
+                <span>{{form.value.endDate}}</span>
+            </div>
+            <div class="property">
+                <span>Длительность</span>
+                <span>8 недель</span>
+            </div>
+        </div>
+    </app-form-element-review-wrapper>
+
+    <h2>Модули</h2>
+    <div class="modules">
+        <div 
+            *ngFor="let module of form.value.modules; let i = index"
+            class="admin-module">
+            <h3>Модуль {{i + 1}}.</h3>
+            <app-form-element-review-wrapper
+                type="review"
+                [form]="getModuleEditorCommentsForm(i)"
+                control="title">
+                <div class="property">
+                    <span>Название</span>
+                    <p class="">{{module.title}}</p>
+                </div>
+            </app-form-element-review-wrapper>
+
+            <app-form-element-review-wrapper
+                type="review"
+                [form]="getModuleEditorCommentsForm(i)"
+                control="description">
+                <div class="property">
+                    <span>Описание</span>
+                    <p class="">{{module.description}}</p>
+                </div>
+            </app-form-element-review-wrapper>
+            
+            <div class="module-topics">
+                <div *ngFor="let topic of module.topics; let j = index" class="admin-module-topic">
+                    <h4>Тема {{j + 1}}.</h4>
+
+                    <app-form-element-review-wrapper
+                        type="review"
+                        [form]="getTopicEditorCommentsForm(i, j)"
+                        control="title">
+                        <div class="property">
+                            <span>Название</span>
+                            <p class="">{{topic.title}}</p>
+                        </div>
+                    </app-form-element-review-wrapper>
+                    
+                    <app-form-element-review-wrapper
+                        type="review"
+                        [form]="editorFormModules.controls[i].controls.topics.controls[j]"
+                        control="description">
+                        <div class="property">
+                            <span>Описание</span>
+                            <p class="">{{topic.description}}</p>
+                        </div>
+                    </app-form-element-review-wrapper>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-footer">
+        <ng-container [ngTemplateOutlet]="actionButtons" [ngTemplateOutletContext]="{ viewMode }"></ng-container>
+    </div>
+</ng-template>
 
 <ng-template #actionButtons>
     <ng-container [ngSwitch]="viewMode">
