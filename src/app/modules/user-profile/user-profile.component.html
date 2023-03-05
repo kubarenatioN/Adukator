@@ -1,40 +1,96 @@
 <ng-container *ngIf="user$ | async as user">
     <p>Role: {{user?.role}}</p>
 
-    <ng-container *ngIf="user.role === 'teacher'">
-        <div class="user-courses">
-            <h2>Мои курсы</h2>
- 
-            <a [routerLink]="['/app/learn/create']" mat-raised-button color="primary">
-                Создать курс
-            </a>
- 
-            <div class="user-courses-container">
-                <ng-container *ngIf="userCourses$ | async as courses; else loader">
-                    <h3>Опубликованные</h3>
-                    <div class="user-courses-list">
-                        <div *ngFor="let course of courses">
-                            <a [routerLink]="['/app/learn/course/overview', course.id]">Курс {{course.id}} {{course.title}}</a>
-                        </div>
-                    </div>
-                </ng-container>
-            </div>
- 
-            <div class="user-courses-container">
-                <ng-container *ngIf="userCoursesOnReview$ | async as coursesOnReview; else loader">
-                    <h3>На рассмотрении</h3>
-                    <div class="user-courses-list">
-                        <div *ngFor="let course of coursesOnReview">
-                            <a [routerLink]="['/app/learn/course/review', course.id]">Курс {{course.id}} {{course.title}}</a>
-                        </div>
-                    </div>
-                </ng-container>
-            </div>
-        </div>
+    <ng-container [ngSwitch]="user.role">
+        <ng-container 
+            *ngSwitchCase="'student'"
+            [ngTemplateOutlet]="studentPermissionProfile">
+        </ng-container>
+        <ng-container 
+            *ngSwitchCase="'teacher'"
+            [ngTemplateOutlet]="teacherPermissionProfile">
+        </ng-container>
     </ng-container>
 </ng-container>
 <button mat-raised-button color="primary" (click)="logOut()">Выйти</button>
 
+<ng-template #studentPermissionProfile>
+
+    <div class="courses-section" 
+        *ngIf="studentCourses$ | async as courses; else loader">
+        <h2>Мои курсы</h2>
+        <div 
+            class="courses-superlist" 
+            *ngIf="courses.length > 0; else noCourses"
+            [ngTemplateOutlet]="coursesSection">
+        </div>
+    </div>
+
+    <h2>Еще какой-нибудь раздел в профиле студента</h2>
+
+</ng-template>
+
+<ng-template #teacherPermissionProfile>
+
+    <div class="courses-section" 
+        *ngIf="studentCourses$ | async as courses; else loader">
+        <h2>Мои курсы</h2>
+        <div 
+            class="courses-superlist" 
+            *ngIf="courses.length > 0; else noCourses"
+            [ngTemplateOutlet]="coursesSection">
+        </div>
+    </div>
+
+    <div class="students-section">
+        <h2>Еще какой-нибудь раздел в профиле преподавателя</h2>
+        <p>Например, информация о студентах, учащихся у этого преподавателя</p>
+    </div>
+
+</ng-template>
+
+<ng-template #coursesSection>
+    <div class="courses-list" *ngIf="pendingCourses$ | async as pendingCourses; noCourses">
+        <h3 class="courses-list-title">На рассмотрении</h3>
+        <a class="course-item" *ngFor="let course of pendingCourses" [routerLink]="['/app/learn/course/overview', course.id]">
+            <p>
+                Курс {{course.id}} {{course.title}}
+            </p>
+            <span class="course-status">
+                {{course.status}}
+            </span>
+        </a>
+    </div>
+    
+    <div class="courses-list" *ngIf="approvedCourses$ | async as approvedCourses; noCourses">
+        <h3 class="courses-list-title">Активные</h3>
+        <a class="course-item" *ngFor="let course of approvedCourses" [routerLink]="['/app/learn/course/training', course.id]">
+            <p>
+                Курс {{course.id}} {{course.title}}
+            </p>
+            <span class="course-status">
+                {{course.status}}
+            </span>
+        </a>
+    </div>
+    
+    <div class="courses-list" *ngIf="rejectedCourses$ | async as rejectedCourses; noCourses">
+        <h3 class="courses-list-title">Отклоненные</h3>
+        <a class="course-item" *ngFor="let course of rejectedCourses" [routerLink]="['/app/learn/course/overview', course.id]">
+            <p>
+                Курс {{course.id}} {{course.title}}
+            </p>
+            <span class="course-status">
+                {{course.status}}
+            </span>
+        </a>
+    </div>
+</ng-template>
+
 <ng-template #loader>
     Loading...
+</ng-template>
+
+<ng-template #noCourses>
+    Вы пока не записаны ни на один курс.
 </ng-template>

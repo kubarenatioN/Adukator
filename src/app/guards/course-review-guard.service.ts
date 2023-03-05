@@ -33,7 +33,7 @@ export class CourseReviewGuardService implements CanActivate {
     }
 
     private isTeacherAuthor(courseId: number) {
-        return this.coursesService.userCourses$.pipe(
+        return this.coursesService.teacherUserCourses$.pipe(
             withLatestFrom(this.userService.user$),
             map(([courses, user]) => {
                 const courseForReview = courses?.review?.find(course => course.id === courseId)

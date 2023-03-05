@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { catchError, map, Observable, of, shareReplay, Subscription, switchMap, throwError, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, catchError, map, merge, Observable, of, shareReplay, Subject, Subscription, switchMap, throwError, withLatestFrom } from 'rxjs';
 import { parseModules } from 'src/app/helpers/courses.helper';
 import { ConfigService } from 'src/app/services/config.service';
 import { CoursesService } from 'src/app/services/courses.service';
@@ -15,12 +15,15 @@ import { Course, CourseModule } from 'src/app/typings/course.types';
 })
 export class CourseOverviewComponent {
     private enrollmentSub?: Subscription
+    private courseEnrollTrigger$ = new BehaviorSubject<void>(undefined);
+
     public course$: Observable<Course | null>;
 
     public modules$: Observable<CourseModule[]>
 
     public canEnroll$: Observable<boolean>;
-    public isEnrolled$: Observable<boolean | null>;
+    public isEnrolled$: Observable<boolean>;
+    public enrollStatus$: Observable<string | null>;
     public isUserOwner$: Observable<boolean>;
     
 	constructor(private activatedRoute: ActivatedRoute, private coursesService: CoursesService, private configService: ConfigService, private userService: UserService) {
@@ -55,29 +58,34 @@ export class CourseOverviewComponent {
             })
         )
 
-        this.isEnrolled$ = this.course$.pipe(
-            switchMap(course => {
-                if (course) {
-                    return this.coursesService.makeCourseEnrollAction(course.id, 'lookup')
-                }
-                return of(null);
-            }),
-            withLatestFrom(this.userService.user$),
-            map(([result, user]) => {
-                if (result === null) {
-                    return false;
-                }
-                const { data, action } = result
-                if (
-                    action === 'lookup' &&
-                    data.length > 0 && 
-                    data.findIndex(record => record.userId === user?.id) !== -1
-                ) {
-                    return true;
-                }
-                return false;
-            }),
-            shareReplay(1),
+        const courseEnrollmentStatus$ = this.courseEnrollTrigger$
+            .asObservable()
+            .pipe(
+                switchMap(() => this.course$),
+                switchMap(course => {
+                    if (course) {
+                        return this.coursesService.makeCourseEnrollAction(course.id, 'lookup')
+                    }
+                    return of(null);
+                }),
+                withLatestFrom(this.userService.user$),
+                map(([result, user]) => {
+                    if (result === null) {
+                        return null;
+                    }
+                    const { data, action } = result
+                    const userEnrollmentIndex = data.findIndex(record => record.userId === user?.id)
+                    if (action === 'lookup' && userEnrollmentIndex !== -1) {
+                        return data[userEnrollmentIndex].status;
+                    }
+                    return null;
+                }),
+                shareReplay(1),
+            )
+
+        this.enrollStatus$ = courseEnrollmentStatus$
+        this.isEnrolled$ = this.enrollStatus$.pipe(
+            map(status => status !== null)
         )
     }
 
@@ -94,6 +102,7 @@ export class CourseOverviewComponent {
             .subscribe({
                 next: (res) => {
                     console.log('Enrolled on course!', res);
+                    this.courseEnrollTrigger$.next();
                     this.enrollmentSub?.unsubscribe()
                 },
                 error: (err) => {

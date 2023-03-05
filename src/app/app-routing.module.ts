@@ -19,8 +19,8 @@ const routes: Routes = [
 		children: [
 			{
 				path: '',
-                pathMatch: 'full',
-                redirectTo: 'dashboard',
+				pathMatch: 'full',
+				redirectTo: 'dashboard',
 				// loadChildren: () =>
 				// 	import('./modules/dashboard/dashboard.module').then(
 				// 		(m) => m.DashboardModule
@@ -48,7 +48,14 @@ const routes: Routes = [
 						(m) => m.AdminModule
 					),
 			},
-            {
+			{
+				path: 'teacher',
+				loadChildren: () =>
+					import('./modules/teacher/teacher.module').then(
+						(m) => m.TeacherModule
+					),
+			},
+			{
 				path: 'profile/:id',
 				loadChildren: () =>
 					import('./modules/user-profile/user-profile.module').then(

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, map, Observable, of, shareReplay, switchMap, throwError } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { Course, UserCourses, CourseFormData, CourseReview } from '../typings/course.types';
+import { Course, CourseFormData, CourseReview, StudentCourse, TeacherCourses } from '../typings/course.types';
 import { CourseEnrollAction, CourseEnrollResponse, CoursesResponse } from '../typings/response.types';
 import { ConfigService } from './config.service';
 import { DataService } from './data.service';
@@ -12,14 +12,16 @@ import { UserService } from './user.service';
 })
 export class CoursesService {
     public courses$: Observable<Course[]>
-    public userCourses$: Observable<UserCourses | null>
+    public studentCourses$: Observable<StudentCourse[] | null>
+    public teacherUserCourses$: Observable<TeacherCourses | null>
 
     private resetCoursesCaching$ = new BehaviorSubject<void>(undefined);
     private resetCoursesForReviewCaching$ = new BehaviorSubject<void>(undefined);
 
 	constructor(private dataService: DataService, private userService: UserService, private configService: ConfigService) {
         this.courses$ = this.getCourses()
-        this.userCourses$ = this.getAllUserCourses()
+        this.studentCourses$ = this.getStudentCourses();
+        this.teacherUserCourses$ = this.getTeacherCourses();
 
         this.resetCoursesCaching$.next();
         this.resetCoursesForReviewCaching$.next();
@@ -39,11 +41,13 @@ export class CoursesService {
         );
     }
 
-    public getUserReviewCourse(courseId: number): Observable<CourseReview | null> {
-        return this.userCourses$.pipe(map(userCourses => {
-            const courses: CourseReview[] = userCourses?.review ?? []
-            return courses.find(course => course.id === courseId) ?? null
-        }))
+    public getTeacherReviewCourse(courseId: number): Observable<CourseReview | null> {
+        return this.teacherUserCourses$.pipe(
+            map(teacherCourses => {
+                const courses: CourseReview[] = teacherCourses?.review ?? []
+                return courses.find(course => course.id === courseId) ?? null
+            })
+        )
     }
 
     public getCourseReviewHistory(courseId: number) {
@@ -97,25 +101,39 @@ export class CoursesService {
         )
 	}
 
-    private getAllUserCourses() {
+    private getStudentCourses() {
         return this.userService.user$.pipe(
             switchMap(user => {
                 if (user === null) {
                     return of(null);
                 }
 
-                if (user.role === 'admin') {
-                    return of({})
-                }
-
-                const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetCoursesByUser, {
-                    body: { id: user.id }
+                const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetStudentCourses, {
+                    body: { userId: user.id }
                 })
-                return this.dataService.send<CoursesResponse<UserCourses | null>>(payload).pipe(
+                return this.dataService.send<CoursesResponse<StudentCourse[]>>(payload).pipe(
                     map(res => res.data)
                 )
             }),
             shareReplay(1),
         )
 	}
+
+    private getTeacherCourses() {
+        return this.userService.user$.pipe(
+            switchMap(user => {
+                if (user === null || user.role !== 'teacher') {
+                    return of(null);
+                }
+
+                const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetTeacherCourses, {
+                    body: { id: user.id }
+                })
+                return this.dataService.send<CoursesResponse<TeacherCourses | null>>(payload).pipe(
+                    map(res => res.data)
+                )
+            }),
+            shareReplay(1),
+        )
+    }
 }

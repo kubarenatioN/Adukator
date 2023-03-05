@@ -86,7 +86,7 @@ export class CreateCourseComponent implements OnInit {
                             return of(null);
                         }
                         if (courseId && action) {
-                            return this.coursesService.getUserReviewCourse(courseId);
+                            return this.coursesService.getTeacherReviewCourse(courseId);
                         }
                     }
                 }
@@ -109,7 +109,7 @@ export class CreateCourseComponent implements OnInit {
 		const userInfo$ = combineLatest([
             queryParams$,
             this.userService.user$,
-            this.coursesService.userCourses$
+            this.coursesService.teacherUserCourses$
         ]).pipe(	
 			map(([{ courseId, action }, user, userCourses]) => {
                 const isUserOwnCourse = userCourses?.review?.findIndex(

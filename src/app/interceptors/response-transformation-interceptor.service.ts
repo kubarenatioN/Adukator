@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable, of, switchMap } from 'rxjs';
 import { NetworkRequestKey, REQUEST_TYPE } from '../helpers/network.helper';
 import { ConfigService, CourseCategory } from '../services/config.service';
-import { Course, CourseReview, UserCourses } from '../typings/course.types';
+import { Course, TeacherCourses } from '../typings/course.types';
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +44,7 @@ export class ResponseTransformationInterceptor implements HttpInterceptor {
             map(categories => {
                 let { data } = body;
                 if (data) {
-                    data = this.transformCoursesData(data, categories);
+                    data = this.processCoursesData(data, categories);
                 }
                 body.data = data
                 // console.log('111 formatted body', body);
@@ -53,15 +53,15 @@ export class ResponseTransformationInterceptor implements HttpInterceptor {
         )
     }
 
-    private transformUserCoursesData(body: { data?: UserCourses }): Observable<any> {
+    private transformTeacherCoursesData(body: { data?: TeacherCourses }): Observable<any> {
         return this.configService.loadCourseCategories().pipe(
             map(categories => {
                 let { data } = body;
                 if (data?.published) {
-                    data.published = this.transformCoursesData(data.published, categories);
+                    data.published = this.processCoursesData(data.published, categories);
                 }
                 if (data?.review) {
-                    data.review = this.transformCoursesData(data.review, categories);
+                    data.review = this.processCoursesData(data.review, categories);
                 }
                 body.data = data
                 console.log('111 formatted body', body);
@@ -81,14 +81,14 @@ export class ResponseTransformationInterceptor implements HttpInterceptor {
             return this.transformCoursesBody.bind(this);
         }
 
-        if (reqType === NetworkRequestKey.GetCoursesByUser) {
-            return this.transformUserCoursesData.bind(this);
+        if (reqType === NetworkRequestKey.GetTeacherCourses) {
+            return this.transformTeacherCoursesData.bind(this);
         }
 
         return (body: any): Observable<any> => of(body);
     }
 
-    private transformCoursesData(data: any[], categories: CourseCategory[]): any[] {
+    private processCoursesData(data: any[], categories: CourseCategory[]): any[] {
         if (!Array.isArray(data)) {
             data = [data]
         }

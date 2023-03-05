@@ -8,9 +8,19 @@
         <div class="info">
             <h1 class="title">{{ course.title }}</h1>
             <p class="descr">{{ course.description }}</p>
+
             <button *ngIf="(canEnroll$ | async) === true && (isEnrolled$ | async) === false" mat-raised-button color="accent" (click)="enrollCourse(course.id)">Записаться</button>
-            <button *ngIf="isEnrolled$ | async" mat-raised-button color="accent" (click)="leaveCourse(course.id)">Покинуть</button>
-            <button *ngIf="isUserOwner$ | async" mat-raised-button color="accent" (click)="enrollCourse(course.id)">Управление</button>
+
+            <ng-container *ngIf="enrollStatus$ | async as enrollStatus">
+                <div *ngIf="enrollStatus === 'Pending'">
+                    <p>Заявка на рассмотрении</p>
+                    <button mat-raised-button color="accent">Отозвать</button>
+                </div>
+                
+                <button *ngIf="enrollStatus === 'Approved'" mat-raised-button color="accent" (click)="leaveCourse(course.id)">Покинуть</button>
+            </ng-container>
+
+            <a *ngIf="isUserOwner$ | async" mat-raised-button color="accent" [routerLink]="['/app/teacher']">Управление</a>
         </div>
     </div>
     

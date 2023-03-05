@@ -65,8 +65,7 @@ interface CourseCore {
 }
 
 // publicly accessed course, used for overview & training
-export interface Course extends CourseCore {
-}
+export interface Course extends CourseCore { }
 
 
 // 'on review' course raw data
@@ -75,6 +74,17 @@ export interface CourseReview extends CourseCore {
     masterId: number | null;
     createdAt?: string;
     status?: CourseReviewStatus;
+}
+
+export interface TeacherCourses {
+    published?: Course[]
+    review?: CourseReview[]
+}
+
+
+export interface StudentCourse extends Course {
+    status: string
+    active: boolean
 }
 
 // data for course on review
@@ -111,12 +121,6 @@ export const CourseReviewStatusMap = {
     [CourseReviewStatus.ReadyForReview]: 'Ожидает проверки',
     [CourseReviewStatus.ReadyForUpdate]: 'Ожидает исправлений',
     [CourseReviewStatus.Reviewed]: 'Проверено'
-}
-
-export interface UserCourses {
-    published?: Course[]
-    review?: CourseReview[]
-    // reviewChildren?: Course[]
 }
 
 export enum CourseFormViewMode {

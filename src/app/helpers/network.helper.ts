@@ -9,7 +9,7 @@ export enum NetworkRequestKey {
     
     GetAllCourses = 'GetAllCourses',
     GetCourseById = 'GetCourseById',
-    GetCoursesByUser = 'GetCoursesByUser',
+    GetStudentCourses = 'GetStudentCourses',
     GetReviewCourseHistory = 'GetReviewCourseHistory',
     CreateCourse = 'CreateCourse',
     EnrollCourse = 'EnrollCourse',
@@ -18,6 +18,8 @@ export enum NetworkRequestKey {
     GetAdminReviewCourseById = 'GetAdminReviewCourseById',
     UpdateCourseReview = 'UpdateCourseReview',
     PublishCourse = 'PublishCourse',
+
+    GetTeacherCourses = 'GetTeacherCourses',
     
     UpdateCourse = 'UpdateCourse',
 }
@@ -44,6 +46,7 @@ export class NetworkHelper {
     public static authorizationHeader = 'Authorization';
     
     private static requestsMetadataMap: RequestsMetadataMap = {
+        /* ADMIN RELATED */
         [NetworkRequestKey.GetAdminReviewCourseById]: {
             method: 'GET',
             url: `${DATA_ENDPOINTS.admin.courses}/review`,
@@ -61,6 +64,7 @@ export class NetworkHelper {
             url: `${DATA_ENDPOINTS.admin.courses}/publish`,
         },
 
+        /* AUTH RELATED */
         [NetworkRequestKey.LoginUser]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.auth.login.jwt}`,
@@ -74,6 +78,7 @@ export class NetworkHelper {
             url: `${DATA_ENDPOINTS.auth.user}`,
         },
 
+        /* COMMON */
         [NetworkRequestKey.GetAllCourses]: {
             method: 'GET',
             url: `${DATA_ENDPOINTS.api.courses}`,
@@ -82,25 +87,32 @@ export class NetworkHelper {
             method: 'GET',
             url: `${DATA_ENDPOINTS.api.courses}`,
         },
-        [NetworkRequestKey.GetReviewCourseHistory]: {
-            method: 'GET',
-            url: `${DATA_ENDPOINTS.api.courses}/review/history`,
-        },
-        [NetworkRequestKey.GetCoursesByUser]: {
+        [NetworkRequestKey.GetStudentCourses]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.courses}/author`,
-        },
-        [NetworkRequestKey.CreateCourse]: {
-            method: 'POST',
-            url: `${DATA_ENDPOINTS.api.courses}/create`,
+            url: `${DATA_ENDPOINTS.api.courses}/student`,
         },
         [NetworkRequestKey.EnrollCourse]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses}/enroll`,
         },
+
+
+        /* TEACHER RELATED */
         [NetworkRequestKey.UpdateCourse]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses}/update`,
+        },
+        [NetworkRequestKey.GetTeacherCourses]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.courses}/teacher`,
+        },
+        [NetworkRequestKey.CreateCourse]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.courses}/create`,
+        },
+        [NetworkRequestKey.GetReviewCourseHistory]: {
+            method: 'GET',
+            url: `${DATA_ENDPOINTS.api.courses}/review/history`,
         },
     }
 

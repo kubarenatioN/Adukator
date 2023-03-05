@@ -3,3 +3,17 @@
     padding: 10px 0;
     background-color: #eee;
 }
+
+.course-item {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f8f8f8;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+.course-status {
+    display: inline-block;
+    margin-left: auto;
+}

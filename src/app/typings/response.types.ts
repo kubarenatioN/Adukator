@@ -6,6 +6,7 @@ interface CourseEnrollResponseData {
     userId?: number;
     courseId?: number;
     id?: number;
+    status: string
 }
 
 export interface CourseEnrollResponse {
