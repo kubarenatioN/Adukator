@@ -8,6 +8,9 @@
         <div class="info">
             <h1 class="title">{{ course.title }}</h1>
             <p class="descr">{{ course.description }}</p>
+            <button *ngIf="(canEnroll$ | async) === true && (isEnrolled$ | async) === false" mat-raised-button color="accent" (click)="enrollCourse(course.id)">Записаться</button>
+            <button *ngIf="isEnrolled$ | async" mat-raised-button color="accent" (click)="leaveCourse(course.id)">Покинуть</button>
+            <button *ngIf="isUserOwner$ | async" mat-raised-button color="accent" (click)="enrollCourse(course.id)">Управление</button>
         </div>
     </div>
     
@@ -42,6 +45,16 @@
     
         </div>
     
+        <div class="modules">
+            <h2>Учебные модули</h2>
+
+            <div *ngFor="let module of modules$ | async" class="module-item">
+                <h3>{{module.title}}</h3>
+                <p>{{module.description}}</p>
+            </div>
+
+        </div>
+
     </div>    
 </ng-container>
 

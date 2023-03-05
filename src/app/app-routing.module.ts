@@ -15,15 +15,22 @@ const routes: Routes = [
 	{
 		path: 'app',
 		component: MainComponent,
-        canActivate: [
-            AppGuardService,
-        ],
+		canActivate: [AppGuardService],
 		children: [
 			{
-				path: 'profile/:id',
+				path: '',
+                pathMatch: 'full',
+                redirectTo: 'dashboard',
+				// loadChildren: () =>
+				// 	import('./modules/dashboard/dashboard.module').then(
+				// 		(m) => m.DashboardModule
+				// 	),
+			},
+			{
+				path: 'dashboard',
 				loadChildren: () =>
-					import('./modules/user-profile/user-profile.module').then(
-						(m) => m.UserProfileModule
+					import('./modules/dashboard/dashboard.module').then(
+						(m) => m.DashboardModule
 					),
 			},
 			{
@@ -35,28 +42,31 @@ const routes: Routes = [
 			},
 			{
 				path: 'admin',
-                canActivate: [
-                    AdminGuardService,
-                ],
+				canActivate: [AdminGuardService],
 				loadChildren: () =>
 					import('./modules/admin/admin.module').then(
 						(m) => m.AdminModule
+					),
+			},
+            {
+				path: 'profile/:id',
+				loadChildren: () =>
+					import('./modules/user-profile/user-profile.module').then(
+						(m) => m.UserProfileModule
 					),
 			},
 		],
 	},
 	{
 		path: 'auth',
-        canActivate: [
-            AuthGuardService,
-        ],
+		canActivate: [AuthGuardService],
 		loadChildren: () =>
 			import('./modules/auth/auth.module').then((m) => m.AuthModule),
 	},
-    {
-        path: '**',
-        redirectTo: 'app'
-    }
+	{
+		path: '**',
+		redirectTo: 'app',
+	},
 ];
 
 @NgModule({

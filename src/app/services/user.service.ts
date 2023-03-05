@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, ReplaySubject, Subject } from 'rxjs';
+import { Course } from '../typings/course.types';
 import { User } from '../typings/user.types';
 
 @Injectable({
@@ -17,7 +18,7 @@ export class UserService {
         return this.getUserToken()
     }
 
-    public get role(): Observable<string> {
+    public get role$(): Observable<string> {
         return this.user$.pipe(map(user => user?.role ?? ''))
     }
 
@@ -35,6 +36,10 @@ export class UserService {
 
     public logout() {
         this.clearUser();
+    }
+
+    public isCourseOwner(course: Course): Observable<boolean> {
+        return this.user$.pipe(map(user => user?.role === 'teacher' && user?.id === course.authorId))
     }
 
     private clearUser(): void {

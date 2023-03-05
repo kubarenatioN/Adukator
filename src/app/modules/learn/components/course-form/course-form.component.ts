@@ -17,7 +17,7 @@ import {
 	isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
 import { moduleTopicsCountValidator } from 'src/app/helpers/course-validation';
-import { convertCourseToCourseFormData, getCategory, getEmptyEditorComments } from 'src/app/helpers/courses.helper';
+import { convertCourseToCourseFormData, getEmptyEditorComments } from 'src/app/helpers/courses.helper';
 import { CourseFormDataMock } from 'src/app/mocks/course-form-data';
 import { ConfigService } from 'src/app/services/config.service';
 import {

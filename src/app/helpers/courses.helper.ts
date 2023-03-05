@@ -91,7 +91,3 @@ export const convertCourseFormDataToCourse = (formData: CourseFormData): Course 
         authorId,
     }
 }
-
-export const getCategory = (categories: {key: string; name: string}[], key: string): string | null  => {
-    return categories.find(c => c.key === key)?.name ?? null 
-}

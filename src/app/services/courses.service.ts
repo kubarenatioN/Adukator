@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, of, shareReplay, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, shareReplay, switchMap, throwError } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { Course, UserCourses, CourseFormData, CourseReview } from '../typings/course.types';
-import { CoursesResponse } from '../typings/response.types';
+import { CourseEnrollAction, CourseEnrollResponse, CoursesResponse } from '../typings/response.types';
 import { ConfigService } from './config.service';
 import { DataService } from './data.service';
 import { UserService } from './user.service';
@@ -32,7 +32,6 @@ export class CoursesService {
         return this.dataService.send<CoursesResponse<Course[] | null>>(payload).pipe(
             map(res => {
                 if (res.data && res.data[0]) {
-                    console.log('getCourseById', res.data[0]);
                     return res.data[0]
                 }
                 return null
@@ -69,9 +68,23 @@ export class CoursesService {
         
     }
 
-    public getCategory(key: string): Observable<string | null> {
-        return this.configService.loadCourseCategories().pipe(
-            map((categories: {key: string; name: string}[]) => categories.find(c => c.key === key)?.name ?? null),
+    public makeCourseEnrollAction(courseId: number, action: CourseEnrollAction) {
+        return this.userService.user$.pipe(
+            switchMap(user => {
+                if (user) {
+                    const userId = user.id
+                    const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.EnrollCourse, {
+                        body: {
+                            userIds: [userId],
+                            courseId,
+                            action,
+                        }
+                    })
+
+                    return this.dataService.send<CourseEnrollResponse>(payload)
+                }
+                return throwError(() => new Error('Try to enroll course with no user.'))
+            }),
         )
     }
 

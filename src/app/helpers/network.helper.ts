@@ -12,6 +12,7 @@ export enum NetworkRequestKey {
     GetCoursesByUser = 'GetCoursesByUser',
     GetReviewCourseHistory = 'GetReviewCourseHistory',
     CreateCourse = 'CreateCourse',
+    EnrollCourse = 'EnrollCourse',
 
     GetAllAdminReviewCourses = 'GetAllAdminReviewCourses',
     GetAdminReviewCourseById = 'GetAdminReviewCourseById',
@@ -92,6 +93,10 @@ export class NetworkHelper {
         [NetworkRequestKey.CreateCourse]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses}/create`,
+        },
+        [NetworkRequestKey.EnrollCourse]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.courses}/enroll`,
         },
         [NetworkRequestKey.UpdateCourse]: {
             method: 'POST',
