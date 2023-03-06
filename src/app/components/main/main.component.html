@@ -14,8 +14,20 @@
                 </span>
                 <img class="user-photo" crossorigin="anonymous" referrerpolicy="no-referrer" [src]="user.photo ?? ''" alt="User avatar photo">
             </div>
-            <a mat-raised-button color="primary" [routerLink]="['profile', user.id]" class="profile-btn">Профиль</a>
-            <a mat-raised-button color="accent" *ngIf="isAdmin$ | async" [routerLink]="['admin']" class="profile-btn">Админ панель</a>
+            <a mat-raised-button color="primary" 
+            [routerLink]="['profile', user.id]" class="profile-btn">
+                Профиль
+            </a>
+            <ng-container *ngIf="isAdmin$ | async">
+                <a mat-raised-button color="accent" [routerLink]="['admin']" class="profile-btn">
+                    Админ панель
+                </a>
+            </ng-container>
+            <ng-container *ngIf="user.role === 'teacher'">
+                <a mat-stroked-button color="primary" [routerLink]="['/app/teacher']">
+                    Панель преподавателя
+                </a>
+            </ng-container>
         </ng-container>
     </div>
 </header>

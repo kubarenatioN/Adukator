@@ -1,16 +1,30 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { map, Observable } from 'rxjs';
+import { CoursesService } from 'src/app/services/courses.service';
+import { Course, TeacherCourses } from 'src/app/typings/course.types';
 
 @Component({
-  selector: 'app-teacher',
-  templateUrl: './teacher.component.html',
-  styleUrls: ['./teacher.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: 'app-teacher',
+	templateUrl: './teacher.component.html',
+	styleUrls: ['./teacher.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TeacherComponent implements OnInit {
+    private teacherCourses$: Observable<TeacherCourses | null>
 
-  constructor() { }
+    public publishedCourses$: Observable<Course[] | null>
+    public reviewCourses$: Observable<Course[] | null>
 
-  ngOnInit(): void {
-  }
+	constructor(private coursesService: CoursesService) {
+        this.teacherCourses$ = this.coursesService.teacherUserCourses$;
+        
+        this.publishedCourses$ = this.teacherCourses$.pipe(
+            map(courses => courses?.published ?? [])
+        )
+        this.reviewCourses$ = this.teacherCourses$.pipe(
+            map(courses => courses?.review ?? [])
+        )
+    }
 
+	ngOnInit(): void {}
 }

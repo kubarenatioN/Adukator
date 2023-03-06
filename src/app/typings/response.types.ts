@@ -1,3 +1,5 @@
+import { User } from "./user.types";
+
 export interface CoursesResponse<T> {
     data: T
 }
@@ -16,3 +18,17 @@ export interface CourseEnrollResponse {
 }
 
 export type CourseEnrollAction = 'enroll' | 'approve' | 'reject' | 'lookup'
+
+export interface CourseMembers {
+    pending: User[];
+    approved: User[];
+    rejected: User[];
+}
+
+export interface GetCourseMembersParams {
+    type: 'list' | 'search',
+    status: string,
+    size: number,
+    page: number,
+    courseId: number,
+}

@@ -1,0 +1,17 @@
+.courses-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;    
+}
+
+.course-item {
+    display: inline-block;
+    text-decoration: none;
+    color: inherit;
+    max-width: 300px;
+    width: 100%;
+    min-height: 200px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #e8e8f8;
+}

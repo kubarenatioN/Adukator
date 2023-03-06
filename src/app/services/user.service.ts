@@ -18,7 +18,7 @@ export class UserService {
         return this.getUserToken()
     }
 
-    public get role$(): Observable<string> {
+    public get role$() {
         return this.user$.pipe(map(user => user?.role ?? ''))
     }
 

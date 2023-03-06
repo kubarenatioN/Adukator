@@ -1,0 +1,31 @@
+<ng-container *ngIf="course$ | async as course; else loader">
+    <h2>Управление курсом "{{course.title}}"</h2>
+
+    <div class="course-students">
+        <h3>Студенты</h3>
+        <div class="pending-students students-list">
+            <h4>Ожидают зачисления</h4>
+            <div class="student-item"
+            *ngFor="let user of pendingStudents$ | async">
+                <div class="student-info">
+                    <span>{{user.username}}</span>
+                    <img [src]="user.photo" alt="User avatar">
+                </div>
+
+                <div class="action-buttons">
+                    <button mat-stroked-button>Статус</button>
+                    <button mat-stroked-button>Исключить</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="approved-students students-list">
+            <h4>Зачисленные на курс</h4>
+
+        </div>
+    </div>
+</ng-container>
+
+<ng-template #loader>
+    Loading...
+</ng-template>

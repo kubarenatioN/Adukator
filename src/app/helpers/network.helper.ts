@@ -13,6 +13,7 @@ export enum NetworkRequestKey {
     GetReviewCourseHistory = 'GetReviewCourseHistory',
     CreateCourse = 'CreateCourse',
     EnrollCourse = 'EnrollCourse',
+    GetCourseMembers = 'GetCourseMembers',
 
     GetAllAdminReviewCourses = 'GetAllAdminReviewCourses',
     GetAdminReviewCourseById = 'GetAdminReviewCourseById',
@@ -33,7 +34,7 @@ interface RequestCoreMetadata {
 
 interface RequestMetadata {
     body?: Record<string, string | number | object | boolean | undefined>;
-    params?: Record<string, string | number>
+    params?: Record<string, string | string[] | number | number[]>
     urlId?: string | number;
     headers?: HttpHeaders
 }
@@ -96,7 +97,6 @@ export class NetworkHelper {
             url: `${DATA_ENDPOINTS.api.courses}/enroll`,
         },
 
-
         /* TEACHER RELATED */
         [NetworkRequestKey.UpdateCourse]: {
             method: 'POST',
@@ -113,6 +113,10 @@ export class NetworkHelper {
         [NetworkRequestKey.GetReviewCourseHistory]: {
             method: 'GET',
             url: `${DATA_ENDPOINTS.api.courses}/review/history`,
+        },
+        [NetworkRequestKey.GetCourseMembers]: {
+            method: 'GET',
+            url: `${DATA_ENDPOINTS.api.courses}/members`,
         },
     }
 

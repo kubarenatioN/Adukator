@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, map, Observable, of, shareReplay, switchMap, throwError } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { Course, CourseFormData, CourseReview, StudentCourse, TeacherCourses } from '../typings/course.types';
-import { CourseEnrollAction, CourseEnrollResponse, CoursesResponse } from '../typings/response.types';
+import { CourseEnrollAction, CourseEnrollResponse, CourseMembers, CoursesResponse, GetCourseMembersParams } from '../typings/response.types';
+import { User } from '../typings/user.types';
 import { ConfigService } from './config.service';
 import { DataService } from './data.service';
 import { UserService } from './user.service';
@@ -18,7 +19,7 @@ export class CoursesService {
     private resetCoursesCaching$ = new BehaviorSubject<void>(undefined);
     private resetCoursesForReviewCaching$ = new BehaviorSubject<void>(undefined);
 
-	constructor(private dataService: DataService, private userService: UserService, private configService: ConfigService) {
+	constructor(private dataService: DataService, private userService: UserService) {
         this.courses$ = this.getCourses()
         this.studentCourses$ = this.getStudentCourses();
         this.teacherUserCourses$ = this.getTeacherCourses();
@@ -90,6 +91,15 @@ export class CoursesService {
                 return throwError(() => new Error('Try to enroll course with no user.'))
             }),
         )
+    }
+
+    public getCourseMembers(reqParams: GetCourseMembersParams): Observable<CourseMembers> {
+        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetCourseMembers, {
+            params: {
+                ...reqParams
+            }
+        })
+        return this.dataService.send<CourseMembers>(payload);
     }
 
     private getCourses() {

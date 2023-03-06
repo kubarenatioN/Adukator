@@ -5,6 +5,7 @@ import { MainComponent } from './components/main/main.component';
 import { AdminGuardService } from './guards/admin-guard.service';
 import { AuthGuardService } from './guards/auth-guard.service';
 import { AppGuardService } from './guards/app-guard.service';
+import { TeacherGuardService } from './guards/teacher-guard.service';
 
 const routes: Routes = [
 	{
@@ -50,6 +51,9 @@ const routes: Routes = [
 			},
 			{
 				path: 'teacher',
+                canActivate: [
+                    TeacherGuardService,
+                ],
 				loadChildren: () =>
 					import('./modules/teacher/teacher.module').then(
 						(m) => m.TeacherModule

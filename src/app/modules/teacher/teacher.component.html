@@ -1,1 +1,28 @@
-<p>teacher works!</p>
+<h1 class="title">Кабинет преподавателя</h1>
+
+<div class="courses">
+    
+    <a [routerLink]="['/app/learn/create']" mat-raised-button color="primary">
+        Создать курс
+    </a>
+
+    <h2>Мои курсы</h2>
+
+    <h3>Опубликованные</h3>
+    <div class="courses-list">
+        <a class="course-item" *ngFor="let course of publishedCourses$ | async"
+        [routerLink]="['/app/teacher/manage/course', course.id]">
+            <h4>{{course.title}}</h4>
+            <p>{{course.description}}</p>
+        </a>
+    </div>
+    
+    <div class="courses-list">
+        <h3>Ожидают публикации</h3>
+        <a *ngFor="let course of reviewCourses$ | async"
+        [routerLink]="['/app/learn/course/review', course.id]">
+            <h4>{{course.title}}</h4>
+            <p>{{course.description}}</p>
+        </a>
+    </div>
+</div>
