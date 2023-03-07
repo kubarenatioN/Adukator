@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { map, Observable } from 'rxjs';
+import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { CoursesService } from 'src/app/services/courses.service';
 import { Course, TeacherCourses } from 'src/app/typings/course.types';
 
@@ -9,13 +10,14 @@ import { Course, TeacherCourses } from 'src/app/typings/course.types';
 	styleUrls: ['./teacher.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TeacherComponent implements OnInit {
+export class TeacherComponent extends CenteredContainerDirective implements OnInit {
     private teacherCourses$: Observable<TeacherCourses | null>
 
     public publishedCourses$: Observable<Course[] | null>
     public reviewCourses$: Observable<Course[] | null>
 
 	constructor(private coursesService: CoursesService) {
+        super();
         this.teacherCourses$ = this.coursesService.teacherUserCourses$;
         
         this.publishedCourses$ = this.teacherCourses$.pipe(

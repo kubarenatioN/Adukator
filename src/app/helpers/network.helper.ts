@@ -6,6 +6,7 @@ export enum NetworkRequestKey {
     LoginUser = 'LoginUser',
     RegisterUser = 'RegisterUser',
     GetUserByToken = 'GetUserByToken',
+    GetUserById = 'GetUserById',
     
     GetAllCourses = 'GetAllCourses',
     GetCourseById = 'GetCourseById',
@@ -77,6 +78,10 @@ export class NetworkHelper {
         [NetworkRequestKey.GetUserByToken]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.auth.user}`,
+        },
+        [NetworkRequestKey.GetUserById]: {
+            method: 'GET',
+            url: `${DATA_ENDPOINTS.user}`,
         },
 
         /* COMMON */

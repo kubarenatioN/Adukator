@@ -5,12 +5,13 @@
 }
 
 .course-item {
-    display: inline-block;
+    display: flex;
+    align-items: center;
     text-decoration: none;
     color: inherit;
     max-width: 300px;
     width: 100%;
-    min-height: 200px;
+    min-height: 100px;
     padding: 10px;
     border-radius: 10px;
     background-color: #e8e8f8;

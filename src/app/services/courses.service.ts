@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, map, Observable, of, shareReplay, switchMap, throwError } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, shareReplay, switchMap, throwError } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { Course, CourseFormData, CourseReview, StudentCourse, TeacherCourses } from '../typings/course.types';
-import { CourseEnrollAction, CourseEnrollResponse, CourseMembers, CoursesResponse, GetCourseMembersParams } from '../typings/response.types';
-import { User } from '../typings/user.types';
-import { ConfigService } from './config.service';
+import { Course, CourseEnrollAction, CourseFormData, CourseMembers, CourseReview, GetCourseMembersParams, StudentCourse, TeacherCourses } from '../typings/course.types';
+import { CoursesResponse, CourseEnrollResponse } from '../typings/response.types';
 import { DataService } from './data.service';
 import { UserService } from './user.service';
 
@@ -73,24 +71,15 @@ export class CoursesService {
         
     }
 
-    public makeCourseEnrollAction(courseId: number, action: CourseEnrollAction) {
-        return this.userService.user$.pipe(
-            switchMap(user => {
-                if (user) {
-                    const userId = user.id
-                    const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.EnrollCourse, {
-                        body: {
-                            userIds: [userId],
-                            courseId,
-                            action,
-                        }
-                    })
-
-                    return this.dataService.send<CourseEnrollResponse>(payload)
-                }
-                return throwError(() => new Error('Try to enroll course with no user.'))
-            }),
-        )
+    public makeCourseEnrollAction(userIds: number[], courseId: number, action: CourseEnrollAction) {
+        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.EnrollCourse, {
+            body: {
+                userIds,
+                courseId,
+                action,
+            }
+        })
+        return this.dataService.send<CourseEnrollResponse>(payload)
     }
 
     public getCourseMembers(reqParams: GetCourseMembersParams): Observable<CourseMembers> {
@@ -99,7 +88,9 @@ export class CoursesService {
                 ...reqParams
             }
         })
-        return this.dataService.send<CourseMembers>(payload);
+        return this.dataService.send<CoursesResponse<CourseMembers>>(payload).pipe(
+            map(res => res.data)
+        );
     }
 
     private getCourses() {

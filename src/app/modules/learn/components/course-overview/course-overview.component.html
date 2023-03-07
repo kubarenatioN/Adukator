@@ -14,10 +14,12 @@
             <ng-container *ngIf="enrollStatus$ | async as enrollStatus">
                 <div *ngIf="enrollStatus === 'Pending'">
                     <p>Заявка на рассмотрении</p>
-                    <button mat-raised-button color="accent">Отозвать</button>
+                    <button mat-raised-button (click)="cancelCourseEnroll(course.id)">Отозвать</button>
                 </div>
-                
-                <button *ngIf="enrollStatus === 'Approved'" mat-raised-button color="accent" (click)="leaveCourse(course.id)">Покинуть</button>
+                <div *ngIf="enrollStatus === 'Approved'">
+                    <button  mat-raised-button color="accent" (click)="leaveCourse(course.id)">Покинуть</button>
+                    <a mat-raised-button [routerLink]="['/app/student/training', course.id]">Перейти к треннингу</a>
+                </div>
             </ng-container>
 
             <a *ngIf="isUserOwner$ | async" mat-raised-button color="accent" [routerLink]="['/app/teacher']">Управление</a>

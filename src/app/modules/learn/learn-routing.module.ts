@@ -4,18 +4,18 @@ import { CourseReviewComponent } from 'src/app/modules/learn/components/course-r
 import { CourseReviewGuardService } from 'src/app/guards/course-review-guard.service';
 import { CatalogComponent } from './components/catalog/catalog.component';
 import { CourseOverviewComponent } from './components/course-overview/course-overview.component';
-import { CourseTrainingComponent } from './components/course-training/course-training.component';
+import { CourseTrainingComponent } from '../student/components/course-training/course-training.component';
 import { CreateCourseComponent } from './components/create-course/create-course.component';
 
 const routes: Routes = [
+    {
+		path: 'catalog',
+		component: CatalogComponent,
+	},
 	{
 		path: '',
 		redirectTo: 'catalog',
 		pathMatch: 'full',
-	},
-	{
-		path: 'catalog',
-		component: CatalogComponent,
 	},
 	{
 		path: 'create',
@@ -24,10 +24,6 @@ const routes: Routes = [
 	{
 		path: 'course',
 		children: [
-			{
-				path: 'training/:id',
-				component: CourseTrainingComponent,
-			},
 			{
 				path: 'overview/:id',
 				component: CourseOverviewComponent,

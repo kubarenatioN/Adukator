@@ -1,0 +1,21 @@
+<ng-container *ngIf="course$ | async as course; else loader">    
+    <div class="training-container">
+        <section class="content">
+            <h1>Тренинг по курсу {{course.title}}</h1>
+            <p>{{course.description}}</p>
+            <p>Категория: {{course.categoryLabel}}</p>
+        </section>
+    
+        <aside class="sidebar">
+            <nav class="nav">
+                Navigation
+            </nav>
+        </aside>
+    </div>
+</ng-container>
+
+<ng-template #loader>
+    <p>
+        Loading...
+    </p>
+</ng-template>

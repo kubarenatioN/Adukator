@@ -44,3 +44,11 @@ h3.title {
     width: 700px;
     height: 800px;
 }
+
+.container-center {
+    display: block;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 10px;
+}

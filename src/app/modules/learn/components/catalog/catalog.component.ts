@@ -1,10 +1,12 @@
 import {
 	ChangeDetectionStrategy,
 	Component,
+	HostBinding,
 	OnDestroy,
 	OnInit,
 } from '@angular/core';
 import { map, Observable, takeUntil, tap } from 'rxjs';
+import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from 'src/app/shared/base.component';
@@ -16,10 +18,7 @@ import { Course } from 'src/app/typings/course.types';
 	styleUrls: ['./catalog.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CatalogComponent
-	extends BaseComponent
-	implements OnInit, OnDestroy
-{
+export class CatalogComponent extends CenteredContainerDirective {
 	public courses$: Observable<Course[]>;
 
 	public isTeacherUser$ = this.userService.user$.pipe(
@@ -32,13 +31,5 @@ export class CatalogComponent
 	) {
 		super();
 		this.courses$ = this.coursesService.courses$;
-	}
-
-	ngOnInit(): void {
-		this.coursesService.courses$
-			.pipe(takeUntil(this.componentLifecycle$))
-			.subscribe((c) => {
-				console.log('catalog courses', c);
-			});
 	}
 }

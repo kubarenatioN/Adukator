@@ -9,6 +9,7 @@ export const DATA_ENDPOINTS = {
         user: `${apiUrl}/auth/user`,
         register: `${apiUrl}/auth/register`,
     },
+    user: `${apiUrl}/user`,
 	api: {
         courses: `${apiUrl}/api/courses`,
     },

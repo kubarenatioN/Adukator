@@ -13,9 +13,10 @@ import { BackBtnComponent } from './components/back-btn/back-btn.component';
 import { DatePipe } from './pipes/date.pipe';
 import { TimeDurationPipe } from './pipes/time-duration.pipe';
 import { ResponseTransformationInterceptor } from './interceptors/response-transformation-interceptor.service';
+import { CenteredContainerDirective } from './directives/centered-container.directive';
 
 @NgModule({
-	declarations: [AppComponent, NavComponent, MainComponent],
+	declarations: [AppComponent, NavComponent, MainComponent, CenteredContainerDirective],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,

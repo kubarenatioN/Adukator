@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, ReplaySubject, Subject } from 'rxjs';
+import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { Course } from '../typings/course.types';
+import { DataResponse } from '../typings/response.types';
 import { User } from '../typings/user.types';
+import { DataService } from './data.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -22,7 +25,7 @@ export class UserService {
         return this.user$.pipe(map(user => user?.role ?? ''))
     }
 
-	constructor() {
+	constructor(private dataService: DataService) {
 		this.user$ = this.userStore$.asObservable();
         this.isAdmin$ = this.user$.pipe(map(user => user !== null && user.role === 'admin'));
 	}
@@ -40,6 +43,13 @@ export class UserService {
 
     public isCourseOwner(course: Course): Observable<boolean> {
         return this.user$.pipe(map(user => user?.role === 'teacher' && user?.id === course.authorId))
+    }
+
+    public getUserById(userId: number): Observable<User | null> {
+        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetUserById, {
+            urlId: userId
+        })
+        return this.dataService.send<DataResponse<User | null>>(payload).pipe(map(res => res.data));
     }
 
     private clearUser(): void {

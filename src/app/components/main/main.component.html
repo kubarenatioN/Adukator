@@ -8,15 +8,11 @@
     </div>
     <div class="profile">
         <ng-container *ngIf="user$ | async as user">
-            <div class="user-info">
+            <a [routerLink]="['/app/user', 'me']" class="user-info">
                 <span class="user-name">
                     {{user.username}}
                 </span>
                 <img class="user-photo" crossorigin="anonymous" referrerpolicy="no-referrer" [src]="user.photo ?? ''" alt="User avatar photo">
-            </div>
-            <a mat-raised-button color="primary" 
-            [routerLink]="['profile', user.id]" class="profile-btn">
-                Профиль
             </a>
             <ng-container *ngIf="isAdmin$ | async">
                 <a mat-raised-button color="accent" [routerLink]="['admin']" class="profile-btn">
@@ -33,9 +29,7 @@
 </header>
 <main class="main">
     <app-nav class="nav"></app-nav>
-    <div class="container">
-        <div class="content">
-            <router-outlet></router-outlet>
-        </div>
+    <div class="content">
+        <router-outlet></router-outlet>
     </div>
 </main>

@@ -1,27 +1,45 @@
+<app-back-btn>Назад</app-back-btn>
 <ng-container *ngIf="course$ | async as course; else loader">
     <h2>Управление курсом "{{course.title}}"</h2>
 
     <div class="course-students">
         <h3>Студенты</h3>
+
         <div class="pending-students students-list">
             <h4>Ожидают зачисления</h4>
-            <div class="student-item"
-            *ngFor="let user of pendingStudents$ | async">
-                <div class="student-info">
-                    <span>{{user.username}}</span>
-                    <img [src]="user.photo" alt="User avatar">
-                </div>
-
-                <div class="action-buttons">
-                    <button mat-stroked-button>Статус</button>
-                    <button mat-stroked-button>Исключить</button>
-                </div>
-            </div>
+            <input type="text" placeholder="Поиск...">
+            <button (click)="refreshMembersList('pending')">Обновить</button>
+            <ng-container *ngIf="pendingStudents$ | async as pendingMembers; else loader">
+                <app-course-member 
+                    class="student-item"    
+                    *ngFor="let user of pendingMembers"
+                    [user]="user"
+                    type="Pending"
+                    (enroll)="onApproveEnroll($event)"   
+                >                
+                </app-course-member>
+            </ng-container>
         </div>
 
         <div class="approved-students students-list">
             <h4>Зачисленные на курс</h4>
-
+            <input type="text" placeholder="Поиск...">
+            <button (click)="refreshMembersList('approved')">Обновить</button>
+            <ng-container *ngIf="approvedStudents$ | async as approvedMembers; else loader">
+                <ng-container *ngIf="approvedMembers.length === 0">
+                    <p>
+                        Нет зачисленных студентов.
+                    </p>
+                </ng-container>
+                <app-course-member 
+                    class="student-item"    
+                    *ngFor="let user of approvedMembers"
+                    [user]="user"
+                    type="Approved"
+                    (expel)="onExpel($event)"
+                >                
+                </app-course-member>
+            </ng-container>
         </div>
     </div>
 </ng-container>

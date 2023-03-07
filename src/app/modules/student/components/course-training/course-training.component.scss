@@ -1,0 +1,27 @@
+.training-container {
+    display: flex;
+    align-items: flex-start;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.content {
+    flex-grow: 1;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.sidebar {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    min-width: 300px;
+    width: 300px;
+    padding: 10px;
+    height: 90%;
+}
+
+.nav {
+    height: 100%;
+    background-color: #cfcfef;
+}

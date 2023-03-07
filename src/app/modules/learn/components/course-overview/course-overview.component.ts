@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, catchError, map, merge, Observable, of, shareReplay, Subject, Subscription, switchMap, throwError, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, catchError, map, merge, Observable, of, Subject, Subscription, switchMap, throwError, withLatestFrom, combineLatest, shareReplay } from 'rxjs';
 import { parseModules } from 'src/app/helpers/courses.helper';
 import { ConfigService } from 'src/app/services/config.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UserService } from 'src/app/services/user.service';
-import { Course, CourseModule } from 'src/app/typings/course.types';
+import { Course, CourseEnrollAction, CourseModule } from 'src/app/typings/course.types';
+import { CourseEnrollResponse } from 'src/app/typings/response.types';
 
 @Component({
 	selector: 'app-course-overview',
@@ -58,30 +59,31 @@ export class CourseOverviewComponent {
             })
         )
 
-        const courseEnrollmentStatus$ = this.courseEnrollTrigger$
-            .asObservable()
-            .pipe(
-                switchMap(() => this.course$),
-                switchMap(course => {
-                    if (course) {
-                        return this.coursesService.makeCourseEnrollAction(course.id, 'lookup')
-                    }
-                    return of(null);
-                }),
-                withLatestFrom(this.userService.user$),
-                map(([result, user]) => {
-                    if (result === null) {
-                        return null;
-                    }
-                    const { data, action } = result
-                    const userEnrollmentIndex = data.findIndex(record => record.userId === user?.id)
-                    if (action === 'lookup' && userEnrollmentIndex !== -1) {
-                        return data[userEnrollmentIndex].status;
-                    }
+        const courseEnrollmentStatus$ = combineLatest([
+            this.courseEnrollTrigger$.asObservable(),
+            this.course$,
+            this.userService.user$,
+        ]).pipe(
+            switchMap(([_, course, user]) => {
+                if (course && user) {
+                    return this.coursesService.makeCourseEnrollAction([user.id], course.id, 'lookup')
+                }
+                return of(null);
+            }),
+            withLatestFrom(this.userService.user$),
+            map(([result, user]) => {
+                if (result === null) {
                     return null;
-                }),
-                shareReplay(1),
-            )
+                }
+                const { data, action } = result
+                const userEnrollmentIndex = data.findIndex(record => record.userId === user?.id)
+                if (action === 'lookup' && userEnrollmentIndex !== -1) {
+                    return data[userEnrollmentIndex].status;
+                }
+                return null;
+            }),
+            shareReplay(1),
+        )
 
         this.enrollStatus$ = courseEnrollmentStatus$
         this.isEnrolled$ = this.enrollStatus$.pipe(
@@ -90,18 +92,36 @@ export class CourseOverviewComponent {
     }
 
     public enrollCourse(courseId: number): void {
+        this.makeCourseEnrollAction(courseId, 'enroll')
+    }
+
+    public cancelCourseEnroll(courseId: number): void {
+        this.makeCourseEnrollAction(courseId, 'cancel')
+    }
+
+    public leaveCourse(courseId: number) {
+        console.log('Leave course', courseId);
+    }
+
+    private makeCourseEnrollAction(courseId: number, action: CourseEnrollAction): void {
         if(this.enrollmentSub && !this.enrollmentSub.closed) {
             return;
         }
-        this.enrollmentSub = this.coursesService.makeCourseEnrollAction(courseId, 'enroll')
+        this.enrollmentSub = this.userService.user$
             .pipe(
+                switchMap(user => {
+                    if (user) {
+                        return this.coursesService.makeCourseEnrollAction([user.id], courseId, action)
+                    }
+                    return throwError(() => new Error('No user'))
+                }),
                 catchError(err => {
                     return throwError(() => new Error(err.error.message))
                 }),
             )
             .subscribe({
                 next: (res) => {
-                    console.log('Enrolled on course!', res);
+                    console.log('Perform course enroll action', res);
                     this.courseEnrollTrigger$.next();
                     this.enrollmentSub?.unsubscribe()
                 },
@@ -110,9 +130,5 @@ export class CourseOverviewComponent {
                     this.enrollmentSub?.unsubscribe()
                 }
             })
-    }
-
-    public leaveCourse(courseId: number): void {
-        console.log('111 leave course', courseId);
     }
 }

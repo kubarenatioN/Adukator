@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Host, HostBinding } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, Observable } from 'rxjs';
+import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UserService } from 'src/app/services/user.service';
 import { Course, CourseReview, StudentCourse } from 'src/app/typings/course.types';
@@ -12,7 +13,7 @@ import { User } from 'src/app/typings/user.types';
 	styleUrls: ['./user-profile.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserProfileComponent {
+export class UserProfileComponent extends CenteredContainerDirective {    
     public user$: Observable<User | null>;
     
     public studentCourses$!: Observable<StudentCourse[] | null>
@@ -22,6 +23,7 @@ export class UserProfileComponent {
     public rejectedCourses$!:Observable<StudentCourse[] | null>
 
 	constructor(private userService: UserService, private router: Router, private coursesService: CoursesService) {
+        super();
         this.user$ = this.userService.user$
         const studentCourses$ = this.coursesService.studentCourses$
 

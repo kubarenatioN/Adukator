@@ -1,5 +1,12 @@
 <ng-container *ngIf="user$ | async as user">
-    <p>Role: {{user?.role}}</p>
+
+    <div class="profile-banner">
+        <div class="row">
+            <img crossorigin="anonymous" referrerpolicy="no-referrer" [src]="user.photo" alt="User Avatar">
+            <h1>{{user.username}}</h1>
+        </div>
+        <h3>Ранг: {{user.role}}</h3>
+    </div>
 
     <ng-container [ngSwitch]="user.role">
         <ng-container 
@@ -64,7 +71,7 @@
     
     <div class="courses-list" *ngIf="approvedCourses$ | async as approvedCourses; noCourses">
         <h3 class="courses-list-title">Активные</h3>
-        <a class="course-item" *ngFor="let course of approvedCourses" [routerLink]="['/app/learn/course/training', course.id]">
+        <a class="course-item" *ngFor="let course of approvedCourses" [routerLink]="['/app/student/training', course.id]">
             <p>
                 Курс {{course.id}} {{course.title}}
             </p>

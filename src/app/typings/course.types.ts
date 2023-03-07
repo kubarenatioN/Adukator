@@ -1,3 +1,5 @@
+import { User } from "./user.types";
+
 export interface CourseTopicTask {
     id: string;
     topicId: string;
@@ -130,3 +132,35 @@ export enum CourseFormViewMode {
     Review = 'review',
     Default = 'default',
 };
+
+export type CourseEnrollAction = 
+    'enroll' | 
+    'approve' | 
+    'reject' | 
+    'cancel' | 
+    'leave' | 
+    'lookup'
+
+export interface CourseMembers {
+    pending: User[];
+    approved: User[];
+    rejected: User[];
+}
+
+export type CourseMemberStatus = 'Pending' | 'Approved' | 'Rejected'
+
+export const CourseMembersMap: {
+    [key: string]: CourseMemberStatus;
+} = {
+    pending: 'Pending', 
+    approved: 'Approved', 
+    rejected: 'Rejected', 
+}
+
+export interface GetCourseMembersParams {
+    type: 'list' | 'search',
+    status: string,
+    size: number,
+    page: number,
+    courseId: number,
+}

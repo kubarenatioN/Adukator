@@ -9,12 +9,13 @@
     display: flex;
     align-items: center;
     min-height: 60px;
-    padding: 10px 0;
+    padding: 6px 0;
     background-color: #eee;
 }
 
 .logo,
 .nav {
+    min-width: 270px;
     width: 270px;
 }
 
@@ -38,17 +39,17 @@
     min-height: 200px;
 }
 
-.container {
+.content {
     overflow-y: auto;
     width: 100%;
     position: relative;
 }
 
-.content {
+.container {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 10px;
 }
 
 .user-info {
@@ -56,17 +57,24 @@
     align-items: center;
     margin-right: 20px;
     gap: 10px;
+    text-decoration: none;
+    color: inherit;
 }
+
 .user-name {
+    font-size: 16px;
     display: inline-block;
-    width: 100px;
+    min-width: 50px;
+    max-width: 100px;
     text-align: right;
     text-overflow: ellipsis;
     overflow: hidden;
+    white-space: nowrap;
 }
+
 .user-photo {
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     object-fit: cover;
 }

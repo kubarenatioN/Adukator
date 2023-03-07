@@ -44,7 +44,7 @@ export class AuthService {
 		);
 	}
 
-	public getUserByToken(): Observable<User | null> {
+	private getUserByToken(): Observable<User | null> {
 		const payload = NetworkHelper.createRequestPayload(
 			NetworkRequestKey.GetUserByToken
 		);
