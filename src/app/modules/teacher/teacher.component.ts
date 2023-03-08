@@ -24,7 +24,7 @@ export class TeacherComponent extends CenteredContainerDirective implements OnIn
             map(courses => courses?.published ?? [])
         )
         this.reviewCourses$ = this.teacherCourses$.pipe(
-            map(courses => courses?.review ?? [])
+            map(courses => courses?.review?.filter(course => course.masterId === null) ?? [])
         )
     }
 

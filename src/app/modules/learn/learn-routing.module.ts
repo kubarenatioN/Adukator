@@ -4,7 +4,6 @@ import { CourseReviewComponent } from 'src/app/modules/learn/components/course-r
 import { CourseReviewGuardService } from 'src/app/guards/course-review-guard.service';
 import { CatalogComponent } from './components/catalog/catalog.component';
 import { CourseOverviewComponent } from './components/course-overview/course-overview.component';
-import { CourseTrainingComponent } from '../student/components/course-training/course-training.component';
 import { CreateCourseComponent } from './components/create-course/create-course.component';
 
 const routes: Routes = [

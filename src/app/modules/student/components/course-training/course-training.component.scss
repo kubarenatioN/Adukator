@@ -9,19 +9,21 @@
     flex-grow: 1;
     max-width: 1000px;
     margin: 0 auto;
+    padding: 0 20px;
 }
 
 .sidebar {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
-    min-width: 300px;
-    width: 300px;
+    min-width: 280px;
+    width: 280px;
     padding: 10px;
     height: 90%;
 }
 
 .nav {
+    display: block;
     height: 100%;
-    background-color: #cfcfef;
+    background-color: #e4e4f8;
 }

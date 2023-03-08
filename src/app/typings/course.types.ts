@@ -49,29 +49,28 @@ export interface CourseEditorComments {
         }[]
     }[]
 }
+
  
 interface CourseCore {
-    id: number;
     title: string;
 	description: string;
 	startDate: string;
 	endDate: string;
 	category: string;
-	categoryLabel?: string;
-	subcategory: string;
-	// userCategory?: string;
-	// userSubcategory?: string;
     advantages?: string;
-    modulesJson: string;
     authorId: number;
+	categoryLabel?: string;
 }
 
 // publicly accessed course, used for overview & training
-export interface Course extends CourseCore { }
+export interface Course extends CourseCore {
+    id: number;
+    modulesJson: string;
+}
 
 
 // 'on review' course raw data
-export interface CourseReview extends CourseCore {
+export interface CourseReview extends Course {
     editorCommentsJson: string | null;
     masterId: number | null;
     createdAt?: string;
@@ -97,12 +96,16 @@ export interface CourseFormData {
 	endDate: string;
 	category: string;
 	categoryLabel?: string;
-	subcategory: string;
     advantages?: string;
 	modules: CourseModule[];
     editorComments: CourseEditorComments | null;
     createdAt?: string;
     metadata: CourseFormMetadata
+}
+
+export interface CourseTraining extends CourseCore {
+    id: number;
+    modules: CourseModule[];
 }
 
 export interface CourseFormMetadata {

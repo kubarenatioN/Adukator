@@ -1,18 +1,48 @@
 <ng-container *ngIf="course$ | async as course; else loader">    
     <div class="training-container">
         <section class="content">
-            <h1>Тренинг по курсу {{course.title}}</h1>
-            <p>{{course.description}}</p>
-            <p>Категория: {{course.categoryLabel}}</p>
+            
+            <ng-container *ngIf="viewType$ | async as viewType" [ngSwitch]="viewType">
+                
+                <ng-container *ngSwitchCase="viewTypes.Main"
+                    [ngTemplateOutlet]="mainView"
+                    [ngTemplateOutletContext]="{ course }"
+                ></ng-container>
+
+                <ng-container *ngSwitchCase="viewTypes.Module"
+                    [ngTemplateOutlet]="moduleView"
+                ></ng-container>
+
+                <ng-container *ngSwitchCase="viewTypes.Topic"
+                    [ngTemplateOutlet]="topicView">
+                </ng-container>
+
+            </ng-container>
+
         </section>
     
         <aside class="sidebar">
-            <nav class="nav">
-                Navigation
-            </nav>
+            <app-course-sidenav class="nav" [course]="course"></app-course-sidenav>
         </aside>
     </div>
 </ng-container>
+
+<ng-template #mainView let-course="course">
+    <h1>Тренинг по курсу {{course.title}}</h1>
+    <p>{{course.description}}</p>
+    <p>Категория: {{course.categoryLabel}}</p>
+</ng-template>
+
+<ng-template #moduleView>
+    <p>Module View</p>
+</ng-template>
+
+<ng-template #topicView let-topic="topic">
+    <ng-container *ngIf="topic$ | async as topic">
+        <h1>Тема {{topic.title}}</h1>
+        <p>{{topic.description}}</p>
+    </ng-container>
+</ng-template>
 
 <ng-template #loader>
     <p>

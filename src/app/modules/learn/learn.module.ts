@@ -13,7 +13,6 @@ import { ModuleTopicComponent } from './components/module-topic/module-topic.com
 import { CreateTopicDialogComponent } from './components/create-topic-dialog/create-topic-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CourseOverviewComponent } from './components/course-overview/course-overview.component';
-import { CourseTrainingComponent } from '../student/components/course-training/course-training.component';
 import { CourseFormComponent } from './components/course-form/course-form.component';
 import { CourseReviewDiffComponent } from './components/course-review-diff/course-review-diff.component';
 import { CourseReviewComponent } from './components/course-review/course-review.component';
@@ -28,7 +27,6 @@ import { FormElementReviewWrapperComponent } from './components/form-element-rev
 		ModuleTopicComponent,
 		CreateTopicDialogComponent,
 		CourseOverviewComponent,
-		CourseTrainingComponent,
 		CourseFormComponent,
 		CourseReviewDiffComponent,
 		CourseReviewComponent,
