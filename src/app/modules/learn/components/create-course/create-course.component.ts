@@ -14,6 +14,7 @@ import {
 	EmptyCourseFormDataType,
 	EMPTY_COURSE_FORM_DATA,
 } from 'src/app/constants/common.constants';
+import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import {
     convertCourseFormDataToCourse,
     convertCourseFormDataToCourseReview,
@@ -37,7 +38,7 @@ import { User } from 'src/app/typings/user.types';
 	styleUrls: ['./create-course.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CreateCourseComponent implements OnInit {
+export class CreateCourseComponent extends CenteredContainerDirective implements OnInit {
 	private courseMetadata!: CourseFormMetadata;
 
 	public formData$!: Observable<CourseReview | EmptyCourseFormDataType>;
@@ -47,14 +48,13 @@ export class CreateCourseComponent implements OnInit {
     public viewModes = CourseFormViewMode
 
 	constructor(
-		private dataService: DataService,
 		private userService: UserService,
-		private router: Router,
 		private activatedRoute: ActivatedRoute,
 		private coursesService: CoursesService,
 		private adminCoursesService: AdminCoursesService,
-        private location: Location,
-	) {}
+	) {
+        super();
+    }
 
 	public ngOnInit(): void {
 		const queryParams$: Observable<{
@@ -181,22 +181,11 @@ export class CreateCourseComponent implements OnInit {
         this.restoreCourseMetadata(formData, this.courseMetadata);
 
         const courseData = convertCourseFormDataToCourseReview(formData);
-        console.log(courseData);
-        this.coursesService.createCourseReviewVersion(courseData, { isMaster })
-            .subscribe((res) => {
-                console.log('course review new version created!', res);
-            });
-	}
-
-    public goBack() {
-        this.location.back();
-    }
-
-	private showLoading() {
-		this.showLoading$.next(true);
-		setTimeout(() => {
-			this.router.navigate(['/app/learn']);
-		}, 2000);
+        console.log('111 create', courseData);
+        // this.coursesService.createCourseReviewVersion(courseData, { isMaster })
+        //     .subscribe((res) => {
+        //         console.log('course review new version created!', res);
+        //     });
 	}
 
     private restoreCourseMetadata(formData: CourseFormData, metadata: CourseFormMetadata): CourseFormData {

@@ -20,6 +20,62 @@
         </mat-form-field>
     </app-form-element-review-wrapper>
 
+    <div class="section materials">
+        <h3>Материалы</h3>
+        <div class="upload-container">
+            <app-upload-box></app-upload-box>
+        </div>
+    </div>
+
+    <div>
+        <p>Добавить раздел</p>
+        <button [disabled]="sections.theory" (click)="onAddSection('theory')">Теория</button>
+        <button [disabled]="sections.practice" (click)="onAddSection('practice')">Практика</button>
+        <button [disabled]="sections.test" (click)="onAddSection('test')">Тест</button>
+    </div>
+
+    <ng-container *ngIf="sections.theory" 
+        [ngTemplateOutlet]="theory"></ng-container>
+
+    <ng-container *ngIf="sections.practice" 
+        [ngTemplateOutlet]="practice"></ng-container>
+
+    <ng-container *ngIf="sections.test" 
+        [ngTemplateOutlet]="test"></ng-container>
+
 </form>
 
-<button (click)="onRemove()">Удалить</button>
+<button [disabled]="order === 0" (click)="onRemove()">Удалить тему</button>
+
+<ng-template #practice>
+    <div class="section">
+        <h3>Практика</h3>
+        <button (click)="onRemoveSection('practice')">Удалить раздел</button>
+        <div class="task">
+            Task goes here...
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #theory>
+    <div class="section">
+        <h3>Теория</h3>
+        <button (click)="onRemoveSection('theory')">Удалить раздел</button>
+        <mat-form-field appearance="fill" [formGroup]="form">
+            <mat-label>Теория</mat-label>
+            <textarea matInput formControlName="theory"></textarea>
+        </mat-form-field>
+    </div>
+</ng-template>
+
+<ng-template #test>
+    <div class="section">
+        <h3>Тест</h3>
+        <button (click)="onRemoveSection('test')">Удалить раздел</button>
+        <mat-form-field appearance="fill" [formGroup]="form">
+            <mat-label>Ссылка на тест</mat-label>
+            <input matInput formControlName="testLink" />
+        </mat-form-field>
+    </div>
+
+</ng-template>

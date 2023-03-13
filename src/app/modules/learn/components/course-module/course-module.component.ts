@@ -7,6 +7,7 @@ import {
 	Output,
 } from '@angular/core';
 import { Form, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 
 @Component({
 	selector: 'app-course-module',
@@ -54,6 +55,7 @@ export class CourseModuleComponent implements OnInit {
 
 	constructor(
 		private fb: FormBuilder,
+        private fbHelper: FormBuilderHelper,
 	) {}
 
 	public ngOnInit(): void {
@@ -72,9 +74,6 @@ export class CourseModuleComponent implements OnInit {
 	}
 
     private createNewTopicFormModel() {
-        return this.fb.group({
-            title: ['', Validators.required],
-            description: [''],
-        })
+        return this.fbHelper.getEmptyTopic()
     }
 }

@@ -23,17 +23,8 @@ export const parseEditorComments = (commentsString: string): CourseEditorComment
     return comments
 }
 
-export const getEmptyEditorComments = () => {
-    return {
-        title: null,
-        description: null,
-        dates: null,
-        categories: null,
-    }
-}
-
 export const convertCourseToCourseFormData = (course: CourseReview): CourseFormData => {
-    const { id, authorId, masterId, title, description, startDate, endDate, category, categoryLabel, advantages, modulesJson, editorCommentsJson, status } = course
+    const { id, authorId, masterId, title, description, category, categoryLabel, advantages, modulesJson, editorCommentsJson, status } = course
     const metadata: CourseFormMetadata = {
         id,
         authorId,
@@ -43,8 +34,6 @@ export const convertCourseToCourseFormData = (course: CourseReview): CourseFormD
     return {
         title,
         description,
-        startDate,
-        endDate,
         category,
         categoryLabel,
         advantages,
@@ -55,7 +44,7 @@ export const convertCourseToCourseFormData = (course: CourseReview): CourseFormD
 }
 
 export const convertCourseFormDataToCourseReview = (formData: CourseFormData): CourseReview => {
-    const { title, description, startDate, endDate, category, advantages, modules, editorComments, metadata } = formData
+    const { title, description, category, advantages, modules, editorComments, metadata } = formData
     const { id, masterCourseId: masterId, authorId, status } = metadata;
     return {
         id,
@@ -63,8 +52,6 @@ export const convertCourseFormDataToCourseReview = (formData: CourseFormData): C
         authorId,
         title,
         description,
-        startDate,
-        endDate,
         category,
         advantages,
         modulesJson: stringify(modules),
@@ -74,14 +61,12 @@ export const convertCourseFormDataToCourseReview = (formData: CourseFormData): C
 }
 
 export const convertCourseFormDataToCourse = (formData: CourseFormData): Course => {
-    const { title, description, startDate, endDate, category, advantages, modules, metadata } = formData
+    const { title, description, category, advantages, modules, metadata } = formData
     const { id, authorId } = metadata;
     return {
         id,
         title,
         description,
-        startDate,
-        endDate,
         category,
         advantages,
         modulesJson: stringify(modules),
@@ -90,13 +75,11 @@ export const convertCourseFormDataToCourse = (formData: CourseFormData): Course 
 }
 
 export const convertCourseToCourseTraining = (course: Course): CourseTraining => {
-    const { id, title, description, startDate, endDate, category, advantages, modulesJson, authorId } = course
+    const { id, title, description, category, advantages, modulesJson, authorId } = course
     return {
         id,
         title,
         description,
-        startDate,
-        endDate,
         category,
         advantages,
         modules: parseModules(modulesJson),

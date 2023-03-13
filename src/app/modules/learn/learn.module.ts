@@ -17,8 +17,13 @@ import { CourseFormComponent } from './components/course-form/course-form.compon
 import { CourseReviewDiffComponent } from './components/course-review-diff/course-review-diff.component';
 import { CourseReviewComponent } from './components/course-review/course-review.component';
 import { FormElementReviewWrapperComponent } from './components/form-element-review-wrapper/form-element-review-wrapper.component';
+import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
+import { UploadBoxComponent } from 'src/app/components/upload-box/upload-box.component';
 
 @NgModule({
+    providers: [
+        FormBuilderHelper,
+    ],
 	declarations: [
 		LearnComponent,
 		CatalogComponent,
@@ -30,7 +35,7 @@ import { FormElementReviewWrapperComponent } from './components/form-element-rev
 		CourseFormComponent,
 		CourseReviewDiffComponent,
 		CourseReviewComponent,
-  FormElementReviewWrapperComponent,
+        FormElementReviewWrapperComponent,
 	],
 	imports: [
 		CommonModule,

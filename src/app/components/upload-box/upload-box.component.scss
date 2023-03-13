@@ -1,0 +1,56 @@
+.dropzone {
+    height: 100%;
+    background-color: #eed;
+    position: relative;
+
+    &.fileover .dropzone-wrapper {
+        opacity: 1;
+    }
+}
+
+.dropzone-wrapper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #eee;
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s;
+}
+
+.file-input {
+    position: absolute;
+    opacity: 0;
+}
+
+.pick-files-btn {
+    position: absolute;
+    z-index: 1;
+}
+
+.files-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    height: calc(100% - 30px);
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.file-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 23%;
+    min-height: 100%;
+    padding: 5px;
+    background-color: #ccc;
+
+    & button {
+        margin-top: auto;
+    }
+}

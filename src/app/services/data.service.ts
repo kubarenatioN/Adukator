@@ -1,6 +1,7 @@
 import { HttpClient, HttpContext, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { apiUrl } from '../constants/urls';
 
 export interface DataRequestPayload {
 	url: string;
@@ -26,4 +27,18 @@ export class DataService {
             context
 		});
 	}
+
+    public uploadFile(file: File) {
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('folder', 'course-1/module-3/topic-4')
+        this.http.post(`${apiUrl}/upload`, formData
+            // body: {
+            //     file: formData,
+            //     folder: 'course-1/module-3/topic-4'
+            // }
+        ).subscribe(res => {
+            console.log(res);
+        })
+    }
 }

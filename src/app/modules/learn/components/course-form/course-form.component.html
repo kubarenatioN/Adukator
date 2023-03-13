@@ -59,10 +59,10 @@
         [ngTemplateOutletContext]="{ form, editorForm }"
     ></ng-container>
 
-    <ng-container 
+    <!-- <ng-container 
         [ngTemplateOutlet]="dates"
         [ngTemplateOutletContext]="{ form, editorForm }"
-    ></ng-container>
+    ></ng-container> -->
 
     <ng-container 
         [ngTemplateOutlet]="modules"
@@ -89,36 +89,7 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-
-                <!-- <mat-checkbox
-                    #customCategory
-                    (change)="onChangeCustomCategory($event, 'userCategory')"
-                    >Свой вариант</mat-checkbox
-                >
-
-                <mat-form-field *ngIf="customCategory.checked" appearance="fill">
-                    <mat-label>Своя категория</mat-label>
-                    <input matInput formControlName="userCategory" />
-                </mat-form-field> -->
             </div>
-
-            <!-- <div class="category-row">
-                <mat-form-field appearance="fill">
-                    <mat-label>Подкатегория</mat-label>
-                    <input matInput formControlName="subcategory" />
-                </mat-form-field>
-
-                <mat-checkbox
-                    #customSubcategory
-                    (change)="onChangeCustomCategory($event, 'userSubcategory')"
-                    >Свой вариант</mat-checkbox
-                >
-
-                <mat-form-field *ngIf="customSubcategory.checked" appearance="fill">
-                    <mat-label>Своя подкатегория</mat-label>
-                    <input matInput formControlName="userSubcategory" />
-                </mat-form-field>
-            </div> -->
         </div>
     </app-form-element-review-wrapper>
 </ng-template>
@@ -222,31 +193,6 @@
             <div class="property _category-row">
                 <span>Категория</span>
                 <span>{{category}}</span>
-            </div>
-            <!-- <div class="property _category-row">
-                <span>Подкатегория</span>
-                <span>{{form.value.subcategory}}</span>
-            </div> -->
-        </div>
-    </app-form-element-review-wrapper>
-
-    <app-form-element-review-wrapper 
-        type="review"
-        [form]="editorForm" 
-        control="dates"
-        reviewType="dates">
-        <div class="dates">
-            <div class="property">
-                <span>Начало</span>
-                <span>{{form.value.startDate}}</span>
-            </div>
-            <div class="property">
-                <span>Окончание</span>
-                <span>{{form.value.endDate}}</span>
-            </div>
-            <div class="property">
-                <span>Длительность</span>
-                <span>8 недель</span>
             </div>
         </div>
     </app-form-element-review-wrapper>

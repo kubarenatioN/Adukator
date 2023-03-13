@@ -15,12 +15,13 @@ export interface CourseTopic {
     // id: string;
     title: string;
     description: string;
-    resources?: string[];
+    materials?: string[];
     theory?: string;
     practice?: {
         description: string;
         tasks: CourseTopicTask[]
     },
+    testLink: string;
     results?: {
         test: string;
         report: boolean;
@@ -54,8 +55,8 @@ export interface CourseEditorComments {
 interface CourseCore {
     title: string;
 	description: string;
-	startDate: string;
-	endDate: string;
+	// startDate: string;
+	// endDate: string;
 	category: string;
     advantages?: string;
     authorId: number;
@@ -92,8 +93,8 @@ export interface StudentCourse extends Course {
 export interface CourseFormData {
     title: string;
 	description: string;
-	startDate: string;
-	endDate: string;
+	// startDate: string;
+	// endDate: string;
 	category: string;
 	categoryLabel?: string;
     advantages?: string;

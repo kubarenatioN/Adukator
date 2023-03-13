@@ -14,10 +14,11 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { BackBtnComponent } from 'src/app/components/back-btn/back-btn.component';
 import { DatePipe } from 'src/app/pipes/date.pipe';
 import { TimeDurationPipe } from 'src/app/pipes/time-duration.pipe';
-// import {MatIconModule} from '@angular/material/icon';
+import { UploadBoxComponent } from 'src/app/components/upload-box/upload-box.component';
+import { DndDirective } from 'src/app/directives/dnd.directive';
 
 @NgModule({
-	declarations: [BackBtnComponent, DatePipe, TimeDurationPipe],
+	declarations: [BackBtnComponent, DatePipe, TimeDurationPipe, UploadBoxComponent, DndDirective],
 	imports: [
 		CommonModule,
 		MatButtonModule,
@@ -42,10 +43,12 @@ import { TimeDurationPipe } from 'src/app/pipes/time-duration.pipe';
         MatSelectModule,
         MatButtonToggleModule,
         // MatIconModule,
-        BackBtnComponent,
 		MatFormFieldModule,
+        BackBtnComponent,
         DatePipe,
         TimeDurationPipe,
+        UploadBoxComponent,
+        DndDirective,
 	],
 })
 export class SharedModule {}

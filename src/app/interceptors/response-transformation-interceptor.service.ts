@@ -47,7 +47,6 @@ export class ResponseTransformationInterceptor implements HttpInterceptor {
                     data = this.processCoursesData(data, categories);
                 }
                 body.data = data
-                // console.log('111 formatted body', body);
                 return body;
             })
         )
@@ -64,7 +63,7 @@ export class ResponseTransformationInterceptor implements HttpInterceptor {
                     data.review = this.processCoursesData(data.review, categories);
                 }
                 body.data = data
-                console.log('111 formatted body', body);
+
                 return body;
             })
         )

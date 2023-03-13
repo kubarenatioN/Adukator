@@ -1,7 +1,5 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {
 	ChangeDetectionStrategy,
-	ChangeDetectorRef,
 	Component,
 	EventEmitter,
 	Input,
@@ -10,24 +8,19 @@ import {
 } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { map, Observable, of, tap } from 'rxjs';
 import {
 	EmptyCourseFormDataType,
 	EMPTY_COURSE_FORM_DATA,
-	isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
 import { moduleTopicsCountValidator } from 'src/app/helpers/course-validation';
-import { convertCourseToCourseFormData, getEmptyEditorComments } from 'src/app/helpers/courses.helper';
+import { convertCourseToCourseFormData } from 'src/app/helpers/courses.helper';
+import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { CourseFormDataMock } from 'src/app/mocks/course-form-data';
 import { ConfigService } from 'src/app/services/config.service';
 import {
-	CourseEditorComments,
 	CourseFormData,
-	CourseFormMetadata,
 	CourseFormViewMode,
-	CourseModule,
 	CourseReview,
-	CourseTopic,
 } from 'src/app/typings/course.types';
 
 
@@ -78,7 +71,7 @@ export class CourseFormComponent implements OnInit {
 	@Input() public set formData(
 		data: CourseReview | EmptyCourseFormDataType
 	) {
-        console.log('111 form data', data);
+        // console.log('111 form data', data);
 		if (data !== EMPTY_COURSE_FORM_DATA) {
             const courseFormData = convertCourseToCourseFormData(data);
 			this.courseFormData = courseFormData;
@@ -96,20 +89,14 @@ export class CourseFormComponent implements OnInit {
     }>();
 	@Output() public update = new EventEmitter<CourseFormData>();
 
-	constructor(private fb: FormBuilder, private configService: ConfigService) {
+	constructor(private fb: FormBuilder, private configService: ConfigService, private fbHelper: FormBuilderHelper) {
 		this.courseForm = this.fb.group({
 			title: [CourseFormDataMock.title, Validators.required],
 			description: [CourseFormDataMock.descr, Validators.required],
-			startDate: [null, Validators.required],
-			endDate: [null, Validators.required],
 			category: ['', Validators.required],
-			// subcategory: ['', Validators.required],
-			// userCategory: [null],
-			// userSubcategory: [null],
-			// advantages: [null],
 			modules: this.fb.array([]),
 			editorComments: this.fb.group({
-				...getEmptyEditorComments(),
+				...this.fbHelper.getEmptyEditorComments(),
 				modules: this.fb.array([]),
 			}),
 		});
@@ -123,23 +110,14 @@ export class CourseFormComponent implements OnInit {
 	}
 
 	public addStartModule(): void {
-		const moduleControl = this.fb.group({
-			title: ['Module Title 1', Validators.required],
-			description: ['Module descr...', Validators.required],
-			topics: this.fb.array([
-				this.fb.group({
-					title: ['Topic Title 1', Validators.required],
-					description: 'Topic descr...',
-				}),
-			]),
-		});
+		const moduleControl = this.fbHelper.getEmptyModule()
 
 		moduleControl.controls['topics'].setValidators([
 			moduleTopicsCountValidator(),
 		]);
 		this.modules.push(moduleControl);
 
-        const moduleCommentsForm = this.getEditorCommentsModules([moduleControl.value], { isEmpty: true });
+        const moduleCommentsForm = this.fbHelper.getEditorCommentsModules([moduleControl.value], { isEmpty: true });
         this.editorModules.push(moduleCommentsForm[0]);
 	}
 
@@ -232,20 +210,14 @@ export class CourseFormComponent implements OnInit {
 	private setCourseModel(course: CourseFormData): void {
 		const { modules, editorComments } = course;
 
-		const modulesArray = this.getModulesFormArray(modules);
-		const editorModulesArray = this.prepareEditorComments(editorComments, modules);
+		const modulesArray = this.fbHelper.getModulesFormArray(modules);
+		const editorModulesArray = this.fbHelper.getEditorComments(editorComments, modules);
 
 		this.courseForm.patchValue({
 			title: course.title,
 			description: course.description,
-			startDate: course.startDate,
-			endDate: course.endDate,
 			category: course.category,
-			// subcategory: course.subcategory,
-			// userCategory: course.userCategory,
-			// userSubcategory: course.userSubcategory,
-			// advantages: course.advantages,
-			editorComments: editorComments ?? getEmptyEditorComments(),
+			editorComments: editorComments ?? this.fbHelper.getEmptyEditorComments(),
 		});
 
 		modulesArray.controls.forEach((control) => {
@@ -254,66 +226,6 @@ export class CourseFormComponent implements OnInit {
 
 		editorModulesArray.forEach((control) => {
 			this.editorModules.push(control);
-		});
-	}
-
-	private getModulesFormArray(modulesData: CourseModule[]): FormArray {
-		const array = this.fb.array<FormGroup>([]);
-		modulesData.forEach((module) => {
-			const topics = this.getTopicsFormArray(module.topics);
-			const moduleGroup = this.fb.group({
-				title: module.title,
-				description: module.description,
-				topics: this.fb.array(topics),
-			});
-			array.push(moduleGroup);
-		});
-
-		return array;
-	}
-
-	private getTopicsFormArray(topics: CourseTopic[]) {
-		return topics.map((topic) => {
-			return this.fb.group({
-				title: topic.title,
-				description: topic.description,
-			});
-		});
-	}
-
-	private prepareEditorComments(editorComments: CourseEditorComments | null, modules: CourseModule[]) {
-		if (editorComments?.modules && editorComments.modules.length > 0) {
-			return this.getEditorCommentsModules(editorComments.modules);
-		}
-        return this.getEditorCommentsModules(modules, { isEmpty: true });
-	}
-
-	private getEditorCommentsModules(
-		modules: Record<string, any>[],
-		{ isEmpty }: { isEmpty: boolean } = { isEmpty: false }
-	) {
-		return modules.map((module) => {
-			const topics = this.getEditorCommentsModuleTopics(
-				module['topics'],
-				{ isEmpty }
-			);
-			return this.fb.group({
-				title: isEmpty ? null : module['title'],
-				description: isEmpty ? null : module['description'],
-				topics: this.fb.array(topics),
-			});
-		});
-	}
-
-	private getEditorCommentsModuleTopics(
-		topics: Record<string, any>[],
-		{ isEmpty }: { isEmpty: boolean }
-	) {
-		return topics.map((topic) => {
-			return this.fb.group({
-				title: isEmpty ? null : topic['title'],
-				description: isEmpty ? null : topic['description'],
-			});
 		});
 	}
 }

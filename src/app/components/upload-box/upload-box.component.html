@@ -1,0 +1,22 @@
+<div class="dropzone" appDnd (filesDropped)="onFilesDropped($event)">
+    <div class="dropzone-wrapper">
+        Отпустите файлы здесь.
+    </div>
+    <input class="file-input" type="file" id="fileInput" #fileInputRef multiple (change)="onChange($event)">
+
+    <div class="files-container--empty" *ngIf="files.length === 0; else filesContainer">
+        <h3>Для загрузки, перетащите файлы сюда.</h3>
+        <p>или</p>
+        <label class="pick-files-btn" for="fileInput">Выберите файлы</label>
+    </div>
+</div>
+
+<ng-template #filesContainer>
+    <div class="files-container">
+        <div class="file-item" *ngFor="let file of files; let i = index">
+            {{file.name}}
+            <button (click)="removeFile(i)">Remove</button>
+        </div>
+    </div>
+    <label class="pick-files-btn" for="fileInput">Добавить файлы</label>
+</ng-template>

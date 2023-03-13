@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, shareReplay } from 'rxjs';
-import { Course, CourseReview } from '../typings/course.types';
+import { Observable } from 'rxjs';
+import { CourseReview } from '../typings/course.types';
 import { AdminCoursesService } from './admin-courses.service';
-import { CoursesService } from './courses.service';
 
 @Injectable({
 	providedIn: 'root',
