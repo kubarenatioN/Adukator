@@ -11,14 +11,18 @@ import {
 	withLatestFrom,
 } from 'rxjs/operators';
 import {
+    EmptyCourseFormData,
 	EmptyCourseFormDataType,
 	EMPTY_COURSE_FORM_DATA,
+    getEmptyCourseFormData,
+    isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import {
     convertCourseFormDataToCourse,
     convertCourseFormDataToCourseReview,
 	convertCourseToCourseFormData,
+	generateUUID,
 	stringify,
 } from 'src/app/helpers/courses.helper';
 import {
@@ -41,7 +45,7 @@ import { User } from 'src/app/typings/user.types';
 export class CreateCourseComponent extends CenteredContainerDirective implements OnInit {
 	private courseMetadata!: CourseFormMetadata;
 
-	public formData$!: Observable<CourseReview | EmptyCourseFormDataType>;
+	public formData$!: Observable<CourseReview | EmptyCourseFormData>;
 	public viewMode$!: Observable<CourseFormViewMode | null>;
 	public showLoading$ = new BehaviorSubject<boolean>(false);
 
@@ -101,7 +105,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
                     this.courseMetadata = this.getCourseMetadata(course);
                     return course;
                 }
-                return EMPTY_COURSE_FORM_DATA;
+                return getEmptyCourseFormData(this.courseMetadata.secondaryId);
 			}),
             shareReplay(1),
 		);
@@ -112,7 +116,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
             this.coursesService.teacherUserCourses$
         ]).pipe(	
 			map(([{ courseId, action }, user, userCourses]) => {
-                const isUserOwnCourse = userCourses?.review?.findIndex(
+                const isUserOwnCourse: boolean = userCourses?.review?.findIndex(
                     (course) => course.id === courseId
                 ) !== -1;
                 
@@ -138,7 +142,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 		]).pipe(
             map(([formData, userInfo, action]) => {
                 const { isValid: isValidUser, role: userRole } = userInfo
-                if (formData === 'EmptyCourse' && !action && userRole === 'teacher') {
+                if (isEmptyCourseFormData(formData) && !action && userRole === 'teacher') {
                     return CourseFormViewMode.Create
                 }
                 else if (isValidUser && action === 'update') {
@@ -179,13 +183,15 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
             formData.editorComments = null;
         }
         this.restoreCourseMetadata(formData, this.courseMetadata);
+        console.log('111 course form', formData);
 
         const courseData = convertCourseFormDataToCourseReview(formData);
-        console.log('111 create', courseData);
-        // this.coursesService.createCourseReviewVersion(courseData, { isMaster })
-        //     .subscribe((res) => {
-        //         console.log('course review new version created!', res);
-        //     });
+        console.log('111 converted course form', courseData);
+        // TODO: Uncomment method below
+        this.coursesService.createCourseReviewVersion(courseData, { isMaster })
+            .subscribe((res) => {
+                console.log('course review new version created!', res);
+            });
 	}
 
     private restoreCourseMetadata(formData: CourseFormData, metadata: CourseFormMetadata): CourseFormData {
@@ -196,6 +202,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
     private getMasterCourseMetadata(author: User): CourseFormMetadata {
         return {
             id: -1,
+            secondaryId: generateUUID(),
             authorId: author.id,
             masterCourseId: null,
             status: CourseReviewStatus.Default
@@ -205,6 +212,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
     private getCourseMetadata(course: CourseReview): CourseFormMetadata {
         return {
             id: course.id,
+            secondaryId: course.secondaryId,
             authorId: course.authorId,
             masterCourseId: course.masterId === null ? course.id : course.masterId, // if get master course, correct new course version masterId value
             status: course.status

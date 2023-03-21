@@ -121,6 +121,8 @@ export class CoursesService {
 	}
 
     private getTeacherCourses() {
+        // return of({} as TeacherCourses) // Remove me after mockings
+        // TODO: Uncomment below logic!
         return this.userService.user$.pipe(
             switchMap(user => {
                 if (user === null || user.role !== 'teacher') {

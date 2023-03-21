@@ -11,7 +11,6 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './interceptors/token-interceptor.service';
 import { ResponseTransformationInterceptor } from './interceptors/response-transformation-interceptor.service';
 import { CenteredContainerDirective } from './directives/centered-container.directive';
-import { DndDirective } from './directives/dnd.directive';
 
 @NgModule({
 	declarations: [AppComponent, NavComponent, MainComponent, CenteredContainerDirective],

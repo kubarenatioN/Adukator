@@ -142,7 +142,9 @@
 					}}
                 </mat-panel-title>
 			</mat-expansion-panel-header>
-			<app-course-module #module [form]="moduleForm" [editorModulesForm]="getModuleEditorCommentsForm(i)"></app-course-module>
+			
+            <app-course-module #module [form]="moduleForm" [editorModulesForm]="getModuleEditorCommentsForm(i)" [hierarchy]="getHierarchy(i + 1)"></app-course-module>
+
 			<mat-action-row>
 				<!-- TODO: Add Trash Icon instead of text  -->
 				<button
@@ -232,7 +234,7 @@
                         [form]="getTopicEditorCommentsForm(i, j)"
                         control="title">
                         <div class="property">
-                            <span>Название</span>
+                            <h3>Название</h3>
                             <p class="">{{topic.title}}</p>
                         </div>
                     </app-form-element-review-wrapper>
@@ -242,11 +244,48 @@
                         [form]="editorFormModules.controls[i].controls.topics.controls[j]"
                         control="description">
                         <div class="property">
-                            <span>Описание</span>
+                            <h3>Описание</h3>
                             <p class="">{{topic.description}}</p>
                         </div>
                     </app-form-element-review-wrapper>
                     
+                    <div class="topic-content">
+                        <div *ngIf="topic.materials" class="topic-materials">
+                            <h3>Материалы</h3>
+                            <app-upload-box class="topic-review-materials" type="download" [folder]="getReviewTopicFolderPath(i + 1, j + 1)"></app-upload-box>
+                        </div>
+                        <div *ngIf="topic.theory" class="topic-theory">
+                            <h3>Теория</h3>
+                            <p>
+                                {{ topic.theory }}
+                            </p>
+                        </div>
+                        <div *ngIf="topic.practice" class="topic-practice">
+                            <h3>Практика</h3>
+                            <h4>{{topic.practice.goal}}</h4>
+                            <div class="practice-tasks-list">
+                                <div *ngFor="let task of topic.practice.tasks; let k = index" class="task-item">
+                                    <!-- {{ task | json }} -->
+                                    <h4>Задание {{ k + 1 }}.</h4>
+                                    <p>{{ task.taskDescr }}</p>
+                                    
+                                    <app-upload-box *ngIf="task.materials.length > 0" type="download" [folder]="getReviewTaskFolderPath(i + 1, j + 1, k + 1)" class="task-materials">
+                                    </app-upload-box>
+
+                                    <p *ngIf="task.comment">
+                                        Комментарий: {{ task.comment }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="topic.test" class="topic-test">
+                            <h3>Тест</h3>
+                            <a target="_blank" [href]="topic.test">
+                                Перейти к тесту
+                            </a>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

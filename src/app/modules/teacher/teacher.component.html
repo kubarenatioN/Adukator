@@ -2,7 +2,7 @@
 
 <div class="courses">
     
-    <a [routerLink]="['/app/learn/create']" mat-raised-button color="primary">
+    <a [routerLink]="['/app/course-builder/create']" mat-raised-button color="primary">
         Создать курс
     </a>
 
@@ -24,7 +24,7 @@
         <ng-container *ngIf="reviewCourses$ | async as reviewCourses; else loader">
             <a class="course-item" 
             *ngFor="let course of reviewCourses"
-            [routerLink]="['/app/learn/course/review', course.id]">
+            [routerLink]="['/app/course-review/review', course.id]">
                 <h4>{{course.title}}</h4>
             </a>
         </ng-container>

@@ -6,6 +6,7 @@ import { AdminGuardService } from './guards/admin-guard.service';
 import { AuthGuardService } from './guards/auth-guard.service';
 import { AppGuardService } from './guards/app-guard.service';
 import { TeacherGuardService } from './guards/teacher-guard.service';
+import { CourseReviewGuardService } from './guards/course-review-guard.service';
 
 const routes: Routes = [
 	{
@@ -13,7 +14,7 @@ const routes: Routes = [
 		component: MainComponent,
 		canActivate: [AppGuardService],
 		children: [
-            {
+			{
 				path: 'learn',
 				loadChildren: () =>
 					import('./modules/learn/learn.module').then(
@@ -66,6 +67,21 @@ const routes: Routes = [
 						(m) => m.UserProfileModule
 					),
 			},
+			{
+				path: 'course-builder',
+				canActivate: [TeacherGuardService],
+				loadChildren: () =>
+					import(
+						'./modules/course-builder/course-builder.module'
+					).then((m) => m.CourseBuilderModule),
+			},
+			{
+				path: 'course-review',
+				loadChildren: () =>
+					import('./modules/course-review/course-review.module').then(
+						(m) => m.CourseReviewModule
+					),
+			},
 		],
 	},
 	{
@@ -74,7 +90,7 @@ const routes: Routes = [
 		loadChildren: () =>
 			import('./modules/auth/auth.module').then((m) => m.AuthModule),
 	},
-    {
+	{
 		path: '',
 		pathMatch: 'full',
 		redirectTo: 'app',

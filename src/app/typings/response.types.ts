@@ -1,4 +1,5 @@
 import { CourseEnrollAction } from "./course.types";
+import { UserFile } from "./files.types";
 import { User } from "./user.types";
 
 export interface CoursesResponse<T> {
@@ -21,4 +22,9 @@ export interface CourseEnrollResponse {
     data: CourseEnrollResponseData[];
     message: string;
     action: CourseEnrollAction
+}
+
+export interface CourseFilesResponse {
+    resources: UserFile[],
+    total_count: number
 }

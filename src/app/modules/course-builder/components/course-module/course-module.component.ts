@@ -6,8 +6,9 @@ import {
 	OnInit,
 	Output,
 } from '@angular/core';
-import { Form, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
+import { CourseHierarchyComponent } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-course-module',
@@ -18,6 +19,7 @@ import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 export class CourseModuleComponent implements OnInit {
     private _editorCommentsForm: FormGroup | null = null;
     
+	@Input() public hierarchy!: CourseHierarchyComponent;
 	@Input() public form!: FormGroup;
 
     // form for editor comments
@@ -54,7 +56,6 @@ export class CourseModuleComponent implements OnInit {
 	}
 
 	constructor(
-		private fb: FormBuilder,
         private fbHelper: FormBuilderHelper,
 	) {}
 
@@ -72,6 +73,13 @@ export class CourseModuleComponent implements OnInit {
 	public onRemoveTopic(index: number) {
 		this.topics.removeAt(index);
 	}
+
+    public getHierarchy(topicIndex: number): CourseHierarchyComponent {
+        return {
+            ...this.hierarchy,
+            topic: topicIndex
+        }
+    }
 
     private createNewTopicFormModel() {
         return this.fbHelper.getEmptyTopic()

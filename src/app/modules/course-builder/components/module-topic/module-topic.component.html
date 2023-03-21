@@ -20,39 +20,62 @@
         </mat-form-field>
     </app-form-element-review-wrapper>
 
-    <div class="section materials">
-        <h3>Материалы</h3>
-        <div class="upload-container">
-            <app-upload-box></app-upload-box>
-        </div>
-    </div>
-
     <div>
         <p>Добавить раздел</p>
-        <button [disabled]="sections.theory" (click)="onAddSection('theory')">Теория</button>
-        <button [disabled]="sections.practice" (click)="onAddSection('practice')">Практика</button>
-        <button [disabled]="sections.test" (click)="onAddSection('test')">Тест</button>
+        <button [disabled]="activeSections.materials" (click)="onAddSection('materials')">Материалы</button>
+        <button [disabled]="activeSections.theory" (click)="onAddSection('theory')">Теория</button>
+        <button [disabled]="activeSections.practice" (click)="onAddSection('practice')">Практика</button>
+        <button [disabled]="activeSections.test" (click)="onAddSection('test')">Тест</button>
     </div>
 
-    <ng-container *ngIf="sections.theory" 
+    <ng-container *ngIf="activeSections.materials" 
+        [ngTemplateOutlet]="materials"></ng-container>
+
+    <ng-container *ngIf="activeSections.theory" 
         [ngTemplateOutlet]="theory"></ng-container>
 
-    <ng-container *ngIf="sections.practice" 
-        [ngTemplateOutlet]="practice"></ng-container>
+    <ng-container *ngIf="activeSections.practice" 
+        [ngTemplateOutlet]="practice"
+        [ngTemplateOutletContext]="{ practiceForm: practiceFormGroup }"></ng-container>
 
-    <ng-container *ngIf="sections.test" 
+    <ng-container *ngIf="activeSections.test" 
         [ngTemplateOutlet]="test"></ng-container>
 
 </form>
 
 <button [disabled]="order === 0" (click)="onRemove()">Удалить тему</button>
 
-<ng-template #practice>
+<ng-template #materials>
+    <div class="section materials">
+        <h3>Материалы</h3>
+        <button (click)="onRemoveSection('materials')">Удалить раздел</button>
+
+        <app-upload-box 
+        class="upload-box" 
+        type="upload" 
+        [folder]="uploadFolder"
+        (uploadFilesChanged)="onUploadFilesChanged($event)"></app-upload-box>
+    </div>
+</ng-template>
+
+<ng-template #practice let-practiceForm="practiceForm">
     <div class="section">
         <h3>Практика</h3>
         <button (click)="onRemoveSection('practice')">Удалить раздел</button>
-        <div class="task">
-            Task goes here...
+
+        <textarea>
+            {{practiceForm.value.goal}}
+        </textarea>
+        <button (click)="onAddTask()">Добавить задание</button>
+        <div class="tasks-list">
+            <ng-container *ngIf="taskForms.length > 0">
+                <app-topic-task 
+                class="task-item"
+                *ngFor="let task of taskForms; let i = index" 
+                [form]="task"
+                [hierarchy]="getHierarchy(i + 1)"
+                (remove)="onRemoveTaskAt(i)"></app-topic-task>
+            </ng-container>
         </div>
     </div>
 </ng-template>

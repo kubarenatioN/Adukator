@@ -1,7 +1,7 @@
 <div class="catalog-wrapper">
 	<h1 class="title">Каталог курсов</h1>
 	
-    <a *ngIf="isTeacherUser$ | async" [routerLink]="['../create']" mat-raised-button color="primary"
+    <a *ngIf="isTeacherUser$ | async" [routerLink]="['/app/course-builder/create']" mat-raised-button color="primary"
 		>Создать курс</a
 	>
     

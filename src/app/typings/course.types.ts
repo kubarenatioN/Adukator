@@ -1,26 +1,24 @@
+import { FormGroup } from "@angular/forms";
 import { User } from "./user.types";
 
-export interface CourseTopicTask {
-    id: string;
-    topicId: string;
-    moduleId: string;
-    courseId: string;
-    task: string;
-    points: number;
-    difficulty: number;
+export interface TopicTask {
+    taskDescr: string;
+    materials?: string[],
+    comment?: string
+}
+
+export interface TopicPractice {
+    goal: string;
+    tasks?: TopicTask[]
 }
 
 // TODO: check fields optionality
-export interface CourseTopic {
-    // id: string;
+export interface ModuleTopic {
     title: string;
     description: string;
     materials?: string[];
     theory?: string;
-    practice?: {
-        description: string;
-        tasks: CourseTopicTask[]
-    },
+    practice?: TopicPractice,
     testLink: string;
     results?: {
         test: string;
@@ -30,10 +28,9 @@ export interface CourseTopic {
 }
 
 export interface CourseModule {
-	// id: string;
 	title: string;
 	description: string;
-    topics: CourseTopic[]
+    topics: ModuleTopic[]
 }
 
 export interface CourseEditorComments {
@@ -66,7 +63,15 @@ interface CourseCore {
 // publicly accessed course, used for overview & training
 export interface Course extends CourseCore {
     id: number;
+    secondaryId: string;
     modulesJson: string;
+}
+
+export interface CourseHierarchyComponent {
+    courseUUID: string;
+    module: number;
+    topic?: number;
+    task?: number;
 }
 
 
@@ -111,6 +116,7 @@ export interface CourseTraining extends CourseCore {
 
 export interface CourseFormMetadata {
     id: number;
+    secondaryId: string;
     authorId: number;
     masterCourseId: number | null;
     status?: CourseReviewStatus;

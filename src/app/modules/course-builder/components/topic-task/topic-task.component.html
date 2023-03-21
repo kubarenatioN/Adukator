@@ -1,0 +1,16 @@
+<form [formGroup]="form">
+
+    <label>Задание</label>
+    <input formControlName="taskDescr" />
+
+    <div class="field">
+        <h3>Ресурсы</h3>
+        <app-upload-box 
+        class="upload-box" 
+        [folder]="uploadPath"
+        (uploadFilesChanged)="onUploadFilesChanged($event)"></app-upload-box>
+    </div>
+
+</form>
+
+<button (click)="remove.emit()">Удалить</button>

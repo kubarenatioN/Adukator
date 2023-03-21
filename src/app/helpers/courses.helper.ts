@@ -1,4 +1,5 @@
 import { Course, CourseEditorComments, CourseFormData, CourseFormMetadata, CourseModule, CourseReview, CourseTraining } from "../typings/course.types";
+import { v4 as uuidv4 } from 'uuid';
 
 export const stringify = (data: any): string => {
     if (!data) {
@@ -24,9 +25,10 @@ export const parseEditorComments = (commentsString: string): CourseEditorComment
 }
 
 export const convertCourseToCourseFormData = (course: CourseReview): CourseFormData => {
-    const { id, authorId, masterId, title, description, category, categoryLabel, advantages, modulesJson, editorCommentsJson, status } = course
+    const { id, secondaryId, authorId, masterId, title, description, category, categoryLabel, advantages, modulesJson, editorCommentsJson, status } = course
     const metadata: CourseFormMetadata = {
         id,
+        secondaryId,
         authorId,
         masterCourseId: masterId,
         status
@@ -45,9 +47,10 @@ export const convertCourseToCourseFormData = (course: CourseReview): CourseFormD
 
 export const convertCourseFormDataToCourseReview = (formData: CourseFormData): CourseReview => {
     const { title, description, category, advantages, modules, editorComments, metadata } = formData
-    const { id, masterCourseId: masterId, authorId, status } = metadata;
+    const { id, secondaryId, masterCourseId: masterId, authorId, status } = metadata;
     return {
         id,
+        secondaryId,
         masterId,
         authorId,
         title,
@@ -62,9 +65,10 @@ export const convertCourseFormDataToCourseReview = (formData: CourseFormData): C
 
 export const convertCourseFormDataToCourse = (formData: CourseFormData): Course => {
     const { title, description, category, advantages, modules, metadata } = formData
-    const { id, authorId } = metadata;
+    const { id, secondaryId, authorId } = metadata;
     return {
         id,
+        secondaryId,
         title,
         description,
         category,
@@ -85,4 +89,8 @@ export const convertCourseToCourseTraining = (course: Course): CourseTraining =>
         modules: parseModules(modulesJson),
         authorId,
     }
+}
+
+export const generateUUID = (): string => {
+    return uuidv4();
 }

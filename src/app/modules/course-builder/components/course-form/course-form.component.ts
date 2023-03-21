@@ -9,20 +9,21 @@ import {
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import {
-	EmptyCourseFormDataType,
-	EMPTY_COURSE_FORM_DATA,
+    EmptyCourseFormData,
+	EmptyCourseFormDataType, isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
 import { moduleTopicsCountValidator } from 'src/app/helpers/course-validation';
 import { convertCourseToCourseFormData } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
+import { UploadHelper } from 'src/app/helpers/upload.helper';
 import { CourseFormDataMock } from 'src/app/mocks/course-form-data';
 import { ConfigService } from 'src/app/services/config.service';
 import {
 	CourseFormData,
 	CourseFormViewMode,
+	CourseHierarchyComponent,
 	CourseReview,
 } from 'src/app/typings/course.types';
-
 
 @Component({
 	selector: 'app-course-form',
@@ -33,6 +34,7 @@ import {
 export class CourseFormComponent implements OnInit {
 	private _mode: CourseFormViewMode = CourseFormViewMode.Create;
 	private courseFormData: CourseFormData | null = null;
+	private courseSecondaryId!: string;
 
     public categories$ = this.configService.loadCourseCategories();
 
@@ -69,14 +71,17 @@ export class CourseFormComponent implements OnInit {
 	}
 
 	@Input() public set formData(
-		data: CourseReview | EmptyCourseFormDataType
+		data: CourseReview | EmptyCourseFormData
 	) {
         // console.log('111 form data', data);
-		if (data !== EMPTY_COURSE_FORM_DATA) {
-            const courseFormData = convertCourseToCourseFormData(data);
+		if (!isEmptyCourseFormData(data)) {
+            const courseData = data as CourseReview;
+            this.courseSecondaryId = courseData.secondaryId
+            const courseFormData = convertCourseToCourseFormData(courseData);
 			this.courseFormData = courseFormData;
 			this.setCourseModel(courseFormData);
 		} else {
+            this.courseSecondaryId = (data as EmptyCourseFormData).uuid;
 			this.addStartModule();
 		}
 	}
@@ -102,10 +107,13 @@ export class CourseFormComponent implements OnInit {
 		});
 	}
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
+        // if (this.viewMode === CourseFormViewMode.Create) {
+        //     this.newCourseSecondaryId = uuidv4()
+        //     console.log('new course id:', this.newCourseSecondaryId);
+        // }
 		this.courseForm.valueChanges.subscribe((res) => {
-			console.log('111 course form changed value', res);
-			// console.log('111 course form changed form', this.courseForm);
+			console.log('111 main course form', res);
 		});
 	}
 
@@ -124,6 +132,30 @@ export class CourseFormComponent implements OnInit {
 	public removeModule(index: number): void {
 		this.modules.removeAt(index);
 	}
+
+    public getReviewTopicFolderPath(module: number, topic: number) {
+        return UploadHelper.getTopicUploadFolder({
+            courseUUID: this.courseSecondaryId,
+            module,
+            topic,
+        })
+    }
+
+    public getReviewTaskFolderPath(module: number, topic: number, task: number) {
+        return UploadHelper.getTaskUploadFolder({
+            courseUUID: this.courseSecondaryId,
+            module,
+            topic,
+            task
+        })
+    }
+
+    public getHierarchy(moduleIndex: number): CourseHierarchyComponent {
+        return {
+            courseUUID: this.courseSecondaryId,
+            module: moduleIndex
+        }
+    }
 
 	public onChangeCustomCategory(
 		change: MatCheckboxChange,

@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, map, Observable, of, shareReplay, switchMap, takeUntil } from 'rxjs';
-import { convertCourseFormDataToCourse, convertCourseToCourseTraining } from 'src/app/helpers/courses.helper';
+import { convertCourseToCourseTraining } from 'src/app/helpers/courses.helper';
 import { CoursesService } from 'src/app/services/courses.service';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { Course, CourseTopic, CourseTraining } from 'src/app/typings/course.types';
+import { CourseTraining, ModuleTopic } from 'src/app/typings/course.types';
 
 enum ViewType {
     Main = 'main',
@@ -23,8 +23,7 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 
     public viewType$: Observable<string> = this.viewTypeStore$.asObservable();
     public course$!: Observable<CourseTraining | null>
-    public topic$!: Observable<CourseTopic | null>
-
+    public topic$!: Observable<ModuleTopic | null>
 
     public viewTypes = ViewType;
     

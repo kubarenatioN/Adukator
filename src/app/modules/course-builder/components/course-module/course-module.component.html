@@ -35,6 +35,7 @@
                     <app-module-topic 
                         [order]="i" 
                         [form]="topicForm" 
+                        [hierarchy]="getHierarchy(i + 1)"
                         [editorForm]="topicsEditorCommentsForm(i)" 
                         (removeTopic)="onRemoveTopic(i)"></app-module-topic>                    
                 </mat-expansion-panel>

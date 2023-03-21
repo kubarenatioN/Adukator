@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { map, Observable } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
+import { UploadService } from 'src/app/services/upload.service';
+import { UserFile } from 'src/app/typings/files.types';
 
 @Component({
 	selector: 'app-upload-box',
@@ -10,13 +13,28 @@ import { DataService } from 'src/app/services/data.service';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadBoxComponent implements OnInit {
-    public files: File[] = []
+    @Input() type: 'upload' | 'download' = 'upload';
+    @Input() folder: string | null = null;
 
-	constructor(private dataService: DataService) {
+    @Output()
+    public uploadFilesChanged = new EventEmitter<string[]>();
+    
+    public uploadFiles: File[] = []
+    public downloadFiles$!: Observable<UserFile[]>;
+
+    public get fileInputId(): string {
+        let components = this.folder?.split('/');
+        components?.shift()
+        return `fileInput-${components?.join('-')}`;
     }
 
-	ngOnInit(): void {
-        
+	constructor(private uploadService: UploadService) {
+    }
+
+	public ngOnInit(): void {
+        if (this.type === 'download' && this.folder !== null) {
+            this.downloadFiles$ = this.getFilesFromFolder(this.folder);
+        }
     }
 
     public onChange(e: Event) {
@@ -27,28 +45,44 @@ export class UploadBoxComponent implements OnInit {
     }
 
     public onFilesDropped(files: FileList) {
+        if (this.folder === null) {
+            return;
+        }
         for (let i = 0; i < files.length; i++) {
             const file = files.item(i);
             if (file) {
-                const fileIndex = this.files.findIndex(f => f.name === file.name && f.type === file.type)
+                const fileIndex = this.uploadFiles.findIndex(f => f.name === file.name && f.type === file.type)
                 if (fileIndex === -1) {
-                    this.files.push(file)
-                    this.uploadFile(file)
+                    this.uploadFiles.push(file)
+                    this.uploadFile(file, this.folder)
                 }
             }
         }
-        console.log('files:', this.files);
     }
 
     public removeFile(index: number) {
-        this.files = this.files.filter((_, i) => i !== index)
+        this.uploadFiles = this.uploadFiles.filter((_, i) => i !== index)
     }
 
-    private uploadFile(file: File) {
-        this.dataService.uploadFile(file);
+    private uploadFile(file: File, folder: string) {
+        this.uploadService.uploadFile(file, folder)
+        .subscribe(() => {
+            this.uploadFilesChanged.emit(this.uploadFiles.map(file => file.name));
+        });
     }
 
-    private removeFileOnServer() {
+    private removeFileFromServer() {
 
+    }
+
+    private getFilesFromFolder(folder: string) {
+        return this.uploadService.getFilesFromFolder(folder)
+            .pipe(
+                map(res => res.resources)
+            )
+    }
+
+    public downloadFile(url: string, filename: string) {
+        this.uploadService.downloadFile(url, filename).subscribe()
     }
 }

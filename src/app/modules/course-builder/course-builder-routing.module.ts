@@ -1,14 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AdminComponent } from './admin.component';
+import { CreateCourseComponent } from './components/create-course/create-course.component';
 
 const routes: Routes = [
-	{ path: '', component: AdminComponent },
-	{ path: '**', redirectTo: '' },
+    {
+		path: 'create',
+		component: CreateCourseComponent,
+	},
 ];
 
 @NgModule({
 	imports: [RouterModule.forChild(routes)],
 	exports: [RouterModule],
 })
-export class AdminRoutingModule {}
+export class CourseBuilderRoutingModule {}

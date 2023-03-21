@@ -1,22 +1,56 @@
-<div class="dropzone" appDnd (filesDropped)="onFilesDropped($event)">
-    <div class="dropzone-wrapper">
-        Отпустите файлы здесь.
-    </div>
-    <input class="file-input" type="file" id="fileInput" #fileInputRef multiple (change)="onChange($event)">
+<ng-container [ngSwitch]="type">
+    <ng-container 
+    *ngSwitchCase="'download'"
+    [ngTemplateOutlet]="download"></ng-container>
+    <ng-container 
+    *ngSwitchCase="'upload'"
+    [ngTemplateOutlet]="upload"></ng-container>
+    <ng-container 
+    *ngSwitchDefault
+    [ngTemplateOutlet]="upload"></ng-container>
+</ng-container>
 
-    <div class="files-container--empty" *ngIf="files.length === 0; else filesContainer">
-        <h3>Для загрузки, перетащите файлы сюда.</h3>
-        <p>или</p>
-        <label class="pick-files-btn" for="fileInput">Выберите файлы</label>
+<ng-template #upload>
+    <div class="dropzone" appDnd (filesDropped)="onFilesDropped($event)">
+        <div class="dropzone-wrapper">
+            Отпустите файлы здесь.
+        </div>
+        <input class="file-input" type="file" [id]="fileInputId" #fileInputRef multiple (change)="onChange($event)">
+
+        <div class="files-container--empty" *ngIf="uploadFiles.length === 0; else filesContainer">
+            <h3>Для загрузки, перетащите файлы сюда.</h3>
+            <p>или</p>
+            <label class="pick-files-btn" [for]="fileInputId">Выберите файлы</label>
+        </div>
     </div>
-</div>
+</ng-template>
+
+<ng-template #download>
+    <div class="files-container">
+        <ng-container *ngIf="downloadFiles$ | async as downloadFiles; else loader">
+            <ng-container *ngIf="downloadFiles.length > 0; else noFiles">
+                <div *ngFor="let file of downloadFiles" class="file-item" (click)="downloadFile(file.url, file.filename)">
+                    {{file.filename}}
+                </div>
+            </ng-container>
+        </ng-container>
+    </div>
+</ng-template>
 
 <ng-template #filesContainer>
     <div class="files-container">
-        <div class="file-item" *ngFor="let file of files; let i = index">
+        <div class="file-item" *ngFor="let file of uploadFiles; let i = index">
             {{file.name}}
             <button (click)="removeFile(i)">Remove</button>
         </div>
     </div>
-    <label class="pick-files-btn" for="fileInput">Добавить файлы</label>
+    <label class="pick-files-btn" [for]="fileInputId">Добавить файлы</label>
+</ng-template>
+
+<ng-template #loader>
+    <p>Loading...</p>
+</ng-template>
+
+<ng-template #noFiles>
+    <p>Нет доступных файлов.</p>
 </ng-template>
