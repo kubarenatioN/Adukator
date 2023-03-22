@@ -1,69 +1,51 @@
-<app-back-btn class="back-btn">
+<a mat-raised-button [routerLink]="['/app/dashboard']" class="back-btn">
     Назад
-</app-back-btn>
+</a>
 
-<ng-container *ngIf="formData$ | async as formData; else loading">
-    <ng-container *ngIf="viewMode$ | async as viewMode">
-        <p>
-            {{viewMode}}
-        </p>
-        <ng-container [ngSwitch]="viewMode">
-            
-            <ng-container 
-                *ngSwitchCase="viewModes.Create" 
-                [ngTemplateOutlet]="createHeader"
-            ></ng-container>
-            <ng-container 
-                *ngSwitchCase="viewModes.Update" 
-                [ngTemplateOutlet]="updateHeader"
-            ></ng-container>
-            <ng-container 
-                *ngSwitchCase="viewModes.Edit" 
-                [ngTemplateOutlet]="editHeader"
-            ></ng-container>
-            <ng-container 
-                *ngSwitchCase="viewModes.Review" 
-                [ngTemplateOutlet]="reviewHeader"
-            ></ng-container>
+<div class="container">
 
-        </ng-container>
+    <nav class="sidenav" *ngIf="modules$ | async as modules">
+        <ul class="sidenav-list">
+            <li><a routerLink=".">Главная</a></li>
+            <ul class="sidenav-modules-list">
+                <ul *ngFor="let module of modules; let i = index">
+                    <li>
+                        <a 
+                        routerLink="."
+                        [queryParams]="{ module: i + 1 }">
+                            Модуль {{ i + 1 }}. {{ module.title }}
+                        </a>
+                    </li>
+                    <ul class="sidenav-module-topics-list">
+                        <li *ngFor="let topic of module.topics; let j = index">
+                            <a 
+                            routerLink="."
+                            [queryParams]="{ module: i + 1, topic: j + 1 }">
+                                Тема {{ j + 1 }}. {{ topic.title }}
+                            </a>
+                        </li>
+                    </ul>
+                </ul>
+            </ul>
+        </ul>
+    </nav>
 
-        <ng-container *ngIf="viewMode !== viewModes.Default">
+    <ng-container *ngIf="courseData$ | async as courseData">
+        <div class="form-container">
             <app-course-form 
-                (publish)="onPulish($event)"
-                (saveReview)="onSaveReview($event)"
+                [formMode]="courseData.formMode"
+                [formData]="courseData.formData"
+                [viewData]="courseData.viewData"
                 (createReviewVersion)="onCreateReviewVersion($event)"
-                [mode]="viewMode"
-                [formData]="formData">
+                (moduleAdded)="onModuleAdded($event)">
             </app-course-form>
-        </ng-container>
-
+        </div>
     </ng-container>
-</ng-container>
 
-<ng-template #createHeader>
-    <h1 class="title">Создание курса</h1>
-    <p>Пожалуйста, заполните данные о курсе в форму ниже.</p>
-</ng-template>
+</div>
 
-<ng-template #updateHeader>
-    <h1 class="title">Редактирование курса</h1>
-    <p>Внесите необходимые правки в текущую версию курса.</p>
-</ng-template>
 
-<ng-template #editHeader>
-    <h1 class="title">Исправление курса</h1>
-    <p>Обновите содержание курса в соответствии с советами редакции.</p>
-</ng-template>
-
-<ng-template #reviewHeader>
-    <h1 class="title">Проверка курса</h1>
-    <p>
-        Проверьте содержание курса на соответствие <a href="#">политики о содержимом</a>
-    </p>
-</ng-template>
-
-<ng-template #loading>
+<ng-template #loader>
     Loading course data...
 </ng-template>
 

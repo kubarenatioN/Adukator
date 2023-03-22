@@ -2,6 +2,7 @@ form {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    flex-grow: 1;
 }
 
 mat-form-field {
@@ -9,8 +10,14 @@ mat-form-field {
     width: 100%;
 }
 
-mat-accordion {
-    width: 100%;
+.modules {
+    padding-left: 40px;
+    margin-top: 60px;
+}
+
+.module-item {
+    padding: 10px;
+    border: 1px solid #ccc;
 }
 
 .footer {
@@ -73,10 +80,6 @@ mat-accordion {
 
 p {
     margin: 0;
-}
-
-app-form-element-review-wrapper {
-    margin: 15px 0;
 }
 
 .form-footer {

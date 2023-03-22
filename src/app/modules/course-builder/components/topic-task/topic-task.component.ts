@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UploadHelper } from 'src/app/helpers/upload.helper';
 import { CourseHierarchyComponent } from 'src/app/typings/course.types';
@@ -9,7 +9,7 @@ import { CourseHierarchyComponent } from 'src/app/typings/course.types';
 	styleUrls: ['./topic-task.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TopicTaskComponent {
+export class TopicTaskComponent implements OnInit {
     private _hierarchy: CourseHierarchyComponent | null = null;
     public uploadPath = ''
     
@@ -22,6 +22,10 @@ export class TopicTaskComponent {
     @Output() public remove = new EventEmitter<void>();
 
 	constructor() {}
+
+    ngOnInit(): void {
+
+    }
 
     public onUploadFilesChanged(materials: string[]) {
         this.form.patchValue({

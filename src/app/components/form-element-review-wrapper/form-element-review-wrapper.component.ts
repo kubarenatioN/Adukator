@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { TitleStrategy } from '@angular/router';
+import { WrapperType } from 'src/app/typings/course.types';
 
 const textItems: CommentItem[] = [
     {
@@ -26,7 +27,7 @@ interface CommentItem {
     id: number,
     label: string
 }
-type WrapperType = 'review' | 'edit';
+
 type ReviewType = 'text' | 'category' | 'dates' | 'checkbox';
 
 @Component({
@@ -36,16 +37,17 @@ type ReviewType = 'text' | 'category' | 'dates' | 'checkbox';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormElementReviewWrapperComponent implements OnInit {
-    private _form: FormGroup | null = null;
+    private _form!: FormGroup;
     private _isReviewActive = false;
     private _isEditDone = false;
     private textItems = textItems
     
-    @Input() public type!: WrapperType;
-    @Input() public set form(value: FormGroup | null) {
-        this._form = value;
+    @Input() public content!: TemplateRef<any>;
+    @Input() public set form(value: FormGroup) {
+        this._form = value.controls['comments'] as FormGroup;
     }
     @Input() public control!: string
+    @Input() public type: WrapperType = 'review';
     @Input() public reviewType: ReviewType = 'text'
     
     public get isReviewActive(): boolean {
@@ -60,10 +62,6 @@ export class FormElementReviewWrapperComponent implements OnInit {
         return this.comments.length > 0
     }
 
-    public get form(): FormGroup | null {
-        return this._form;
-    }
-
     public get comments(): CommentItem[] {
         if (this._form === null) {
             return [];
@@ -75,6 +73,10 @@ export class FormElementReviewWrapperComponent implements OnInit {
         }
 
         return Array.isArray(value) ? value : [value]
+    }
+
+    public get form(): FormGroup {
+        return this._form;
     }
 
 	constructor(private fb: FormBuilder) {

@@ -1,24 +1,18 @@
 <form [formGroup]="form">
 
-    <app-form-element-review-wrapper
-        type="edit"
-        [form]="editorForm"
-        control="title">
-        <mat-form-field appearance="fill">
-            <mat-label>Название</mat-label>
-            <input matInput formControlName="title" />
-        </mat-form-field>
-    </app-form-element-review-wrapper>
+    <mat-form-field 
+        *appFormElWrapper="form; control: 'title'"
+        appearance="fill">
+        <mat-label>Название темы</mat-label>
+        <input matInput formControlName="title" />
+    </mat-form-field>
 
-    <app-form-element-review-wrapper
-        type="edit"
-        [form]="editorForm"
-        control="description">
-        <mat-form-field appearance="fill">
-            <mat-label>Описание</mat-label>
-            <textarea matInput formControlName="description"></textarea>
-        </mat-form-field>
-    </app-form-element-review-wrapper>
+    <mat-form-field 
+        *appFormElWrapper="form; control: 'description'"
+        appearance="fill">
+        <mat-label>Описание темы</mat-label>
+        <input matInput formControlName="description" />
+    </mat-form-field>
 
     <div>
         <p>Добавить раздел</p>
@@ -34,7 +28,7 @@
     <ng-container *ngIf="activeSections.theory" 
         [ngTemplateOutlet]="theory"></ng-container>
 
-    <ng-container *ngIf="activeSections.practice" 
+    <ng-container *ngIf="activeSections.practice && hasPracticeFormGroup" 
         [ngTemplateOutlet]="practice"
         [ngTemplateOutletContext]="{ practiceForm: practiceFormGroup }"></ng-container>
 
@@ -42,8 +36,6 @@
         [ngTemplateOutlet]="test"></ng-container>
 
 </form>
-
-<button [disabled]="order === 0" (click)="onRemove()">Удалить тему</button>
 
 <ng-template #materials>
     <div class="section materials">
@@ -59,32 +51,36 @@
 </ng-template>
 
 <ng-template #practice let-practiceForm="practiceForm">
-    <div class="section">
+    <div class="section" [formGroup]="practiceForm">
         <h3>Практика</h3>
         <button (click)="onRemoveSection('practice')">Удалить раздел</button>
 
-        <textarea>
-            {{practiceForm.value.goal}}
-        </textarea>
+        <textarea formControlName="goal">{{practiceForm.value.goal}}</textarea>
+
         <button (click)="onAddTask()">Добавить задание</button>
         <div class="tasks-list">
-            <ng-container *ngIf="taskForms.length > 0">
-                <app-topic-task 
-                class="task-item"
-                *ngFor="let task of taskForms; let i = index" 
-                [form]="task"
-                [hierarchy]="getHierarchy(i + 1)"
-                (remove)="onRemoveTaskAt(i)"></app-topic-task>
+            <ng-container *ngIf="tasksFormArray.controls.length > 0">
+                <div 
+                *ngFor="let taskForm of tasksFormArray.controls; let i = index"
+                class="task-item">
+                    <app-topic-task 
+                    [form]="taskForm"
+                    [hierarchy]="getHierarchy(i + 1)"></app-topic-task>
+
+                    <button [disabled]="i === 0" (click)="onRemoveTaskAt(i)">
+                        Удалить задачу
+                    </button>
+                </div>
             </ng-container>
         </div>
     </div>
 </ng-template>
 
 <ng-template #theory>
-    <div class="section">
+    <div class="section" [formGroup]="form">
         <h3>Теория</h3>
         <button (click)="onRemoveSection('theory')">Удалить раздел</button>
-        <mat-form-field appearance="fill" [formGroup]="form">
+        <mat-form-field appearance="fill">
             <mat-label>Теория</mat-label>
             <textarea matInput formControlName="theory"></textarea>
         </mat-form-field>
@@ -92,10 +88,10 @@
 </ng-template>
 
 <ng-template #test>
-    <div class="section">
+    <div class="section" [formGroup]="form">
         <h3>Тест</h3>
         <button (click)="onRemoveSection('test')">Удалить раздел</button>
-        <mat-form-field appearance="fill" [formGroup]="form">
+        <mat-form-field appearance="fill">
             <mat-label>Ссылка на тест</mat-label>
             <input matInput formControlName="testLink" />
         </mat-form-field>

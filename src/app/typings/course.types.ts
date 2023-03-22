@@ -1,6 +1,26 @@
 import { FormGroup } from "@angular/forms";
 import { User } from "./user.types";
 
+export enum CourseTopFormGroups {
+    OverallInfo = 'overallInfo',
+    Modules = 'modules',
+}
+
+export enum CourseTopFormFields {
+    Title = 'title',
+    Descr = 'description',
+}
+
+export enum OverallFormFields {
+    Title = 'title',
+    Descr = 'description',
+    Category = 'category',
+}
+
+export enum TaskFormFields {
+    Requirement = 'requirement',
+}
+
 export interface TopicTask {
     taskDescr: string;
     materials?: string[],
@@ -9,14 +29,14 @@ export interface TopicTask {
 
 export interface TopicPractice {
     goal: string;
-    tasks?: TopicTask[]
+    tasks: TopicTask[]
 }
 
 // TODO: check fields optionality
 export interface ModuleTopic {
     title: string;
     description: string;
-    materials?: string[];
+    materials: string[];
     theory?: string;
     practice?: TopicPractice,
     testLink: string;
@@ -139,9 +159,18 @@ export enum CourseFormViewMode {
     Create = 'create',
     Update = 'update',
     Edit = 'edit',
-    Review = 'review',
     Default = 'default',
 };
+
+export type CourseBuilderViewType =  'topic' | 'module' | 'main'
+
+export interface CourseBuilderViewData {
+    type: CourseBuilderViewType;
+    module: number;
+    topic: number;
+}
+
+export type WrapperType = 'edit' | 'review';
 
 export type CourseEnrollAction = 
     'enroll' | 

@@ -1,4 +1,4 @@
-<ng-content></ng-content>
+<ng-container *ngTemplateOutlet="content"></ng-container>
 
 <ng-container [ngSwitch]="type">
     <ng-container *ngSwitchCase="'review'">

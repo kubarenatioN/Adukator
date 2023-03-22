@@ -71,11 +71,7 @@
                 </span>
                 <a 
                     *ngIf="canShowCourseVersionActionButton(courseReviewStatuses.ReadyForReview, course) | async"
-                    [routerLink]="['/app/learn/create']" 
-                    [queryParams]="{
-                        id: course.metadata.id,
-                        action: 'review'
-                    }" 
+                    [routerLink]="['/app/admin/review', course.metadata.id]"
                     mat-stroked-button
                     color="primary"
                     >
@@ -88,7 +84,7 @@
                 </span>
                 <a 
                     *ngIf="canShowCourseVersionActionButton(courseReviewStatuses.ReadyForUpdate, course) | async"
-                    [routerLink]="['/app/learn/create']" 
+                    [routerLink]="['/app/course-builder/create']" 
                     [queryParams]="{
                         id: course.metadata.id,
                         action: 'edit'

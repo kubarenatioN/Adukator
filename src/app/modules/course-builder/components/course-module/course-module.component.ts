@@ -7,7 +7,9 @@ import {
 	Output,
 } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
+import { takeUntil } from 'rxjs';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
+import { BaseComponent } from 'src/app/shared/base.component';
 import { CourseHierarchyComponent } from 'src/app/typings/course.types';
 
 @Component({
@@ -16,16 +18,9 @@ import { CourseHierarchyComponent } from 'src/app/typings/course.types';
 	styleUrls: ['./course-module.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CourseModuleComponent implements OnInit {
-    private _editorCommentsForm: FormGroup | null = null;
-    
+export class CourseModuleComponent extends BaseComponent implements OnInit {    
+	@Input() public form!: FormGroup
 	@Input() public hierarchy!: CourseHierarchyComponent;
-	@Input() public form!: FormGroup;
-
-    // form for editor comments
-	@Input() public set editorModulesForm(value: FormGroup | null) {
-        this._editorCommentsForm = value;
-    }
 
 	@Output() public changeTitle = new EventEmitter<string>();
 
@@ -37,17 +32,6 @@ export class CourseModuleComponent implements OnInit {
 		return this.topics.controls as FormGroup[];
 	}
 
-    public get editorModulesForm() {
-        return this._editorCommentsForm;
-    }
-
-    public topicsEditorCommentsForm(i: number): FormGroup | null {
-        if (this.editorModulesForm === null) {
-            return null;
-        }
-        return (this.editorModulesForm.controls['topics'] as FormArray).at(i) as FormGroup
-    }
-
 	public get title(): string {
 		if (this.form) {
 			return this.form.get('title')?.value || '';
@@ -57,20 +41,27 @@ export class CourseModuleComponent implements OnInit {
 
 	constructor(
         private fbHelper: FormBuilderHelper,
-	) {}
+	) {
+        super();
+    }
 
 	public ngOnInit(): void {
-		this.form.valueChanges.subscribe((res) => {
-			console.log('111 module form changed', res);
-		});
+		this.form.valueChanges
+            .pipe(takeUntil(this.componentLifecycle$))
+            .subscribe((res) => {
+                console.log('111 module form changed', res);
+            });
 	}
 
     public addTopic(): void {
-        const newTopic = this.createNewTopicFormModel();
+        const newTopic = this.fbHelper.getTopicForm();
         this.topics.push(newTopic);
     }
 
 	public onRemoveTopic(index: number) {
+        if (index === 0) {
+            return;
+        }
 		this.topics.removeAt(index);
 	}
 
@@ -79,9 +70,5 @@ export class CourseModuleComponent implements OnInit {
             ...this.hierarchy,
             topic: topicIndex
         }
-    }
-
-    private createNewTopicFormModel() {
-        return this.fbHelper.getEmptyTopic()
     }
 }

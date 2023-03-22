@@ -8,7 +8,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { BackBtnComponent } from 'src/app/modules/shared/components/back-btn/back-btn.component';
@@ -18,6 +17,7 @@ import { UploadBoxComponent } from 'src/app/components/upload-box/upload-box.com
 import { DndDirective } from 'src/app/directives/dnd.directive';
 import { FormElementReviewWrapperComponent } from 'src/app/components/form-element-review-wrapper/form-element-review-wrapper.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { FormElementWrapperDirective } from 'src/app/directives/form-element-wrapper.directive';
 
 @NgModule({
 	declarations: [
@@ -26,6 +26,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 		TimeDurationPipe,
 		UploadBoxComponent,
 		DndDirective,
+        FormElementWrapperDirective,
         FormElementReviewWrapperComponent,
 	],
 	imports: [
@@ -55,6 +56,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 		TimeDurationPipe,
 		UploadBoxComponent,
 		DndDirective,
+        FormElementWrapperDirective,
         FormElementReviewWrapperComponent,
 	],
 })

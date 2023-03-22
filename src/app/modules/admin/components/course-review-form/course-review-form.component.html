@@ -1,0 +1,170 @@
+<form [formGroup]="form">
+	<app-form-element-review-wrapper
+		type="review"
+		[form]="editorComments"
+		control="title"
+	>
+		<div class="property">
+			<span>Название курса</span>
+			<h2>{{ form.value.title }}</h2>
+		</div>
+	</app-form-element-review-wrapper>
+
+	<app-form-element-review-wrapper
+		type="review"
+		[form]="editorComments"
+		control="description"
+	>
+		<div class="property">
+			<span>Описание курса</span>
+			<p>{{ form.value.description }}</p>
+		</div>
+	</app-form-element-review-wrapper>
+
+	<app-form-element-review-wrapper
+		type="review"
+		[form]="editorComments"
+		control="categories"
+		reviewType="checkbox"
+	>
+		<div class="categories">
+			<div class="property _category-row">
+				<span>Категория</span>
+				<span>{{ category }}</span>
+			</div>
+		</div>
+	</app-form-element-review-wrapper>
+
+	<h2>Модули</h2>
+	<div class="modules">
+		<div
+			*ngFor="let module of form.value.modules; let i = index"
+			class="admin-module"
+		>
+			<h3>Модуль {{ i + 1 }}.</h3>
+			<app-form-element-review-wrapper
+				type="review"
+				[form]="getModuleEditorCommentsForm(i)"
+				control="title"
+			>
+				<div class="property">
+					<span>Название</span>
+					<p class="">{{ module.title }}</p>
+				</div>
+			</app-form-element-review-wrapper>
+
+			<app-form-element-review-wrapper
+				type="review"
+				[form]="getModuleEditorCommentsForm(i)"
+				control="description"
+			>
+				<div class="property">
+					<span>Описание</span>
+					<p class="">{{ module.description }}</p>
+				</div>
+			</app-form-element-review-wrapper>
+
+			<div class="module-topics">
+				<div
+					*ngFor="let topic of module.topics; let j = index"
+					class="admin-module-topic"
+				>
+					<h4>Тема {{ j + 1 }}.</h4>
+
+					<app-form-element-review-wrapper
+						type="review"
+						[form]="getTopicEditorCommentsForm(i, j)"
+						control="title"
+					>
+						<div class="property">
+							<h3>Название</h3>
+							<p class="">{{ topic.title }}</p>
+						</div>
+					</app-form-element-review-wrapper>
+
+					<app-form-element-review-wrapper
+						type="review"
+						[form]="getTopicEditorCommentsForm(i, j)"
+						control="description"
+					>
+						<div class="property">
+							<h3>Описание</h3>
+							<p class="">{{ topic.description }}</p>
+						</div>
+					</app-form-element-review-wrapper>
+
+					<div class="topic-content">
+						<div *ngIf="topic.materials" class="topic-materials">
+							<h3>Материалы</h3>
+							<app-upload-box
+								class="topic-review-materials"
+								type="download"
+								[folder]="
+									getReviewTopicFolderPath(i + 1, j + 1)
+								"
+							></app-upload-box>
+						</div>
+						<div *ngIf="topic.theory" class="topic-theory">
+							<h3>Теория</h3>
+							<p>
+								{{ topic.theory }}
+							</p>
+						</div>
+						<div *ngIf="topic.practice" class="topic-practice">
+							<h3>Практика</h3>
+							<h4>{{ topic.practice.goal }}</h4>
+							<div class="practice-tasks-list">
+								<div
+									*ngFor="
+										let task of topic.practice.tasks;
+										let k = index
+									"
+									class="task-item"
+								>
+									<!-- {{ task | json }} -->
+									<h4>Задание {{ k + 1 }}.</h4>
+									<p>{{ task.taskDescr }}</p>
+
+									<app-upload-box
+										*ngIf="task.materials.length > 0"
+										type="download"
+										[folder]="
+											getReviewTaskFolderPath(
+												i + 1,
+												j + 1,
+												k + 1
+											)
+										"
+										class="task-materials"
+									>
+									</app-upload-box>
+
+									<p *ngIf="task.comment">
+										Комментарий: {{ task.comment }}
+									</p>
+								</div>
+							</div>
+						</div>
+						<div *ngIf="topic.test" class="topic-test">
+							<h3>Тест</h3>
+							<a target="_blank" [href]="topic.test">
+								Перейти к тесту
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-footer">
+		<button mat-raised-button color="primary" (click)="onSubmit('review')">Сохранить</button>
+        <button mat-raised-button color="primary" (click)="onSubmit('publish')">Опубликовать</button>
+	</div>
+</form>
+
+<ng-template #loader>
+    <p>
+        Loading...
+    </p>
+</ng-template>

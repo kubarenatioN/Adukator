@@ -1,103 +1,107 @@
 <form class="course-form" [formGroup]="courseForm">
 
-    <ng-container 
-        [ngTemplateOutlet]="form"
-        [ngTemplateOutletContext]="{ viewMode, form: courseForm }"
-    ></ng-container>
-	
+    <ng-container [ngSwitch]="viewType">
+        <ng-container 
+            *ngSwitchCase="'main'"
+            [ngTemplateOutlet]="courseMainInfo">
+        </ng-container>
+        <ng-container 
+            *ngSwitchCase="'module'"
+            [ngTemplateOutlet]="courseModule"
+            [ngTemplateOutletContext]="{ module: getView('module'), viewType }">
+        </ng-container>
+        <ng-container 
+            *ngSwitchCase="'topic'"
+            [ngTemplateOutlet]="courseTopic"
+            [ngTemplateOutletContext]="{ topic: getView('topic'), viewType }">
+        </ng-container>
+    </ng-container>
+
+    <div class="form-footer">
+        <ng-container 
+        [ngTemplateOutlet]="actionButtons" 
+        [ngTemplateOutletContext]="{ formMode }"></ng-container>
+    </div>
+    
 </form>
 
-<ng-template #form let-viewMode="viewMode" let-form="form">
-    <ng-container [ngSwitch]="viewMode">
-        
-        <!-- Template for review mode -->
-        <ng-container *ngSwitchCase="viewModes.Review">
-            <ng-container
-                [ngTemplateOutlet]="reviewForm"
-                [ngTemplateOutletContext]="{ form }"
-            ></ng-container>
-        </ng-container>
+<ng-template #courseMainInfo>
 
-        <ng-container *ngSwitchDefault>
-            <ng-container
-                [ngTemplateOutlet]="changableForm"
-                [ngTemplateOutletContext]="{ form }"
-            ></ng-container>
-        </ng-container>
+    <ng-container [ngSwitch]="formMode">
+                
+        <ng-container 
+            *ngSwitchCase="formModes.Create" 
+            [ngTemplateOutlet]="createHeader"
+        ></ng-container>
+        <ng-container 
+            *ngSwitchCase="formModes.Update" 
+            [ngTemplateOutlet]="updateHeader"
+        ></ng-container>
+        <ng-container 
+            *ngSwitchCase="formModes.Edit" 
+            [ngTemplateOutlet]="editHeader"
+        ></ng-container>
 
     </ng-container>
-</ng-template>
 
-<!-- Template for editable mode (create, update, edit) -->
-<ng-template 
-    #changableForm 
-    let-form="form"
-    let-editorForm="form.controls.editorComments">
-    
-    <app-form-element-review-wrapper 
-        type="edit"
-        [form]="editorForm" 
-        control="title">
-        <mat-form-field appearance="fill" [formGroup]="form">
+    <div [formGroup]="overallInfoSubform">
+        
+        <mat-form-field 
+        *appFormElWrapper="overallInfoSubform; control: 'title'"
+        appearance="fill">
             <mat-label>Название курса</mat-label>
             <input matInput formControlName="title" />
         </mat-form-field>
-    </app-form-element-review-wrapper>
-    
-    <app-form-element-review-wrapper 
-        type="edit"
-        [form]="editorForm" 
-        control="description">
-        <mat-form-field appearance="fill" [formGroup]="form">
+        
+        <mat-form-field 
+        *appFormElWrapper="overallInfoSubform; control: 'description'"
+        appearance="fill">
             <mat-label>Описание курса</mat-label>
-            <textarea matInput formControlName="description"></textarea>
+            <input matInput formControlName="description" />
         </mat-form-field>
-    </app-form-element-review-wrapper>
+        
+        <div 
+            *appFormElWrapper="overallInfoSubform; control: 'category'"
+            class="categories-container">
+            <mat-form-field appearance="fill">
+                <mat-label>Категория</mat-label>
+                <mat-select formControlName="category">
+                    <mat-option *ngFor="let category of categories$ | async" [value]="category.key">
+                        {{category.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
 
-    <ng-container 
-        [ngTemplateOutlet]="categories"
-        [ngTemplateOutletContext]="{ form, editorForm }"
-    ></ng-container>
+    </div>
 
-    <!-- <ng-container 
-        [ngTemplateOutlet]="dates"
-        [ngTemplateOutletContext]="{ form, editorForm }"
-    ></ng-container> -->
-
-    <ng-container 
-        [ngTemplateOutlet]="modules"
-        [ngTemplateOutletContext]="{ form, editorForm }"
-    ></ng-container>
-
-    <div class="form-footer">
-        <ng-container [ngTemplateOutlet]="actionButtons" [ngTemplateOutletContext]="{ viewMode }"></ng-container>
+    <div class="modules">
+        <div 
+        *ngFor="let moduleForm of modulesFormArray.controls; let i = index"
+        class="module-item">
+            <p>{{ moduleForm.value.title }}</p>
+        </div>
     </div>
 </ng-template>
 
-<ng-template #categories let-form="form" let-editorForm="editorForm">
-    <app-form-element-review-wrapper
-        type="edit"
-        [form]="editorForm"
-        control="categories">
-        <div class="categories-container" [formGroup]="form">
-            <div class="category-row">
-                <mat-form-field appearance="fill">
-                    <mat-label>Категория</mat-label>
-                    <mat-select formControlName="category">
-                        <mat-option *ngFor="let category of categories$ | async" [value]="category.key">
-                            {{category.name}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </div>
-    </app-form-element-review-wrapper>
+<ng-template #courseModule let-module="module">
+    <h3>Модуль {{ viewData.module + 1 }}. {{ module.value.title }}</h3>
+    <app-course-module 
+        [form]="module" 
+        [hierarchy]="getHierarchy(viewType)"></app-course-module>
 </ng-template>
 
-<ng-template #dates let-form="form" let-editorForm="editorForm">
+<ng-template #courseTopic let-topic="topic">
+    <h3>Тема {{ viewData.topic + 1 }}. {{ topic.value.title }}</h3>
+    <app-module-topic 
+        [form]="topic"
+        [hierarchy]="getHierarchy(viewType)"></app-module-topic>
+</ng-template>
+
+<ng-template #dates let-form="form">
     <app-form-element-review-wrapper
         type="edit"
-        [form]="editorForm"
+        [form]="form"
         control="dates">
         <mat-form-field appearance="fill" [formGroup]="form">
             <mat-label>Длительность курса</mat-label>
@@ -120,202 +124,17 @@
     </app-form-element-review-wrapper>
 </ng-template>
 
-<ng-template #modules let-form="form">
-    <h2>Модули курса</h2>
-
-    <!-- TODO: Add Icon instead of text  -->
-	<button mat-stroked-button color="primary" (click)="addStartModule()">
-		Добавить модуль
-	</button>
-
-	<mat-accordion multi [formGroup]="form">
-		<mat-expansion-panel
-			*ngFor="let moduleForm of modulesControls; let i = index"
-			[expanded]="i === 0"
-            [formGroup]="moduleForm"
-		>
-			<mat-expansion-panel-header>
-				<mat-panel-title>
-                    {{ i + 1 }}.
-					{{
-						module.title !== '' ? module.title : 'Модуль ' + (i + 1)
-					}}
-                </mat-panel-title>
-			</mat-expansion-panel-header>
-			
-            <app-course-module #module [form]="moduleForm" [editorModulesForm]="getModuleEditorCommentsForm(i)" [hierarchy]="getHierarchy(i + 1)"></app-course-module>
-
-			<mat-action-row>
-				<!-- TODO: Add Trash Icon instead of text  -->
-				<button
-					mat-stroked-button
-					color="primary"
-					[disabled]="i === 0 && modulesControls.length === 1"
-					(click)="removeModule(i)"
-				>
-					Удалить
-				</button>
-			</mat-action-row>
-		</mat-expansion-panel>
-	</mat-accordion>
-</ng-template>
-
-<ng-template 
-    #reviewForm 
-    let-form="form" 
-    let-editorForm="form.controls.editorComments"
-    let-editorFormModules="form.controls.editorComments.controls.modules">
-
-    <app-form-element-review-wrapper 
-        type="review"
-        [form]="editorForm" 
-        control="title">
-        <div class="property">
-            <span>Название курса</span>
-            <h2>{{form.value.title}}</h2>
-        </div>
-    </app-form-element-review-wrapper>
-
-    <app-form-element-review-wrapper
-        type="review"
-        [form]="editorForm" 
-        control="description">
-        <div class="property">
-            <span>Описание курса</span>
-            <p>{{form.value.description}}</p>
-        </div>
-    </app-form-element-review-wrapper>
-
-    <app-form-element-review-wrapper 
-        type="review"
-        [form]="editorForm" 
-        control="categories"
-        reviewType="checkbox">
-        <div class="categories">
-            <div class="property _category-row">
-                <span>Категория</span>
-                <span>{{category}}</span>
-            </div>
-        </div>
-    </app-form-element-review-wrapper>
-
-    <h2>Модули</h2>
-    <div class="modules">
-        <div 
-            *ngFor="let module of form.value.modules; let i = index"
-            class="admin-module">
-            <h3>Модуль {{i + 1}}.</h3>
-            <app-form-element-review-wrapper
-                type="review"
-                [form]="getModuleEditorCommentsForm(i)"
-                control="title">
-                <div class="property">
-                    <span>Название</span>
-                    <p class="">{{module.title}}</p>
-                </div>
-            </app-form-element-review-wrapper>
-
-            <app-form-element-review-wrapper
-                type="review"
-                [form]="getModuleEditorCommentsForm(i)"
-                control="description">
-                <div class="property">
-                    <span>Описание</span>
-                    <p class="">{{module.description}}</p>
-                </div>
-            </app-form-element-review-wrapper>
-            
-            <div class="module-topics">
-                <div *ngFor="let topic of module.topics; let j = index" class="admin-module-topic">
-                    <h4>Тема {{j + 1}}.</h4>
-
-                    <app-form-element-review-wrapper
-                        type="review"
-                        [form]="getTopicEditorCommentsForm(i, j)"
-                        control="title">
-                        <div class="property">
-                            <h3>Название</h3>
-                            <p class="">{{topic.title}}</p>
-                        </div>
-                    </app-form-element-review-wrapper>
-                    
-                    <app-form-element-review-wrapper
-                        type="review"
-                        [form]="editorFormModules.controls[i].controls.topics.controls[j]"
-                        control="description">
-                        <div class="property">
-                            <h3>Описание</h3>
-                            <p class="">{{topic.description}}</p>
-                        </div>
-                    </app-form-element-review-wrapper>
-                    
-                    <div class="topic-content">
-                        <div *ngIf="topic.materials" class="topic-materials">
-                            <h3>Материалы</h3>
-                            <app-upload-box class="topic-review-materials" type="download" [folder]="getReviewTopicFolderPath(i + 1, j + 1)"></app-upload-box>
-                        </div>
-                        <div *ngIf="topic.theory" class="topic-theory">
-                            <h3>Теория</h3>
-                            <p>
-                                {{ topic.theory }}
-                            </p>
-                        </div>
-                        <div *ngIf="topic.practice" class="topic-practice">
-                            <h3>Практика</h3>
-                            <h4>{{topic.practice.goal}}</h4>
-                            <div class="practice-tasks-list">
-                                <div *ngFor="let task of topic.practice.tasks; let k = index" class="task-item">
-                                    <!-- {{ task | json }} -->
-                                    <h4>Задание {{ k + 1 }}.</h4>
-                                    <p>{{ task.taskDescr }}</p>
-                                    
-                                    <app-upload-box *ngIf="task.materials.length > 0" type="download" [folder]="getReviewTaskFolderPath(i + 1, j + 1, k + 1)" class="task-materials">
-                                    </app-upload-box>
-
-                                    <p *ngIf="task.comment">
-                                        Комментарий: {{ task.comment }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div *ngIf="topic.test" class="topic-test">
-                            <h3>Тест</h3>
-                            <a target="_blank" [href]="topic.test">
-                                Перейти к тесту
-                            </a>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-footer">
-        <ng-container [ngTemplateOutlet]="actionButtons" [ngTemplateOutletContext]="{ viewMode }"></ng-container>
-    </div>
-</ng-template>
-
 <ng-template #actionButtons>
-    <ng-container [ngSwitch]="viewMode">
+    <ng-container [ngSwitch]="formMode">
         <ng-template 
-            *ngSwitchCase="viewModes.Review" 
-            [ngTemplateOutlet]="reviewCourseActionButtons"
-        ></ng-template>
-        <ng-template 
-            *ngSwitchCase="viewModes.Create" 
+            *ngSwitchCase="formModes.Create" 
             [ngTemplateOutlet]="createCourseActionButtons"
         ></ng-template>
         <ng-template 
-            *ngSwitchCase="viewModes.Edit" 
+            *ngSwitchCase="formModes.Edit" 
             [ngTemplateOutlet]="editCourseActionButtons"
         ></ng-template>
     </ng-container>
-</ng-template>
-
-<ng-template #reviewCourseActionButtons>
-    <button mat-raised-button color="primary" (click)="onSubmit(viewModes.Review)">Сохранить</button>
-    <button mat-raised-button color="primary" (click)="onSubmit('publish')">Опубликовать</button>
 </ng-template>
 
 <ng-template #createCourseActionButtons>
@@ -324,4 +143,19 @@
 
 <ng-template #editCourseActionButtons>
     <button mat-raised-button color="primary" (click)="onSubmit(viewModes.Edit)">Сохранить</button>
+</ng-template>
+
+<ng-template #createHeader>
+    <h1 class="title">Создание курса</h1>
+    <p>Пожалуйста, заполните данные о курсе в форму ниже.</p>
+</ng-template>
+
+<ng-template #updateHeader>
+    <h1 class="title">Редактирование курса</h1>
+    <p>Внесите необходимые правки в текущую версию курса.</p>
+</ng-template>
+
+<ng-template #editHeader>
+    <h1 class="title">Исправление курса</h1>
+    <p>Обновите содержание курса в соответствии с советами редакции.</p>
 </ng-template>
