@@ -1,36 +1,17 @@
 <form [formGroup]="form">
 
     <mat-form-field 
-        *appFormElWrapper="form; control: 'title'"
+        *appFormElWrapper="form; control: 'title'; type: controlsType"
         appearance="fill">
         <mat-label>Название модуля</mat-label>
         <input matInput formControlName="title" />
     </mat-form-field>
 
     <mat-form-field 
-        *appFormElWrapper="form; control: 'description'"
+        *appFormElWrapper="form; control: 'description'; type: controlsType"
         appearance="fill">
         <mat-label>Описание модуля</mat-label>
         <input matInput formControlName="description" />
     </mat-form-field>
 
-    <!-- <div class="topics">
-        <h3 class="title">Темы модуля</h3>
-    
-        <button mat-stroked-button color="primary" (click)="addTopic()">Добавить тему</button>
-    
-        <div class="topics-container">
-            <div 
-            *ngFor="let topicForm of topicsFormGroups; let i = index"
-            class="topic-item">
-                <app-module-topic 
-                    [form]="topicForm"
-                    [hierarchy]="getHierarchy(i + 1)"></app-module-topic>
-                    
-                <button [disabled]="i === 0" (click)="onRemoveTopic(i)">
-                    Удалить тему
-                </button>
-            </div>
-        </div>
-    </div> -->
 </form>

@@ -10,7 +10,7 @@ import { FormArray, FormGroup } from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { CourseHierarchyComponent } from 'src/app/typings/course.types';
+import { CourseHierarchyComponent, WrapperType } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-course-module',
@@ -19,7 +19,8 @@ import { CourseHierarchyComponent } from 'src/app/typings/course.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseModuleComponent extends BaseComponent implements OnInit {    
-	@Input() public form!: FormGroup
+	@Input() public form!: FormGroup;
+	@Input() public controlsType!: WrapperType;
 	@Input() public hierarchy!: CourseHierarchyComponent;
 
 	@Output() public changeTitle = new EventEmitter<string>();

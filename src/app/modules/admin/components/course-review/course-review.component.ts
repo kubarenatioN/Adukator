@@ -81,9 +81,8 @@ export class CourseReviewComponent extends CenteredContainerDirective implements
             })
 	}
 
-	public onSaveReview(formData: CourseFormData): void {
+	public onSaveReview(comments: { overallComments: string; modules: string }): void {
         const id = this.courseMetadata.id;
-        const comments = stringify(formData.editorComments)        
         this.adminCoursesService.saveCourseReview(id, comments)
             .subscribe(() => {
                 console.log('course review updated');

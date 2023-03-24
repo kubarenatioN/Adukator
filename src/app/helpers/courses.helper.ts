@@ -1,4 +1,4 @@
-import { Course, CourseEditorComments, CourseFormData, CourseFormMetadata, CourseModule, CourseReview, CourseTraining } from "../typings/course.types";
+import { Course, CourseFormData, CourseFormMetadata, CourseModule, CourseReview, CourseTraining } from "../typings/course.types";
 import { v4 as uuidv4 } from 'uuid';
 
 export const stringify = (data: any): string => {
@@ -16,16 +16,8 @@ export const parseModules = (modulesString: string): CourseModule[] => {
     return modules
 }
 
-export const parseEditorComments = (commentsString: string): CourseEditorComments | null => {
-    const comments = JSON.parse(commentsString);
-    if (comments === null) {
-        return null
-    }
-    return comments
-}
-
 export const convertCourseToCourseFormData = (course: CourseReview): CourseFormData => {
-    const { id, secondaryId, authorId, masterId, title, description, category, categoryLabel, advantages, modulesJson, editorCommentsJson, status } = course
+    const { id, secondaryId, authorId, masterId, title, description, category, categoryLabel, advantages, modulesJson, status } = course
     const metadata: CourseFormMetadata = {
         id,
         secondaryId,
@@ -33,20 +25,24 @@ export const convertCourseToCourseFormData = (course: CourseReview): CourseFormD
         masterCourseId: masterId,
         status
     }
+
     return {
-        title,
-        description,
-        category,
-        categoryLabel,
-        advantages,
+        overallInfo: {
+            title,
+            description,
+            category,
+            categoryLabel,
+            advantages,
+            comments: {}
+        },
         modules: parseModules(modulesJson),
-        editorComments: editorCommentsJson === null ? editorCommentsJson : parseEditorComments(editorCommentsJson),
         metadata,
     }
 }
 
 export const convertCourseFormDataToCourseReview = (formData: CourseFormData): CourseReview => {
-    const { title, description, category, advantages, modules, editorComments, metadata } = formData
+    const { overallInfo, modules, metadata } = formData
+    const { title, description, category, advantages, comments } = overallInfo
     const { id, secondaryId, masterCourseId: masterId, authorId, status } = metadata;
     return {
         id,
@@ -57,14 +53,15 @@ export const convertCourseFormDataToCourseReview = (formData: CourseFormData): C
         description,
         category,
         advantages,
+        comments: stringify(comments),
         modulesJson: stringify(modules),
-        editorCommentsJson: editorComments ? stringify(editorComments) : null,
         status,
     }
 }
 
 export const convertCourseFormDataToCourse = (formData: CourseFormData): Course => {
-    const { title, description, category, advantages, modules, metadata } = formData
+    const { overallInfo, modules, metadata } = formData
+    const { title, description, category, advantages } = overallInfo
     const { id, secondaryId, authorId } = metadata;
     return {
         id,

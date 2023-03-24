@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, of, shareReplay } from 'rxjs';
-import { convertCourseFormDataToCourseReview, stringify } from '../helpers/courses.helper';
+import { map, Observable, shareReplay } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { Course, CourseEditorComments, CourseFormData, CourseReview } from '../typings/course.types';
+import { Course, CourseReview } from '../typings/course.types';
 import { CoursesResponse } from '../typings/response.types';
 import { DataService } from './data.service';
 
@@ -33,7 +32,7 @@ export class AdminCoursesService {
         return this.dataService.send(payload);
     }
 
-    public saveCourseReview(id: number, comments: string): Observable<unknown> {
+    public saveCourseReview(id: number, comments: { overallComments: string; modules: string }): Observable<unknown> {
         const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.UpdateCourseReview, {
             body: { id, comments }
         })

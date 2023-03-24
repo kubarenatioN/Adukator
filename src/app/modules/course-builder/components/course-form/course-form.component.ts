@@ -28,6 +28,7 @@ import {
 	CourseModule,
 	CourseReview,
     ModuleTopic,
+    WrapperType,
 } from 'src/app/typings/course.types';
 
 @Component({
@@ -42,10 +43,11 @@ export class CourseFormComponent implements OnInit {
 
     public categories$ = this.configService.loadCourseCategories();
 
-	public courseForm;
 	public viewModes = CourseFormViewMode;
     public formModes = CourseFormViewMode
+    public controlsType: WrapperType = 'edit'
 
+	public courseForm;
     public overallInfoSubform;
     public modulesFormArray;
 
@@ -55,8 +57,6 @@ export class CourseFormComponent implements OnInit {
 
 	@Input() public formMode: CourseFormViewMode = CourseFormViewMode.Create;
 	@Input() public viewData!: CourseBuilderViewData;
-	// @Input() public viewType$!: Observable<CourseBuilderViewType>
-
 	@Input() public set formData(
 		data: CourseReview | EmptyCourseFormData
 	) {

@@ -101,19 +101,13 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 		this.formData$ = queryParams$.pipe(
             withLatestFrom(this.userService.user$),
 			switchMap(([{ courseId, action }, user]) => {
-                if (user !== null) {
-                    const { role } = user;
-                    if (role === 'admin' && courseId) {
-                        return this.adminCoursesService.getReviewCourse(courseId)
+                if (user !== null && user.role === 'teacher') {
+                    if (!courseId && (!action || action === CourseFormViewMode.Create)) {
+                        this.courseMetadata = this.getMasterCourseMetadata(user);              
+                        return of(null);
                     }
-                    if (role === 'teacher') {
-                        if (!courseId && (!action || action === CourseFormViewMode.Create)) {
-                            this.courseMetadata = this.getMasterCourseMetadata(user);              
-                            return of(null);
-                        }
-                        if (courseId && action) {
-                            return this.coursesService.getTeacherReviewCourse(courseId);
-                        }
+                    if (courseId && action) {
+                        return this.coursesService.getTeacherReviewCourse(courseId);
                     }
                 }
                 throw new Error('Try to get course form data with no user.');
@@ -190,9 +184,6 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 	}
 
 	public onCreateReviewVersion({ formData, isMaster }: { formData: CourseFormData, isMaster: boolean }): void {
-        if (isMaster) {
-            formData.editorComments = null;
-        }
         this.restoreCourseMetadata(formData, this.courseMetadata);
         console.log('111 course form', formData);
 

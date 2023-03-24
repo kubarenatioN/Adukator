@@ -16,12 +16,6 @@
             [ngTemplateOutletContext]="{ topic: getView('topic'), viewType }">
         </ng-container>
     </ng-container>
-
-    <div class="form-footer">
-        <ng-container 
-        [ngTemplateOutlet]="actionButtons" 
-        [ngTemplateOutletContext]="{ formMode }"></ng-container>
-    </div>
     
 </form>
 
@@ -47,21 +41,21 @@
     <div [formGroup]="overallInfoSubform">
         
         <mat-form-field 
-        *appFormElWrapper="overallInfoSubform; control: 'title'"
+        *appFormElWrapper="overallInfoSubform; control: 'title'; type: controlsType"
         appearance="fill">
             <mat-label>Название курса</mat-label>
             <input matInput formControlName="title" />
         </mat-form-field>
         
         <mat-form-field 
-        *appFormElWrapper="overallInfoSubform; control: 'description'"
+        *appFormElWrapper="overallInfoSubform; control: 'description'; type: controlsType"
         appearance="fill">
             <mat-label>Описание курса</mat-label>
             <input matInput formControlName="description" />
         </mat-form-field>
         
         <div 
-            *appFormElWrapper="overallInfoSubform; control: 'category'"
+            *appFormElWrapper="overallInfoSubform; control: 'category'; type: controlsType"
             class="categories-container">
             <mat-form-field appearance="fill">
                 <mat-label>Категория</mat-label>
@@ -82,12 +76,19 @@
             <p>{{ moduleForm.value.title }}</p>
         </div>
     </div>
+
+    <div class="form-footer">
+        <ng-container 
+        [ngTemplateOutlet]="actionButtons" 
+        [ngTemplateOutletContext]="{ formMode }"></ng-container>
+    </div>
 </ng-template>
 
 <ng-template #courseModule let-module="module">
     <h3>Модуль {{ viewData.module + 1 }}. {{ module.value.title }}</h3>
     <app-course-module 
         [form]="module" 
+        [controlsType]="controlsType"
         [hierarchy]="getHierarchy(viewType)"></app-course-module>
 </ng-template>
 
@@ -95,6 +96,7 @@
     <h3>Тема {{ viewData.topic + 1 }}. {{ topic.value.title }}</h3>
     <app-module-topic 
         [form]="topic"
+        [controlsType]="controlsType"
         [hierarchy]="getHierarchy(viewType)"></app-module-topic>
 </ng-template>
 

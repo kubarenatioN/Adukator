@@ -37,22 +37,22 @@
 	</div>
 	<div class="property">
 		<span>Название</span>
-		<h2>{{ versionsPair[0].title }}</h2>
-		<h2>{{ versionsPair[1].title }}</h2>
+		<h2>{{ versionsPair[0].overallInfo.title }}</h2>
+		<h2>{{ versionsPair[1].overallInfo.title }}</h2>
 	</div>
 	<div class="property">
 		<span>Описание</span>
-		<p>{{ versionsPair[0].description }}</p>
-		<p>{{ versionsPair[1].description }}</p>
+		<p>{{ versionsPair[0].overallInfo.description }}</p>
+		<p>{{ versionsPair[1].overallInfo.description }}</p>
 	</div>
 	<div class="property">
 		<span>Модули</span>
 
         <div>
-            <span>{{ versionsPair[0].modules }}</span>
+            <span>{{ versionsPair[0].modules | json }}</span>
         </div>
         <div>
-            <span>{{ versionsPair[1].modules }}</span>
+            <span>{{ versionsPair[1].modules | json }}</span>
         </div>
 	</div>
 </div>

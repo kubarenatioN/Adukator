@@ -4,7 +4,7 @@ import { takeUntil } from 'rxjs';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { UploadHelper } from 'src/app/helpers/upload.helper';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { CourseHierarchyComponent } from 'src/app/typings/course.types';
+import { CourseHierarchyComponent, WrapperType } from 'src/app/typings/course.types';
 
 type SectionType = 'materials' | 'theory' | 'practice' | 'test'
 
@@ -17,6 +17,7 @@ type SectionType = 'materials' | 'theory' | 'practice' | 'test'
 export class ModuleTopicComponent extends BaseComponent implements OnInit {
 	@Input() public hierarchy!: CourseHierarchyComponent;
 	@Input() public form!: FormGroup;
+	@Input() public controlsType!: WrapperType;
 
     @Output() public saveTopic = new EventEmitter<FormGroup>();
 

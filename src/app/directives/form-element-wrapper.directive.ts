@@ -10,7 +10,7 @@ export class FormElementWrapperDirective implements OnInit {
     private wrapperContainer!: ComponentRef<FormElementReviewWrapperComponent>;
     private form!: FormGroup
     private control!: string;
-    private type: WrapperType = 'review'
+    private type!: WrapperType
     
     @Input() public set appFormElWrapper(value: FormGroup) {
         this.form = value

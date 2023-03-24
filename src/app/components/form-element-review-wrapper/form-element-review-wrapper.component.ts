@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
-import { TitleStrategy } from '@angular/router';
+import { CourseReviewControlComment } from 'src/app/typings/course-review.types';
 import { WrapperType } from 'src/app/typings/course.types';
 
-const textItems: CommentItem[] = [
+const textItems: CourseReviewControlComment[] = [
     {
         id: 1,
         label: 'Слишком много символов',
@@ -22,11 +22,6 @@ const textItems: CommentItem[] = [
         label: 'Нарушает правила содержания',
     },
 ]
-
-interface CommentItem {
-    id: number,
-    label: string
-}
 
 type ReviewType = 'text' | 'category' | 'dates' | 'checkbox';
 
@@ -62,7 +57,7 @@ export class FormElementReviewWrapperComponent implements OnInit {
         return this.comments.length > 0
     }
 
-    public get comments(): CommentItem[] {
+    public get comments(): CourseReviewControlComment[] {
         if (this._form === null) {
             return [];
         }
@@ -105,7 +100,7 @@ export class FormElementReviewWrapperComponent implements OnInit {
         }
     }
 
-    public getCommentsLabel(comments: CommentItem[]) {
+    public getCommentsLabel(comments: CourseReviewControlComment[]) {
         return comments
     }
 

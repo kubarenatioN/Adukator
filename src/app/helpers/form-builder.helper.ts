@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CourseOverallFormFields } from '../config/course-form.config';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CourseFormDataMock } from '../mocks/course-form-data';
-import { CourseEditorComments, CourseFormData, CourseModule, CourseTopFormGroups, ModuleTopic, OverallFormFields, TopicPractice, TopicTask } from '../typings/course.types';
+import { CourseFormData, CourseFormOverallInfo, CourseModule, CourseTopFormGroups, ModuleFormFields, ModuleTopic, OverallFormFields, PracticeFormFields, TaskFormFields, TopicFormFields, TopicPractice, TopicTask } from '../typings/course.types';
 
 @Injectable({
 	providedIn: 'root',
@@ -22,107 +21,61 @@ export class FormBuilderHelper {
     }
 
     public fillCourseModel(modelRef: FormGroup, data: CourseFormData) {
-        const { modules, editorComments } = data;
-
+        const { overallInfo, modules } = data;
 		const modulesArray = this.getCourseModulesFormArray(modules);
-		const editorModulesArray = this.getEditorComments(editorComments, modules);
 
 		modelRef.patchValue({
-			title: data.title,
-			description: data.description,
-			category: data.category,
-			editorComments: editorComments ?? this.getEmptyEditorComments(),
+            overallInfo,
 		});
-
-        const modulesFormArray = this.getFormModules(modelRef)
-        const editorModulesFormArray = this.getFormEditorCommentsModules(modelRef)
-
-		modulesArray.controls.forEach((control) => {
-			modulesFormArray.push(control);
-		});
-
-		editorModulesArray.forEach((control) => {
-			editorModulesFormArray.push(control);
-		});
+        modelRef.setControl('modules', modulesArray);
     }
 
 	public getModuleForm(module: CourseModule | null = null) {
 		return this.fb.group({
-			title: module ? module.title : 'Module Title 1',
-			description: module ? module.description : 'Module descr...',
+			[ModuleFormFields.Title]: module ? module.title : 'Module Title 1',
+			[ModuleFormFields.Descr]: module ? module.description : 'Module descr...',
 			topics: module ? this.getTopicsFormArray(module.topics) : this.fb.array([
 				this.getTopicForm()
 			]),
+            comments: this.getFormGroupComments(ModuleFormFields, {})
 		});
 	}
 
     public getTopicForm(topic: ModuleTopic | null = null) {
         return this.fb.group({
-            title: topic ? topic.title : 'Topic Title 1',
-            description: topic ? topic.description : 'Topic descr...',
-            materials: topic ? topic.materials : [],
-            theory: topic ? topic.theory : null,
-            testLink: topic ? topic.testLink : null,
-            practice: this.getTopicPracticeForm(topic?.practice ?? null)
+            [TopicFormFields.Title]: topic ? topic.title : 'Topic Title 1',
+            [TopicFormFields.Descr]: topic ? topic.description : 'Topic descr...',
+            [TopicFormFields.Materials]: topic ? topic.materials : [],
+            [TopicFormFields.Theory]: topic ? topic.theory : null,
+            practice: this.getTopicPracticeForm(topic?.practice ?? null),
+            [TopicFormFields.TestLink]: topic ? topic.testLink : null,
+            comments: this.getFormGroupComments(TopicFormFields, {})
         });
     }
 
     public getTopicPracticeForm(practice: TopicPractice | null = null) {
         const tasks = practice ? this.getTopicTasksFormArray(practice.tasks) : this.fb.array([this.getTopicTaskForm()]);
         return this.fb.group({
-            goal: practice ? practice.goal : 'Цель практической работы - изучить принципы ООП и научиться их применять.',
+            [PracticeFormFields.Goal]: practice ? practice.goal : 'Цель практической работы - изучить принципы ООП и научиться их применять.',
             tasks,
+            comments: this.getFormGroupComments(PracticeFormFields, {}),
         })
     }
 
     public getTopicTaskForm(task: TopicTask | null = null) {
         return this.fb.group({
-            taskDescr: task ? task.taskDescr : 'Создать 5 классов с демонстрацией принципов ООП',
-            materials: task ? task.materials : [],
-            comment: task ? task.comment : 'Очень важный комментарий от студента Васи Васильевича',
+            [TaskFormFields.TaskDescr]: task ? task.taskDescr : 'Создать 5 классов с демонстрацией принципов ООП',
+            [TaskFormFields.Materials]: task ? task.materials : [],
+            [TaskFormFields.Comment]: task ? task.comment : 'Очень важный комментарий от студента Васи Васильевича',
+            comments: this.getFormGroupComments(TaskFormFields, {}),
         })
     }
 
-    public getEditorComments(editorComments: CourseEditorComments | null, modules: CourseModule[]) {
-		if (editorComments?.modules && editorComments.modules.length > 0) {
-			return this.getEditorCommentsModules(editorComments.modules);
-		}
-        return this.getEditorCommentsModules(modules, { isEmpty: true });
-	}
-
-    public getEmptyEditorComments() {
-        return {
-            title: null,
-            description: null,
-            dates: null,
-            categories: null,
-        }
-    }
-
-    public getEditorCommentsModules(
-		modules: Record<string, any>[],
-		{ isEmpty }: { isEmpty: boolean } = { isEmpty: false }
-	): FormGroup[] {
-		return modules.map((module) => {
-			const topics = this.getEditorCommentsModuleTopics(
-				module['topics'],
-				{ isEmpty }
-			);
-			return this.fb.group({
-				title: isEmpty ? null : module['title'],
-				description: isEmpty ? null : module['description'],
-				topics: this.fb.array(topics),
-			});
-		});
-	}
-
-    private getOverallInfoForm(overallInfo?: any) {
-        console.log(overallInfo);
-
+    private getOverallInfoForm(overallInfo: CourseFormOverallInfo | null = null) {
         return this.fb.group({
-            [OverallFormFields.Title]: [CourseFormDataMock.title, Validators.required],
-			[OverallFormFields.Descr]: [CourseFormDataMock.descr, Validators.required],
-			[OverallFormFields.Category]: [''],
+            [OverallFormFields.Title]: overallInfo ? overallInfo.title : [CourseFormDataMock.title, Validators.required],
+			[OverallFormFields.Descr]: overallInfo ? overallInfo.description : [CourseFormDataMock.descr, Validators.required],
+			[OverallFormFields.Category]: overallInfo ? overallInfo.category : [''],
             comments: this.getFormGroupComments(OverallFormFields, {})
         })
     }
@@ -140,10 +93,9 @@ export class FormBuilderHelper {
     }
 
     private getTopicsFormArray(topics: ModuleTopic[]) {
-		const arr = topics.map((topic) => {
+        return this.fb.array(topics.map((topic) => {
 			return this.getTopicForm(topic)
-		});
-        return this.fb.array(arr);
+		}));
 	}
 
     private getTopicTasksFormArray(tasks: TopicTask[]) {
@@ -161,28 +113,4 @@ export class FormBuilderHelper {
         });
         return this.fb.group(commentsObj);
     }
-
-    private getEditorCommentsModuleTopics(
-		topics: Record<string, any>[],
-		{ isEmpty }: { isEmpty: boolean }
-	) {
-		return topics.map((topic) => {
-			return this.fb.group({
-				title: isEmpty ? null : topic['title'],
-				description: isEmpty ? null : topic['description'],
-			});
-		});
-	}
-
-    private getFormModules(form: FormGroup): FormArray {
-		return form.get('modules') as FormArray;
-	}
-
-    private getFormEditorComments(form: FormGroup): FormGroup {
-		return form.get('editorComments') as FormGroup;
-	}
-
-    private getFormEditorCommentsModules(form: FormGroup): FormArray {
-		return this.getFormEditorComments(form).get('modules') as FormArray;
-	}
 }

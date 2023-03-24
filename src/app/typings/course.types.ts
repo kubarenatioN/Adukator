@@ -1,14 +1,9 @@
-import { FormGroup } from "@angular/forms";
+import { CourseReviewControlComment } from "./course-review.types";
 import { User } from "./user.types";
 
 export enum CourseTopFormGroups {
     OverallInfo = 'overallInfo',
     Modules = 'modules',
-}
-
-export enum CourseTopFormFields {
-    Title = 'title',
-    Descr = 'description',
 }
 
 export enum OverallFormFields {
@@ -17,8 +12,27 @@ export enum OverallFormFields {
     Category = 'category',
 }
 
+export enum ModuleFormFields {
+    Title = 'title',
+    Descr = 'description',
+}
+
+export enum TopicFormFields {
+    Title = 'title',
+    Descr = 'description',
+    Materials = 'materials',
+    Theory = 'theory',
+    TestLink = 'testLink',
+}
+
+export enum PracticeFormFields {
+    Goal = 'goal',
+}
+
 export enum TaskFormFields {
-    Requirement = 'requirement',
+    TaskDescr = 'taskDescr',
+    Materials = 'materials',
+    Comment = 'comment',
 }
 
 export interface TopicTask {
@@ -53,27 +67,15 @@ export interface CourseModule {
     topics: ModuleTopic[]
 }
 
-export interface CourseEditorComments {
+export interface CourseFormOverallInfo {
     title: string;
     description: string;
-    categories: string;
-    dates: string;
-    modules: {
-        title: string;
-        description: string;
-        topics: {
-            title: string;
-            description?: string;    
-        }[]
-    }[]
+    category: string;
 }
-
  
 interface CourseCore {
     title: string;
 	description: string;
-	// startDate: string;
-	// endDate: string;
 	category: string;
     advantages?: string;
     authorId: number;
@@ -97,7 +99,7 @@ export interface CourseHierarchyComponent {
 
 // 'on review' course raw data
 export interface CourseReview extends Course {
-    editorCommentsJson: string | null;
+    comments: string | null;
     masterId: number | null;
     createdAt?: string;
     status?: CourseReviewStatus;
@@ -114,17 +116,19 @@ export interface StudentCourse extends Course {
     active: boolean
 }
 
-// data for course on review
+// data for course form on review
 export interface CourseFormData {
-    title: string;
-	description: string;
-	// startDate: string;
-	// endDate: string;
-	category: string;
-	categoryLabel?: string;
-    advantages?: string;
+    overallInfo: {
+        title: string;
+        description: string;
+        category: string;
+        categoryLabel?: string;
+        advantages?: string;
+        comments: {
+            [key: string]: CourseReviewControlComment[] | null
+        }
+    },
 	modules: CourseModule[];
-    editorComments: CourseEditorComments | null;
     createdAt?: string;
     metadata: CourseFormMetadata
 }

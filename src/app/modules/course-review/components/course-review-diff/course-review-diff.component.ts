@@ -105,10 +105,14 @@ export class CourseReviewDiffComponent implements OnInit {
 
     private formatVersions(versions: CourseReview[]): CourseFormData[] {
         return versions.map(version => {
+            const formData = (version as any).isDummy ? {
+                metadata: {},
+                overallInfo: {},
+            } as unknown as CourseFormData : convertCourseToCourseFormData(version)
             if (version.createdAt) {
-                version.createdAt = formatDate(version.createdAt)
+                formData.createdAt = formatDate(version.createdAt);
             }
-            return (version as any).isDummy ? {metadata: {}} as CourseFormData : convertCourseToCourseFormData(version)
+            return formData;
         })
     }
 
