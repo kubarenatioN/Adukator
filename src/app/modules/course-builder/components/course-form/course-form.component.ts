@@ -66,6 +66,7 @@ export class CourseFormComponent implements OnInit {
         }
         if (isEmptyCourseFormData(data)) {
             this.courseSecondaryId = data.uuid;
+            this.formChanged.emit(this.courseForm);
         } 
         else {
             const formData = convertCourseToCourseFormData(data);
