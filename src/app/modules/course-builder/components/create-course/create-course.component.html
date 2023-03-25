@@ -14,7 +14,7 @@
                 [formData]="formData$ | async"
                 [viewData]="viewData$ | async"
                 (createReviewVersion)="onCreateReviewVersion($event)"
-                (modulesChanged)="onModulesChanged($event)">
+                (formChanged)="onFormChanged($event)">
             </app-course-form>
         </div>
     </ng-container>

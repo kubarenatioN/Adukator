@@ -134,8 +134,8 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
             });
 	}
 
-    public onModulesChanged(modules: CourseModule[]) {
-        this.modulesStore$.next(modules);
+    public onFormChanged(form: FormGroup) {
+        this.modulesStore$.next(form.controls['modules'].value);
     }
 
     private resolveViewType(module?: number, topic?: number): CourseBuilderViewType {

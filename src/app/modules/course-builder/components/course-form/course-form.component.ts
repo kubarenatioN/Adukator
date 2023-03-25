@@ -47,8 +47,12 @@ export class CourseFormComponent implements OnInit {
 
 	public courseForm;
 	public activeFormGroup!: FormGroup;
-    public overallInfoSubform;
-    public modulesFormArray;
+    public get overallInfoSubform() {
+        return this.courseForm.controls.overallInfo;
+    };
+    public get modulesFormArray() {
+        return this.courseForm.controls.modules;
+    };
 
     public formMode!: CourseFormViewMode;
     public viewType!: CourseBuilderViewType;
@@ -85,30 +89,38 @@ export class CourseFormComponent implements OnInit {
         formData: CourseFormData;
     }>();
 	@Output() public update = new EventEmitter<CourseFormData>();
-	@Output() public modulesChanged = new EventEmitter<CourseModule[]>();
+	// @Output() public modulesChanged = new EventEmitter<CourseModule[]>();
+	@Output() public formChanged = new EventEmitter<typeof this.courseForm>();
 
 	constructor(private configService: ConfigService, 
 		private cd: ChangeDetectorRef,
         private fbHelper: FormBuilderHelper) {
 		this.courseForm = this.fbHelper.getNewCourseFormModel();
-        
-        this.overallInfoSubform = this.courseForm.controls.overallInfo;
-        this.modulesFormArray = this.courseForm.controls.modules;
 	}
 
 	public ngOnInit(): void {
 		this.courseForm.valueChanges.subscribe((res) => {
 			console.log('111 main course form', res);
+            this.formChanged.emit(this.courseForm);
 		});
 
-        // Initial modules emittion
-        this.modulesChanged.emit(this.modulesFormArray.value as unknown as CourseModule[]);
+        // this.modulesChanged.emit(this.modulesFormArray.value as unknown as CourseModule[]);
 	}
 
     public addModule() {
         const emptyModuleForm = this.fbHelper.getModuleForm();
-        this.modulesFormArray.push(emptyModuleForm);
-        this.modulesChanged.emit(this.modulesFormArray.value as unknown as CourseModule[]);
+        this.courseForm.controls.modules.push(emptyModuleForm);
+        console.log(this.modulesFormArray.value);
+        // this.modulesChanged.emit(this.modulesFormArray.value as unknown as CourseModule[]);
+    }
+
+    public addTopic(moduleForm: typeof this.modulesFormArray.controls[0]) {
+        const emptyTopicForm = this.fbHelper.getTopicForm();
+        const topicsArray = moduleForm.controls.topics;
+        topicsArray.push(emptyTopicForm)
+        moduleForm.controls.topics = topicsArray;
+        console.log(topicsArray, this.modulesFormArray.value);
+        // this.modulesChanged.emit(this.modulesFormArray.value as unknown as CourseModule[]);
     }
 
 	public removeModule(index: number): void {
@@ -182,6 +194,5 @@ export class CourseFormComponent implements OnInit {
 
     private setCourseModel(courseData: CourseFormData): void {
         this.fbHelper.fillCourseModel(this.courseForm, courseData)
-        
 	}
 }

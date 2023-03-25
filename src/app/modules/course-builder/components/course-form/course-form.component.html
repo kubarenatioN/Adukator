@@ -68,11 +68,14 @@
     </div>
 
     <div class="modules">
+        <h3>Модули курса</h3>
         <div 
         *ngFor="let moduleForm of modulesFormArray.controls; let i = index"
         class="module-item">
-            <p>{{ moduleForm.value.title }}</p>
+            <p>{{ i + 1 }}.{{ moduleForm.value.title }}</p>
         </div>
+        <button (click)="addModule()">Добавить модуль</button>
+
     </div>
 
     <div class="form-footer">
@@ -88,7 +91,15 @@
         [form]="activeFormGroup" 
         [controlsType]="controlsType"
         [hierarchy]="getHierarchy(viewType)"></app-course-module>
-   </ng-template>
+
+    <div class="topics">
+        <h3>Темы модуля</h3>
+        <div *ngFor="let topic of activeFormGroup.value.topics; let j = index">
+            Тема {{ j + 1 }}. {{ topic.title }}.
+        </div>
+        <button (click)="addTopic(activeFormGroup)">Добавить тему</button>
+    </div>
+</ng-template>
 
 <ng-template #courseTopic>
     <h3>Тема {{ activeFormGroup.value.title }}</h3>
