@@ -1,19 +1,27 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, filter, map, Observable, of, ReplaySubject, Subject, switchMap } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { Course } from '../typings/course.types';
 import { DataResponse } from '../typings/response.types';
 import { User } from '../typings/user.types';
+import { AuthService } from './auth.service';
 import { DataService } from './data.service';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class UserService {
-	// private userStore$ = new Subject<User | null>();
-	private userStore$ = new ReplaySubject<User | null>(1);
+	private userStore$ = new BehaviorSubject<User | null>(null);
 
-	public user$: Observable<User | null>;
+	public user$: Observable<User>;
+
+    public get hasUser$(): Observable<boolean> {
+        return this.user$.pipe(map(user => user !== null))
+    }
+
+    public get userId(): number | null {
+        return this.userStore$.value?.id ?? null
+    }
 
     public isAdmin$: Observable<boolean>;
 
@@ -25,10 +33,23 @@ export class UserService {
         return this.user$.pipe(map(user => user?.role ?? ''))
     }
 
-	constructor(private dataService: DataService) {
-		this.user$ = this.userStore$.asObservable();
+	constructor(private dataService: DataService, private authService: AuthService) {
+		this.user$ = this.userStore$.asObservable().pipe(filter(Boolean));
         this.isAdmin$ = this.user$.pipe(map(user => user !== null && user.role === 'admin'));
 	}
+
+    public initUser() {
+		this.authService.getUserByToken().subscribe(user => {
+            this.setUser(user)
+        })
+	}
+
+    public login(user: { email: string; password: string }) {
+        this.authService.login(user)
+        .subscribe(({ token, user }) => {
+            this.setUser(user, token);
+        });
+    }
 
 	public setUser(user: User | null, token?: string) {
 		this.userStore$.next(user);

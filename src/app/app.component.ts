@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { take } from 'rxjs';
 import { AuthService } from './services/auth.service';
+import { UserService } from './services/user.service';
 
 @Component({
 	selector: 'app-root',
@@ -8,9 +10,9 @@ import { AuthService } from './services/auth.service';
 	styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-	constructor(private authService: AuthService, private router: Router) {
+	constructor(private userService: UserService, private router: Router) {
 		window.addEventListener('message', (e) => this.setToken(e));
-		this.authService.initUser();
+		this.userService.initUser();
         (window as any).__localeId__ = 'ru'
 	}
 
@@ -22,7 +24,7 @@ export class AppComponent {
 			e.data.info.token
 		) {
             localStorage.setItem('token', e.data.info.token);
-            this.authService.initUser();
+            this.userService.initUser();
 
 			e.source?.postMessage({
                 command: 'info',

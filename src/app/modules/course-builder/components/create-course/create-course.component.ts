@@ -1,4 +1,6 @@
+import { ThisReceiver } from '@angular/compiler';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormArray, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, Observable, BehaviorSubject, of, ReplaySubject, Subject } from 'rxjs';
 import {
@@ -8,6 +10,7 @@ import {
 	shareReplay,
 	switchMap,
 	take,
+	tap,
 	withLatestFrom,
 } from 'rxjs/operators';
 import {
@@ -16,10 +19,13 @@ import {
     isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
+import { moduleTopicsCountValidator } from 'src/app/helpers/course-validation';
 import {
     convertCourseFormDataToCourseReview,
+	convertCourseToCourseFormData,
 	generateUUID,
 } from 'src/app/helpers/courses.helper';
+import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UserService } from 'src/app/services/user.service';
@@ -35,18 +41,13 @@ import { User } from 'src/app/typings/user.types';
 export class CreateCourseComponent extends CenteredContainerDirective implements OnInit {
 	private courseMetadata!: CourseFormMetadata;
 	private modulesStore$ = new ReplaySubject<CourseModule[]>(1);
-	private viewDataStore$ = new ReplaySubject<CourseBuilderViewData>(1);
+
+    public formMode: CourseFormViewMode = CourseFormViewMode.Create;
 
 	public modules$: Observable<CourseModule[]>;
-	public formData$!: Observable<CourseReview | EmptyCourseFormData>;
-	public formMode$!: Observable<CourseFormViewMode | null>;
-	public viewData$!: Observable<CourseBuilderViewData>;
+    public formData$!: Observable<CourseReview | EmptyCourseFormData | null>;
+    public viewData$!: Observable<CourseBuilderViewData | null>;
 
-	public courseData$!: Observable<{
-        formData: CourseReview | EmptyCourseFormData;
-        formMode: CourseFormViewMode;
-        viewData: CourseBuilderViewData;
-    }>;
 	public showLoading$ = new BehaviorSubject<boolean>(false);
 
 	constructor(
@@ -54,132 +55,69 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 		private activatedRoute: ActivatedRoute,
 		private coursesService: CoursesService,
 		private adminCoursesService: AdminCoursesService,
-		private cd: ChangeDetectorRef,
 	) {
         super();
         this.modules$ = this.modulesStore$.asObservable();
-        this.viewData$ = this.viewDataStore$.asObservable();
     }
 
-	public ngOnInit(): void {        
-        const queryParams$: Observable<{
-            action?: string
-            courseId?: number
-        }> = this.activatedRoute.queryParams.pipe(
-			take(1),
-			map((params) => {
-				const courseId = Number(params['id']);
-				const action = params['action'];
-				return {
-					courseId: isNaN(courseId) ? undefined : courseId,
-					action,
-				};
-			}),
-            shareReplay(1),
-		);
+	public ngOnInit(): void {      
+        const navQuery$ = this.activatedRoute.queryParams
+            .pipe(
+                map((query) => {                    
+                    const moduleNumber = Number(query['module']);
+                    const module = Number.isNaN(moduleNumber) ? undefined : moduleNumber;
+                    
+                    const topicNumber = Number(query['topic']);
+                    const topic = Number.isNaN(topicNumber) ? undefined : topicNumber;
 
-        const navQuery$ = combineLatest([
-            this.activatedRoute.queryParams,
-        ]).pipe(
-			map(([params]) => {
-				let module = params['module'];
-                module = Number.isNaN(module) ? undefined : Number(module)
-				let topic = params['topic'];
-                topic = Number.isNaN(topic) ? undefined : Number(topic)
-
-                const type = this.resolveViewType(module, topic)
-                this.viewDataStore$.next({
-                    type,
-                    module: module - 1,
-                    topic: topic - 1,
-                });
-            })
-		);
-
-        navQuery$.subscribe();
-
-		this.formData$ = queryParams$.pipe(
-            withLatestFrom(this.userService.user$),
-			switchMap(([{ courseId, action }, user]) => {
-                if (user !== null && user.role === 'teacher') {
-                    if (!courseId && (!action || action === CourseFormViewMode.Create)) {
-                        this.courseMetadata = this.getMasterCourseMetadata(user);              
-                        return of(null);
+                    const viewType = this.resolveViewType(module, topic)
+                    return {
+                        type: viewType,
+                        module: module ? module - 1 : module,
+                        topic: topic ? topic - 1 : topic,
                     }
-                    if (courseId && action) {
+                }),
+                shareReplay(),
+            );
+
+		this.formData$ = combineLatest([
+            this.activatedRoute.paramMap,
+            this.userService.user$,
+        ])
+            .pipe(
+                switchMap(([params, user]) => {
+                    const { mode } = this.activatedRoute.snapshot.data as { mode: CourseFormViewMode };
+                    if (mode === CourseFormViewMode.Create) {
+                        this.courseMetadata = this.getMasterCourseMetadata(user.id)
+                        return of(getEmptyCourseFormData(generateUUID()));
+                    } else {
+                        const courseId = Number(params.get('id'));
+                        if (mode === CourseFormViewMode.Review) {
+                            return this.adminCoursesService.getReviewCourse(courseId);
+                        }
                         return this.coursesService.getTeacherReviewCourse(courseId);
                     }
-                }
-                throw new Error('Try to get course form data with no user.');
-			}),
-            catchError(err => {
-                console.error(err);
-                return of(null);
-            }),
-			map((course) => {
-                if (course !== null) {
-                    this.courseMetadata = this.getCourseMetadata(course);
-                    return course;
-                }
-                return getEmptyCourseFormData(this.courseMetadata.secondaryId);
-			}),
-            shareReplay(1),
-		);
+                }),
+                tap(course => {
+                    if (course !== null && !isEmptyCourseFormData(course)) {
+                        this.courseMetadata = this.getCourseMetadata(course)
+                    }
+                }),
+                shareReplay(1),    
+            )
 
-		const userInfo$ = combineLatest([
-            queryParams$,
-            this.userService.user$,
-            this.coursesService.teacherUserCourses$
-        ]).pipe(	
-			map(([{ courseId, action }, user, userCourses]) => {
-                const isUserOwnCourse: boolean = userCourses?.review?.findIndex(
-                    (course) => course.id === courseId
-                ) !== -1;
-                
-				const isTeacherChangeOwnCourse: boolean =
-                    isUserOwnCourse &&
-                    (action === CourseFormViewMode.Update || action === CourseFormViewMode.Edit) &&
-					user?.role === 'teacher'
-
-				return {
-                    isValid: isTeacherChangeOwnCourse,
-                    role: user?.role
-                };
-			})
-		);
-
-		this.formMode$ = combineLatest([
-			this.formData$,
-			userInfo$,
-			queryParams$.pipe(map(({ action }) => action)),
-		]).pipe(
-            map(([formData, userInfo, action]) => {
-                const { isValid: isValidUser, role: userRole } = userInfo
-                if (isEmptyCourseFormData(formData) && !action && userRole === 'teacher') {
-                    return CourseFormViewMode.Create
-                }
-                else if (isValidUser && action === 'update') {
-                    return CourseFormViewMode.Update
-                }
-                else if (isValidUser && action === 'edit') {
-                    return CourseFormViewMode.Edit
-                }
-                return CourseFormViewMode.Default
-            })
-        );
- 
-        this.courseData$ = combineLatest([
-            this.formData$,
-            this.formMode$.pipe(filter(Boolean)),
-            this.viewData$,
-        ]).pipe(
-            map(([formData, formMode, viewData]) => {
+        this.viewData$ = this.formData$.pipe(
+            switchMap(() => navQuery$),
+            map((navQuery) => {
+                const { mode } = this.activatedRoute.snapshot.data as { mode: CourseFormViewMode };
+                const { type, module, topic } = navQuery;                             
                 return {
-                    formData,
-                    formMode,
-                    viewData,
+                    viewPath: { ...navQuery },
+                    mode,
+                    metadata: this.courseMetadata,
                 }
-            })
+            }),
+            shareReplay(1),
         )
 	}
 
@@ -196,12 +134,11 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
             });
 	}
 
-    public onModuleAdded(modules: CourseModule[]) {
+    public onModulesChanged(modules: CourseModule[]) {
         this.modulesStore$.next(modules);
-        this.cd.detectChanges();
     }
 
-    private resolveViewType(module: number, topic: number): CourseBuilderViewType {
+    private resolveViewType(module?: number, topic?: number): CourseBuilderViewType {
         if (module) {
             if (topic) {
                 return 'topic'
@@ -216,11 +153,11 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
         return formData
     }
 
-    private getMasterCourseMetadata(author: User): CourseFormMetadata {
+    private getMasterCourseMetadata(authorId: number): CourseFormMetadata {
         return {
             id: -1,
             secondaryId: generateUUID(),
-            authorId: author.id,
+            authorId,
             masterCourseId: null,
             status: CourseReviewStatus.Default
         }

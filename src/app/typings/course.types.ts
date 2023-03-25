@@ -1,3 +1,4 @@
+import { FormGroup } from "@angular/forms";
 import { CourseReviewControlComment } from "./course-review.types";
 import { User } from "./user.types";
 
@@ -163,15 +164,19 @@ export enum CourseFormViewMode {
     Create = 'create',
     Update = 'update',
     Edit = 'edit',
-    Default = 'default',
+    Review = 'review',
 };
 
 export type CourseBuilderViewType =  'topic' | 'module' | 'main'
-
+export interface CourseBuilderViewPath {
+    type: CourseBuilderViewType
+    module?: number
+    topic?: number
+};
 export interface CourseBuilderViewData {
-    type: CourseBuilderViewType;
-    module: number;
-    topic: number;
+    metadata: CourseFormMetadata
+    mode: CourseFormViewMode
+    viewPath: CourseBuilderViewPath
 }
 
 export type WrapperType = 'edit' | 'review';

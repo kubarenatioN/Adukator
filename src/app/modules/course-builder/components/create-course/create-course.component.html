@@ -2,48 +2,23 @@
     Назад
 </a>
 
-<div class="container">
-
-    <nav class="sidenav" *ngIf="modules$ | async as modules">
-        <ul class="sidenav-list">
-            <li><a routerLink=".">Главная</a></li>
-            <ul class="sidenav-modules-list">
-                <ul *ngFor="let module of modules; let i = index">
-                    <li>
-                        <a 
-                        routerLink="."
-                        [queryParams]="{ module: i + 1 }">
-                            Модуль {{ i + 1 }}. {{ module.title }}
-                        </a>
-                    </li>
-                    <ul class="sidenav-module-topics-list">
-                        <li *ngFor="let topic of module.topics; let j = index">
-                            <a 
-                            routerLink="."
-                            [queryParams]="{ module: i + 1, topic: j + 1 }">
-                                Тема {{ j + 1 }}. {{ topic.title }}
-                            </a>
-                        </li>
-                    </ul>
-                </ul>
-            </ul>
-        </ul>
-    </nav>
-
-    <ng-container *ngIf="courseData$ | async as courseData">
+<app-layout>
+    <app-course-nav
+    *ngIf="modules$ | async as modules"
+    [items]="modules" 
+    slot="sidebar"></app-course-nav>
+    <ng-container 
+    slot="main">
         <div class="form-container">
             <app-course-form 
-                [formMode]="courseData.formMode"
-                [formData]="courseData.formData"
-                [viewData]="courseData.viewData"
+                [formData]="formData$ | async"
+                [viewData]="viewData$ | async"
                 (createReviewVersion)="onCreateReviewVersion($event)"
-                (moduleAdded)="onModuleAdded($event)">
+                (modulesChanged)="onModulesChanged($event)">
             </app-course-form>
         </div>
     </ng-container>
-
-</div>
-
+</app-layout>
 
 <ng-template #loader>
     Loading course data...

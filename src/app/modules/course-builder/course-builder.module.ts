@@ -11,6 +11,8 @@ import { SharedModule } from '../shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { CourseFormComponent } from './components/course-form/course-form.component';
+import { LayoutComponent } from 'src/app/components/layout/layout.component';
+import { CourseNavComponent } from './components/course-nav/course-nav.component';
 
 @NgModule({
 	providers: [FormBuilderHelper],
@@ -21,12 +23,14 @@ import { CourseFormComponent } from './components/course-form/course-form.compon
 		CourseModuleComponent,
 		ModuleTopicComponent,
 		TopicTaskComponent,
+        CourseNavComponent,
 	],
 	imports: [
 		CommonModule,
 		CourseBuilderRoutingModule,
 		SharedModule,
 		ReactiveFormsModule,
+        LayoutComponent,
 	],
 })
 export class CourseBuilderModule {}

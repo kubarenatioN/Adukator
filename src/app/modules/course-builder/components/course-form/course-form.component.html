@@ -7,13 +7,11 @@
         </ng-container>
         <ng-container 
             *ngSwitchCase="'module'"
-            [ngTemplateOutlet]="courseModule"
-            [ngTemplateOutletContext]="{ module: getView('module'), viewType }">
+            [ngTemplateOutlet]="courseModule">
         </ng-container>
         <ng-container 
             *ngSwitchCase="'topic'"
-            [ngTemplateOutlet]="courseTopic"
-            [ngTemplateOutletContext]="{ topic: getView('topic'), viewType }">
+            [ngTemplateOutlet]="courseTopic">
         </ng-container>
     </ng-container>
     
@@ -24,15 +22,15 @@
     <ng-container [ngSwitch]="formMode">
                 
         <ng-container 
-            *ngSwitchCase="formModes.Create" 
+            *ngSwitchCase="viewModes.Create" 
             [ngTemplateOutlet]="createHeader"
         ></ng-container>
         <ng-container 
-            *ngSwitchCase="formModes.Update" 
+            *ngSwitchCase="viewModes.Update" 
             [ngTemplateOutlet]="updateHeader"
         ></ng-container>
         <ng-container 
-            *ngSwitchCase="formModes.Edit" 
+            *ngSwitchCase="viewModes.Edit" 
             [ngTemplateOutlet]="editHeader"
         ></ng-container>
 
@@ -84,18 +82,18 @@
     </div>
 </ng-template>
 
-<ng-template #courseModule let-module="module">
-    <h3>Модуль {{ viewData.module + 1 }}. {{ module.value.title }}</h3>
+<ng-template #courseModule>
+    <h3>Модуль {{ activeFormGroup.value.title }}</h3>
     <app-course-module 
-        [form]="module" 
+        [form]="activeFormGroup" 
         [controlsType]="controlsType"
         [hierarchy]="getHierarchy(viewType)"></app-course-module>
-</ng-template>
+   </ng-template>
 
-<ng-template #courseTopic let-topic="topic">
-    <h3>Тема {{ viewData.topic + 1 }}. {{ topic.value.title }}</h3>
+<ng-template #courseTopic>
+    <h3>Тема {{ activeFormGroup.value.title }}</h3>
     <app-module-topic 
-        [form]="topic"
+        [form]="activeFormGroup"
         [controlsType]="controlsType"
         [hierarchy]="getHierarchy(viewType)"></app-module-topic>
 </ng-template>
@@ -129,11 +127,11 @@
 <ng-template #actionButtons>
     <ng-container [ngSwitch]="formMode">
         <ng-template 
-            *ngSwitchCase="formModes.Create" 
+            *ngSwitchCase="viewModes.Create" 
             [ngTemplateOutlet]="createCourseActionButtons"
         ></ng-template>
         <ng-template 
-            *ngSwitchCase="formModes.Edit" 
+            *ngSwitchCase="viewModes.Edit" 
             [ngTemplateOutlet]="editCourseActionButtons"
         ></ng-template>
     </ng-container>

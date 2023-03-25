@@ -4,10 +4,10 @@ export interface EmptyCourseFormData {
     isEmpty: boolean;
     uuid: string;
 };
-export type EmptyCourseFormDataType = typeof EMPTY_COURSE_FORM_DATA;
-export const EMPTY_COURSE_FORM_DATA = 'EmptyCourse' as const;
+// export type EmptyCourseFormDataType = typeof EMPTY_COURSE_FORM_DATA;
+// export const EMPTY_COURSE_FORM_DATA = 'EmptyCourse' as const;
 
-export const isEmptyCourseFormData = (value: CourseReview | EmptyCourseFormData): boolean => {
+export const isEmptyCourseFormData = (value: CourseReview | EmptyCourseFormData): value is EmptyCourseFormData => {
     return 'isEmpty' in value && value.isEmpty === true;
 }
 

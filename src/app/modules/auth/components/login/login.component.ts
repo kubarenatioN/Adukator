@@ -24,7 +24,6 @@ export class LoginComponent extends BaseComponent implements OnInit {
 
 	constructor(
 		private fb: FormBuilder,
-		private authService: AuthService,
 		private userService: UserService,
 		private cd: ChangeDetectorRef,
 		private router: Router
@@ -60,7 +59,7 @@ export class LoginComponent extends BaseComponent implements OnInit {
 		const { value, valid } = this.form;
 		if (valid) {
 			this.isSubmitDisabled = true;
-			this.authService.login(value);
+			this.userService.login(value);
 		}
 	}
 

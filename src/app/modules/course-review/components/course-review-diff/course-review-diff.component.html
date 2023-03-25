@@ -71,10 +71,9 @@
                 </span>
                 <a 
                     *ngIf="canShowCourseVersionActionButton(courseReviewStatuses.ReadyForReview, course) | async"
-                    [routerLink]="['/app/admin/review', course.metadata.id]"
+                    [routerLink]="['/app/course-builder', course.metadata.id, 'review']"
                     mat-stroked-button
-                    color="primary"
-                    >
+                    color="primary">
                     Проверить
                 </a>
             </ng-container>
@@ -84,14 +83,9 @@
                 </span>
                 <a 
                     *ngIf="canShowCourseVersionActionButton(courseReviewStatuses.ReadyForUpdate, course) | async"
-                    [routerLink]="['/app/course-builder/create']" 
-                    [queryParams]="{
-                        id: course.metadata.id,
-                        action: 'edit'
-                    }" 
+                    [routerLink]="['/app/course-builder', course.metadata.id, 'edit']" 
                     mat-stroked-button
-                    color="primary"
-                    >
+                    color="primary">
                     Исправить
                 </a>
             </ng-container>

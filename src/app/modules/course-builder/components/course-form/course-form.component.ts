@@ -1,6 +1,7 @@
 import {
     AfterViewInit,
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	EventEmitter,
 	Input,
@@ -21,6 +22,7 @@ import { UploadHelper } from 'src/app/helpers/upload.helper';
 import { ConfigService } from 'src/app/services/config.service';
 import {
     CourseBuilderViewData,
+    CourseBuilderViewPath,
     CourseBuilderViewType,
 	CourseFormData,
 	CourseFormViewMode,
@@ -43,43 +45,51 @@ export class CourseFormComponent implements OnInit {
 
     public categories$ = this.configService.loadCourseCategories();
 
-	public viewModes = CourseFormViewMode;
-    public formModes = CourseFormViewMode
-    public controlsType: WrapperType = 'edit'
-
 	public courseForm;
+	public activeFormGroup!: FormGroup;
     public overallInfoSubform;
     public modulesFormArray;
 
-    public get viewType() {
-        return this.viewData.type ?? null;
+    public formMode!: CourseFormViewMode;
+    public viewType!: CourseBuilderViewType;
+
+    public viewModes = CourseFormViewMode;
+    public controlsType: WrapperType = 'edit'
+
+    @Input() public set formData(data: CourseReview | EmptyCourseFormData | null) {
+        if (data === null) {
+            return;
+        }
+        if (isEmptyCourseFormData(data)) {
+            this.courseSecondaryId = data.uuid;
+        } 
+        else {
+            const formData = convertCourseToCourseFormData(data);
+            this.setCourseModel(formData)
+        }
     }
 
-	@Input() public formMode: CourseFormViewMode = CourseFormViewMode.Create;
-	@Input() public viewData!: CourseBuilderViewData;
-	@Input() public set formData(
-		data: CourseReview | EmptyCourseFormData
-	) {
-        console.log('111 form data', data);
-		if (!isEmptyCourseFormData(data)) {
-            const courseData = data as CourseReview;
-            this.courseSecondaryId = courseData.secondaryId
-            const courseFormData = convertCourseToCourseFormData(courseData);
-			this.courseFormData = courseFormData;
-			this.setCourseModel(courseFormData);
-		} else {
-            this.courseSecondaryId = (data as EmptyCourseFormData).uuid;
-		}
-	}
+    @Input() public set viewData(value: CourseBuilderViewData | null) {
+        if (value === null) {
+            return;
+        }
+        const { metadata, mode, viewPath } = value;
+        this.formMode = mode;
+        this.viewType = viewPath.type;
+        this.courseSecondaryId = metadata.secondaryId;
+        this.activeFormGroup = this.getFormGroup(viewPath)
+    }
 
 	@Output() public createReviewVersion = new EventEmitter<{
         isMaster: boolean;
         formData: CourseFormData;
     }>();
 	@Output() public update = new EventEmitter<CourseFormData>();
-	@Output() public moduleAdded = new EventEmitter<CourseModule[]>();
+	@Output() public modulesChanged = new EventEmitter<CourseModule[]>();
 
-	constructor(private configService: ConfigService, private fbHelper: FormBuilderHelper) {
+	constructor(private configService: ConfigService, 
+		private cd: ChangeDetectorRef,
+        private fbHelper: FormBuilderHelper) {
 		this.courseForm = this.fbHelper.getNewCourseFormModel();
         
         this.overallInfoSubform = this.courseForm.controls.overallInfo;
@@ -92,13 +102,13 @@ export class CourseFormComponent implements OnInit {
 		});
 
         // Initial modules emittion
-        this.moduleAdded.emit(this.modulesFormArray.value as unknown as CourseModule[]);
+        this.modulesChanged.emit(this.modulesFormArray.value as unknown as CourseModule[]);
 	}
 
     public addModule() {
         const emptyModuleForm = this.fbHelper.getModuleForm();
         this.modulesFormArray.push(emptyModuleForm);
-        this.moduleAdded.emit(this.modulesFormArray.value as unknown as CourseModule[]);
+        this.modulesChanged.emit(this.modulesFormArray.value as unknown as CourseModule[]);
     }
 
 	public removeModule(index: number): void {
@@ -106,16 +116,10 @@ export class CourseFormComponent implements OnInit {
 	}
 
     public getHierarchy(viewType: CourseBuilderViewType): CourseHierarchyComponent {
-        if (viewType === 'module') {
-            return {
-                courseUUID: this.courseSecondaryId,
-                module: this.viewData.module + 1
-            }
-        }
         return {
             courseUUID: this.courseSecondaryId,
-            module: this.viewData.module + 1,
-            topic: this.viewData?.topic + 1
+            module: 1,
+            topic: 1
         }
     }
 
@@ -148,22 +152,25 @@ export class CourseFormComponent implements OnInit {
 		}
 	}
 
-    public getView(type: Omit<CourseBuilderViewType, 'main'>) {
+    private getFormGroup({ type, module, topic}: CourseBuilderViewPath): FormGroup {
         try {
-            if (!this.viewData) {
-                throw new Error('No topic index was provided.');
+            if (type === 'main') {
+                return this.courseForm.controls.overallInfo;
             }
-            const module = this.modulesFormArray.at(this.viewData.module)
-            if (type === 'topic') {
-                return module.controls.topics.at(this.viewData.topic);
+            if (module != null) {
+                const moduleForm = this.courseForm.controls.modules.at(module);
+                if (type === 'module') {
+                    return moduleForm;
+                }
+                if (topic != null && type === 'topic') {
+                    return moduleForm.controls.topics.at(topic);
+                }
             }
-            if (type === 'module') {
-                return module;
-            }
+            throw new Error('Cannot resolve with type. Fallback with overall info form.')
         } catch (error) {
-            console.warn('Error while resolving view.');
+            this.viewType = 'main';
+            return this.courseForm.controls.overallInfo
         }
-        return null;
     }
 
     private onCreateReviewVersion(formData: CourseFormData, isMaster: boolean): void {
@@ -173,7 +180,8 @@ export class CourseFormComponent implements OnInit {
         });
     }
 
-	private setCourseModel(courseData: CourseFormData): void {
+    private setCourseModel(courseData: CourseFormData): void {
         this.fbHelper.fillCourseModel(this.courseForm, courseData)
+        
 	}
 }
