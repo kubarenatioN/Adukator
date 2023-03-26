@@ -1,31 +1,39 @@
-<ng-container *ngIf="course$ | async as course; else loader">    
-    <div class="training-container">
+<app-layout class="container layout" *ngIf="viewData$ | async as viewData; else loader">
+    <div 
+    slot="main"
+    class="training-container">
         <section class="content">
             
-            <ng-container *ngIf="viewType$ | async as viewType" [ngSwitch]="viewType">
+            <ng-container [ngSwitch]="viewData.viewType">
                 
                 <ng-container *ngSwitchCase="viewTypes.Main"
                     [ngTemplateOutlet]="mainView"
-                    [ngTemplateOutletContext]="{ course }"
+                    [ngTemplateOutletContext]="{ course: viewData.course }"
                 ></ng-container>
 
-                <ng-container *ngSwitchCase="viewTypes.Module"
+                <ng-container 
+                    *ngSwitchCase="viewTypes.Module"
                     [ngTemplateOutlet]="moduleView"
                 ></ng-container>
 
-                <ng-container *ngSwitchCase="viewTypes.Topic"
-                    [ngTemplateOutlet]="topicView">
-                </ng-container>
+                <ng-container 
+                    *ngSwitchCase="viewTypes.Topic"
+                    [ngTemplateOutlet]="topicView"
+                    [ngTemplateOutletContext]="{ topic: viewData.topic }"
+                ></ng-container>
 
             </ng-container>
 
         </section>
-    
-        <aside class="sidebar">
-            <app-course-sidenav class="nav" [course]="course"></app-course-sidenav>
-        </aside>
     </div>
-</ng-container>
+
+    <div class="sidebar" slot="sidebar">
+        <app-course-sidenav 
+        class="nav" 
+        [course]="viewData.course"></app-course-sidenav>
+    </div>
+
+</app-layout>
 
 <ng-template #mainView let-course="course">
     <h1>Тренинг по курсу {{course.title}}</h1>
@@ -33,15 +41,15 @@
     <p>Категория: {{course.categoryLabel}}</p>
 </ng-template>
 
-<ng-template #moduleView>
-    <p>Module View</p>
+<ng-template #moduleView let-module="module">
+    <h1>{{ module.title }}</h1>
 </ng-template>
 
 <ng-template #topicView let-topic="topic">
-    <ng-container *ngIf="topic$ | async as topic">
-        <h1>Тема {{topic.title}}</h1>
-        <p>{{topic.description}}</p>
-    </ng-container>
+    <app-topic-training 
+    *ngIf="topic" 
+    [topic]="topic"
+    [folderPath]="topicUploadPath"></app-topic-training>
 </ng-template>
 
 <ng-template #loader>

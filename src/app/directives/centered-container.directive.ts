@@ -5,6 +5,6 @@ import { BaseComponent } from '../shared/base.component';
 	selector: '[appCenteredContainer]',
 })
 export class CenteredContainerDirective extends BaseComponent {
-	@HostBinding('class.container-center')
+	@HostBinding('class.container')
 	private isCenteredContainer: boolean = true;
 }

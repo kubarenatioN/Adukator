@@ -1,15 +1,23 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, map, Observable, of, shareReplay, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, takeUntil, withLatestFrom } from 'rxjs';
 import { convertCourseToCourseTraining } from 'src/app/helpers/courses.helper';
+import { UploadHelper } from 'src/app/helpers/upload.helper';
 import { CoursesService } from 'src/app/services/courses.service';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { CourseTraining, ModuleTopic } from 'src/app/typings/course.types';
+import { CourseModule, CourseTraining, ModuleTopic } from 'src/app/typings/course.types';
 
 enum ViewType {
     Main = 'main',
     Module = 'module',
     Topic = 'topic',
+}
+
+interface ViewConfig {
+    viewType: ViewType,
+    course: CourseTraining,
+    module?: CourseModule,
+    topic?: ModuleTopic
 }
 
 @Component({
@@ -23,12 +31,17 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 
     public viewType$: Observable<string> = this.viewTypeStore$.asObservable();
     public course$!: Observable<CourseTraining | null>
-    public topic$!: Observable<ModuleTopic | null>
+    public viewData$!: Observable<ViewConfig>
+
+    public topicUploadPath: string = '';
 
     public viewTypes = ViewType;
     
 	constructor(private activatedRoute: ActivatedRoute, private coursesService: CoursesService) {
         super();
+    }
+
+	ngOnInit(): void {
         this.course$ = this.activatedRoute.paramMap.pipe(
             switchMap(params => {
                 const courseId = Number(params.get('id'));
@@ -46,23 +59,36 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
             shareReplay(1)
         )
 
-        this.activatedRoute.queryParams
+        this.viewData$ = combineLatest([
+            this.activatedRoute.queryParams,
+            this.course$.pipe(filter(Boolean)),
+        ])
         .pipe(
-            takeUntil(this.componentLifecycle$)
-        )
-        .subscribe(res => {
-            const { module, topic } = res;
-            const viewType = this.getViewType(module, topic)
-            if (viewType === this.viewTypes.Topic) {
-                this.topic$ = this.course$.pipe(
-                    map(course => course ? course.modules[module - 1].topics[topic - 1] : null)
-                )
-            }
-            this.viewTypeStore$.next(viewType)
-        })
-    }
+            takeUntil(this.componentLifecycle$),
+            map(([params, course]) => {
+                const { module: moduleIndex, topic: topicIndex } = params;
+                const viewType = this.getViewType(moduleIndex, topicIndex)
+                if (viewType === this.viewTypes.Module) {
+                    return {
+                        viewType,
+                        course: course,
+                        module: course?.modules[moduleIndex - 1],
+                    }
+                }
+                if (viewType === this.viewTypes.Topic) {
+                    this.topicUploadPath = UploadHelper.getTopicUploadFolder({ courseUUID: course.secondaryId, module: moduleIndex, topic: topicIndex });
+                    return {
+                        viewType,
+                        course: course,
+                        module: course?.modules[moduleIndex - 1],
+                        topic: course?.modules[moduleIndex - 1].topics[topicIndex - 1],
+                    }
+                }
 
-	ngOnInit(): void {}
+                return { viewType, course }
+            })
+        )
+    }
 
     private getViewType(moduleIndex: number, topicIndex: number): ViewType {
         if (!moduleIndex && !topicIndex) {

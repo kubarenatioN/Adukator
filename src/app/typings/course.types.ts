@@ -156,6 +156,7 @@ export interface CourseFormData {
 
 export interface CourseTraining extends CourseCore {
     id: number;
+    secondaryId: string;
     modules: CourseModule[];
 }
 

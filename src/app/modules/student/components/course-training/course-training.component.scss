@@ -1,4 +1,10 @@
+.layout {
+    flex-direction: row-reverse;
+    height: 100%;
+}
+
 .training-container {
+    width: 100%;
     display: flex;
     align-items: flex-start;
     height: 100%;

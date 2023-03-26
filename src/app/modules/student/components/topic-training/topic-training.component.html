@@ -1,0 +1,30 @@
+<h1>Тема {{topic.title}}</h1>
+
+<span>Описание</span>
+<p>{{ topic.description }}</p>
+
+<span>Дедлайн</span>
+<p>{{ topic.endDate | date:'dd.MM.yyyy' }}</p>
+
+<div class="topic-content">
+
+    <div *ngIf="topic.materials && topic.materials.length > 0" class="section">
+        <h2>Материалы к теме</h2>
+        <app-upload-box [folder]="folderPath"></app-upload-box>
+    </div>
+
+    <div class="section">
+        <h2>Теория</h2>
+        <p>
+            {{ topic.theory }}
+        </p>
+    </div>
+
+    <div *ngIf="topic.practice" class="section">
+        <h2>Практика</h2>
+        <p>
+            {{ topic.practice.goal }}
+        </p>
+    </div>
+
+</div>

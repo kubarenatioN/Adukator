@@ -1,3 +1,7 @@
+.container {
+    max-width: 800px;
+}
+
 .course-banner-content,
 .course-banner-wrapper {
     height: 280px;
@@ -51,4 +55,13 @@
 .modules {
     max-width: 600px;
     margin: 0 auto;
+}
+
+.competencies {
+    display: flex;
+    justify-content: space-between;
+
+    &-list {
+        padding-left: 20px;
+    }
 }

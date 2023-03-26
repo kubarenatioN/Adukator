@@ -26,8 +26,28 @@
         </div>
     </div>
     
-    <div class="course-content">
+    <div class="course-content container">
     
+        <div class="competencies">
+            <div class="competencies-required">
+                <h3>Для зачисления на курс вам необходимо владеть следующими компетенциями</h3>
+                <ul class="competencies-list">
+                    <li *ngFor="let comp of course.requiredCompetencies">
+                        {{ comp }}
+                    </li>
+                </ul>
+            </div>
+
+            <div class="competencies-acquired">
+                <h3>После успешного прохождения курса, вы получите следующие компетенции</h3>
+                <ul class="competencies-list">
+                    <li *ngFor="let comp of course.acquiredCompetencies">
+                        {{ comp }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <div class="info-items">
     
             <div class="info-item">
@@ -52,17 +72,26 @@
     
             <div class="info-item">
                 <span>Автор</span>
-                <a [routerLink]="['/app/profile/', course.authorId]">Профиль</a>
+                <p>
+                    <a [routerLink]="['/app/user', course.authorId]">Профиль</a>
+                </p>
             </div>
     
         </div>
     
-        <div class="modules">
-            <h2>Учебные модули</h2>
+        <div class="course-content">
+            <h2>Содержание курса</h2>
 
             <div *ngFor="let module of modules$ | async" class="module-item">
                 <h3>{{module.title}}</h3>
                 <p>{{module.description}}</p>
+
+                <div class="topics-list">
+                    <div *ngFor="let topic of module.topics" class="topic-item">
+                        <h3>{{topic.title}}</h3>
+                        <p>{{topic.description}}</p>
+                    </div>
+                </div>
             </div>
 
         </div>

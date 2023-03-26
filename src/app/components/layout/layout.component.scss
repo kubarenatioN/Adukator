@@ -1,3 +1,7 @@
 :host {
     display: flex;
 }
+
+[slot="main"] {
+    flex-grow: 1;
+}

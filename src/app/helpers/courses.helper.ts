@@ -62,7 +62,6 @@ export const convertCourseToCourseFormData = (
 			advantages,
 			comments: comments ? JSON.parse(comments) : null,
 		},
-		// modules: parseModules(modulesJson),
 		modules,
 		metadata,
 	};
@@ -93,7 +92,6 @@ export const convertCourseFormDataToCourseReview = (
 		advantages,
 		comments: stringify(comments),
 		modules,
-		// modulesJson: stringify(modules),
 		status,
 	};
 };
@@ -114,7 +112,6 @@ export const convertCourseFormDataToCourse = (
         requiredCompetencies,
 		advantages,
 		modules,
-		// modulesJson: stringify(modules),
 		authorId,
 	};
 };
@@ -122,10 +119,11 @@ export const convertCourseFormDataToCourse = (
 export const convertCourseToCourseTraining = (
 	course: Course
 ): CourseTraining => {
-	const { id, title, description, category, acquiredCompetencies, requiredCompetencies, advantages, modules, authorId } =
+	const { id, secondaryId, title, description, category, acquiredCompetencies, requiredCompetencies, advantages, modules, authorId } =
 		course;
 	return {
 		id,
+        secondaryId,
 		title,
 		description,
 		category,
@@ -133,7 +131,6 @@ export const convertCourseToCourseTraining = (
         acquiredCompetencies,
         requiredCompetencies,
 		modules,
-		// modules: parseModules(modulesJson),
 		authorId,
 	};
 };
