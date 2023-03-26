@@ -21,7 +21,6 @@ import { CourseHierarchyComponent, WrapperType } from 'src/app/typings/course.ty
 export class CourseModuleComponent extends BaseComponent implements OnInit {    
 	@Input() public form!: FormGroup;
 	@Input() public controlsType!: WrapperType;
-	@Input() public hierarchy!: CourseHierarchyComponent;
 
 	@Output() public changeTitle = new EventEmitter<string>();
 
@@ -52,6 +51,7 @@ export class CourseModuleComponent extends BaseComponent implements OnInit {
             .subscribe((res) => {
                 console.log('111 module form changed', res);
             });
+        console.log(this.form)
 	}
 
     public addTopic(): void {
@@ -65,11 +65,4 @@ export class CourseModuleComponent extends BaseComponent implements OnInit {
         }
 		this.topics.removeAt(index);
 	}
-
-    public getHierarchy(topicIndex: number): CourseHierarchyComponent {
-        return {
-            ...this.hierarchy,
-            topic: topicIndex
-        }
-    }
 }

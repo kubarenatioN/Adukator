@@ -1,7 +1,7 @@
 import { ThisReceiver } from '@angular/compiler';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { combineLatest, Observable, BehaviorSubject, of, ReplaySubject, Subject } from 'rxjs';
 import {
     catchError,
@@ -21,6 +21,7 @@ import {
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { moduleTopicsCountValidator } from 'src/app/helpers/course-validation';
 import {
+    convertCourseFormDataToCourse,
     convertCourseFormDataToCourseReview,
 	convertCourseToCourseFormData,
 	generateUUID,
@@ -38,7 +39,7 @@ import { User } from 'src/app/typings/user.types';
 	styleUrls: ['./create-course.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CreateCourseComponent extends CenteredContainerDirective implements OnInit {
+export class CreateCourseComponent extends CenteredContainerDirective implements OnInit, OnDestroy {
 	private courseMetadata!: CourseFormMetadata;
 	private modulesStore$ = new ReplaySubject<CourseModule[]>(1);
 
@@ -60,7 +61,8 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
         this.modules$ = this.modulesStore$.asObservable();
     }
 
-	public ngOnInit(): void {      
+	public ngOnInit(): void {
+
         const navQuery$ = this.activatedRoute.queryParams
             .pipe(
                 map((query) => {                    
@@ -110,7 +112,6 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
             switchMap(() => navQuery$),
             map((navQuery) => {
                 const { mode } = this.activatedRoute.snapshot.data as { mode: CourseFormViewMode };
-                const { type, module, topic } = navQuery;                             
                 return {
                     viewPath: { ...navQuery },
                     mode,
@@ -131,6 +132,24 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
         this.coursesService.createCourseReviewVersion(courseData, { isMaster })
             .subscribe((res) => {
                 console.log('course review new version created!', res);
+            });
+	}
+
+    public onPublish(formData: CourseFormData): void {
+        formData = this.restoreCourseMetadata(formData, this.courseMetadata)
+        const courseData = convertCourseFormDataToCourse(formData)
+        const masterId = formData.metadata.masterCourseId || formData.metadata.id
+        this.adminCoursesService.publish(courseData, masterId)
+            .subscribe(res => {
+                console.log('111 course published', res);
+            })
+	}
+
+	public onSaveReview(comments: { overallComments: string; modules: string }): void {
+        const id = this.courseMetadata.id;
+        this.adminCoursesService.saveCourseReview(id, comments)
+            .subscribe(() => {
+                console.log('course review updated');
             });
 	}
 

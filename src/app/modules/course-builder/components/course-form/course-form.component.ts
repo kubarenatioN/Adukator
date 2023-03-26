@@ -1,24 +1,18 @@
 import {
-    AfterViewInit,
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
+    ChangeDetectionStrategy,
 	Component,
 	EventEmitter,
 	Input,
 	OnInit,
 	Output,
 } from '@angular/core';
-import { FormGroup, FormArray } from '@angular/forms';
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { Observable } from 'rxjs';
+import { FormGroup } from '@angular/forms';
 import {
     EmptyCourseFormData,
 	isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
-import { moduleTopicsCountValidator } from 'src/app/helpers/course-validation';
-import { convertCourseToCourseFormData } from 'src/app/helpers/courses.helper';
+import { convertCourseToCourseFormData, stringify } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
-import { UploadHelper } from 'src/app/helpers/upload.helper';
 import { ConfigService } from 'src/app/services/config.service';
 import {
     CourseBuilderViewData,
@@ -26,10 +20,7 @@ import {
     CourseBuilderViewType,
 	CourseFormData,
 	CourseFormViewMode,
-	CourseHierarchyComponent,
-	CourseModule,
 	CourseReview,
-    ModuleTopic,
     WrapperType,
 } from 'src/app/typings/course.types';
 
@@ -41,7 +32,6 @@ import {
 })
 export class CourseFormComponent implements OnInit {
 	private courseFormData: CourseFormData | null = null;
-	private courseSecondaryId!: string;
 
     public categories$ = this.configService.loadCourseCategories();
 
@@ -56,6 +46,7 @@ export class CourseFormComponent implements OnInit {
 
     public formMode!: CourseFormViewMode;
     public viewType!: CourseBuilderViewType;
+    public canEditForm = true;
 
     public viewModes = CourseFormViewMode;
     public controlsType: WrapperType = 'edit'
@@ -64,14 +55,11 @@ export class CourseFormComponent implements OnInit {
         if (data === null) {
             return;
         }
-        if (isEmptyCourseFormData(data)) {
-            this.courseSecondaryId = data.uuid;
-            this.formChanged.emit(this.courseForm);
-        } 
-        else {
+        if (!isEmptyCourseFormData(data)) {
             const formData = convertCourseToCourseFormData(data);
-            this.setCourseModel(formData)
+            this.setCourseModel(formData);
         }
+        this.formChanged.emit(this.courseForm);
     }
 
     @Input() public set viewData(value: CourseBuilderViewData | null) {
@@ -80,8 +68,12 @@ export class CourseFormComponent implements OnInit {
         }
         const { metadata, mode, viewPath } = value;
         this.formMode = mode;
+        if (mode === CourseFormViewMode.Review) {
+            this.canEditForm = false;
+            this.controlsType = 'review';
+        }
         this.viewType = viewPath.type;
-        this.courseSecondaryId = metadata.secondaryId;
+        this.overallInfoSubform.controls.id.setValue(metadata.secondaryId);
         this.activeFormGroup = this.getFormGroup(viewPath)
     }
 
@@ -90,11 +82,11 @@ export class CourseFormComponent implements OnInit {
         formData: CourseFormData;
     }>();
 	@Output() public update = new EventEmitter<CourseFormData>();
-	// @Output() public modulesChanged = new EventEmitter<CourseModule[]>();
+	@Output() public publish = new EventEmitter<CourseFormData>();
+	@Output() public saveReview = new EventEmitter<{ overallComments: string; modules: string }>();
 	@Output() public formChanged = new EventEmitter<typeof this.courseForm>();
 
 	constructor(private configService: ConfigService, 
-		private cd: ChangeDetectorRef,
         private fbHelper: FormBuilderHelper) {
 		this.courseForm = this.fbHelper.getNewCourseFormModel();
 	}
@@ -104,15 +96,12 @@ export class CourseFormComponent implements OnInit {
 			console.log('111 main course form', res);
             this.formChanged.emit(this.courseForm);
 		});
-
-        // this.modulesChanged.emit(this.modulesFormArray.value as unknown as CourseModule[]);
 	}
 
     public addModule() {
         const emptyModuleForm = this.fbHelper.getModuleForm();
         this.courseForm.controls.modules.push(emptyModuleForm);
         console.log(this.modulesFormArray.value);
-        // this.modulesChanged.emit(this.modulesFormArray.value as unknown as CourseModule[]);
     }
 
     public addTopic(moduleForm: typeof this.modulesFormArray.controls[0]) {
@@ -121,32 +110,20 @@ export class CourseFormComponent implements OnInit {
         topicsArray.push(emptyTopicForm)
         moduleForm.controls.topics = topicsArray;
         console.log(topicsArray, this.modulesFormArray.value);
-        // this.modulesChanged.emit(this.modulesFormArray.value as unknown as CourseModule[]);
     }
 
-	public removeModule(index: number): void {
-		this.modulesFormArray.removeAt(index);
+	public removeModule(id: string): void {
+        // IMPLEMENT
+		// this.modulesFormArray.removeAt(index...);
 	}
-
-    public getHierarchy(viewType: CourseBuilderViewType): CourseHierarchyComponent {
-        return {
-            courseUUID: this.courseSecondaryId,
-            module: 1,
-            topic: 1
-        }
-    }
 
 	public onSubmit(action: CourseFormViewMode | 'publish'): void {
 		const { valid: isValid } = this.courseForm;
         const { value } = this.courseForm;
 
-		if (this.courseFormData !== null && action === 'create') {
-			throw new Error('Cannot create not empty course.');
-		}
-
 		switch (action) {
 			case 'create': {
-                if (isValid && this.courseFormData === null) {
+                if (isValid) {
                     this.onCreateReviewVersion(value as unknown as CourseFormData, true)
 				} else {
                     console.warn('Invalid form data.');
@@ -154,10 +131,18 @@ export class CourseFormComponent implements OnInit {
 				break;
 			}
 			case 'edit': {
-				if (isValid && this.courseFormData) {
+				if (isValid) {
 					this.onCreateReviewVersion(value as unknown as CourseFormData, false)
 				}
 				break;
+			}
+            case 'review': {
+                this.onSaveReview();
+                break;
+			}
+            case 'publish': {
+                this.publish.emit(value as unknown as CourseFormData)
+                break;
 			}
 
 			default:
@@ -191,6 +176,14 @@ export class CourseFormComponent implements OnInit {
             isMaster,
             formData,
         });
+    }
+
+    private onSaveReview() {
+        const comments: { overallComments: string; modules: string } = {
+            overallComments: stringify(this.overallInfoSubform.value.comments),
+            modules: stringify(this.modulesFormArray.value),
+        }
+        this.saveReview.emit(comments);
     }
 
     private setCourseModel(courseData: CourseFormData): void {

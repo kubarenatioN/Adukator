@@ -16,7 +16,6 @@ export class AuthGuardService
 	constructor(private userService: UserService) {}
 
 	public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-		const user$ = this.userService.user$;
-		return user$.pipe(map((user) => user === null));
+		return this.userService.hasUser$.pipe(map(hasUser => !hasUser))
 	}
 }

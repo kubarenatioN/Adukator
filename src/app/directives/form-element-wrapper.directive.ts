@@ -14,6 +14,9 @@ export class FormElementWrapperDirective implements OnInit {
     
     @Input() public set appFormElWrapper(value: FormGroup) {
         this.form = value
+        if (this.wrapperContainer) {
+            this.wrapperContainer.instance.form = this.form;
+        }
     }
 
     @Input() public set appFormElWrapperType(value: WrapperType) {
@@ -31,9 +34,10 @@ export class FormElementWrapperDirective implements OnInit {
 
     public ngOnInit(): void {
         this.wrapperContainer = this.viewContainerRef.createComponent(FormElementReviewWrapperComponent);
-        this.wrapperContainer.instance.form = this.form;
-        this.wrapperContainer.instance.type = this.type;
+        // Order matters
         this.wrapperContainer.instance.control = this.control;
+        this.wrapperContainer.instance.type = this.type;
+        this.wrapperContainer.instance.form = this.form;
         this.wrapperContainer.instance.content = this.templateRef;
     }
 }

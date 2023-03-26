@@ -15,13 +15,27 @@ type SectionType = 'materials' | 'theory' | 'practice' | 'test'
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModuleTopicComponent extends BaseComponent implements OnInit {
-	@Input() public hierarchy!: CourseHierarchyComponent;
-	@Input() public form!: FormGroup;
-	@Input() public controlsType!: WrapperType;
+    private _form!: FormGroup;
 
+    @Input() public set form(form: FormGroup) {
+        this._form = form;
+        const formHierarchyPosition = this.getHierarchy(form);
+        this.uploadFolder = UploadHelper.getTopicUploadFolder(formHierarchyPosition);
+        this.activeSections = {
+            materials: form.value.materials && form.value.materials.length > 0,
+            theory: form.value.theory,
+            practice: form.value.practice,
+            test: form.value.testLink,
+        }
+    };
+	@Input() public controlsType!: WrapperType;
     @Output() public saveTopic = new EventEmitter<FormGroup>();
 
     public uploadFolder: string | null = null;
+    
+    public get form() {
+        return this._form;
+    }
     
     public get practiceFormGroup() {
         return this.form.controls['practice'] as FormGroup;
@@ -50,17 +64,12 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
         super()
     }
 
-	public ngOnInit(): void {
-        if (!this.form) {
-            this.form = this.fbHelper.getTopicForm();
-        }
-        
+	public ngOnInit(): void { 
         this.form.valueChanges
             .pipe(takeUntil(this.componentLifecycle$))
             .subscribe(value => {
-                // console.log('111 change topic', value);
+                console.log('111 change topic', value);
             })
-        this.uploadFolder = UploadHelper.getTopicUploadFolder(this.hierarchy);
     }
 
     public onAddSection(sectionType: SectionType) {
@@ -86,17 +95,24 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
         this.tasksFormArray.removeAt(index);
     }
 
-    public getHierarchy(taskIndex: number): CourseHierarchyComponent {
-        return {
-            ...this.hierarchy,
-            task: taskIndex,
-        }
-    }
-
     public onUploadFilesChanged(materials: string[]): void {
         this.form.patchValue({
             materials,
         })
+    }
+
+    private getHierarchy(form: FormGroup): CourseHierarchyComponent {
+        let courseRootForm: FormArray | FormGroup = form;
+        while (courseRootForm.parent !== null) {
+            courseRootForm = courseRootForm.parent;
+        }
+        const courseUUID = courseRootForm.value.overallInfo.id;
+        const module = form.parent?.parent?.value.id;
+        return {
+            courseUUID,
+            module,
+            topic: form.value.id
+        }
     }
 
     private onAddPracticeSection() {

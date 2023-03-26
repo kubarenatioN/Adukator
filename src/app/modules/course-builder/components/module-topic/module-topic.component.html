@@ -63,9 +63,7 @@
                 <div 
                 *ngFor="let taskForm of tasksFormArray.controls; let i = index"
                 class="task-item">
-                    <app-topic-task 
-                    [form]="taskForm"
-                    [hierarchy]="getHierarchy(i + 1)"></app-topic-task>
+                    <app-topic-task [form]="taskForm"></app-topic-task>
 
                     <button [disabled]="i === 0" (click)="onRemoveTaskAt(i)">
                         Удалить задачу
@@ -80,7 +78,9 @@
     <div class="section" [formGroup]="form">
         <h3>Теория</h3>
         <button (click)="onRemoveSection('theory')">Удалить раздел</button>
-        <mat-form-field appearance="fill">
+        <mat-form-field 
+        *appFormElWrapper="form; control: 'theory'; type: controlsType"
+        appearance="fill">
             <mat-label>Теория</mat-label>
             <textarea matInput formControlName="theory"></textarea>
         </mat-form-field>
@@ -91,7 +91,9 @@
     <div class="section" [formGroup]="form">
         <h3>Тест</h3>
         <button (click)="onRemoveSection('test')">Удалить раздел</button>
-        <mat-form-field appearance="fill">
+        <mat-form-field 
+        *appFormElWrapper="form; control: 'testLink'; type: controlsType"
+        appearance="fill">
             <mat-label>Ссылка на тест</mat-label>
             <input matInput formControlName="testLink" />
         </mat-form-field>

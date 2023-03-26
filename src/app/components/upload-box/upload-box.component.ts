@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { UploadService } from 'src/app/services/upload.service';
-import { UserFile } from 'src/app/typings/files.types';
+import { UserFile, UserFileUI } from 'src/app/typings/files.types';
 
 @Component({
 	selector: 'app-upload-box',
@@ -13,14 +13,24 @@ import { UserFile } from 'src/app/typings/files.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadBoxComponent implements OnInit {
-    @Input() type: 'upload' | 'download' = 'upload';
-    @Input() folder: string | null = null;
+    private filesStore$ = new BehaviorSubject<UserFileUI[]>([]);
+    
+    @Input() public type: 'upload' | 'download' = 'upload';
+    @Input() public set folder(value: string | null) {            
+        this.filesStore$.next([]);
+        if (value === null) {
+            return;
+        }
+        // TODO: apply files from cache
+        this.getFilesFromFolder(value).subscribe(files => {
+            this.filesStore$.next(files)
+        });
+    };
 
     @Output()
     public uploadFilesChanged = new EventEmitter<string[]>();
     
-    public uploadFiles: File[] = []
-    public downloadFiles$!: Observable<UserFile[]>;
+    public files$!: Observable<UserFileUI[] | null>;
 
     public get fileInputId(): string {
         let components = this.folder?.split('/');
@@ -29,12 +39,11 @@ export class UploadBoxComponent implements OnInit {
     }
 
 	constructor(private uploadService: UploadService) {
+        this.files$ = this.filesStore$.asObservable();
     }
 
 	public ngOnInit(): void {
-        if (this.type === 'download' && this.folder !== null) {
-            this.downloadFiles$ = this.getFilesFromFolder(this.folder);
-        }
+
     }
 
     public onChange(e: Event) {
@@ -44,30 +53,34 @@ export class UploadBoxComponent implements OnInit {
         }
     }
 
-    public onFilesDropped(files: FileList) {
+    public onFilesDropped(fileList: FileList) {
         if (this.folder === null) {
             return;
         }
-        for (let i = 0; i < files.length; i++) {
-            const file = files.item(i);
+        const uploaded = this.filesStore$.value ?? [];
+        const toBeUploaded: UserFileUI[] = [...uploaded]
+        for (let i = 0; i < fileList.length; i++) {
+            const file = fileList.item(i);
             if (file) {
-                const fileIndex = this.uploadFiles.findIndex(f => f.name === file.name && f.type === file.type)
+                const fileIndex = uploaded.findIndex(f => f.filename === file.name)
                 if (fileIndex === -1) {
-                    this.uploadFiles.push(file)
                     this.uploadFile(file, this.folder)
+                    toBeUploaded.push(this.formatFileToUserFile(file))
                 }
             }
         }
+        this.filesStore$.next(toBeUploaded);
     }
 
     public removeFile(index: number) {
-        this.uploadFiles = this.uploadFiles.filter((_, i) => i !== index)
+        const remaining = this.filesStore$.value.filter((_, i) => i !== index)
+        this.filesStore$.next(remaining);
     }
 
     private uploadFile(file: File, folder: string) {
         this.uploadService.uploadFile(file, folder)
         .subscribe(() => {
-            this.uploadFilesChanged.emit(this.uploadFiles.map(file => file.name));
+            this.uploadFilesChanged.emit(this.filesStore$.value?.map(file => file.filename));
         });
     }
 
@@ -82,7 +95,15 @@ export class UploadBoxComponent implements OnInit {
             )
     }
 
-    public downloadFile(url: string, filename: string) {
-        this.uploadService.downloadFile(url, filename).subscribe()
+    public downloadFile(filename: string, url?: string) {
+        if (url) {   
+            this.uploadService.downloadFile(url, filename).subscribe()
+        }
+    }
+
+    private formatFileToUserFile(file: File): UserFileUI {
+        return {
+            filename: file.name,
+        }
     }
 }

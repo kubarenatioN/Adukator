@@ -81,7 +81,7 @@
                         </ng-container>
                     </div>
 
-                    <div *ngIf="topicForm.value.practice" class="property">
+                    <!-- <div *ngIf="topicForm.value.practice" class="property">
                         <ng-container *appFormElWrapper="topicForm; control: 'practice'; type: controlsType">
                             <span>Практика</span>
                             <div class="practice">
@@ -90,13 +90,13 @@
                                 </p>
 
                                 <div class="tasks">
-                                    <div *ngFor="let task of topicForm.value.practice.tasks; let k = index" class="task-item">
+                                    <div *ngFor="let task of topicForm.value.practice.controls.tasks; let k = index" class="task-item">
                                         <p> Задание {{ k + 1 }}. </p>
                                         <p>
                                             {{task.taskDescr}}
                                         </p>
                                         <app-upload-box
-                                            *ngIf="task.materials.length > 0"
+                                            *ngIf="task.materials && task.materials.length > 0"
                                             class="topic-review-materials"
                                             type="download" 
                                             [folder]="getReviewTaskFolderPath(i + 1, j + 1, k + 1)"
@@ -106,7 +106,7 @@
                             </div>
                             
                         </ng-container>
-                    </div>
+                    </div> -->
 
                     <div *ngIf="topicForm.value.testLink" class="property">
                         <ng-container *appFormElWrapper="topicForm; control: 'testLink'; type: controlsType">

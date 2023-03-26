@@ -16,7 +16,7 @@ export class UserService {
 	public user$: Observable<User>;
 
     public get hasUser$(): Observable<boolean> {
-        return this.user$.pipe(map(user => user !== null))
+        return this.userStore$.pipe(map(user => user !== null))
     }
 
     public get userId(): number | null {

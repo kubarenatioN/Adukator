@@ -37,9 +37,11 @@ export enum TaskFormFields {
 }
 
 export interface TopicTask {
+    id: string;
     taskDescr: string;
     materials?: string[],
     comment?: string
+    comments: Record<string, string>;
 }
 
 export interface TopicPractice {
@@ -49,6 +51,7 @@ export interface TopicPractice {
 
 // TODO: check fields optionality
 export interface ModuleTopic {
+    id: string;
     title: string;
     description: string;
     materials: string[];
@@ -60,18 +63,23 @@ export interface ModuleTopic {
         report: boolean;
         offline: boolean;
     }
+    comments: Record<string, string>;
 }
 
 export interface CourseModule {
+    id: string;
 	title: string;
 	description: string;
-    topics: ModuleTopic[]
+    topics: ModuleTopic[];
+    comments: Record<string, string>;
 }
 
 export interface CourseFormOverallInfo {
+    id: string;
     title: string;
     description: string;
     category: string;
+    comments: Record<string, string>;
 }
  
 interface CourseCore {
@@ -120,6 +128,7 @@ export interface StudentCourse extends Course {
 // data for course form on review
 export interface CourseFormData {
     overallInfo: {
+        id: string;
         title: string;
         description: string;
         category: string;

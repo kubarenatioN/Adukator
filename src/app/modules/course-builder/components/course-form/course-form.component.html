@@ -33,6 +33,10 @@
             *ngSwitchCase="viewModes.Edit" 
             [ngTemplateOutlet]="editHeader"
         ></ng-container>
+        <ng-container 
+            *ngSwitchCase="viewModes.Review" 
+            [ngTemplateOutlet]="reviewHeader"
+        ></ng-container>
 
     </ng-container>
 
@@ -73,8 +77,18 @@
         *ngFor="let moduleForm of modulesFormArray.controls; let i = index"
         class="module-item">
             <p>{{ i + 1 }}.{{ moduleForm.value.title }}</p>
+            <div class="topics">
+                <h4>Темы модуля</h4>
+                <div 
+                *ngFor="let topicForm of moduleForm.controls.topics.controls" 
+                class="topic-item">
+                    <p>
+                        {{ topicForm.value.title }}
+                    </p>
+                </div>
+            </div>
         </div>
-        <button (click)="addModule()">Добавить модуль</button>
+        <button *ngIf="canEditForm" (click)="addModule()">Добавить модуль</button>
 
     </div>
 
@@ -89,15 +103,14 @@
     <h3>Модуль {{ activeFormGroup.value.title }}</h3>
     <app-course-module 
         [form]="activeFormGroup" 
-        [controlsType]="controlsType"
-        [hierarchy]="getHierarchy(viewType)"></app-course-module>
+        [controlsType]="controlsType"></app-course-module>
 
     <div class="topics">
         <h3>Темы модуля</h3>
         <div *ngFor="let topic of activeFormGroup.value.topics; let j = index">
             Тема {{ j + 1 }}. {{ topic.title }}.
         </div>
-        <button (click)="addTopic(activeFormGroup)">Добавить тему</button>
+        <button *ngIf="canEditForm" (click)="addTopic(activeFormGroup)">Добавить тему</button>
     </div>
 </ng-template>
 
@@ -105,8 +118,7 @@
     <h3>Тема {{ activeFormGroup.value.title }}</h3>
     <app-module-topic 
         [form]="activeFormGroup"
-        [controlsType]="controlsType"
-        [hierarchy]="getHierarchy(viewType)"></app-module-topic>
+        [controlsType]="controlsType"></app-module-topic>
 </ng-template>
 
 <ng-template #dates let-form="form">
@@ -145,6 +157,10 @@
             *ngSwitchCase="viewModes.Edit" 
             [ngTemplateOutlet]="editCourseActionButtons"
         ></ng-template>
+        <ng-template 
+            *ngSwitchCase="viewModes.Review" 
+            [ngTemplateOutlet]="reviewCourseActionButtons"
+        ></ng-template>
     </ng-container>
 </ng-template>
 
@@ -153,7 +169,12 @@
 </ng-template>
 
 <ng-template #editCourseActionButtons>
-    <button mat-raised-button color="primary" (click)="onSubmit(viewModes.Edit)">Сохранить</button>
+    <button mat-raised-button color="primary" (click)="onSubmit(viewModes.Edit)">Сохранить изменения</button>
+</ng-template>
+
+<ng-template #reviewCourseActionButtons>
+    <button mat-raised-button color="primary" (click)="onSubmit(viewModes.Review)">Отправить на исправление</button>
+    <button mat-raised-button color="primary" (click)="onSubmit('publish')">Опубликовать</button>
 </ng-template>
 
 <ng-template #createHeader>
@@ -169,4 +190,11 @@
 <ng-template #editHeader>
     <h1 class="title">Исправление курса</h1>
     <p>Обновите содержание курса в соответствии с советами редакции.</p>
+</ng-template>
+
+<ng-template #reviewHeader>
+    <h1 class="title">Проверка курса</h1>
+    <p>
+        Проверьте содержание курса на соответствие <a href="#">политики о содержимом</a>
+    </p>
 </ng-template>

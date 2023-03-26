@@ -17,7 +17,7 @@ export const parseModules = (modulesString: string): CourseModule[] => {
 }
 
 export const convertCourseToCourseFormData = (course: CourseReview): CourseFormData => {
-    const { id, secondaryId, authorId, masterId, title, description, category, categoryLabel, advantages, modulesJson, status } = course
+    const { id, secondaryId, authorId, masterId, title, description, category, categoryLabel, advantages, comments, modulesJson, status } = course
     const metadata: CourseFormMetadata = {
         id,
         secondaryId,
@@ -28,12 +28,13 @@ export const convertCourseToCourseFormData = (course: CourseReview): CourseFormD
 
     return {
         overallInfo: {
+            id: secondaryId,
             title,
             description,
             category,
             categoryLabel,
             advantages,
-            comments: {}
+            comments: comments ? JSON.parse(comments) : null,
         },
         modules: parseModules(modulesJson),
         metadata,

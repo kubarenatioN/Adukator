@@ -14,6 +14,8 @@
                 [formData]="formData$ | async"
                 [viewData]="viewData$ | async"
                 (createReviewVersion)="onCreateReviewVersion($event)"
+                (saveReview)="onSaveReview($event)"
+                (publish)="onPublish($event)"
                 (formChanged)="onFormChanged($event)">
             </app-course-form>
         </div>

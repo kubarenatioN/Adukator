@@ -10,13 +10,16 @@ import { CourseHierarchyComponent } from 'src/app/typings/course.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopicTaskComponent implements OnInit {
-    private _hierarchy: CourseHierarchyComponent | null = null;
+    private _form!: FormGroup;
     public uploadPath = ''
     
-    @Input() public form!: FormGroup
-    @Input() public set hierarchy(value: CourseHierarchyComponent) {
-        this._hierarchy = value;
-        this.uploadPath = UploadHelper.getTaskUploadFolder(value);
+    public get form() {
+        return this._form;
+    }
+
+    @Input() public set form(value: FormGroup) {
+        this._form = value;
+        this.uploadPath = UploadHelper.getTaskUploadFolder(this.getHierarchy());
     }
 
     @Output() public remove = new EventEmitter<void>();
@@ -31,5 +34,12 @@ export class TopicTaskComponent implements OnInit {
         this.form.patchValue({
             materials,
         });
+    }
+
+    private getHierarchy(): CourseHierarchyComponent {
+        return { 
+            courseUUID: '',
+            module: 1,
+        };
     }
 }

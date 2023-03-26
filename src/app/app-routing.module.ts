@@ -69,7 +69,6 @@ const routes: Routes = [
 			},
 			{
 				path: 'course-builder',
-				canActivate: [TeacherGuardService],
 				loadChildren: () =>
 					import(
 						'./modules/course-builder/course-builder.module'

@@ -7,3 +7,8 @@ export interface UserFile {
     format: string,
     resource_type: 'image' | 'raw' | 'video',
 }
+
+export interface UserFileUI {
+    filename: string,
+    url?: string
+}
