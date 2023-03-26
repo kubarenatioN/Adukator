@@ -6,7 +6,9 @@ import {
 	OnInit,
 	Output,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
+import { DateFilterFn, DateRange, MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { addDays } from 'date-fns/esm';
 import {
     EmptyCourseFormData,
 	isEmptyCourseFormData,
@@ -117,6 +119,15 @@ export class CourseFormComponent implements OnInit {
 		// this.modulesFormArray.removeAt(index...);
 	}
 
+    public onTopicDateChanged(
+        e: MatDatepickerInputEvent<any, DateRange<any>>, 
+        topicForm: FormGroup,
+        limit: 'start' | 'end'
+    ) {
+        const { value } = e;
+        // console.log(value, topicForm.value.id, limit);
+    }
+
 	public onSubmit(action: CourseFormViewMode | 'publish'): void {
 		const { valid: isValid } = this.courseForm;
         const { value } = this.courseForm;
@@ -149,6 +160,43 @@ export class CourseFormComponent implements OnInit {
 				break;
 		}
 	}
+
+    public getDateInputMin(form: FormGroup): Date | null {
+        const topicForms = (form.parent as FormArray).controls;
+        const currentFormIndex = topicForms.indexOf(form);
+        if (currentFormIndex === 0) {
+            return null;
+        }
+
+        const prevForm = topicForms.at(currentFormIndex - 1);
+        const prevFormStartDateStr = prevForm?.value.endDate;
+        let prevFormStartDate;
+        if (prevFormStartDateStr === null) {
+            return null;
+        } else {
+            prevFormStartDate = new Date(prevFormStartDateStr);
+        }
+        return addDays(prevFormStartDate, 1);
+    }
+
+    public getDateInputMax(form: FormGroup): Date | null {
+        const topicForms = (form.parent as FormArray).controls;
+        const currentFormIndex = topicForms.indexOf(form);
+        const totalFormsCount = topicForms.length;
+        if (currentFormIndex === totalFormsCount - 1) {
+            return null;
+        }
+
+        const nextForm = topicForms.at(currentFormIndex + 1);
+        const nextFormStartDateStr = nextForm?.value.startDate;
+        let nextFormStartDate;
+        if (nextFormStartDateStr === null) {
+            return null;
+        } else {
+            nextFormStartDate = new Date(nextFormStartDateStr);
+        }
+        return addDays(nextFormStartDate, -1);
+    }
 
     private getFormGroup({ type, module, topic}: CourseBuilderViewPath): FormGroup {
         try {

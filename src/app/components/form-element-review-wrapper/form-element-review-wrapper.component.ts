@@ -46,7 +46,6 @@ export class FormElementReviewWrapperComponent implements OnInit {
         if (this.type === 'review') {
             this.checkReviewComments();
         } else {
-            console.log(this._form.value);
             this.commentsStore$.next(this.getComments());
         }
     }

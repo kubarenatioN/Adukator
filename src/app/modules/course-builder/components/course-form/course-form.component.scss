@@ -11,6 +11,7 @@ mat-form-field {
 }
 
 .modules {
+    width: 100%;
     padding-left: 40px;
     margin-top: 60px;
 }
@@ -21,9 +22,15 @@ mat-form-field {
 }
 
 .topic-item {
+    display: flex;
+    justify-content: space-between;
     padding: 10px;
     border: 1px solid #ccc;
     margin: 10px;
+}
+
+.topic-dates {
+    padding-bottom: 20px;
 }
 
 .footer {
@@ -61,27 +68,7 @@ mat-form-field {
 .property {
     // display: flex;
     align-items: baseline;
-    padding: 5px 0;
-    & *:first-child {
-        padding-right: 10px;
-    }
-}
-
-.admin-module-topic,
-.admin-module {
-    padding-left: 20px;
-}
-
-.admin-module {
-    border-bottom: 1px solid #333;
-    margin-bottom: 20px;
-}
-
-.admin-module-topic {
-    padding: 10px;
-    background-color: #fafafa;
-    margin: 10px 0;
-    border-radius: 6px;
+    padding: 8px 0;
 }
 
 p {
@@ -96,4 +83,8 @@ p {
 
 .topic-review-materials {
     height: 120px;
+}
+
+app-chips-control {
+    display: block;
 }

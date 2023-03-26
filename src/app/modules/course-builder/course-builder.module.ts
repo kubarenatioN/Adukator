@@ -13,6 +13,7 @@ import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { CourseFormComponent } from './components/course-form/course-form.component';
 import { LayoutComponent } from 'src/app/components/layout/layout.component';
 import { CourseNavComponent } from './components/course-nav/course-nav.component';
+import { ChipsControlComponent } from './controls/chips-control/chips-control.component';
 
 @NgModule({
 	providers: [FormBuilderHelper],
@@ -24,6 +25,7 @@ import { CourseNavComponent } from './components/course-nav/course-nav.component
 		ModuleTopicComponent,
 		TopicTaskComponent,
         CourseNavComponent,
+        ChipsControlComponent,
 	],
 	imports: [
 		CommonModule,

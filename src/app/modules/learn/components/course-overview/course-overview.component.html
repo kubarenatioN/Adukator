@@ -33,15 +33,15 @@
             <div class="info-item">
                 <div>
                     <span>Начало</span>
-                    <span>{{'' | date : 'dd.MM.yyyy'}}</span>
+                    <span>TBD</span>
                 </div>
                 <div>
                     <span>Окончание</span>
-                    <span>{{'' | date : 'dd.MM.yyyy'}}</span>
+                    <span>TBD</span>
                 </div>
                 <div>
                     <span>Длительность</span>
-                    <span>{{course | timeDuration}}</span>
+                    <span>8 weeks</span>
                 </div>
             </div>
     
@@ -51,8 +51,8 @@
             </div>
     
             <div class="info-item">
-                <span>Тип обучения</span>
-                <p>Самостоятельное</p>
+                <span>Автор</span>
+                <a [routerLink]="['/app/profile/', course.authorId]">Профиль</a>
             </div>
     
         </div>

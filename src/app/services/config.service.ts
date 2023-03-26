@@ -13,6 +13,7 @@ export interface CourseCategory {
 })
 export class ConfigService {
     private courseCategories$: Observable<CourseCategory[]> | null = null
+    private courseCompetencies$: Observable<string[]> | null = null
     
     private configFilesPath = `${apiUrl}/static/config`
 
@@ -25,5 +26,14 @@ export class ConfigService {
             );
         }
         return this.courseCategories$;
+    }
+
+	public loadCourseCompetencies(): Observable<string[]> {
+        if (!this.courseCompetencies$) {
+            this.courseCompetencies$ = this.http.get<string[]>(`${this.configFilesPath}/course-competencies.json`).pipe(
+                shareReplay(1)
+            );
+        }
+        return this.courseCompetencies$;
     }
 }

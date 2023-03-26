@@ -116,6 +116,7 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
     }
 
     private onAddPracticeSection() {
-        this.form.controls['practice'] = this.fbHelper.getTopicPracticeForm()
+        const practiceForm = this.fbHelper.getTopicPracticeForm();
+        this.form.setControl('practice', practiceForm);
     }
 }

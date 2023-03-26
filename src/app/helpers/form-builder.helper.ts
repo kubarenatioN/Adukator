@@ -34,8 +34,8 @@ export class FormBuilderHelper {
 	public getModuleForm(module: CourseModule | null = null) {
 		return this.fb.group({
             id: module ? module.id : generateUUID(),
-			[ModuleFormFields.Title]: module ? module.title : 'Module Title 1',
-			[ModuleFormFields.Descr]: module ? module.description : 'Module descr...',
+			[ModuleFormFields.Title]: module ? module.title : 'Новый модуль',
+			[ModuleFormFields.Descr]: module ? module.description : 'Описание модуля...',
 			topics: module ? this.getTopicsFormArray(module.topics) : this.fb.array([
 				this.getTopicForm()
 			]),
@@ -46,12 +46,14 @@ export class FormBuilderHelper {
     public getTopicForm(topic: ModuleTopic | null = null) {
         return this.fb.group({
             id: topic ? topic.id : generateUUID(),
-            [TopicFormFields.Title]: topic ? topic.title : 'Topic Title 1',
-            [TopicFormFields.Descr]: topic ? topic.description : 'Topic descr...',
+            [TopicFormFields.Title]: topic ? topic.title : 'Новая тема',
+            [TopicFormFields.Descr]: topic ? topic.description : '',
             [TopicFormFields.Materials]: topic ? [topic.materials] : [[]],
             [TopicFormFields.Theory]: topic ? topic.theory : null,
             practice: topic?.practice ? this.getTopicPracticeForm(topic.practice) : null,
             [TopicFormFields.TestLink]: topic ? topic.testLink : null,
+            startDate: topic ? topic.startDate : null,
+            endDate: topic ? topic.endDate : null,
             comments: this.getFormGroupComments(TopicFormFields, topic?.comments ?? {})
         });
     }
@@ -79,7 +81,9 @@ export class FormBuilderHelper {
             id: overallInfo ? overallInfo.id : generateUUID(),
             [OverallFormFields.Title]: overallInfo ? overallInfo.title : [CourseFormDataMock.title, Validators.required],
 			[OverallFormFields.Descr]: overallInfo ? overallInfo.description : [CourseFormDataMock.descr, Validators.required],
-			[OverallFormFields.Category]: overallInfo ? overallInfo.category : [''],
+			[OverallFormFields.Category]: overallInfo ? overallInfo.category : '',
+			[OverallFormFields.AcquiredCompetencies]: overallInfo ? [overallInfo.acquiredCompetencies] : [[]],
+			[OverallFormFields.RequiredCompetencies]: overallInfo ? [overallInfo.requiredCompetencies] : [[]],
             comments: this.getFormGroupComments(OverallFormFields, overallInfo?.comments ?? {})
         })
     }

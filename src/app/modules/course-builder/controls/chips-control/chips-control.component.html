@@ -1,0 +1,15 @@
+<mat-form-field class="example-chip-list" appearance="fill">
+    <mat-label>{{ title }}</mat-label>
+    <mat-chip-list #chipList>
+    <mat-chip *ngFor="let c of items" 
+    (removed)="remove(c)">
+        {{c}}
+        <button matChipRemove>Х</button>
+    </mat-chip>
+        <input placeholder="..."
+            [matChipInputFor]="chipList"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            [matChipInputAddOnBlur]="true"
+            (matChipInputTokenEnd)="add($event)">
+    </mat-chip-list>
+</mat-form-field>

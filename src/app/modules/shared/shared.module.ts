@@ -10,6 +10,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import {MatChipsModule} from '@angular/material/chips';
 import { BackBtnComponent } from 'src/app/modules/shared/components/back-btn/back-btn.component';
 import { DatePipe } from 'src/app/pipes/date.pipe';
 import { TimeDurationPipe } from 'src/app/pipes/time-duration.pipe';
@@ -41,6 +42,7 @@ import { FormElementWrapperDirective } from 'src/app/directives/form-element-wra
 		MatButtonToggleModule,
 		MatFormFieldModule,
         ReactiveFormsModule,
+        MatChipsModule,
 	],
 	exports: [
 		MatButtonModule,
@@ -51,6 +53,7 @@ import { FormElementWrapperDirective } from 'src/app/directives/form-element-wra
 		MatSelectModule,
 		MatButtonToggleModule,
 		MatFormFieldModule,
+        MatChipsModule,
 		BackBtnComponent,
 		DatePipe,
 		TimeDurationPipe,

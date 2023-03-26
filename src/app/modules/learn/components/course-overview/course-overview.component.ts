@@ -40,7 +40,7 @@ export class CourseOverviewComponent {
         );
 
         this.modules$ = this.course$.pipe(
-            map(course => course ? parseModules(course.modulesJson) : [])
+            map(course => course ? course.modules : [])
         )
         
         this.isUserOwner$ = this.course$.pipe(

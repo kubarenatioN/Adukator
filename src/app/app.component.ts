@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { take } from 'rxjs';
-import { AuthService } from './services/auth.service';
+import { ConfigService } from './services/config.service';
 import { UserService } from './services/user.service';
 
 @Component({
@@ -10,11 +8,12 @@ import { UserService } from './services/user.service';
 	styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-	constructor(private userService: UserService, private router: Router) {
+	constructor(private userService: UserService, private configService: ConfigService) {
+        (window as any).__localeId__ = 'ru'
 		window.addEventListener('message', (e) => this.setToken(e));
 		this.userService.initUser();
-        (window as any).__localeId__ = 'ru'
-	}
+        this.configService.loadCourseCompetencies();
+    }
 
 	private setToken(e: MessageEvent) {
 		if (

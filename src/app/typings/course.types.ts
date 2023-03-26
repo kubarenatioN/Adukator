@@ -11,6 +11,8 @@ export enum OverallFormFields {
     Title = 'title',
     Descr = 'description',
     Category = 'category',
+    AcquiredCompetencies = 'acquiredCompetencies',
+    RequiredCompetencies = 'requiredCompetencies',
 }
 
 export enum ModuleFormFields {
@@ -62,7 +64,9 @@ export interface ModuleTopic {
         test: string;
         report: boolean;
         offline: boolean;
-    }
+    };
+    startDate: string;
+    endDate: string;
     comments: Record<string, string>;
 }
 
@@ -79,6 +83,8 @@ export interface CourseFormOverallInfo {
     title: string;
     description: string;
     category: string;
+    acquiredCompetencies: string[];
+    requiredCompetencies: string[];
     comments: Record<string, string>;
 }
  
@@ -88,6 +94,8 @@ interface CourseCore {
 	category: string;
     advantages?: string;
     authorId: number;
+    acquiredCompetencies: string[];
+    requiredCompetencies: string[];
 	categoryLabel?: string;
 }
 
@@ -95,7 +103,8 @@ interface CourseCore {
 export interface Course extends CourseCore {
     id: number;
     secondaryId: string;
-    modulesJson: string;
+    // modulesJson: string;
+    modules: CourseModule[];
 }
 
 export interface CourseHierarchyComponent {
@@ -133,6 +142,8 @@ export interface CourseFormData {
         description: string;
         category: string;
         categoryLabel?: string;
+        acquiredCompetencies: string[];
+        requiredCompetencies: string[];
         advantages?: string;
         comments: {
             [key: string]: CourseReviewControlComment[] | null

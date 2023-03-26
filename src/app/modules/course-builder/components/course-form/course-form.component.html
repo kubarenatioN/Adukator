@@ -20,7 +20,7 @@
 <ng-template #courseMainInfo>
 
     <ng-container [ngSwitch]="formMode">
-                
+
         <ng-container 
             *ngSwitchCase="viewModes.Create" 
             [ngTemplateOutlet]="createHeader"
@@ -41,25 +41,29 @@
     </ng-container>
 
     <div [formGroup]="overallInfoSubform">
+        <div class="property">
+            <mat-form-field 
+            *appFormElWrapper="overallInfoSubform; control: 'title'; type: controlsType"
+            appearance="fill">
+                <mat-label>Название курса</mat-label>
+                <input matInput formControlName="title" />
+            </mat-form-field>
+        </div>
         
-        <mat-form-field 
-        *appFormElWrapper="overallInfoSubform; control: 'title'; type: controlsType"
-        appearance="fill">
-            <mat-label>Название курса</mat-label>
-            <input matInput formControlName="title" />
-        </mat-form-field>
+        <div class="property">
+            <mat-form-field 
+            *appFormElWrapper="overallInfoSubform; control: 'description'; type: controlsType"
+            appearance="fill">
+                <mat-label>Описание курса</mat-label>
+                <input matInput formControlName="description" />
+            </mat-form-field>
+        </div>
         
-        <mat-form-field 
-        *appFormElWrapper="overallInfoSubform; control: 'description'; type: controlsType"
-        appearance="fill">
-            <mat-label>Описание курса</mat-label>
-            <input matInput formControlName="description" />
-        </mat-form-field>
-        
-        <div 
+        <div class="property">
+            <mat-form-field 
             *appFormElWrapper="overallInfoSubform; control: 'category'; type: controlsType"
-            class="categories-container">
-            <mat-form-field appearance="fill">
+            class="categories-container"
+            appearance="fill">
                 <mat-label>Категория</mat-label>
                 <mat-select formControlName="category">
                     <mat-option *ngFor="let category of categories$ | async" [value]="category.key">
@@ -68,6 +72,24 @@
                 </mat-select>
             </mat-form-field>
         </div>
+        
+        <div class="property">
+            <app-chips-control
+            [form]="overallInfoSubform"
+            control="requiredCompetencies"
+            title="Необходимые компетенции"
+            class="categories-container"
+            ></app-chips-control>
+        </div> 
+
+        <div class="property">
+            <app-chips-control
+            [form]="overallInfoSubform"
+            control="acquiredCompetencies"
+            title="Получаемые компетенции"
+            class="categories-container"
+            ></app-chips-control>
+        </div> 
 
     </div>
 
@@ -82,10 +104,33 @@
                 <div 
                 *ngFor="let topicForm of moduleForm.controls.topics.controls" 
                 class="topic-item">
-                    <p>
+                    <div class="topic-info">
                         {{ topicForm.value.title }}
-                    </p>
+                    </div>
+                    <div class="topic-dates">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Длительность темы</mat-label>
+                            <mat-date-range-input  
+                            [formGroup]="topicForm" 
+                            [min]="getDateInputMin(topicForm)"
+                            [max]="getDateInputMax(topicForm)"
+                            [rangePicker]="picker">
+                              <input 
+                              matStartDate 
+                              formControlName="startDate" 
+                              placeholder="Начало">
+                              <input 
+                              matEndDate 
+                              formControlName="endDate" 
+                              placeholder="Окончание">
+                            </mat-date-range-input>
+                            <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+                        </mat-form-field>
+                    </div>
                 </div>
+                <button *ngIf="canEditForm" (click)="addTopic(moduleForm)">Добавить тему</button>
             </div>
         </div>
         <button *ngIf="canEditForm" (click)="addModule()">Добавить модуль</button>
