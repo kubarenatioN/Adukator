@@ -30,7 +30,7 @@ export class UploadHelper {
 		lastId: string
 	): string[] {
         const hierarchy = {
-            id: course.secondaryId,
+            id: course.uuid,
             children: course.modules.map(module => ({
                 id: module.id,
                 children: module.topics.map(topic => ({

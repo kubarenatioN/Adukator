@@ -18,7 +18,6 @@ import { Course, CourseFormData, CourseFormViewMode, CourseReview, WrapperType }
 })
 export class CourseReviewFormComponent implements OnInit {
     private courseFormData: CourseFormData | null = null;
-	private courseSecondaryId!: string;
 
     public get category(): string {
         return this.courseFormData?.overallInfo.categoryLabel || ''
@@ -33,7 +32,6 @@ export class CourseReviewFormComponent implements OnInit {
     @Input()
     public set formData(courseData: CourseReview) {
         console.log('set review form data', courseData);
-        this.courseSecondaryId = courseData.secondaryId
         const courseFormData = convertCourseToCourseFormData(courseData);
         this.courseFormData = courseFormData;
         this.fillReviewForm(courseFormData)

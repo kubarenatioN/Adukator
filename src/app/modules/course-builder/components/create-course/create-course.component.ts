@@ -175,7 +175,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
     private getMasterCourseMetadata(authorId: number): CourseFormMetadata {
         return {
             id: -1,
-            secondaryId: generateUUID(),
+            uuid: generateUUID(),
             authorId,
             masterCourseId: null,
             status: CourseReviewStatus.Default
@@ -185,7 +185,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
     private getCourseMetadata(course: CourseReview): CourseFormMetadata {
         return {
             id: course.id,
-            secondaryId: course.secondaryId,
+            uuid: course.uuid,
             authorId: course.authorId,
             masterCourseId: course.masterId === null ? course.id : course.masterId, // if get master course, correct new course version masterId value
             status: course.status

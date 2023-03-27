@@ -102,7 +102,7 @@ interface CourseCore {
 // publicly accessed course, used for overview & training
 export interface Course extends CourseCore {
     id: number;
-    secondaryId: string;
+    uuid: string;
     modules: CourseModule[];
 }
 
@@ -155,13 +155,13 @@ export interface CourseFormData {
 
 export interface CourseTraining extends CourseCore {
     id: number;
-    secondaryId: string;
+    uuid: string;
     modules: CourseModule[];
 }
 
 export interface CourseFormMetadata {
     id: number;
-    secondaryId: string;
+    uuid: string;
     authorId: number;
     masterCourseId: number | null;
     status?: CourseReviewStatus;

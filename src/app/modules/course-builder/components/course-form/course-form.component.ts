@@ -75,7 +75,7 @@ export class CourseFormComponent implements OnInit {
             this.controlsType = 'review';
         }
         this.viewType = viewPath.type;
-        this.overallInfoSubform.controls.id.setValue(metadata.secondaryId);
+        this.overallInfoSubform.controls.id.setValue(metadata.uuid);
         this.activeFormGroup = this.getFormGroup(viewPath)
     }
 
