@@ -68,8 +68,7 @@
                             <span>Материалы к теме</span>
                             <app-upload-box
 								class="topic-review-materials"
-								type="download" 
-								[folder]="getReviewTopicFolderPath(i + 1, j + 1)"
+								type="download"
 							></app-upload-box>
                         </ng-container>
                     </div>
@@ -80,33 +79,6 @@
                             <p>{{ topicForm.value.theory }}</p>
                         </ng-container>
                     </div>
-
-                    <!-- <div *ngIf="topicForm.value.practice" class="property">
-                        <ng-container *appFormElWrapper="topicForm; control: 'practice'; type: controlsType">
-                            <span>Практика</span>
-                            <div class="practice">
-                                <p>
-                                    {{topicForm.value.practice.goal}}
-                                </p>
-
-                                <div class="tasks">
-                                    <div *ngFor="let task of topicForm.value.practice.controls.tasks; let k = index" class="task-item">
-                                        <p> Задание {{ k + 1 }}. </p>
-                                        <p>
-                                            {{task.taskDescr}}
-                                        </p>
-                                        <app-upload-box
-                                            *ngIf="task.materials && task.materials.length > 0"
-                                            class="topic-review-materials"
-                                            type="download" 
-                                            [folder]="getReviewTaskFolderPath(i + 1, j + 1, k + 1)"
-                                        ></app-upload-box>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                        </ng-container>
-                    </div> -->
 
                     <div *ngIf="topicForm.value.testLink" class="property">
                         <ng-container *appFormElWrapper="topicForm; control: 'testLink'; type: controlsType">
@@ -120,10 +92,10 @@
 		</div>
 	</div>
 
-	<div class="form-footer">
+	<!-- <div class="form-footer">
 		<button mat-raised-button color="primary" (click)="onSubmit('review')">Сохранить</button>
         <button mat-raised-button color="primary" (click)="onSubmit('publish')">Опубликовать</button>
-	</div>
+	</div> -->
 </form>
 
 <ng-template #loader>

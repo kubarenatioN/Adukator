@@ -5,6 +5,7 @@ import {
 	OnInit,
 } from '@angular/core';
 import { UploadHelper } from 'src/app/helpers/upload.helper';
+import { CourseTrainingService } from 'src/app/services/course-training.service';
 import { ModuleTopic } from 'src/app/typings/course.types';
 
 @Component({
@@ -17,11 +18,20 @@ export class TopicTrainingComponent implements OnInit {
 	@Input() public topic!: ModuleTopic;
     @Input() public folderPath!: string; 
 
-    public materialsFolder!: string
+    public topicFolderPath!: string
+    public tasksFolderPaths: string[] = []
 
-	constructor() {}
+	constructor(private trainingService: CourseTrainingService) {}
 
 	ngOnInit(): void {
+        this.trainingService.course$.subscribe(course => {
+            if (course) {
+                this.topicFolderPath = UploadHelper.getTopicUploadFolderFromCourse(course, this.topic.id);
 
+                this.tasksFolderPaths = this.topic.practice?.tasks.map(task => {
+                    return UploadHelper.getTopicUploadFolderFromCourse(course, task.id)
+                }) ?? [];
+            }
+        });
     }
 }

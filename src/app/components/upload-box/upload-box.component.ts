@@ -13,14 +13,17 @@ import { UserFile, UserFileUI } from 'src/app/typings/files.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadBoxComponent implements OnInit {
+    private _folder: string | null = null;
     private filesStore$ = new BehaviorSubject<UserFileUI[]>([]);
     
+    @Input() public downloadOnly: boolean = false;
     @Input() public type: 'upload' | 'download' = 'upload';
     @Input() public set folder(value: string | null) {            
         this.filesStore$.next([]);
         if (value === null) {
             return;
         }
+        this._folder = value;
         // TODO: apply files from cache
         this.getFilesFromFolder(value).subscribe(files => {
             this.filesStore$.next(files)
@@ -54,7 +57,7 @@ export class UploadBoxComponent implements OnInit {
     }
 
     public onFilesDropped(fileList: FileList) {
-        if (this.folder === null) {
+        if (this._folder === null) {
             return;
         }
         const uploaded = this.filesStore$.value ?? [];
@@ -64,7 +67,7 @@ export class UploadBoxComponent implements OnInit {
             if (file) {
                 const fileIndex = uploaded.findIndex(f => f.filename === file.name)
                 if (fileIndex === -1) {
-                    this.uploadFile(file, this.folder)
+                    this.uploadFile(file, this._folder)
                     toBeUploaded.push(this.formatFileToUserFile(file))
                 }
             }

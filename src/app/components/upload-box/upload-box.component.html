@@ -1,23 +1,48 @@
-<div class="dropzone" appDnd (filesDropped)="onFilesDropped($event)">
+<div class="upload-box">
     <ng-container *ngIf="files$ | async as files; else loader">
-        <div class="dropzone-wrapper">
-            Отпустите файлы здесь.
-        </div>
-        <input class="file-input" type="file" [id]="fileInputId" multiple (change)="onChange($event)">
-        
-        <ng-container *ngIf="files.length > 0; else emptyDropzone">
-            <div class="files-container">
-                <div *ngFor="let file of files"
-                class="file-item" 
-                (click)="downloadFile(file.filename, file.url)">
-                    {{file.filename}}
-                </div>
-            </div>
-            <label class="pick-files-btn" [for]="fileInputId">Добавить файлы</label>
-        </ng-container>
 
+        <ng-container *ngIf="files.length > 0; else emptyDropzone">
+
+            <div 
+            *ngIf="!downloadOnly"
+            class="dropzone" appDnd (filesDropped)="onFilesDropped($event)">
+                
+                <div class="dropzone-wrapper">
+                    Отпустите файлы здесь.
+                </div>
+                <input  class="file-input" type="file" [id]="fileInputId" multiple (change)="onChange($event)">
+                
+                <div class="files-container">
+                    <div *ngFor="let file of files"
+                    class="file-item" 
+                    (click)="downloadFile(file.filename, file.url)">
+                        {{file.filename}}
+                    </div>
+                </div>
+                <label class="pick-files-btn" [for]="fileInputId">Добавить файлы</label>
+
+            </div>
+
+            <ng-container 
+                [ngTemplateOutlet]="downloadOnlyZone"
+                [ngTemplateOutletContext]="{ files }"
+                *ngIf="downloadOnly"></ng-container>
+
+        </ng-container>
+    
     </ng-container>
 </div>
+
+<ng-template #downloadOnlyZone let-files="files">
+    <div class="files-container">
+        <p>Download only</p>
+        <div *ngFor="let file of files"
+        class="file-item" 
+        (click)="downloadFile(file.filename, file.url)">
+            {{file.filename}}
+        </div>
+    </div>
+</ng-template>
 
 <ng-template #emptyDropzone>
     <div class="files-container--empty">

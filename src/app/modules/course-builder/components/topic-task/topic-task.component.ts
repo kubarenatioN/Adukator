@@ -19,7 +19,7 @@ export class TopicTaskComponent implements OnInit {
 
     @Input() public set form(value: FormGroup) {
         this._form = value;
-        this.uploadPath = UploadHelper.getTaskUploadFolder(this.getHierarchy());
+        this.uploadPath = UploadHelper.getTaskUploadFolder(value);
     }
 
     @Output() public remove = new EventEmitter<void>();
@@ -34,12 +34,5 @@ export class TopicTaskComponent implements OnInit {
         this.form.patchValue({
             materials,
         });
-    }
-
-    private getHierarchy(): CourseHierarchyComponent {
-        return { 
-            courseUUID: '',
-            module: 1,
-        };
     }
 }

@@ -53,51 +53,6 @@ export class CourseReviewFormComponent implements OnInit {
 		this.form.valueChanges.subscribe(res => {
             console.log('111 review form changed', res);
         })
-	}
-
-    public onSubmit(action: 'review' | 'publish'): void {
-		const { valid: isValid } = this.form;
-        const { value } = this.form;
-
-		switch (action) {
-			case 'review': {
-                const comments: { overallComments: string; modules: string } = {
-                    overallComments: stringify(this.overallInfoForm.value.comments),
-                    modules: stringify(this.modulesFormArray.value),
-                }
-                this.saveReview.emit(comments);
-				break;
-			}
-			case 'publish': {
-				// TEMP: skip validation
-                // TODO: uncomment later
-                // if (isValid && this.courseFormData && this.viewMode === this.viewModes.Review) {
-				// 	this.publish.emit(value)
-				// }
-				this.publish.emit(value as unknown as CourseFormData)
-				break;
-			}
-
-			default:
-				break;
-		}
-	}
-
-    public getReviewTopicFolderPath(module: number, topic: number) {
-        return UploadHelper.getTopicUploadFolder({
-            courseUUID: this.courseSecondaryId,
-            module,
-            topic,
-        })
-    }
-
-    public getReviewTaskFolderPath(module: number, topic: number, task: number) {
-        return UploadHelper.getTaskUploadFolder({
-            courseUUID: this.courseSecondaryId,
-            module,
-            topic,
-            task
-        })
     }
 
     private fillReviewForm(formData: CourseFormData) {

@@ -19,8 +19,7 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
 
     @Input() public set form(form: FormGroup) {
         this._form = form;
-        const formHierarchyPosition = this.getHierarchy(form);
-        this.uploadFolder = UploadHelper.getTopicUploadFolder(formHierarchyPosition);
+        this.uploadFolder = UploadHelper.getTopicUploadFolder(form);
         this.activeSections = {
             materials: form.value.materials && form.value.materials.length > 0,
             theory: form.value.theory,
@@ -99,20 +98,6 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
         this.form.patchValue({
             materials,
         })
-    }
-
-    private getHierarchy(form: FormGroup): CourseHierarchyComponent {
-        let courseRootForm: FormArray | FormGroup = form;
-        while (courseRootForm.parent !== null) {
-            courseRootForm = courseRootForm.parent;
-        }
-        const courseUUID = courseRootForm.value.overallInfo.id;
-        const module = form.parent?.parent?.value.id;
-        return {
-            courseUUID,
-            module,
-            topic: form.value.id
-        }
     }
 
     private onAddPracticeSection() {

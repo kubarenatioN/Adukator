@@ -103,7 +103,6 @@ interface CourseCore {
 export interface Course extends CourseCore {
     id: number;
     secondaryId: string;
-    // modulesJson: string;
     modules: CourseModule[];
 }
 

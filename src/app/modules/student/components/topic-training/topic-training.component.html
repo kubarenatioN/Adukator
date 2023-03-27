@@ -6,24 +6,40 @@
 <span>Дедлайн</span>
 <p>{{ topic.endDate | date:'dd.MM.yyyy' }}</p>
 
+<p>
+    {{ topic | json }}
+</p>
+
 <div class="topic-content">
 
+    <div *ngIf="topic.theory" class="section">
+        <h2>Теория</h2>
+        <p> {{ topic.theory }} </p>
+    </div>
+    
     <div *ngIf="topic.materials && topic.materials.length > 0" class="section">
         <h2>Материалы к теме</h2>
-        <app-upload-box [folder]="folderPath"></app-upload-box>
-    </div>
-
-    <div class="section">
-        <h2>Теория</h2>
-        <p>
-            {{ topic.theory }}
-        </p>
+        <app-upload-box [downloadOnly]="true" [folder]="topicFolderPath"></app-upload-box>
     </div>
 
     <div *ngIf="topic.practice" class="section">
         <h2>Практика</h2>
+        <div class="practice-container" *ngIf="topic.practice">
+            <p>{{ topic.practice.goal }}</p>
+            <div class="practice-tasks">
+                <div *ngFor="let task of topic.practice.tasks; let i = index" class="practice-task">
+                    <h4>Задание {{ i + 1 }}.</h4>
+                    <p>{{ task.taskDescr }}</p>
+                    <app-upload-box [downloadOnly]="true" [folder]="tasksFolderPaths[i]"></app-upload-box>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="topic.testLink" class="section">
+        <h2>Ссылка на тест</h2>
         <p>
-            {{ topic.practice.goal }}
+            <a target="_blank" [href]="topic.testLink">{{ topic.testLink }}</a>
         </p>
     </div>
 

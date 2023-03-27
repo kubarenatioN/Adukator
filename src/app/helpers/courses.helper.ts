@@ -6,7 +6,7 @@ import {
 	CourseReview,
 	CourseTraining,
 } from '../typings/course.types';
-import { v4 as uuidv4 } from 'uuid';
+import { nanoid } from 'nanoid';
 
 export const stringify = (data: any): string => {
 	if (!data) {
@@ -136,5 +136,5 @@ export const convertCourseToCourseTraining = (
 };
 
 export const generateUUID = (): string => {
-	return uuidv4();
+    return nanoid()
 };

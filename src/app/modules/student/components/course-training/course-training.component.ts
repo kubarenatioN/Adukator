@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, takeUntil, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { convertCourseToCourseTraining } from 'src/app/helpers/courses.helper';
 import { UploadHelper } from 'src/app/helpers/upload.helper';
+import { CourseTrainingService } from 'src/app/services/course-training.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { CourseModule, CourseTraining, ModuleTopic } from 'src/app/typings/course.types';
@@ -37,7 +38,9 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 
     public viewTypes = ViewType;
     
-	constructor(private activatedRoute: ActivatedRoute, private coursesService: CoursesService) {
+	constructor(
+        private trainingService: CourseTrainingService,
+        private activatedRoute: ActivatedRoute, private coursesService: CoursesService) {
         super();
     }
 
@@ -55,6 +58,9 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
                     return convertCourseToCourseTraining(course)
                 }
                 return null;
+            }),
+            tap(course => {
+                this.trainingService.course = course;
             }),
             shareReplay(1)
         )
@@ -76,12 +82,13 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
                     }
                 }
                 if (viewType === this.viewTypes.Topic) {
-                    this.topicUploadPath = UploadHelper.getTopicUploadFolder({ courseUUID: course.secondaryId, module: moduleIndex, topic: topicIndex });
+                    const topic = course?.modules[moduleIndex - 1].topics[topicIndex - 1]
+                    this.topicUploadPath = UploadHelper.getTopicUploadFolderFromCourse(course, topic.id);
                     return {
                         viewType,
                         course: course,
                         module: course?.modules[moduleIndex - 1],
-                        topic: course?.modules[moduleIndex - 1].topics[topicIndex - 1],
+                        topic: topic,
                     }
                 }
 
