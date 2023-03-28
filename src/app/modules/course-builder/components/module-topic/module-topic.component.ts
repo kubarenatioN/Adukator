@@ -19,7 +19,7 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
 
     @Input() public set form(form: FormGroup) {
         this._form = form;
-        this.uploadFolder = UploadHelper.getTopicUploadFolder(form);
+        this.uploadFolder = UploadHelper.getTopicReviewUploadFolder('form', form);
         this.activeSections = {
             materials: form.value.materials && form.value.materials.length > 0,
             theory: form.value.theory,

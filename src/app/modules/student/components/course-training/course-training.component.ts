@@ -83,7 +83,7 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
                 }
                 if (viewType === this.viewTypes.Topic) {
                     const topic = course?.modules[moduleIndex - 1].topics[topicIndex - 1]
-                    this.topicUploadPath = UploadHelper.getTopicUploadFolderFromCourse(course, topic.id);
+                    this.topicUploadPath = UploadHelper.getTopicUploadFolder('object', course, topic.id);
                     return {
                         viewType,
                         course: course,

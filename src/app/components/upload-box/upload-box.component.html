@@ -28,8 +28,8 @@
 </ng-container>
 
 <ng-template #downloadOnlyZone let-files="files">
+    <p>Download only</p>
     <div class="files-container">
-        <p>Download only</p>
         <div *ngFor="let file of files"
         class="file-item" 
         (click)="downloadFile(file.filename, file.url)">

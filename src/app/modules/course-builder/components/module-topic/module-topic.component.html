@@ -14,7 +14,7 @@
         <input matInput formControlName="description" />
     </mat-form-field>
 
-    <div>
+    <div *ngIf="controlsType === 'edit'">
         <p>Добавить раздел</p>
         <button [disabled]="activeSections.materials" (click)="onAddSection('materials')">Материалы</button>
         <button [disabled]="activeSections.theory" (click)="onAddSection('theory')">Теория</button>
@@ -44,7 +44,7 @@
 
         <app-upload-box 
         class="upload-box" 
-        type="upload" 
+        [downloadOnly]="controlsType === 'review'"         
         [folder]="uploadFolder"
         (uploadFilesChanged)="onUploadFilesChanged($event)"></app-upload-box>
     </div>
@@ -63,7 +63,9 @@
                 <div 
                 *ngFor="let taskForm of tasksFormArray.controls; let i = index"
                 class="task-item">
-                    <app-topic-task [form]="taskForm"></app-topic-task>
+                    <app-topic-task 
+                    [controlsType]="controlsType"
+                    [form]="taskForm"></app-topic-task>
 
                     <button [disabled]="i === 0" (click)="onRemoveTaskAt(i)">
                         Удалить задачу

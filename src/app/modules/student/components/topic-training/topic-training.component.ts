@@ -26,10 +26,10 @@ export class TopicTrainingComponent implements OnInit {
 	ngOnInit(): void {
         this.trainingService.course$.subscribe(course => {
             if (course) {
-                this.topicFolderPath = UploadHelper.getTopicUploadFolderFromCourse(course, this.topic.id);
+                this.topicFolderPath = UploadHelper.getTopicUploadFolder('object', course, this.topic.id);
 
                 this.tasksFolderPaths = this.topic.practice?.tasks.map(task => {
-                    return UploadHelper.getTopicUploadFolderFromCourse(course, task.id)
+                    return UploadHelper.getTopicUploadFolder('object', course, task.id)
                 }) ?? [];
             }
         });
