@@ -15,6 +15,7 @@ import {
 } from 'src/app/constants/common.constants';
 import { convertCourseToCourseFormData, stringify } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
+import { getTopicMinDate, getTopicMaxDate } from 'src/app/helpers/forms.helper';
 import { ConfigService } from 'src/app/services/config.service';
 import {
     CourseBuilderViewData,
@@ -162,40 +163,11 @@ export class CourseFormComponent implements OnInit {
 	}
 
     public getDateInputMin(form: FormGroup): Date | null {
-        const topicForms = (form.parent as FormArray).controls;
-        const currentFormIndex = topicForms.indexOf(form);
-        if (currentFormIndex === 0) {
-            return null;
-        }
-
-        const prevForm = topicForms.at(currentFormIndex - 1);
-        const prevFormStartDateStr = prevForm?.value.endDate;
-        let prevFormStartDate;
-        if (prevFormStartDateStr === null) {
-            return null;
-        } else {
-            prevFormStartDate = new Date(prevFormStartDateStr);
-        }
-        return addDays(prevFormStartDate, 1);
+        return getTopicMinDate(this.courseForm, form);
     }
 
     public getDateInputMax(form: FormGroup): Date | null {
-        const topicForms = (form.parent as FormArray).controls;
-        const currentFormIndex = topicForms.indexOf(form);
-        const totalFormsCount = topicForms.length;
-        if (currentFormIndex === totalFormsCount - 1) {
-            return null;
-        }
-
-        const nextForm = topicForms.at(currentFormIndex + 1);
-        const nextFormStartDateStr = nextForm?.value.startDate;
-        let nextFormStartDate;
-        if (nextFormStartDateStr === null) {
-            return null;
-        } else {
-            nextFormStartDate = new Date(nextFormStartDateStr);
-        }
-        return addDays(nextFormStartDate, -1);
+        return getTopicMaxDate(this.courseForm, form);
     }
 
     private getFormGroup({ type, module, topic}: CourseBuilderViewPath): FormGroup {

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { UploadService } from 'src/app/services/upload.service';
-import { UserFile, UserFileUI } from 'src/app/typings/files.types';
+import { CloudinaryFile, UserFile } from 'src/app/typings/files.types';
 
 @Component({
 	selector: 'app-upload-box',
@@ -14,7 +14,7 @@ import { UserFile, UserFileUI } from 'src/app/typings/files.types';
 })
 export class UploadBoxComponent implements OnInit {
     private _folder: string | null = null;
-    private filesStore$ = new BehaviorSubject<UserFileUI[]>([]);
+    private filesStore$ = new BehaviorSubject<UserFile[]>([]);
     
     @Input() public downloadOnly: boolean = false;
     @Input() public type: 'upload' | 'download' = 'upload';
@@ -25,7 +25,7 @@ export class UploadBoxComponent implements OnInit {
         }
         this._folder = value;
         // TODO: apply files from cache
-        this.getFilesFromFolder(value).subscribe(files => {
+        this.getFilesFromFolder(value).subscribe((files: UserFile[]) => {
             this.filesStore$.next(files)
         });
     };
@@ -33,7 +33,7 @@ export class UploadBoxComponent implements OnInit {
     @Output()
     public uploadFilesChanged = new EventEmitter<string[]>();
     
-    public files$!: Observable<UserFileUI[] | null>;
+    public files$!: Observable<UserFile[] | null>;
 
     public get fileInputId(): string {
         let components = this.folder?.split('/');
@@ -61,7 +61,7 @@ export class UploadBoxComponent implements OnInit {
             return;
         }
         const uploaded = this.filesStore$.value ?? [];
-        const toBeUploaded: UserFileUI[] = [...uploaded]
+        const toBeUploaded: UserFile[] = [...uploaded]
         for (let i = 0; i < fileList.length; i++) {
             const file = fileList.item(i);
             if (file) {
@@ -91,10 +91,17 @@ export class UploadBoxComponent implements OnInit {
 
     }
 
-    private getFilesFromFolder(folder: string) {
+    private getFilesFromFolder(folder: string): Observable<UserFile[]> {
         return this.uploadService.getFilesFromFolder(folder)
             .pipe(
-                map(res => res.resources)
+                map(res => {
+                    const { resources } = res;
+                    return resources.map(file => ({
+                        filename: file.filename,
+                        uploadedAt: file.uploaded_at,
+                        url: file.url
+                    }))
+                })
             )
     }
 
@@ -104,9 +111,10 @@ export class UploadBoxComponent implements OnInit {
         }
     }
 
-    private formatFileToUserFile(file: File): UserFileUI {
+    private formatFileToUserFile(file: File): UserFile {
         return {
             filename: file.name,
+            uploadedAt: new Date().toString()
         }
     }
 }
