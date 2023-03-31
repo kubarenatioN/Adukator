@@ -1,6 +1,7 @@
-import { format } from 'date-fns'
+import { addWeeks, format } from 'date-fns'
 import { enGB, eo, ru } from 'date-fns/locale'
 import differenceInMilliseconds from 'date-fns/differenceInMilliseconds'
+import { addDays, addYears } from 'date-fns/esm'
 
 const locales: {
     [key: string]: Locale
@@ -24,4 +25,13 @@ export const getDurationInMilliseconds = (from: number | Date | string, to: numb
     to = typeof to === 'string' ? new Date(to) : to;
 
     return differenceInMilliseconds(to, from);
+}
+
+export const getTodayTime = (): Date => {
+    return addDays(new Date(), 20) // DEBUG ONLY!!!
+    // return new Date()
+}
+
+export const getNextYearTime = (): Date => {
+    return addYears(getTodayTime(), 1)
 }

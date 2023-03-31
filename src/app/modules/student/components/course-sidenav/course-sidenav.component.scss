@@ -6,3 +6,36 @@
 ul {
     list-style: none;
 }
+
+.modules-list {
+    padding: 10px 0;
+}
+
+.topics-list {
+    padding-top: 5px;
+    padding-left: 15px;
+}
+
+.topic-item {
+
+    &.actual {
+        position: relative;
+    }
+
+    &.actual::before {
+        content: '';
+        position: absolute;
+        left: -12px;
+        top: 6px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: rgb(102, 250, 33);
+    }
+
+    & a {
+        display: inline-block;
+        padding: 4px 0;
+        color: #000;
+    }
+}

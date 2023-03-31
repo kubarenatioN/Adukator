@@ -76,6 +76,14 @@ export class FormBuilderHelper {
         })
     }
 
+    public getTrainingTaskForm() {
+        return this.fb.group({
+            id: '',
+            files: [new Array<string>()],
+            comment: ''
+        })
+    }
+
     private getOverallInfoForm(overallInfo: CourseFormOverallInfo | null = null) {
         return this.fb.group({
             id: overallInfo ? overallInfo.id : generateUUID(),

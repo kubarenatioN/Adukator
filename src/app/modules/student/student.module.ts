@@ -8,6 +8,8 @@ import { CourseTrainingComponent } from './components/course-training/course-tra
 import { LayoutComponent } from 'src/app/components/layout/layout.component';
 import { TopicTrainingComponent } from './components/topic-training/topic-training.component';
 import { SharedModule } from '../shared/shared.module';
+import { TrainingTaskComponent } from './components/training-task/training-task.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -15,13 +17,15 @@ import { SharedModule } from '../shared/shared.module';
     StudentComponent,
     CourseTrainingComponent,
     CourseSidenavComponent,
-    TopicTrainingComponent
+    TopicTrainingComponent,
+    TrainingTaskComponent
   ],
   imports: [
     CommonModule,
     LayoutComponent,
     SharedModule,
-    StudentRoutingModule
+    StudentRoutingModule,
+    ReactiveFormsModule,
   ]
 })
 export class StudentModule { }

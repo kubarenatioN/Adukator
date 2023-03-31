@@ -1,0 +1,6 @@
+<form [formGroup]="form">
+    <p>{{ task.taskDescr }}</p>
+    <app-upload-box [label]="uploadLabel" [folder]="uploadFolder" type="upload"></app-upload-box>
+
+    <button (click)="onSend()">Отправить</button>
+</form>

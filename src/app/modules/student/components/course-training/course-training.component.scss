@@ -1,6 +1,6 @@
 .layout {
     flex-direction: row-reverse;
-    height: 100%;
+    align-items: flex-start;
 }
 
 .training-container {
@@ -21,15 +21,10 @@
 .sidebar {
     position: -webkit-sticky;
     position: sticky;
-    top: 0;
+    top: 60px;
     min-width: 280px;
     width: 280px;
     padding: 10px;
-    height: 90%;
-}
-
-.nav {
-    display: block;
-    height: 100%;
+    min-height: 400px;
     background-color: #e4e4f8;
 }

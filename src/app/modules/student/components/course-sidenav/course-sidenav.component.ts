@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { Course, CourseTraining } from 'src/app/typings/course.types';
+import { CourseTraining } from 'src/app/models/course.model';
 
 @Component({
 	selector: 'app-course-sidenav',

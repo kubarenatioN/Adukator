@@ -3,10 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { convertCourseToCourseTraining } from 'src/app/helpers/courses.helper';
 import { UploadHelper } from 'src/app/helpers/upload.helper';
+import { CourseTraining } from 'src/app/models/course.model';
 import { CourseTrainingService } from 'src/app/services/course-training.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { CourseModule, CourseTraining, ModuleTopic } from 'src/app/typings/course.types';
+import { CourseModule, ICourseTraining, ModuleTopic } from 'src/app/typings/course.types';
+import { isActualTopic } from '../../helpers/course-training.helper';
 
 enum ViewType {
     Main = 'main',
@@ -31,7 +33,6 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
     private viewTypeStore$ = new BehaviorSubject<ViewType>(ViewType.Main)
 
     public viewType$: Observable<string> = this.viewTypeStore$.asObservable();
-    public course$!: Observable<CourseTraining | null>
     public viewData$!: Observable<ViewConfig>
 
     public topicUploadPath: string = '';
@@ -45,7 +46,7 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
     }
 
 	ngOnInit(): void {
-        this.course$ = this.activatedRoute.paramMap.pipe(
+        const course$ = this.activatedRoute.paramMap.pipe(
             switchMap(params => {
                 const courseId = Number(params.get('id'));
                 if (isNaN(courseId)) {
@@ -55,7 +56,8 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
             }),
             map(course => {
                 if (course) {
-                    return convertCourseToCourseTraining(course)
+                    const courseTraining = convertCourseToCourseTraining(course)
+                    return new CourseTraining(courseTraining);
                 }
                 return null;
             }),
@@ -67,27 +69,27 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 
         this.viewData$ = combineLatest([
             this.activatedRoute.queryParams,
-            this.course$.pipe(filter(Boolean)),
+            course$.pipe(filter(Boolean)),
         ])
         .pipe(
             takeUntil(this.componentLifecycle$),
-            map(([params, course]) => {
-                const { module: moduleIndex, topic: topicIndex } = params;
-                const viewType = this.getViewType(moduleIndex, topicIndex)
-                if (viewType === this.viewTypes.Module) {
+            map(([params, course]: [{module?: string, topic?: string}, CourseTraining]) => {
+                const { module: moduleId, topic: topicId } = params;
+                const viewType = this.getViewType(moduleId, topicId)
+                if (viewType === this.viewTypes.Module && moduleId) {
                     return {
                         viewType,
                         course: course,
-                        module: course?.modules[moduleIndex - 1],
+                        module: course.getModule(moduleId),
                     }
                 }
-                if (viewType === this.viewTypes.Topic) {
-                    const topic = course?.modules[moduleIndex - 1].topics[topicIndex - 1]
-                    this.topicUploadPath = UploadHelper.getTopicUploadFolder('object', course, topic.id);
+                if (viewType === this.viewTypes.Topic && topicId) {
+                    const topic = course.getTopic(topicId);
+                    this.topicUploadPath = UploadHelper.getTopicUploadFolder('course', course, topicId);
                     return {
                         viewType,
                         course: course,
-                        module: course?.modules[moduleIndex - 1],
+                        module: course.getTopicModule(topicId),
                         topic: topic,
                     }
                 }
@@ -97,14 +99,14 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
         )
     }
 
-    private getViewType(moduleIndex: number, topicIndex: number): ViewType {
-        if (!moduleIndex && !topicIndex) {
+    private getViewType(moduleId?: string, topicId?: string): ViewType {
+        if (!moduleId && !topicId) {
             return ViewType.Main
         }
-        if (moduleIndex && !topicIndex) {
+        if (moduleId && !topicId) {
             return ViewType.Module
         }
-        if (moduleIndex && topicIndex) {
+        if (moduleId && topicId) {
             return ViewType.Topic
         }
         return ViewType.Main

@@ -1,7 +1,8 @@
 import { FormArray, FormGroup } from "@angular/forms";
 import { addDays, addYears } from "date-fns/esm";
+import { getNextYearTime, getTodayTime } from "./date-fns.helper";
 
-const MAX_DATE = addYears(new Date(), 1);
+const MAX_DATE = getNextYearTime();
 
 function getFormAllTopics(form: FormGroup) {
     const allTopics: FormGroup[] = [];
@@ -20,7 +21,7 @@ export function getTopicMinDate(courseForm: FormGroup, topicForm: FormGroup): Da
 
     const currentFormIndex = allTopics.indexOf(topicForm);
     if (currentFormIndex === 0) {
-        return new Date();
+        return getTodayTime()
     }
 
     const prevForms = allTopics.slice(0, currentFormIndex);
@@ -31,8 +32,8 @@ export function getTopicMinDate(courseForm: FormGroup, topicForm: FormGroup): Da
             }
             const formEndDate = new Date(form.value.endDate);
             return formEndDate > max ? formEndDate : max;
-        }, new Date())
-        : new Date();
+        }, getTodayTime())
+        : getTodayTime();
 
     return addDays(prevClosestMaxEndDate, 1);
 }
@@ -55,7 +56,7 @@ export function getTopicMaxDate(courseForm: FormGroup, topicForm: FormGroup): Da
             const formStartDate = new Date(form.value.startDate);
             return formStartDate < min ? formStartDate : min;
         }, MAX_DATE)
-        : new Date();
+        : getTodayTime();
 
     return addDays(nextClosestMinStartDate, -1);
 }

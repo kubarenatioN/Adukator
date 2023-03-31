@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, ReplaySubject, shareReplay } from 'rxjs';
-import { CourseTraining } from '../typings/course.types';
+import { BehaviorSubject, Observable, shareReplay } from 'rxjs';
+import { CourseTraining } from '../models/course.model';
 
 @Injectable({
 	providedIn: 'root',

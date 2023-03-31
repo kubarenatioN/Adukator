@@ -67,7 +67,9 @@ export interface ModuleTopic {
     };
     startDate: string;
     endDate: string;
-    comments: Record<string, string>;
+    comments: Record<string, string>; // move this review-related field in separate interface
+    isActual?: boolean;
+    isPast?: boolean;
 }
 
 export interface CourseModule {
@@ -153,7 +155,7 @@ export interface CourseFormData {
     metadata: CourseFormMetadata
 }
 
-export interface CourseTraining extends CourseCore {
+export interface ICourseTraining extends CourseCore {
     id: number;
     uuid: string;
     modules: CourseModule[];

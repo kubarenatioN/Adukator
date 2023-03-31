@@ -1,5 +1,6 @@
-<ng-container *ngIf="files$ | async as files; else loader">
+<ng-container *ngIf="true">
 
+    <p *ngIf="label">{{ label }}</p>
     <div  *ngIf="!downloadOnly" class="dropzone" appDnd (filesDropped)="onFilesDropped($event)">
 
         <div class="dropzone-wrapper">
@@ -7,13 +8,15 @@
         </div>
         <input class="file-input" type="file" [id]="fileInputId" multiple (change)="onChange($event)">
 
-        <ng-container *ngIf="files.length > 0; else emptyDropzone">    
+        <ng-container *ngIf="filesStore.size > 0; else emptyDropzone">    
             <div class="files-container">
-                <div *ngFor="let file of files"
-                class="file-item" 
-                (click)="downloadFile(file.filename, file.url)">
-                    {{file.filename}}
-                </div>
+                <app-file-item *ngFor="let file of filesStore.values()"
+                    class="file-item"
+                    [userFile]="file.userFile"
+                    [file]="file.uploadFile"
+                    [folder]="folder"
+                    type="upload">
+                </app-file-item>
             </div>
             <label class="pick-files-btn" [for]="fileInputId">Добавить файлы</label>
         </ng-container>
@@ -22,19 +25,18 @@
     
     <ng-container 
         [ngTemplateOutlet]="downloadOnlyZone"
-        [ngTemplateOutletContext]="{ files }"
         *ngIf="downloadOnly"></ng-container>
 
 </ng-container>
 
-<ng-template #downloadOnlyZone let-files="files">
-    <p>Download only</p>
+<ng-template #downloadOnlyZone>
     <div class="files-container">
-        <div *ngFor="let file of files"
-        class="file-item" 
-        (click)="downloadFile(file.filename, file.url)">
-            {{file.filename}}
-        </div>
+        <app-file-item *ngFor="let file of filesStore.values()"
+            class="file-item" 
+            [userFile]="file.userFile"
+            (download)="downloadFile($event)"
+            type="download">
+        </app-file-item>
     </div>
 </ng-template>
 

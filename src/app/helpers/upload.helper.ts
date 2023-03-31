@@ -1,7 +1,8 @@
 import { FormArray, FormGroup } from '@angular/forms';
+import { CourseTraining } from '../models/course.model';
 import {
 	Course,
-	CourseTraining,
+	ICourseTraining,
 } from '../typings/course.types';
 
 export class UploadHelper {
@@ -14,9 +15,16 @@ export class UploadHelper {
     };
 
     // Here may be overload in future
-	public static getTaskUploadFolder(form: FormGroup): string {
-		const idsChain = this.prepareIdsChainFromForm(form);
-		return this.constructCourseEntityFolderPath(idsChain, this.uploadRootFolders.published);
+	public static getTrainingTaskUploadFolder(from: 'form' | 'course', obj: FormGroup): string;
+	public static getTrainingTaskUploadFolder(from: 'form' | 'course', obj: CourseTraining, lastId: string): string;
+	public static getTrainingTaskUploadFolder(from: 'form' | 'course', obj: CourseTraining | FormGroup, lastId?: string): string {
+		if (from === 'form') {
+            return this.getUploadFolderFromForm(obj as FormGroup, this.uploadRootFolders.training);
+        }
+        else if (from === 'course' && lastId !== undefined) {
+            return this.getUploadFolderFromCourse((obj as CourseTraining).course, lastId, this.uploadRootFolders.training);
+        }
+        return '';
 	}
 
     // Here may be overload in future
@@ -25,37 +33,37 @@ export class UploadHelper {
 		return this.constructCourseEntityFolderPath(idsChain, this.uploadRootFolders.review);
 	}
 
-    public static getTopicUploadFolder(from: 'form' | 'object', obj: FormGroup): string;
-	public static getTopicUploadFolder(from: 'form' | 'object', obj: CourseTraining, lastId: string): string
-	public static getTopicUploadFolder(from: 'form' | 'object', obj: CourseTraining | FormGroup, lastId?: string): string {
+    public static getTopicUploadFolder(from: 'form' | 'course', obj: FormGroup): string;
+	public static getTopicUploadFolder(from: 'form' | 'course', obj: CourseTraining, lastId: string): string
+	public static getTopicUploadFolder(from: 'form' | 'course', obj: CourseTraining | FormGroup, lastId?: string): string {
         if (from === 'form') {
-            return this.getTopicUploadFolderFromForm(obj as FormGroup);
+            return this.getUploadFolderFromForm(obj as FormGroup);
         }
-        else if (from === 'object' && lastId !== undefined) {
-            return this.getTopicUploadFolderFromCourse(obj as CourseTraining, lastId);
+        else if (from === 'course' && lastId !== undefined) {
+            return this.getUploadFolderFromCourse((obj as CourseTraining).course, lastId);
         }
         return '';
     }
 
-	public static getTopicReviewUploadFolder(from: 'form' | 'object', obj: FormGroup): string;
-	public static getTopicReviewUploadFolder(from: 'form' | 'object', obj: CourseTraining, lastId: string): string
-	public static getTopicReviewUploadFolder(from: 'form' | 'object', obj: CourseTraining | FormGroup, lastId?: string): string {
+	public static getTopicReviewUploadFolder(from: 'form' | 'course', obj: FormGroup): string;
+	public static getTopicReviewUploadFolder(from: 'form' | 'course', obj: ICourseTraining, lastId: string): string
+	public static getTopicReviewUploadFolder(from: 'form' | 'course', obj: ICourseTraining | FormGroup, lastId?: string): string {
         if (from === 'form') {
-            return this.getTopicUploadFolderFromForm(obj as FormGroup, this.uploadRootFolders.review);
+            return this.getUploadFolderFromForm(obj as FormGroup, this.uploadRootFolders.review);
         }
-        else if (from === 'object' && lastId !== undefined) {
-            return this.getTopicUploadFolderFromCourse(obj as CourseTraining, lastId, this.uploadRootFolders.review);
+        else if (from === 'course' && lastId !== undefined) {
+            return this.getUploadFolderFromCourse(obj as ICourseTraining, lastId, this.uploadRootFolders.review);
         }
         return '';
     }
 
-	private static getTopicUploadFolderFromForm(form: FormGroup, root?: string): string {
+	private static getUploadFolderFromForm(form: FormGroup, root?: string): string {
 		const idsChain = this.prepareIdsChainFromForm(form);
 		return this.constructCourseEntityFolderPath(idsChain, root);
 	}
 
-    private static getTopicUploadFolderFromCourse(
-		course: CourseTraining,
+    private static getUploadFolderFromCourse(
+		course: ICourseTraining,
 		lastId: string,
         root?: string
 	): string {
@@ -64,7 +72,7 @@ export class UploadHelper {
 	}
 
 	private static prepareIdsChainFromCourse(
-		course: Course,
+		course: ICourseTraining,
 		lastId: string
 	): string[] {
         const hierarchy = {

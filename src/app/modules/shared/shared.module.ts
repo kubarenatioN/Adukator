@@ -19,6 +19,7 @@ import { DndDirective } from 'src/app/directives/dnd.directive';
 import { FormElementReviewWrapperComponent } from 'src/app/components/form-element-review-wrapper/form-element-review-wrapper.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormElementWrapperDirective } from 'src/app/directives/form-element-wrapper.directive';
+import { FileItemComponent } from 'src/app/components/upload-box/components/file-item/file-item.component';
 
 @NgModule({
 	declarations: [
@@ -26,6 +27,7 @@ import { FormElementWrapperDirective } from 'src/app/directives/form-element-wra
 		DatePipe,
 		TimeDurationPipe,
 		UploadBoxComponent,
+        FileItemComponent,
 		DndDirective,
         FormElementWrapperDirective,
         FormElementReviewWrapperComponent,
@@ -58,6 +60,7 @@ import { FormElementWrapperDirective } from 'src/app/directives/form-element-wra
 		DatePipe,
 		TimeDurationPipe,
 		UploadBoxComponent,
+        FileItemComponent,
 		DndDirective,
         FormElementWrapperDirective,
         FormElementReviewWrapperComponent,

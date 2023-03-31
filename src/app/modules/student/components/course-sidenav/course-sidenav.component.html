@@ -4,13 +4,15 @@
             <li>
                 <a routerLink="./">Главная</a>
             </li>
-            <ul *ngFor="let module of course.modules, let i = index">
+            <ul class="modules-list" *ngFor="let module of course.modules, let i = index">
                 <li>
                     {{module.title}}
                 </li>
-                <ul>
-                    <li *ngFor="let topic of module.topics, let j = index">
-                        <a [routerLink]="[]" [queryParams]="{ module: i + 1, topic: j + 1 }">{{topic.title}}</a>
+                <ul class="topics-list">
+                    <li 
+                    [class.actual]="topic.isActual"
+                    class="topic-item" *ngFor="let topic of module.topics, let j = index">
+                        <a [routerLink]="[]" [queryParams]="{ module: module.id, topic: topic.id }">{{topic.title}}</a>
                     </li> 
                 </ul>
             </ul>

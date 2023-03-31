@@ -1,10 +1,11 @@
 :host {
-    display: block;
-    min-height: 60px;
+    display: flex;
+    flex-direction: column;
 }
 
 .dropzone {
-    height: 100%;
+    flex-grow: 1;
+    min-height: 100px;
     background-color: #eed;
     position: relative;
 

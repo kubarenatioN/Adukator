@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { from, map, Observable } from 'rxjs';
 import { apiUrl } from '../constants/urls';
@@ -10,12 +10,15 @@ import { CourseFilesResponse } from '../typings/response.types';
 export class UploadService {
 	constructor(private http: HttpClient) {}
 
-	public uploadFile(file: File, folder: string): Observable<unknown> {
+	public uploadFile(file: File, folder: string): Observable<HttpEvent<Object>> {
 		const formData = new FormData();
 		formData.append('file', file);
 		formData.append('folder', folder);
 		// formData.append('folder', 'course-1/module-3/topic-4')
-		return this.http.post(`${apiUrl}/upload`, formData);
+		return this.http.post(`${apiUrl}/upload`, formData, {
+            reportProgress: true,
+            observe: 'events',
+        });
 	}
 
 	public getFilesFromFolder(folder: string): Observable<CourseFilesResponse> {
