@@ -35,9 +35,7 @@ export const convertCourseToCourseFormData = (
 		description,
 		category,
 		categoryLabel,
-		advantages,
-		acquiredCompetencies,
-        requiredCompetencies,
+        competencies,
 		comments,
 		modules,
 		status,
@@ -57,10 +55,9 @@ export const convertCourseToCourseFormData = (
 			description,
 			category,
 			categoryLabel,
-            acquiredCompetencies,
-            requiredCompetencies,
-			advantages,
-			comments: comments ? JSON.parse(comments) : null,
+            acquiredCompetencies: competencies.acquired,
+            requiredCompetencies: competencies.acquired,
+            comments,
 		},
 		modules,
 		metadata,
@@ -71,7 +68,7 @@ export const convertCourseFormDataToCourseReview = (
 	formData: CourseFormData
 ): CourseReview => {
 	const { overallInfo, modules, metadata } = formData;
-	const { title, description, category, acquiredCompetencies, requiredCompetencies, advantages, comments } = overallInfo;
+	const { title, description, category, comments, acquiredCompetencies, requiredCompetencies } = overallInfo;
 	const {
 		id,
 		uuid,
@@ -87,10 +84,11 @@ export const convertCourseFormDataToCourseReview = (
 		title,
 		description,
 		category,
-        acquiredCompetencies,
-        requiredCompetencies,
-		advantages,
-		comments: stringify(comments),
+        competencies: {
+            acquired: acquiredCompetencies,
+            required: requiredCompetencies,
+        },
+		comments,
 		modules,
 		status,
 	};
@@ -100,7 +98,7 @@ export const convertCourseFormDataToCourse = (
 	formData: CourseFormData
 ): Course => {
 	const { overallInfo, modules, metadata } = formData;
-	const { title, description, category, acquiredCompetencies, requiredCompetencies, advantages } = overallInfo;
+	const { title, description, category, acquiredCompetencies, requiredCompetencies } = overallInfo;
 	const { id, uuid, authorId } = metadata;
 	return {
 		id,
@@ -108,9 +106,10 @@ export const convertCourseFormDataToCourse = (
 		title,
 		description,
 		category,
-        acquiredCompetencies,
-        requiredCompetencies,
-		advantages,
+        competencies: {
+            acquired: acquiredCompetencies,
+            required: requiredCompetencies,
+        },
 		modules,
 		authorId,
 	};
@@ -119,7 +118,7 @@ export const convertCourseFormDataToCourse = (
 export const convertCourseToCourseTraining = (
 	course: Course
 ): ICourseTraining => {
-	const { id, uuid, title, description, category, acquiredCompetencies, requiredCompetencies, advantages, modules, authorId } =
+	const { id, uuid, title, description, category, competencies, advantages, modules, authorId } =
 		course;
 	return {
 		id,
@@ -128,8 +127,7 @@ export const convertCourseToCourseTraining = (
 		description,
 		category,
 		advantages,
-        acquiredCompetencies,
-        requiredCompetencies,
+        competencies,
 		modules,
 		authorId,
 	};

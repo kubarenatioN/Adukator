@@ -1,7 +1,7 @@
 <ng-container *ngIf="true">
 
     <p *ngIf="label">{{ label }}</p>
-    <div  *ngIf="!downloadOnly" class="dropzone" appDnd (filesDropped)="onFilesDropped($event)">
+    <div  *ngIf="type === 'upload'" class="dropzone" appDnd (filesDropped)="onFilesDropped($event)">
 
         <div class="dropzone-wrapper">
             Отпустите файлы здесь.
@@ -15,6 +15,7 @@
                     [userFile]="file.userFile"
                     [file]="file.uploadFile"
                     [folder]="folder"
+                    (remove)="onRemove($event)"
                     type="upload">
                 </app-file-item>
             </div>
@@ -24,17 +25,17 @@
     </div>
     
     <ng-container 
-        [ngTemplateOutlet]="downloadOnlyZone"
-        *ngIf="downloadOnly"></ng-container>
+        [ngTemplateOutlet]="downloadZone"
+        *ngIf="type === 'download'"></ng-container>
 
 </ng-container>
 
-<ng-template #downloadOnlyZone>
+<ng-template #downloadZone>
     <div class="files-container">
         <app-file-item *ngFor="let file of filesStore.values()"
             class="file-item" 
             [userFile]="file.userFile"
-            (download)="downloadFile($event)"
+            (download)="onDownload($event)"
             type="download">
         </app-file-item>
     </div>

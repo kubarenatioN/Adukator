@@ -1,6 +1,12 @@
 <form [formGroup]="form">
     <p>{{ task.taskDescr }}</p>
-    <app-upload-box [label]="uploadLabel" [folder]="uploadFolder" type="upload"></app-upload-box>
+    <app-upload-box 
+    [label]="uploadLabel" 
+    [folder]="uploadFolder"
+    [control]="form.controls.files"
+    type="upload"></app-upload-box>
+
+    <textarea formControlName="comment" cols="30" rows="10" placeholder="Комментарий"></textarea>
 
     <button (click)="onSend()">Отправить</button>
 </form>

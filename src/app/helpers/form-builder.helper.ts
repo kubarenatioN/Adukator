@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CourseFormDataMock } from '../mocks/course-form-data';
+import { TaskAnswer } from '../typings/course-training.types';
 import { CourseFormData, CourseFormOverallInfo, CourseModule, CourseTopFormGroups, ModuleFormFields, ModuleTopic, OverallFormFields, PracticeFormFields, TaskFormFields, TopicFormFields, TopicPractice, TopicTask } from '../typings/course.types';
 import { generateUUID } from './courses.helper';
 
@@ -82,6 +83,14 @@ export class FormBuilderHelper {
             files: [new Array<string>()],
             comment: ''
         })
+    }
+
+    public getTrainingTaskDefaultValue(id: string): TaskAnswer {
+        return {
+            id,
+            files: [],
+            comment: ''
+        }
     }
 
     private getOverallInfoForm(overallInfo: CourseFormOverallInfo | null = null) {

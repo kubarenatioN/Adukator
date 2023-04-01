@@ -1,17 +1,17 @@
 <ng-container [ngSwitch]="type">
     <ng-container 
-    ngSwitchCase="upload"
+    *ngSwitchCase="'upload'"
     [ngTemplateOutlet]="upload"></ng-container>
     
     <ng-container 
-    ngSwitchCase="download"
+    *ngSwitchCase="'download'"
     [ngTemplateOutlet]="download"></ng-container>
 </ng-container>
 
 <ng-template #upload>
     <div class="file-item">
         {{userFile.filename}}
-        <div *ngIf="type === 'upload'" class="progress-bar" [style.width]="progress"></div>
+        <div class="progress-bar" [style.width]="progress"></div>
         <button (click)="onRemove()">Удалить</button>
     </div>
 </ng-template>

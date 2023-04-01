@@ -21,6 +21,7 @@ const UploadLabel = 'Загрузите файлы с выполненным з�
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrainingTaskComponent implements OnInit {
+    private initialValue!: TaskAnswer;
 	@Input() public task!: TopicTask;
 
     @Output() public send = new EventEmitter<TaskAnswer>()
@@ -30,11 +31,12 @@ export class TrainingTaskComponent implements OnInit {
     public uploadLabel = UploadLabel;
 
 	constructor(private trainingService: CourseTrainingService, private fbHelper: FormBuilderHelper) {
-        this.form = this.fbHelper.getTrainingTaskForm()
+        this.form = this.fbHelper.getTrainingTaskForm();
     }
 
 	ngOnInit(): void {
         this.form.get('id')?.setValue(this.task.id);
+        this.initialValue = this.fbHelper.getTrainingTaskDefaultValue(this.task.id);
 
         const course = this.trainingService.course;
         if (course) {
@@ -43,6 +45,12 @@ export class TrainingTaskComponent implements OnInit {
     }
 
     public onSend() {
-        this.send.emit(this.form.value as TaskAnswer);
+        const answer = this.form.value as TaskAnswer;
+        if (answer.files.length > -1) {
+            this.send.emit(answer);
+            this.form.reset(this.initialValue);
+        } else {
+            console.warn('No files attached');
+        }
     }
 }

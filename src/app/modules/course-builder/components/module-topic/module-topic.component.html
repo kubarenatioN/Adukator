@@ -42,11 +42,11 @@
         <h3>Материалы</h3>
         <button (click)="onRemoveSection('materials')">Удалить раздел</button>
 
-        <app-upload-box 
-        class="upload-box" 
-        [downloadOnly]="controlsType === 'review'"         
-        [folder]="uploadFolder"
-        (uploadFilesChanged)="onUploadFilesChanged($event)"></app-upload-box>
+        <app-upload-box
+            class="upload-box"      
+            [folder]="uploadFolder"
+            type="upload"
+            (uploadFilesChanged)="onUploadFilesChanged($event)"></app-upload-box>
     </div>
 </ng-template>
 

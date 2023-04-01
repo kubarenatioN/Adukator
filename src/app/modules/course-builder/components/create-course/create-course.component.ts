@@ -1,17 +1,12 @@
-import { ThisReceiver } from '@angular/compiler';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
-import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { combineLatest, Observable, BehaviorSubject, of, ReplaySubject, Subject } from 'rxjs';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { combineLatest, Observable, BehaviorSubject, of, ReplaySubject } from 'rxjs';
 import {
-    catchError,
-	filter,
-	map,
+    map,
 	shareReplay,
 	switchMap,
-	take,
 	tap,
-	withLatestFrom,
 } from 'rxjs/operators';
 import {
     EmptyCourseFormData,
@@ -19,19 +14,15 @@ import {
     isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
-import { moduleTopicsCountValidator } from 'src/app/helpers/course-validation';
 import {
     convertCourseFormDataToCourse,
     convertCourseFormDataToCourseReview,
-	convertCourseToCourseFormData,
 	generateUUID,
 } from 'src/app/helpers/courses.helper';
-import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UserService } from 'src/app/services/user.service';
 import { CourseBuilderViewData, CourseBuilderViewType, CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseModule, CourseReview, CourseReviewStatus } from 'src/app/typings/course.types';
-import { User } from 'src/app/typings/user.types';
 
 @Component({
 	selector: 'app-create-course',

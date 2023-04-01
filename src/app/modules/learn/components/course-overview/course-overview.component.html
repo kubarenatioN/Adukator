@@ -32,7 +32,7 @@
             <div class="competencies-required">
                 <h3>Для зачисления на курс вам необходимо владеть следующими компетенциями</h3>
                 <ul class="competencies-list">
-                    <li *ngFor="let comp of course.requiredCompetencies">
+                    <li *ngFor="let comp of course.competencies.required">
                         {{ comp }}
                     </li>
                 </ul>
@@ -41,7 +41,7 @@
             <div class="competencies-acquired">
                 <h3>После успешного прохождения курса, вы получите следующие компетенции</h3>
                 <ul class="competencies-list">
-                    <li *ngFor="let comp of course.acquiredCompetencies">
+                    <li *ngFor="let comp of course.competencies.acquired">
                         {{ comp }}
                     </li>
                 </ul>

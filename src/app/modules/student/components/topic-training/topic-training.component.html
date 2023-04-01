@@ -22,7 +22,7 @@
     
     <div *ngIf="topic.materials && topic.materials.length > 0" class="section">
         <h2>Материалы к теме</h2>
-        <app-upload-box [downloadOnly]="true" [folder]="topicFolderPath"></app-upload-box>
+        <app-upload-box type="download" [folder]="topicFolderPath"></app-upload-box>
     </div>
 
     <div *ngIf="topic.practice" class="section">
@@ -32,8 +32,9 @@
             <div class="practice-tasks">
                 <div *ngFor="let task of topic.practice.tasks; let i = index" class="practice-task">
                     <h4>Задание {{ i + 1 }}.</h4>
-                    <app-training-task [task]="task" (send)="onSendTaskAnswer($event)"></app-training-task>
-                    <!-- <app-upload-box [downloadOnly]="true" [folder]="tasksFolderPaths[i]"></app-upload-box> -->
+                    <app-training-task 
+                    (send)="onSendTask($event)"
+                    [task]="task"></app-training-task>
                 </div>
             </div>
         </div>

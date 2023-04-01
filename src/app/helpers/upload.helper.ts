@@ -105,6 +105,7 @@ export class UploadHelper {
 	}
 
 	private static constructCourseEntityFolderPath(idsChain: string[], root: string = this.uploadRootFolders.published) {
+        root = 'dev-' + root; // DEV
 		const folders = [root, 'modules', 'topics', 'tasks'];
 		const resultChain = [];
 		for (let i = 0; i < idsChain.length; i++) {

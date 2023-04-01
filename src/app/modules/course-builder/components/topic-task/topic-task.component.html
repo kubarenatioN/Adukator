@@ -7,7 +7,7 @@
         <h3>Ресурсы</h3>
         <app-upload-box 
         class="upload-box" 
-        [downloadOnly]="controlsType === 'review'"
+        type="upload"
         [folder]="uploadPath"
         (uploadFilesChanged)="onUploadFilesChanged($event)"></app-upload-box>
     </div>

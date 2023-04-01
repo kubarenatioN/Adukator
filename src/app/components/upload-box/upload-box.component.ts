@@ -1,5 +1,6 @@
 import { HttpEvent, HttpEventType, HttpProgressEvent } from '@angular/common/http';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { UploadService } from 'src/app/services/upload.service';
@@ -18,8 +19,8 @@ export class UploadBoxComponent implements OnInit {
 
     public filesStore = new Map<string, { userFile: UserFile, uploadFile?: File }>();
 
+    @Input() public control?: FormControl;
     @Input() public label?: string;
-    @Input() public downloadOnly: boolean = false;
     @Input() public preloadExisting: boolean = false;
     @Input() public type!: 'upload' | 'download';
     @Input() public set folder(value: string | null) {            
@@ -29,15 +30,12 @@ export class UploadBoxComponent implements OnInit {
         }
         this._folder = value;
         // TODO: apply files from cache
-        if (this.preloadExisting) {
-            this.getFilesFromFolder(value).subscribe((files: UserFile[]) => {
-                files.forEach(file => this.filesStore.set(file.filename, {
-                    userFile: file
-                }))
-                this.cd.detectChanges();
-            });
-        }
     };
+    @Input() public set files(files: UserFile[]) {
+        files.forEach(file => this.filesStore.set(file.filename, {
+            userFile: file
+        }))
+    }
 
     @Output()
     public uploadFilesChanged = new EventEmitter<string[]>();
@@ -55,7 +53,20 @@ export class UploadBoxComponent implements OnInit {
     }
 
 	public ngOnInit(): void {
+        if (this.type === 'upload' && this.preloadExisting || this.type === 'download') {
+            this.getFilesFromFolder(this.folder).subscribe((files: UserFile[]) => {
+                files.forEach(file => this.filesStore.set(file.filename, {
+                    userFile: file
+                }))
+                this.cd.detectChanges();
+            });
+        }
 
+        this.control?.valueChanges.subscribe((value: UserFile[]) => {
+            if (value.length === 0) {
+                this.clearBox();
+            }
+        })
     }
 
     public onChange(e: Event) {
@@ -69,47 +80,27 @@ export class UploadBoxComponent implements OnInit {
         if (this._folder === null) {
             return;
         }
-        for (let i = 0; i < fileList.length; i++) {
-            const file = fileList.item(i);
-            if (file) {
-                const fileExists = this.filesStore.has(file.name)
-                if (!fileExists) {
-                    const userFile = this.formatFileToUserFile(file)
-                    this.filesStore.set(userFile.filename, {
-                        userFile,
-                        uploadFile: file,
-                    });
-                }
+        Array.from(fileList).forEach(file => {
+            const fileExists = this.filesStore.has(file.name)
+            if (fileExists) {
+                return;
             }
-        }
-        
+            const userFile = this.formatFileToUserFile(file)
+            this.filesStore.set(userFile.filename, {
+                userFile,
+                uploadFile: file,
+            });
+        })
     }
 
-    public removeFile(filename: string) {
+    public onRemove({ filename }: UserFile) {
         this.filesStore.delete(filename)
     }
 
-    // private uploadFile(file: File, folder: string) {
-    //     this.uploadService.uploadFile(file, folder)
-    //     .subscribe(event => {
-    //         switch (event.type) {
-    //             case HttpEventType.Response: {
-    //                 this.uploadFilesChanged.emit([...this.filesStore.values()].map(file => file.filename));
-    //                 break;
-    //             }
-    //             case HttpEventType.UploadProgress: {
-    //                 this.handleUploadProgress(event);
-    //                 break;
-    //             }
-            
-    //             default:
-    //                 break;
-    //         }
-    //     });
-    // }
-
-    private removeFileFromServer() {
-
+    public onDownload({ filename, url }: UserFile) {
+        if (url) {
+            this.uploadService.downloadFile(url, filename).subscribe()
+        }
     }
 
     private getFilesFromFolder(folder: string): Observable<UserFile[]> {
@@ -126,12 +117,6 @@ export class UploadBoxComponent implements OnInit {
             )
     }
 
-    public downloadFile({ filename, url }: UserFile) {
-        if (url) {   
-            this.uploadService.downloadFile(url, filename).subscribe()
-        }
-    }
-
     private formatFileToUserFile(file: File): UserFile {
         return {
             filename: file.name,
@@ -139,7 +124,7 @@ export class UploadBoxComponent implements OnInit {
         }
     }
 
-    private handleUploadProgress(e: HttpProgressEvent) {
-        console.log(e);
+    private clearBox() {
+        this.filesStore.clear();
     }
 }

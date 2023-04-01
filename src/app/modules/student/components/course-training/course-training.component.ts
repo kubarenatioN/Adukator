@@ -103,10 +103,10 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
         if (!moduleId && !topicId) {
             return ViewType.Main
         }
-        if (moduleId && !topicId) {
+        if (moduleId) {
             return ViewType.Module
         }
-        if (moduleId && topicId) {
+        if (topicId) {
             return ViewType.Topic
         }
         return ViewType.Main

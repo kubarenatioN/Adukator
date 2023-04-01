@@ -85,9 +85,10 @@ export interface CourseFormOverallInfo {
     title: string;
     description: string;
     category: string;
-    acquiredCompetencies: string[];
-    requiredCompetencies: string[];
-    comments: Record<string, string>;
+    categoryLabel?: string;
+    comments: Record<string, CourseReviewControlComment[] | null>;
+    acquiredCompetencies: string[],
+    requiredCompetencies: string[],
 }
  
 interface CourseCore {
@@ -96,8 +97,10 @@ interface CourseCore {
 	category: string;
     advantages?: string;
     authorId: number;
-    acquiredCompetencies: string[];
-    requiredCompetencies: string[];
+    competencies: {
+        acquired: string[],
+        required: string[],
+    },
 	categoryLabel?: string;
 }
 
@@ -118,10 +121,12 @@ export interface CourseHierarchyComponent {
 
 // 'on review' course raw data
 export interface CourseReview extends Course {
-    comments: string | null;
     masterId: number | null;
     createdAt?: string;
     status?: CourseReviewStatus;
+    comments: {
+        [key: string]: CourseReviewControlComment[] | null
+    }
 }
 
 export interface TeacherCourses {
@@ -135,25 +140,26 @@ export interface StudentCourse extends Course {
     active: boolean
 }
 
+export interface CourseOverallInfo {
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    categoryLabel?: string;
+    competencies: {
+        acquired: string[];
+        required: string[];
+    },
+}
+
 // data for course form on review
 export interface CourseFormData {
-    overallInfo: {
-        id: string;
-        title: string;
-        description: string;
-        category: string;
-        categoryLabel?: string;
-        acquiredCompetencies: string[];
-        requiredCompetencies: string[];
-        advantages?: string;
-        comments: {
-            [key: string]: CourseReviewControlComment[] | null
-        }
-    },
+    overallInfo: CourseFormOverallInfo,
 	modules: CourseModule[];
     createdAt?: string;
     metadata: CourseFormMetadata
 }
+
 
 export interface ICourseTraining extends CourseCore {
     id: number;

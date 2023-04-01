@@ -46,7 +46,7 @@ export class TopicTrainingComponent implements OnInit {
         });
     }
 
-    public onSendTaskAnswer(answer: TaskAnswer) {
+    public onSendTask(answer: TaskAnswer) {
         console.log('111 send answer', answer.id);
     }
 }

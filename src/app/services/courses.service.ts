@@ -61,7 +61,7 @@ export class CoursesService {
     }
 
     public createCourseReviewVersion(courseData: CourseReview, { isMaster }: { isMaster: boolean }): Observable<unknown> {
-        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.CreateCourse, {
+        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.CreateCourseVersion, {
             body: { course: courseData, isMaster }
         })
         return this.dataService.send<unknown>(payload)
