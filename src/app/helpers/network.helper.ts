@@ -8,6 +8,7 @@ export enum NetworkRequestKey {
     GetUserByToken = 'GetUserByToken',
     GetUserById = 'GetUserById',
     
+    GetCourses = 'GetCourses',
     GetAllCourses = 'GetAllCourses',
     GetCourseById = 'GetCourseById',
     GetStudentCourses = 'GetStudentCourses',
@@ -16,14 +17,14 @@ export enum NetworkRequestKey {
     EnrollCourse = 'EnrollCourse',
     GetCourseMembers = 'GetCourseMembers',
 
-    GetAllAdminReviewCourses = 'GetAllAdminReviewCourses',
-    GetAdminReviewCourseById = 'GetAdminReviewCourseById',
+    GetAllAdminReviewCourses = 'GetAllAdminReviewCourses',// TODO: Remove
+    GetAdminReviewCourseById = 'GetAdminReviewCourseById',// TODO: Remove
+    GetAdminReviewCourses = 'GetAdminReviewCourses', // Use generic request key
     UpdateCourseReview = 'UpdateCourseReview',
     PublishCourse = 'PublishCourse',
 
-    GetTeacherCourses = 'GetTeacherCourses',
-    
-    UpdateCourse = 'UpdateCourse',
+    GetReviewCourses = 'GetReviewCourses',
+    TeacherCourses = 'TeacherCourses',
 }
 
 export const REQUEST_TYPE = new HttpContextToken<string>(() => '');
@@ -49,6 +50,10 @@ export class NetworkHelper {
     
     private static requestsMetadataMap: RequestsMetadataMap = {
         /* ADMIN RELATED */
+        [NetworkRequestKey.GetAdminReviewCourses]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.admin.courses}/review`,
+        },
         [NetworkRequestKey.GetAdminReviewCourseById]: {
             method: 'GET',
             url: `${DATA_ENDPOINTS.admin.courses}/review`,
@@ -89,6 +94,10 @@ export class NetworkHelper {
             method: 'GET',
             url: `${DATA_ENDPOINTS.api.courses}`,
         },
+        [NetworkRequestKey.GetCourses]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.courses}/select`,
+        },
         [NetworkRequestKey.GetCourseById]: {
             method: 'GET',
             url: `${DATA_ENDPOINTS.api.courses}`,
@@ -102,22 +111,24 @@ export class NetworkHelper {
             url: `${DATA_ENDPOINTS.api.courses}/enroll`,
         },
 
-        /* TEACHER RELATED */
-        [NetworkRequestKey.UpdateCourse]: {
+        /* REVIEW */
+        [NetworkRequestKey.GetReviewCourses]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.courses}/update`,
+            url: `${DATA_ENDPOINTS.api.courses.review}/select`,
         },
-        [NetworkRequestKey.GetTeacherCourses]: {
+
+        /* TEACHER RELATED */
+        [NetworkRequestKey.TeacherCourses]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.courses}/teacher`,
+            url: `${DATA_ENDPOINTS.api.courses.teacher}`,
         },
         [NetworkRequestKey.CreateCourseVersion]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.coursesReview}/create`,
+            url: `${DATA_ENDPOINTS.api.courses.review}/create`,
         },
         [NetworkRequestKey.GetReviewCourseHistory]: {
             method: 'GET',
-            url: `${DATA_ENDPOINTS.api.courses}/review/history`,
+            url: `${DATA_ENDPOINTS.api.courses.review}/history`,
         },
         [NetworkRequestKey.GetCourseMembers]: {
             method: 'GET',
@@ -136,20 +147,21 @@ export class NetworkHelper {
             headers,
             context,
         }
+
+        const { params } = extendedPayload ?? {}
+        const searchParams = new HttpParams({ fromObject: params })
+        request.params = searchParams;
+
         if (method === 'POST' || method === 'PUT') {
             request.body = extendedPayload?.body;
         }
         else if (method === 'GET') {
-            let searchParams = new HttpParams()
             let { url } = basePayload
-            const { params, urlId } = extendedPayload ?? {}
-            if (params) {
-                searchParams = new HttpParams({ fromObject: params })
-            }
+            const { urlId } = extendedPayload ?? {}
+            
             if (urlId) {
                 url = `${url}/${String(urlId)}`
             }
-            request.params = searchParams;
             request.url = url
         }
         else {

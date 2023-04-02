@@ -11,8 +11,11 @@ export const DATA_ENDPOINTS = {
     },
     user: `${apiUrl}/user`,
 	api: {
-        courses: `${apiUrl}/api/courses`,
-        coursesReview: `${apiUrl}/api/courses/review`,
+        courses: {
+            teacher: `${apiUrl}/api/courses/teacher`,
+            review: `${apiUrl}/api/courses/review`,
+            toString: () => `${apiUrl}/api/courses`
+        },
     },
     admin: {
         courses: `${apiUrl}/admin/courses`

@@ -21,6 +21,7 @@ import {
 } from 'src/app/helpers/courses.helper';
 import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
+import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
 import { UserService } from 'src/app/services/user.service';
 import { CourseBuilderViewData, CourseBuilderViewType, CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseModule, CourseReview, CourseReviewStatus } from 'src/app/typings/course.types';
 
@@ -46,6 +47,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 		private userService: UserService,
 		private activatedRoute: ActivatedRoute,
 		private coursesService: CoursesService,
+		private teacherCoursesService: TeacherCoursesService,
 		private adminCoursesService: AdminCoursesService,
 	) {
         super();
@@ -88,7 +90,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
                         if (mode === CourseFormViewMode.Review) {
                             return this.adminCoursesService.getReviewCourse(courseId);
                         }
-                        return this.coursesService.getTeacherReviewCourse(courseId);
+                        return this.teacherCoursesService.getReviewCourse(courseId);
                     }
                 }),
                 tap(course => {

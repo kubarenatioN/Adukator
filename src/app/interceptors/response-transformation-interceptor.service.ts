@@ -80,7 +80,7 @@ export class ResponseTransformationInterceptor implements HttpInterceptor {
             return this.transformCoursesBody.bind(this);
         }
 
-        if (reqType === NetworkRequestKey.GetTeacherCourses) {
+        if (reqType === NetworkRequestKey.TeacherCourses) {
             return this.transformTeacherCoursesData.bind(this);
         }
 

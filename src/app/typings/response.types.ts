@@ -1,4 +1,4 @@
-import { CourseEnrollAction } from "./course.types";
+import { Course, CourseEnrollAction, CourseReview } from "./course.types";
 import { CloudinaryFile } from "./files.types";
 
 export interface CoursesResponse<T> {
@@ -8,6 +8,11 @@ export interface CoursesResponse<T> {
 export interface DataResponse<T> {
     data: T;
     message?: string
+}
+
+export interface CoursesSelectResponse {
+    published: Course[]
+    review: CourseReview[]
 }
 
 export interface CourseEnrollResponseData {

@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, combineLatestWith, filter, map, merge, Observable, of, shareReplay, Subject, switchMap, tap, throwError } from 'rxjs';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { CoursesService } from 'src/app/services/courses.service';
+import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
 import { Course, CourseEnrollAction, CourseMembers, CourseMembersMap, GetCourseMembersParams } from 'src/app/typings/course.types';
 import { CourseEnrollResponseData } from 'src/app/typings/response.types';
 import { User } from 'src/app/typings/user.types';
@@ -26,11 +27,11 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
     public approvedStudents$: Observable<User[] | null>; 
     public rejectedStudents$: Observable<User[] | null>; 
 
-	constructor(private activatedRoute: ActivatedRoute, private coursesService: CoursesService) {
+	constructor(private activatedRoute: ActivatedRoute, private coursesService: CoursesService, private teacherCourses: TeacherCoursesService) {
         super();
         this.course$ = combineLatest([
             this.activatedRoute.paramMap,
-            this.coursesService.teacherUserCourses$,
+            this.teacherCourses.courses$,
         ]).pipe(
             map(([params, teacherCourses]) => {
                 const id = Number(params.get('id'));

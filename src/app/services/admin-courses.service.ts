@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { map, Observable, shareReplay } from 'rxjs';
+import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { Course, CourseReview } from '../typings/course.types';
 import { CoursesResponse } from '../typings/response.types';
+import { CoursesService } from './courses.service';
 import { DataService } from './data.service';
 
 @Injectable({
@@ -11,7 +13,7 @@ import { DataService } from './data.service';
 export class AdminCoursesService {
     public reviewCoursesList$: Observable<CourseReview[]>
     
-	constructor(private dataService: DataService) {
+	constructor(private dataService: DataService, private coursesService: CoursesService) {
         this.reviewCoursesList$ = this.getReviewCourses()
     }
 
@@ -40,9 +42,13 @@ export class AdminCoursesService {
     }
 
 	private getReviewCourses(): Observable<CourseReview[]> {
-        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetAllAdminReviewCourses)
-        return this.dataService.send<CoursesResponse<CourseReview[]>>(payload).pipe(
-            map(res => res.data),
+        return this.coursesService.getCourses({
+            requestKey: NetworkRequestKey.GetAdminReviewCourses,
+            type: ['review'],
+            id: 'AdminReview',
+            fields: CoursesSelectFields.Short
+        }).pipe(
+            map(response => response.review),
             shareReplay(1),
         )
     }

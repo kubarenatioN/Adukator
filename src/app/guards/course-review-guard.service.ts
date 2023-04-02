@@ -8,13 +8,14 @@ import {
 } from '@angular/router';
 import { combineLatest, map, Observable, of, switchMap, take, withLatestFrom } from 'rxjs';
 import { CoursesService } from '../services/courses.service';
+import { TeacherCoursesService } from '../services/teacher-courses.service';
 import { UserService } from '../services/user.service';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class CourseReviewGuardService implements CanActivate {
-	constructor(private userService: UserService, private coursesService: CoursesService, private router: Router) {}
+	constructor(private userService: UserService, private teacherCourses: TeacherCoursesService, private router: Router) {}
 
 	canActivate(
 		route: ActivatedRouteSnapshot,
@@ -33,7 +34,7 @@ export class CourseReviewGuardService implements CanActivate {
     }
 
     private isTeacherAuthor(courseId: number) {
-        return this.coursesService.teacherUserCourses$.pipe(
+        return this.teacherCourses.courses$.pipe(
             withLatestFrom(this.userService.user$),
             map(([courses, user]) => {
                 const courseForReview = courses?.review?.find(course => course.id === courseId)

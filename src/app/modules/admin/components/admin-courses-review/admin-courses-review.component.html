@@ -1,6 +1,6 @@
 <h2>Ожидают публикации</h2>
 <div class="courses">
-    <a class="course-item" *ngFor="let course of courses" [routerLink]="['/app/course-review/review', course.id]">
+    <a class="course-item" *ngFor="let course of courses" [routerLink]="['/app/course-review/review', course.uuid]">
         <h4>{{course.title}}</h4>
     </a>
 </div>

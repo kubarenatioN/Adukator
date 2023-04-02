@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, of, shareReplay, switchMap, throwError } from 'rxjs';
+import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { Course, CourseEnrollAction, CourseFormData, CourseMembers, CourseReview, GetCourseMembersParams, StudentCourse, TeacherCourses } from '../typings/course.types';
-import { CoursesResponse, CourseEnrollResponse } from '../typings/response.types';
+import { CoursesResponse, CourseEnrollResponse, CoursesSelectResponse } from '../typings/response.types';
 import { DataService } from './data.service';
 import { UserService } from './user.service';
 
@@ -12,15 +13,13 @@ import { UserService } from './user.service';
 export class CoursesService {
     public courses$: Observable<Course[]>
     public studentCourses$: Observable<StudentCourse[] | null>
-    public teacherUserCourses$: Observable<TeacherCourses | null>
 
     private resetCoursesCaching$ = new BehaviorSubject<void>(undefined);
     private resetCoursesForReviewCaching$ = new BehaviorSubject<void>(undefined);
 
 	constructor(private dataService: DataService, private userService: UserService) {
-        this.courses$ = this.getCourses()
+        this.courses$ = this.getAllCourses()
         this.studentCourses$ = this.getStudentCourses();
-        this.teacherUserCourses$ = this.getTeacherCourses();
 
         this.resetCoursesCaching$.next();
         this.resetCoursesForReviewCaching$.next();
@@ -40,14 +39,37 @@ export class CoursesService {
         );
     }
 
-    public getTeacherReviewCourse(courseId: number): Observable<CourseReview | null> {
-        return this.teacherUserCourses$.pipe(
-            map(teacherCourses => {
-                const courses: CourseReview[] = teacherCourses?.review ?? []
-                return courses.find(course => course.id === courseId) ?? null
-            })
-        )
+    public getCourses({ requestKey, type, coursesIds, authorId, studentId, fields, id }: {
+        requestKey: string,
+        type: ('published' | 'review')[],
+        id: string,
+        coursesIds?: number[],
+        authorId?: number,
+        studentId?: number,
+        fields?: string[],
+    }) {
+        const payload = NetworkHelper.createRequestPayload(requestKey, {
+            body: {
+                type,
+                coursesIds,
+                authorId,
+                studentId,
+                fields: fields ?? []
+            },
+            params: { reqId: id }
+        })
+
+        return this.dataService.send<CoursesSelectResponse>(payload)
     }
+
+    // public getTeacherReviewCourse(courseId: number): Observable<CourseReview | null> {
+    //     return this.teacherUserCourses$.pipe(
+    //         map(teacherCourses => {
+    //             const courses: CourseReview[] = teacherCourses?.review ?? []
+    //             return courses.find(course => course.id === courseId) ?? null
+    //         })
+    //     )
+    // }
 
     public getCourseReviewHistory(courseId: number) {
         const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetReviewCourseHistory, {
@@ -93,7 +115,7 @@ export class CoursesService {
         );
     }
 
-    private getCourses() {
+    private getAllCourses() {
         const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetAllCourses)
 		return this.resetCoursesCaching$.pipe(
             switchMap(() => this.dataService.send<CoursesResponse<Course[]>>(payload)),
@@ -119,24 +141,4 @@ export class CoursesService {
             shareReplay(1),
         )
 	}
-
-    private getTeacherCourses() {
-        // return of({} as TeacherCourses) // Remove me after mockings
-        // TODO: Uncomment below logic!
-        return this.userService.user$.pipe(
-            switchMap(user => {
-                if (user === null || user.role !== 'teacher') {
-                    return of(null);
-                }
-
-                const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetTeacherCourses, {
-                    body: { id: user.id }
-                })
-                return this.dataService.send<CoursesResponse<TeacherCourses | null>>(payload).pipe(
-                    map(res => res.data)
-                )
-            }),
-            shareReplay(1),
-        )
-    }
 }
