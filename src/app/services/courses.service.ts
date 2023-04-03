@@ -55,6 +55,7 @@ export class CoursesService {
         )
     }
 
+    // Main generic method to get any course, try to reuse it everywhere
     public getCourses({ requestKey, type, coursesIds, authorId, studentId, fields, id }: {
         requestKey: string,
         type: ('published' | 'review')[],
@@ -95,7 +96,8 @@ export class CoursesService {
 
     public createCourseReviewVersion(courseData: CourseReview, { isMaster }: { isMaster: boolean }): Observable<unknown> {
         const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.CreateCourseVersion, {
-            body: { course: courseData, isMaster }
+            body: { course: courseData, isMaster },
+            params: { reqId: 'CreateReviewVersion' }
         })
         return this.dataService.send<unknown>(payload)
     }

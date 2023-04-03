@@ -77,7 +77,7 @@ export const convertCourseFormDataToCourseReview = (
 		status,
 	} = metadata;
 	return {
-		_id,
+        _id,
 		uuid,
 		masterId,
 		authorId,
@@ -99,9 +99,9 @@ export const convertCourseFormDataToCourse = (
 ): Course => {
 	const { overallInfo, modules, metadata } = formData;
 	const { title, description, category, acquiredCompetencies, requiredCompetencies } = overallInfo;
-	const { _id, uuid, authorId } = metadata;
+	const { uuid, authorId, _id } = metadata;
 	return {
-		_id,
+		_id: _id ?? '',
 		uuid,
 		title,
 		description,

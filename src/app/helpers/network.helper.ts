@@ -18,7 +18,8 @@ export enum NetworkRequestKey {
     EnrollCourse = 'EnrollCourse',
     GetCourseMembers = 'GetCourseMembers',
 
-    GetAdminReviewCourses = 'GetAdminReviewCourses', // Use generic request key
+    GetAdminReviewCourses = 'GetAdminReviewCourses',
+    
     UpdateCourseReview = 'UpdateCourseReview',
     PublishCourse = 'PublishCourse',
 
@@ -53,7 +54,6 @@ export class NetworkHelper {
             method: 'POST',
             url: `${DATA_ENDPOINTS.admin.courses}/review`,
         },
-
         [NetworkRequestKey.UpdateCourseReview]: {
             method: 'PUT',
             url: `${DATA_ENDPOINTS.admin.courses}/review/update`,
@@ -121,10 +121,6 @@ export class NetworkHelper {
         [NetworkRequestKey.CreateCourseVersion]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses.review}/create`,
-        },
-        [NetworkRequestKey.GetReviewCourseHistory]: {
-            method: 'GET',
-            url: `${DATA_ENDPOINTS.api.courses.review}/history`,
         },
         [NetworkRequestKey.GetCourseMembers]: {
             method: 'GET',

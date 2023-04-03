@@ -137,7 +137,7 @@ export class CourseReviewDiffComponent implements OnInit {
     }
 
     private applyCourseVersion(position: number, versionId: string) {
-        const versionIndex = this._courseVerions.findIndex(course => course.metadata.id === versionId)
+        const versionIndex = this._courseVerions.findIndex(course => course.metadata.uuid === versionId)
         if (versionIndex !== -1) {
             this.versionsPair[position] = this._courseVerions[versionIndex]
         }

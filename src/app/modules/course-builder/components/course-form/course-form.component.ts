@@ -86,7 +86,7 @@ export class CourseFormComponent implements OnInit {
     }>();
 	@Output() public update = new EventEmitter<CourseFormData>();
 	@Output() public publish = new EventEmitter<CourseFormData>();
-	@Output() public saveReview = new EventEmitter<{ overallComments: string; modules: string }>();
+	@Output() public saveReview = new EventEmitter();
 	@Output() public formChanged = new EventEmitter<typeof this.courseForm>();
 
 	constructor(private configService: ConfigService, 
@@ -199,9 +199,9 @@ export class CourseFormComponent implements OnInit {
     }
 
     private onSaveReview() {
-        const comments: { overallComments: string; modules: string } = {
-            overallComments: stringify(this.overallInfoSubform.value.comments),
-            modules: stringify(this.modulesFormArray.value),
+        const comments = {
+            overallComments: this.overallInfoSubform.value.comments,
+            modules: this.modulesFormArray.value,
         }
         this.saveReview.emit(comments);
     }

@@ -3,7 +3,7 @@ import { map, Observable } from 'rxjs';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { CoursesService } from 'src/app/services/courses.service';
 import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
-import { Course, TeacherCourses } from 'src/app/typings/course.types';
+import { Course, CourseReview, TeacherCourses } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-teacher',
@@ -15,7 +15,7 @@ export class TeacherComponent extends CenteredContainerDirective implements OnIn
     private teacherCourses$: Observable<TeacherCourses | null>
 
     public publishedCourses$: Observable<Course[] | null>
-    public reviewCourses$: Observable<Course[] | null>
+    public reviewCourses$: Observable<CourseReview[] | null>
 
 	constructor(private teacherCourses: TeacherCoursesService) {
         super();

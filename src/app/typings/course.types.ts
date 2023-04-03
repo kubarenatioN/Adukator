@@ -120,7 +120,10 @@ export interface CourseHierarchyComponent {
 
 
 // 'on review' course raw data
-export interface CourseReview extends Course {
+export interface CourseReview extends CourseCore {
+    _id?: string;
+    uuid: string;
+    modules: CourseModule[];
     masterId: string | null;
     createdAt?: string;
     status?: CourseReviewStatus;
@@ -168,7 +171,7 @@ export interface ICourseTraining extends CourseCore {
 }
 
 export interface CourseFormMetadata {
-    _id: string;
+    _id?: string;
     uuid: string;
     authorId: number;
     masterCourseId: string | null;

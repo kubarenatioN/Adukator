@@ -1,6 +1,6 @@
 export const CoursesSelectFields = {
-	Short: ['uuid', 'title', 'competencies'],
+	Short: ['uuid', 'title', 'competencies', 'authorId', 'masterId'],
 	Modules: ['modules'],
 	Full: [],
-	ReviewHistory: ['uuid', 'title', 'createdAt', 'masterId', 'status'],
+	ReviewHistory: ['uuid', 'title', 'createdAt', 'masterId', 'status', 'authorId', 'masterId'],
 };

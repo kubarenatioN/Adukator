@@ -95,7 +95,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
                 }),
                 tap(course => {
                     if (course !== null && !isEmptyCourseFormData(course)) {
-                        this.courseMetadata = this.getCourseMetadata(course)
+                        this.courseMetadata = this.cloneParentCourseMetadata(course)
                     }
                 }),
                 shareReplay(1),    
@@ -138,8 +138,12 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
             })
 	}
 
-	public onSaveReview(comments: { overallComments: string; modules: string }): void {
+	public onSaveReview(comments: { overallComments: unknown; modules: unknown }): void {
         const id = this.courseMetadata._id;
+        if (!id) {
+            console.error('No _id provided to save review');
+            return;
+        }
         this.adminCoursesService.saveCourseReview(id, comments)
             .subscribe(() => {
                 console.log('course review updated');
@@ -167,7 +171,6 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 
     private getMasterCourseMetadata(authorId: number): CourseFormMetadata {
         return {
-            _id: '',
             uuid: generateUUID(),
             authorId,
             masterCourseId: null,
@@ -175,13 +178,13 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
         }
     }
 
-    private getCourseMetadata(course: CourseReview): CourseFormMetadata {
+    private cloneParentCourseMetadata(parentCourse: CourseReview): CourseFormMetadata {
         return {
-            _id: course._id,
-            uuid: course.uuid,
-            authorId: course.authorId,
-            masterCourseId: course.masterId === null ? null : course.masterId, // if get master course, correct new course version masterId value
-            status: course.status
+            _id: parentCourse._id,
+            uuid: generateUUID(),
+            authorId: parentCourse.authorId,
+            masterCourseId: parentCourse.masterId === null ? parentCourse.uuid : parentCourse.masterId, // all the versions point to the most first course version, the first one points to null
+            status: parentCourse.status
         }
     }
 }
