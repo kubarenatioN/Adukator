@@ -71,7 +71,7 @@
                 </span>
                 <a 
                     *ngIf="canShowCourseVersionActionButton(courseReviewStatuses.ReadyForReview, course) | async"
-                    [routerLink]="['/app/course-builder', course.metadata.id, 'review']"
+                    [routerLink]="['/app/course-builder', course.metadata.uuid, 'review']"
                     mat-stroked-button
                     color="primary">
                     Проверить
@@ -83,7 +83,7 @@
                 </span>
                 <a 
                     *ngIf="canShowCourseVersionActionButton(courseReviewStatuses.ReadyForUpdate, course) | async"
-                    [routerLink]="['/app/course-builder', course.metadata.id, 'edit']" 
+                    [routerLink]="['/app/course-builder', course.metadata.uuid, 'edit']" 
                     mat-stroked-button
                     color="primary">
                     Исправить

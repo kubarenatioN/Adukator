@@ -106,7 +106,7 @@ interface CourseCore {
 
 // publicly accessed course, used for overview & training
 export interface Course extends CourseCore {
-    id: number;
+    _id: string;
     uuid: string;
     modules: CourseModule[];
 }
@@ -121,7 +121,7 @@ export interface CourseHierarchyComponent {
 
 // 'on review' course raw data
 export interface CourseReview extends Course {
-    masterId: number | null;
+    masterId: string | null;
     createdAt?: string;
     status?: CourseReviewStatus;
     comments: {
@@ -162,16 +162,16 @@ export interface CourseFormData {
 
 
 export interface ICourseTraining extends CourseCore {
-    id: number;
+    _id: string;
     uuid: string;
     modules: CourseModule[];
 }
 
 export interface CourseFormMetadata {
-    id: number;
+    _id: string;
     uuid: string;
     authorId: number;
-    masterCourseId: number | null;
+    masterCourseId: string | null;
     status?: CourseReviewStatus;
 }
 
@@ -238,5 +238,5 @@ export interface GetCourseMembersParams {
     status: string,
     size: number,
     page: number,
-    courseId: number,
+    courseId: string,
 }

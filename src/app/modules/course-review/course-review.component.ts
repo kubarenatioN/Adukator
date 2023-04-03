@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, takeUntil, switchMap, shareReplay } from 'rxjs';
+import { Observable, takeUntil, switchMap, shareReplay, withLatestFrom } from 'rxjs';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { CoursesService } from 'src/app/services/courses.service';
 import { CourseReview } from 'src/app/typings/course.types';
@@ -13,7 +13,6 @@ import { CourseReview } from 'src/app/typings/course.types';
 })
 export class CourseReviewComponent extends CenteredContainerDirective {
 	public courseHistory$: Observable<CourseReview[]>;
-	public parentCourseId: number = -1;
 
 	constructor(
 		private activatedRoute: ActivatedRoute,
@@ -23,8 +22,7 @@ export class CourseReviewComponent extends CenteredContainerDirective {
 		this.courseHistory$ = this.activatedRoute.params.pipe(
 			takeUntil(this.componentLifecycle$),
 			switchMap((params) => {
-				const courseId = Number(params['id']);
-				this.parentCourseId = courseId;
+				const courseId = String(params['id']);
 				return this.coursesService.getCourseReviewHistory(courseId);
 			}),
 			shareReplay(1)

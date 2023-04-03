@@ -66,7 +66,7 @@ export class CourseOverviewComponent {
         ]).pipe(
             switchMap(([_, course, user]) => {
                 if (course && user) {
-                    return this.coursesService.makeCourseEnrollAction([user.id], course.id, 'lookup')
+                    return this.coursesService.makeCourseEnrollAction([user.id], course.uuid, 'lookup')
                 }
                 return of(null);
             }),
@@ -91,19 +91,20 @@ export class CourseOverviewComponent {
         )
     }
 
-    public enrollCourse(courseId: number): void {
+    public enrollCourse(courseId: string): void {
         this.makeCourseEnrollAction(courseId, 'enroll')
     }
 
-    public cancelCourseEnroll(courseId: number): void {
+    public cancelCourseEnroll(courseId: string): void {
         this.makeCourseEnrollAction(courseId, 'cancel')
     }
 
-    public leaveCourse(courseId: number) {
+    public leaveCourse(courseId: string) {
+        console.error('Not implemented!');
         console.log('Leave course', courseId);
     }
 
-    private makeCourseEnrollAction(courseId: number, action: CourseEnrollAction): void {
+    private makeCourseEnrollAction(courseId: string, action: CourseEnrollAction): void {
         if(this.enrollmentSub && !this.enrollmentSub.closed) {
             return;
         }

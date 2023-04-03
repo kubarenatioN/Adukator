@@ -21,20 +21,8 @@ export class TeacherCoursesService {
         this.courses$ = this.getCourses();
     }
 
-    public getReviewCourse(courseId: number) {
-        return this.userService.user$.pipe(
-            switchMap(user => {
-                return this.coursesService.getCourses({
-                    requestKey: RequestKey,
-                    id: 'TeacherReviewCourse',
-                    type: ['review'],
-                    authorId: user.id,
-                    coursesIds: [courseId],
-                    fields: CoursesSelectFields.Full
-                })
-            }),
-            map(response => response.review[0])
-        )
+    public getCourseReviewVersion(courseId: string) {
+        return this.coursesService.getCourseReviewVersion(courseId);   
     }
 
     private getCourses() {

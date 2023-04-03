@@ -86,11 +86,11 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
                         this.courseMetadata = this.getMasterCourseMetadata(user.id)
                         return of(getEmptyCourseFormData(generateUUID()));
                     } else {
-                        const courseId = Number(params.get('id'));
+                        const courseId = String(params.get('id'));
                         if (mode === CourseFormViewMode.Review) {
-                            return this.adminCoursesService.getReviewCourse(courseId);
+                            return this.adminCoursesService.getCourseReviewVersion(courseId);
                         }
-                        return this.teacherCoursesService.getReviewCourse(courseId);
+                        return this.teacherCoursesService.getCourseReviewVersion(courseId);
                     }
                 }),
                 tap(course => {
@@ -131,7 +131,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
     public onPublish(formData: CourseFormData): void {
         formData = this.restoreCourseMetadata(formData, this.courseMetadata)
         const courseData = convertCourseFormDataToCourse(formData)
-        const masterId = formData.metadata.masterCourseId || formData.metadata.id
+        const masterId = formData.metadata.masterCourseId || formData.metadata.uuid
         this.adminCoursesService.publish(courseData, masterId)
             .subscribe(res => {
                 console.log('111 course published', res);
@@ -139,7 +139,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 	}
 
 	public onSaveReview(comments: { overallComments: string; modules: string }): void {
-        const id = this.courseMetadata.id;
+        const id = this.courseMetadata._id;
         this.adminCoursesService.saveCourseReview(id, comments)
             .subscribe(() => {
                 console.log('course review updated');
@@ -167,7 +167,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 
     private getMasterCourseMetadata(authorId: number): CourseFormMetadata {
         return {
-            id: -1,
+            _id: '',
             uuid: generateUUID(),
             authorId,
             masterCourseId: null,
@@ -177,10 +177,10 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 
     private getCourseMetadata(course: CourseReview): CourseFormMetadata {
         return {
-            id: course.id,
+            _id: course._id,
             uuid: course.uuid,
             authorId: course.authorId,
-            masterCourseId: course.masterId === null ? course.id : course.masterId, // if get master course, correct new course version masterId value
+            masterCourseId: course.masterId === null ? null : course.masterId, // if get master course, correct new course version masterId value
             status: course.status
         }
     }

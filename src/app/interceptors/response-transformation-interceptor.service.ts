@@ -73,8 +73,6 @@ export class ResponseTransformationInterceptor implements HttpInterceptor {
         if (
             reqType === NetworkRequestKey.GetCourseById || 
             reqType === NetworkRequestKey.GetAllCourses || 
-            reqType === NetworkRequestKey.GetAdminReviewCourseById ||
-            reqType === NetworkRequestKey.GetAllAdminReviewCourses ||
             reqType === NetworkRequestKey.GetReviewCourseHistory
         ) {
             return this.transformCoursesBody.bind(this);

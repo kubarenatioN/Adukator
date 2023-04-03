@@ -18,23 +18,18 @@ export class AdminCoursesService {
     }
 
     // get any course under review by id
-    public getReviewCourse(id: number): Observable<CourseReview> {
-        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetAdminReviewCourseById, {
-            urlId: id
-        })
-        return this.dataService.send<CoursesResponse<CourseReview[]>>(payload).pipe(
-            map(res => res.data[0])
-        )
+    public getCourseReviewVersion(id: string): Observable<CourseReview> {
+        return this.coursesService.getCourseReviewVersion(id);
     }
 
-    public publish(course: Course, masterId: number): Observable<unknown> {
+    public publish(course: Course, masterId: string): Observable<unknown> {
         const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.PublishCourse, {
             body: { course, masterId },
         });
         return this.dataService.send(payload);
     }
 
-    public saveCourseReview(id: number, comments: { overallComments: string; modules: string }): Observable<unknown> {
+    public saveCourseReview(id: string, comments: { overallComments: string; modules: string }): Observable<unknown> {
         const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.UpdateCourseReview, {
             body: { id, comments }
         })

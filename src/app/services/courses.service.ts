@@ -3,7 +3,7 @@ import { BehaviorSubject, map, Observable, of, shareReplay, switchMap, throwErro
 import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { Course, CourseEnrollAction, CourseFormData, CourseMembers, CourseReview, GetCourseMembersParams, StudentCourse, TeacherCourses } from '../typings/course.types';
-import { CoursesResponse, CourseEnrollResponse, CoursesSelectResponse } from '../typings/response.types';
+import { CoursesResponse, CourseEnrollResponse, CoursesSelectResponse, CourseReviewHistory } from '../typings/response.types';
 import { DataService } from './data.service';
 import { UserService } from './user.service';
 
@@ -39,11 +39,27 @@ export class CoursesService {
         );
     }
 
+    public getCourseReviewVersion(courseId: string) {
+        return this.userService.user$.pipe(
+            switchMap(user => {
+                return this.getCourses({
+                    requestKey: NetworkRequestKey.GetCourses,
+                    id: 'CourseReviewVersion',
+                    type: ['review'],
+                    coursesIds: [courseId],
+                    fields: CoursesSelectFields.Full,
+                    authorId: user.role === 'teacher' ? user.id : undefined
+                })
+            }),
+            map(response => response.review[0])
+        )
+    }
+
     public getCourses({ requestKey, type, coursesIds, authorId, studentId, fields, id }: {
         requestKey: string,
         type: ('published' | 'review')[],
         id: string,
-        coursesIds?: number[],
+        coursesIds?: string[],
         authorId?: number,
         studentId?: number,
         fields?: string[],
@@ -62,23 +78,18 @@ export class CoursesService {
         return this.dataService.send<CoursesSelectResponse>(payload)
     }
 
-    // public getTeacherReviewCourse(courseId: number): Observable<CourseReview | null> {
-    //     return this.teacherUserCourses$.pipe(
-    //         map(teacherCourses => {
-    //             const courses: CourseReview[] = teacherCourses?.review ?? []
-    //             return courses.find(course => course.id === courseId) ?? null
-    //         })
-    //     )
-    // }
-
-    public getCourseReviewHistory(courseId: number) {
-        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetReviewCourseHistory, {
-            params: {
-                id: courseId
-            }
+    public getCourseReviewHistory(masterId: string) {
+        const requestKey = NetworkRequestKey.GetCourseReviewHistory
+        const payload = NetworkHelper.createRequestPayload(requestKey, {
+            body: {
+                masterId,
+                fields: CoursesSelectFields.ReviewHistory,
+            },
+            params: { reqId: 'ReviewHistory' }
         })
-        return this.dataService.send<CoursesResponse<CourseReview[]>>(payload).pipe(
-            map(res => res.data)
+
+        return this.dataService.send<CourseReviewHistory>(payload).pipe(
+            map(response => response.versions)
         )
     }
 
@@ -93,7 +104,7 @@ export class CoursesService {
         
     }
 
-    public makeCourseEnrollAction(userIds: number[], courseId: number, action: CourseEnrollAction) {
+    public makeCourseEnrollAction(userIds: number[], courseId: string, action: CourseEnrollAction) {
         const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.EnrollCourse, {
             body: {
                 userIds,

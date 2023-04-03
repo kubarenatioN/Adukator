@@ -15,6 +15,10 @@ export interface CoursesSelectResponse {
     review: CourseReview[]
 }
 
+export interface CourseReviewHistory {
+    versions: CourseReview[]
+}
+
 export interface CourseEnrollResponseData {
     userId?: number;
     courseId?: number;

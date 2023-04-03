@@ -21,7 +21,7 @@ export class CourseReviewGuardService implements CanActivate {
 		route: ActivatedRouteSnapshot,
 		state: RouterStateSnapshot
 	) {
-        const courseId = Number(route.paramMap.get('id'))        
+        const courseId = String(route.paramMap.get('id'))        
 
         return this.userService.isAdmin$.pipe(
             switchMap(isAdmin => {
@@ -33,15 +33,15 @@ export class CourseReviewGuardService implements CanActivate {
         )
     }
 
-    private isTeacherAuthor(courseId: number) {
+    private isTeacherAuthor(courseId: string) {
         return this.teacherCourses.courses$.pipe(
             withLatestFrom(this.userService.user$),
             map(([courses, user]) => {
-                const courseForReview = courses?.review?.find(course => course.id === courseId)
+                const courseForReview = courses?.review?.find(course => course.uuid === courseId)
                 if (!courseForReview) {
-                    const publishedCourse = courses?.published?.find(course => course.id === courseId)
+                    const publishedCourse = courses?.published?.find(course => course.uuid === courseId)
                     if (publishedCourse) {
-                        return this.router.parseUrl(`/app/learn/course/overview/${publishedCourse.id}`)
+                        return this.router.parseUrl(`/app/learn/course/overview/${publishedCourse.uuid}`)
                     }
                     return this.router.parseUrl(`/app/learn/catalog`)
                 }

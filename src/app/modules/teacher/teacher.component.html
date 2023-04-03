@@ -13,7 +13,7 @@
         <ng-container *ngIf="publishedCourses$ | async as publishedCourses; else loader">
             <a class="course-item" 
             *ngFor="let course of publishedCourses"
-            [routerLink]="['/app/teacher/manage/course', course.id]">
+            [routerLink]="['/app/teacher/manage/course', course.uuid]">
                 <h4>{{course.title}}</h4>
             </a>
         </ng-container>
@@ -24,7 +24,7 @@
         <ng-container *ngIf="reviewCourses$ | async as reviewCourses; else loader">
             <a class="course-item" 
             *ngFor="let course of reviewCourses"
-            [routerLink]="['/app/course-review/review', course.id]">
+            [routerLink]="['/app/course-review/review', course.uuid]">
                 <h4>{{course.title}}</h4>
             </a>
         </ng-container>

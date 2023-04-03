@@ -12,7 +12,7 @@ import { formatDate } from 'src/app/helpers/date-fns.helper';
 import { UserService } from 'src/app/services/user.service';
 import { Course, CourseFormData, CourseReview, CourseReviewStatus, CourseReviewStatusMap } from 'src/app/typings/course.types';
 
-interface VersionOption { id: number; date: string, checked?: boolean }
+interface VersionOption { id: string; date: string, checked?: boolean }
 type VersionSelect = VersionOption[] 
 
 @Component({
@@ -23,7 +23,7 @@ type VersionSelect = VersionOption[]
 })
 export class CourseReviewDiffComponent implements OnInit {
 	private _hasMoreThanOneVersion: boolean = false;
-	private _courseVerions: CourseFormData[] = [];
+	private _courseVerions: any[] = [];
 	private _immutableVerionOptions: VersionOption[] = [];
 
 	@Input() public set courseVersions(value: CourseReview[]) {
@@ -38,7 +38,7 @@ export class CourseReviewDiffComponent implements OnInit {
 
 	public versionsPair: CourseFormData[] = [];
 	public versionOptions: VersionSelect[] = [];
-    public selectedOptions = Array.from({ length: 2 }) as number[];
+    public selectedOptions = Array.from({ length: 2 }) as string[];
 
     public courseReviewStatuses = CourseReviewStatus
     public statusesMap = CourseReviewStatusMap
@@ -51,7 +51,7 @@ export class CourseReviewDiffComponent implements OnInit {
 
 	ngOnInit(): void {}
 
-    public onVersionChange(selectIndex: number, versionId: number) {
+    public onVersionChange(selectIndex: number, versionId: string) {
         this.removeDuplicateVersionsFromSelects()
         this.applyCourseVersion(selectIndex, versionId)
     }
@@ -63,7 +63,7 @@ export class CourseReviewDiffComponent implements OnInit {
     public applyDefaultVersions() {
         this.versionsPair = this._courseVerions.slice(0, 2);
         this.versionsPair.reverse()
-        this.selectedOptions = this.versionsPair.map(version => version.metadata.id)
+        this.selectedOptions = this.versionsPair.map(version => version.metadata.uuid)
     }
 
 	private prepareVersionOptions(versions: CourseReview[]) {
@@ -72,7 +72,7 @@ export class CourseReviewDiffComponent implements OnInit {
 			.filter((course) => course.createdAt !== undefined || (course as any).isDummy)
 			.map((course, i) => {
 				return {
-					id: course.id,
+					id: course.uuid,
 					date: course.createdAt!,
 				};
 			});
@@ -100,15 +100,24 @@ export class CourseReviewDiffComponent implements OnInit {
     }
 
     private isLastVersion(course: CourseFormData): boolean {
-        return this._courseVerions[0].metadata.id === course.metadata.id
+        return this._courseVerions[0].metadata.uuid === course.metadata.uuid
     }
 
-    private formatVersions(versions: CourseReview[]): CourseFormData[] {
+    private formatVersions(versions: CourseReview[]) {
         return versions.map(version => {
             const formData = (version as any).isDummy ? {
                 metadata: {},
                 overallInfo: {},
-            } as unknown as CourseFormData : convertCourseToCourseFormData(version)
+            } as unknown as CourseFormData : {
+                overallInfo: {
+                    title: version.title,
+                },
+                metadata: {
+                    uuid: version.uuid,
+                    status: version.status
+                },
+                createdAt: version.createdAt
+            }
             if (version.createdAt) {
                 formData.createdAt = formatDate(version.createdAt);
             }
@@ -127,7 +136,7 @@ export class CourseReviewDiffComponent implements OnInit {
         })
     }
 
-    private applyCourseVersion(position: number, versionId: number) {
+    private applyCourseVersion(position: number, versionId: string) {
         const versionIndex = this._courseVerions.findIndex(course => course.metadata.id === versionId)
         if (versionIndex !== -1) {
             this.versionsPair[position] = this._courseVerions[versionIndex]

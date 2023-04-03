@@ -59,9 +59,9 @@
 <ng-template #coursesSection>
     <div class="courses-list" *ngIf="pendingCourses$ | async as pendingCourses; noCourses">
         <h3 class="courses-list-title">На рассмотрении</h3>
-        <a class="course-item" *ngFor="let course of pendingCourses" [routerLink]="['/app/learn/course/overview', course.id]">
+        <a class="course-item" *ngFor="let course of pendingCourses" [routerLink]="['/app/learn/course/overview', course.uuid]">
             <p>
-                Курс {{course.id}} {{course.title}}
+                Курс {{course.uuid}} {{course.title}}
             </p>
             <span class="course-status">
                 {{course.status}}
@@ -71,9 +71,9 @@
     
     <div class="courses-list" *ngIf="approvedCourses$ | async as approvedCourses; noCourses">
         <h3 class="courses-list-title">Активные</h3>
-        <a class="course-item" *ngFor="let course of approvedCourses" [routerLink]="['/app/student/training', course.id]">
+        <a class="course-item" *ngFor="let course of approvedCourses" [routerLink]="['/app/student/training', course.uuid]">
             <p>
-                Курс {{course.id}} {{course.title}}
+                Курс {{course.uuid}} {{course.title}}
             </p>
             <span class="course-status">
                 {{course.status}}
@@ -83,9 +83,9 @@
     
     <div class="courses-list" *ngIf="rejectedCourses$ | async as rejectedCourses; noCourses">
         <h3 class="courses-list-title">Отклоненные</h3>
-        <a class="course-item" *ngFor="let course of rejectedCourses" [routerLink]="['/app/learn/course/overview', course.id]">
+        <a class="course-item" *ngFor="let course of rejectedCourses" [routerLink]="['/app/learn/course/overview', course.uuid]">
             <p>
-                Курс {{course.id}} {{course.title}}
+                Курс {{course.uuid}} {{course.title}}
             </p>
             <span class="course-status">
                 {{course.status}}

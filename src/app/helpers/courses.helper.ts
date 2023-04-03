@@ -27,7 +27,7 @@ export const convertCourseToCourseFormData = (
 	course: CourseReview
 ): CourseFormData => {
 	const {
-		id,
+		_id,
 		uuid,
 		authorId,
 		masterId,
@@ -41,7 +41,7 @@ export const convertCourseToCourseFormData = (
 		status,
 	} = course;
 	const metadata: CourseFormMetadata = {
-		id,
+		_id,
 		uuid,
 		authorId,
 		masterCourseId: masterId,
@@ -70,14 +70,14 @@ export const convertCourseFormDataToCourseReview = (
 	const { overallInfo, modules, metadata } = formData;
 	const { title, description, category, comments, acquiredCompetencies, requiredCompetencies } = overallInfo;
 	const {
-		id,
+		_id,
 		uuid,
 		masterCourseId: masterId,
 		authorId,
 		status,
 	} = metadata;
 	return {
-		id,
+		_id,
 		uuid,
 		masterId,
 		authorId,
@@ -99,9 +99,9 @@ export const convertCourseFormDataToCourse = (
 ): Course => {
 	const { overallInfo, modules, metadata } = formData;
 	const { title, description, category, acquiredCompetencies, requiredCompetencies } = overallInfo;
-	const { id, uuid, authorId } = metadata;
+	const { _id, uuid, authorId } = metadata;
 	return {
-		id,
+		_id,
 		uuid,
 		title,
 		description,
@@ -118,10 +118,10 @@ export const convertCourseFormDataToCourse = (
 export const convertCourseToCourseTraining = (
 	course: Course
 ): ICourseTraining => {
-	const { id, uuid, title, description, category, competencies, advantages, modules, authorId } =
+	const { _id, uuid, title, description, category, competencies, advantages, modules, authorId } =
 		course;
 	return {
-		id,
+		_id,
         uuid,
 		title,
 		description,

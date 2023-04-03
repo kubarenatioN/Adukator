@@ -13,12 +13,11 @@ export enum NetworkRequestKey {
     GetCourseById = 'GetCourseById',
     GetStudentCourses = 'GetStudentCourses',
     GetReviewCourseHistory = 'GetReviewCourseHistory',
+    GetCourseReviewHistory = 'GetCourseReviewHistory',
     CreateCourseVersion = 'CreateCourseVersion',
     EnrollCourse = 'EnrollCourse',
     GetCourseMembers = 'GetCourseMembers',
 
-    GetAllAdminReviewCourses = 'GetAllAdminReviewCourses',// TODO: Remove
-    GetAdminReviewCourseById = 'GetAdminReviewCourseById',// TODO: Remove
     GetAdminReviewCourses = 'GetAdminReviewCourses', // Use generic request key
     UpdateCourseReview = 'UpdateCourseReview',
     PublishCourse = 'PublishCourse',
@@ -54,14 +53,7 @@ export class NetworkHelper {
             method: 'POST',
             url: `${DATA_ENDPOINTS.admin.courses}/review`,
         },
-        [NetworkRequestKey.GetAdminReviewCourseById]: {
-            method: 'GET',
-            url: `${DATA_ENDPOINTS.admin.courses}/review`,
-        },
-        [NetworkRequestKey.GetAllAdminReviewCourses]: {
-            method: 'GET',
-            url: `${DATA_ENDPOINTS.admin.courses}/review`,
-        },
+
         [NetworkRequestKey.UpdateCourseReview]: {
             method: 'PUT',
             url: `${DATA_ENDPOINTS.admin.courses}/review/update`,
@@ -115,6 +107,10 @@ export class NetworkHelper {
         [NetworkRequestKey.GetReviewCourses]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses.review}/select`,
+        },
+        [NetworkRequestKey.GetCourseReviewHistory]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.courses.review}/history`,
         },
 
         /* TEACHER RELATED */

@@ -16,7 +16,7 @@ import { User } from 'src/app/typings/user.types';
 })
 export class CourseManagementComponent extends CenteredContainerDirective implements OnInit {
     private membersStore$: BehaviorSubject<CourseMembers> = new BehaviorSubject({} as CourseMembers);
-    private courseId!: number;
+    private courseId!: string;
     private membersStoreRefresher$ = new Subject<{
         id: keyof CourseMembers;
         members: User[];
@@ -34,10 +34,10 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
             this.teacherCourses.courses$,
         ]).pipe(
             map(([params, teacherCourses]) => {
-                const id = Number(params.get('id'));
+                const id = String(params.get('id'));
                 if (id) {
                     this.courseId = id;
-                    const course = teacherCourses?.published?.find(course => course.id === id)
+                    const course = teacherCourses?.published?.find(course => course.uuid === id)
                     return course ? course : null
                 }
                 return null
@@ -55,7 +55,7 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
                     status: ['Approved', 'Pending', 'Rejected'].join(','),
                     size: 10,
                     page: 0,
-                    courseId: course.id,
+                    courseId: course.uuid,
                 })       
             }),
         ).subscribe(data => {
@@ -82,7 +82,7 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
     }
 
     public refreshMembersList(status: keyof CourseMembers): void {
-        if (isNaN(this.courseId)) {
+        if (!this.courseId) {
             throw new Error('No course ID was provided');
         }
         this.requestMembers({
@@ -115,7 +115,7 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
         )
     }
 
-    private makeCourseEnrollAction(userId: number, courseId: number, action: CourseEnrollAction): void {
+    private makeCourseEnrollAction(userId: number, courseId: string, action: CourseEnrollAction): void {
         this.coursesService.makeCourseEnrollAction([userId], courseId, action)
         .pipe(
             catchError(err => {
