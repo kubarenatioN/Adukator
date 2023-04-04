@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
 import { convertCourseToCourseTraining } from 'src/app/helpers/courses.helper';
 import { UploadHelper } from 'src/app/helpers/upload.helper';
 import { CourseTraining } from 'src/app/models/course.model';
@@ -48,11 +49,15 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 	ngOnInit(): void {
         const course$ = this.activatedRoute.paramMap.pipe(
             switchMap(params => {
-                const courseId = Number(params.get('id'));
-                if (isNaN(courseId)) {
+                const courseId = String(params.get('id'));
+                if (!courseId) {
                     return of(null)
                 }
-                return this.coursesService.getCourseById(courseId);
+                return this.coursesService.getCourses<ICourseTraining>({
+                    id: 'CourseTraining',
+                    type: ['published'],
+                    fields: CoursesSelectFields.Full
+                });
             }),
             map(course => {
                 if (course) {

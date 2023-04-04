@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, combineLatestWith, filter, map, merge, Observable, of, shareReplay, Subject, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, shareReplay, Subject } from 'rxjs';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
+import { CourseManagementService } from 'src/app/services/course-management.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
-import { Course, CourseEnrollAction, CourseMembers, CourseMembersMap, GetCourseMembersParams } from 'src/app/typings/course.types';
-import { CourseEnrollResponseData } from 'src/app/typings/response.types';
+import { Course, CourseMembership, CourseMembershipSearchParams } from 'src/app/typings/course.types';
 import { User } from 'src/app/typings/user.types';
 
 @Component({
@@ -15,19 +15,18 @@ import { User } from 'src/app/typings/user.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseManagementComponent extends CenteredContainerDirective implements OnInit {
-    private membersStore$: BehaviorSubject<CourseMembers> = new BehaviorSubject({} as CourseMembers);
     private courseId!: string;
-    private membersStoreRefresher$ = new Subject<{
-        id: keyof CourseMembers;
-        members: User[];
-    }>()
 
     public course$: Observable<Course | null>
     public pendingStudents$: Observable<User[] | null>; 
     public approvedStudents$: Observable<User[] | null>; 
     public rejectedStudents$: Observable<User[] | null>; 
 
-	constructor(private activatedRoute: ActivatedRoute, private coursesService: CoursesService, private teacherCourses: TeacherCoursesService) {
+	constructor(
+        private activatedRoute: ActivatedRoute, 
+        private courseManagement: CourseManagementService,
+        private teacherCourses: TeacherCoursesService
+    ) {
         super();
         this.course$ = combineLatest([
             this.activatedRoute.paramMap,
@@ -45,28 +44,9 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
             shareReplay(1),
         )
 
-        this.course$.pipe(
-            switchMap(course => {
-                if (course === null) {
-                    return of(null);
-                }
-                return this.requestMembers({
-                    type: 'list',
-                    status: ['Approved', 'Pending', 'Rejected'].join(','),
-                    size: 10,
-                    page: 0,
-                    courseId: course.uuid,
-                })       
-            }),
-        ).subscribe(data => {
-            if (data) {
-                this.membersStore$.next(data);
-            }
-        })
-
-        this.pendingStudents$ = this.getCourseMemberByStatus('pending'),
-        this.approvedStudents$ = this.getCourseMemberByStatus('approved')
-        this.rejectedStudents$ = this.getCourseMemberByStatus('rejected')
+        this.pendingStudents$ = this.courseManagement.pendingStudents$
+        this.approvedStudents$ = this.courseManagement.approvedStudents$
+        this.rejectedStudents$ = this.courseManagement.rejectedStudents$
     }
 
 	public ngOnInit(): void {
@@ -74,94 +54,21 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
     }
 
     public onApproveEnroll(userId: number) {
-        this.makeCourseEnrollAction(userId, this.courseId, 'approve')
+        this.courseManagement.setCourseMembershipStatus([userId], this.courseId, 'approved')
     }
 
     public onExpel(userId: number) {
 
     }
 
-    public refreshMembersList(status: keyof CourseMembers): void {
+    public refreshMembersList(status: keyof CourseMembership): void {
         if (!this.courseId) {
             throw new Error('No course ID was provided');
         }
-        this.requestMembers({
-            type: 'list',
-            status: CourseMembersMap[status], // case important here
-            size: 10,
-            page: 0,
-            courseId: this.courseId
-        }).subscribe(res => {
-            const data = res[status]
-            this.setMembersForStatus(status, data);
-        })
+        
     }
 
-    private getCourseMemberByStatus(status: keyof CourseMembers) {
-        return this.membersStore$.pipe(
-            map(students => {
-                if (students === null) {
-                    return null;
-                }
-                return students[status] 
-            })
-        )
-    }
-
-    private getMembersStoreRefresher(id: keyof CourseMembers) {
-        return this.membersStoreRefresher$.pipe(
-            filter(update => update.id === id),
-            map(data => data.members)
-        )
-    }
-
-    private makeCourseEnrollAction(userId: number, courseId: string, action: CourseEnrollAction): void {
-        this.coursesService.makeCourseEnrollAction([userId], courseId, action)
-        .pipe(
-            catchError(err => {
-                return throwError(() => new Error(err.error.message))
-            }),
-        )
-        .subscribe({
-            next: (res) => {
-                console.log('Perform course enroll action', res);
-                this.updateMembersList(res.data, res.action)
-            },
-            error: (err) => {
-                console.warn(err);
-            }
-        })
-    }
-
-    private updateMembersList(data: CourseEnrollResponseData[], action: CourseEnrollAction) {
-        const userIds = data.map(record => record.userId);
-        const store = this.membersStore$.value
-        if (action === 'approve') {
-            const affectedMembers = store.pending.filter(user =>  userIds.includes(user.id))
-
-            console.log(affectedMembers);
-            
-            const approveUpdate = store.approved.concat(affectedMembers);
-            const pendingUpdate = store.pending.filter(user =>  !userIds.includes(user.id))
-
-            const update = {
-                ...store,
-                // approved: approveUpdate,
-                pending: pendingUpdate
-            }
-            this.membersStore$.next(update);
-        }
-    }
-
-    private setMembersForStatus(status: keyof CourseMembers, members: User[]) {
-        const store = this.membersStore$.value;
-        this.membersStore$.next({
-            ...store,
-            [status]: members
-        })
-    }
-
-    private requestMembers(params: GetCourseMembersParams) {
-        return this.coursesService.getCourseMembers(params);
+    private requestMembers(params: CourseMembershipSearchParams) {
+        return this.courseManagement.getCourseMembers(params);
     }
 }

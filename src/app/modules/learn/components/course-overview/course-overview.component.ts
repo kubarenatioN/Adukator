@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, catchError, map, merge, Observable, of, Subject, Subscription, switchMap, throwError, withLatestFrom, combineLatest, shareReplay } from 'rxjs';
+import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
 import { parseModules } from 'src/app/helpers/courses.helper';
 import { ConfigService } from 'src/app/services/config.service';
+import { CourseManagementService } from 'src/app/services/course-management.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UserService } from 'src/app/services/user.service';
-import { Course, CourseEnrollAction, CourseModule } from 'src/app/typings/course.types';
-import { CourseEnrollResponse } from 'src/app/typings/response.types';
+import { Course, CourseEnrollAction, CourseMembershipAction, CourseModule, ICourseTraining } from 'src/app/typings/course.types';
+import { CourseEnrollResponse, CoursesSelectResponse } from 'src/app/typings/response.types';
 
 @Component({
 	selector: 'app-course-overview',
@@ -26,16 +28,24 @@ export class CourseOverviewComponent {
     public isEnrolled$: Observable<boolean>;
     public enrollStatus$: Observable<string | null>;
     public isUserOwner$: Observable<boolean>;
+
+    public isDisabledEnrollActions = false;
     
-	constructor(private activatedRoute: ActivatedRoute, private coursesService: CoursesService, private configService: ConfigService, private userService: UserService) {
+	constructor(private activatedRoute: ActivatedRoute, private coursesService: CoursesService, private configService: ConfigService, private userService: UserService, private courseManagement: CourseManagementService) {
         this.course$ = this.activatedRoute.paramMap.pipe(
             switchMap(paramMap => {
-                const id = paramMap.get('id')
+                const id = String(paramMap.get('id'))
                 if (id) {
-                    return this.coursesService.getCourseById(Number(id));
+                    return this.coursesService.getCourses<CoursesSelectResponse>({
+                        id: 'OverviewCourse',
+                        type: ['published'],
+                        fields: CoursesSelectFields.Full,
+                        coursesIds: [id]
+                    });
                 }
                 return of(null);
             }),
+            map(res => res ? res.published[0] : null),
             shareReplay(1),
         );
 
@@ -66,7 +76,7 @@ export class CourseOverviewComponent {
         ]).pipe(
             switchMap(([_, course, user]) => {
                 if (course && user) {
-                    return this.coursesService.makeCourseEnrollAction([user.id], course.uuid, 'lookup')
+                    return this.courseManagement.lookupEnrollment([user.id], course.uuid)
                 }
                 return of(null);
             }),
@@ -76,7 +86,7 @@ export class CourseOverviewComponent {
                     return null;
                 }
                 const { data, action } = result
-                const userEnrollmentIndex = data.findIndex(record => record.userId === user?.id)
+                const userEnrollmentIndex = data.findIndex(record => record.userId == user?.id)
                 if (action === 'lookup' && userEnrollmentIndex !== -1) {
                     return data[userEnrollmentIndex].status;
                 }
@@ -100,11 +110,11 @@ export class CourseOverviewComponent {
     }
 
     public leaveCourse(courseId: string) {
-        console.error('Not implemented!');
-        console.log('Leave course', courseId);
+        this.makeCourseEnrollAction(courseId, 'leave')
     }
 
-    private makeCourseEnrollAction(courseId: string, action: CourseEnrollAction): void {
+    private makeCourseEnrollAction(courseId: string, action: CourseMembershipAction): void {
+        this.isDisabledEnrollActions = true;
         if(this.enrollmentSub && !this.enrollmentSub.closed) {
             return;
         }
@@ -112,7 +122,7 @@ export class CourseOverviewComponent {
             .pipe(
                 switchMap(user => {
                     if (user) {
-                        return this.coursesService.makeCourseEnrollAction([user.id], courseId, action)
+                        return this.courseManagement.updateEnrollment([user.id], courseId, action)
                     }
                     return throwError(() => new Error('No user'))
                 }),
@@ -125,10 +135,12 @@ export class CourseOverviewComponent {
                     console.log('Perform course enroll action', res);
                     this.courseEnrollTrigger$.next();
                     this.enrollmentSub?.unsubscribe()
+                    this.isDisabledEnrollActions = false;
                 },
                 error: (err) => {
                     console.warn(err);
                     this.enrollmentSub?.unsubscribe()
+                    this.isDisabledEnrollActions = false;
                 }
             })
     }

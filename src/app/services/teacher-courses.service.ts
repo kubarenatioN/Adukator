@@ -28,7 +28,7 @@ export class TeacherCoursesService {
     private getCourses() {
         return this.userService.user$.pipe(
             switchMap(user => {
-                return this.coursesService.getCourses({
+                return this.coursesService.getCourses<TeacherCourses>({
                     requestKey: RequestKey,
                     id: 'TeacherCourses',
                     type: ['published', 'review'],

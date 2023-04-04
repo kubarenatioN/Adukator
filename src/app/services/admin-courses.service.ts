@@ -3,7 +3,7 @@ import { map, Observable, shareReplay } from 'rxjs';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { Course, CourseReview } from '../typings/course.types';
-import { CoursesResponse } from '../typings/response.types';
+import { CoursesResponse, CoursesSelectResponse } from '../typings/response.types';
 import { CoursesService } from './courses.service';
 import { DataService } from './data.service';
 
@@ -39,7 +39,7 @@ export class AdminCoursesService {
     }
 
 	private getReviewCourses(): Observable<CourseReview[]> {
-        return this.coursesService.getCourses({
+        return this.coursesService.getCourses<CoursesSelectResponse>({
             requestKey: NetworkRequestKey.GetAdminReviewCourses,
             type: ['review'],
             id: 'AdminReview',

@@ -9,6 +9,11 @@ import { TeacherGuardService } from './guards/teacher-guard.service';
 import { CourseReviewGuardService } from './guards/course-review-guard.service';
 
 const routes: Routes = [
+    {
+		path: '',
+		pathMatch: 'full',
+		redirectTo: 'app',
+	},
 	{
 		path: 'app',
 		component: MainComponent,
@@ -88,11 +93,6 @@ const routes: Routes = [
 		canActivate: [AuthGuardService],
 		loadChildren: () =>
 			import('./modules/auth/auth.module').then((m) => m.AuthModule),
-	},
-	{
-		path: '',
-		pathMatch: 'full',
-		redirectTo: 'app',
 	},
 	{
 		path: '**',

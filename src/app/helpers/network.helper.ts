@@ -9,20 +9,22 @@ export enum NetworkRequestKey {
     GetUserById = 'GetUserById',
     
     GetCourses = 'GetCourses',
+    ListCourses = 'ListCourses',
+    CourseMembership = 'CourseMembership',
+
     GetAllCourses = 'GetAllCourses',
     GetCourseById = 'GetCourseById',
     GetStudentCourses = 'GetStudentCourses',
     GetReviewCourseHistory = 'GetReviewCourseHistory',
     GetCourseReviewHistory = 'GetCourseReviewHistory',
     CreateCourseVersion = 'CreateCourseVersion',
-    EnrollCourse = 'EnrollCourse',
-    GetCourseMembers = 'GetCourseMembers',
-
     GetAdminReviewCourses = 'GetAdminReviewCourses',
     
     UpdateCourseReview = 'UpdateCourseReview',
     PublishCourse = 'PublishCourse',
 
+    TeacherCourseMembership = 'TeacherCourseMembership',
+    CourseMembers = 'CourseMembers',
     GetReviewCourses = 'GetReviewCourses',
     TeacherCourses = 'TeacherCourses',
 }
@@ -86,10 +88,17 @@ export class NetworkHelper {
             method: 'GET',
             url: `${DATA_ENDPOINTS.api.courses}`,
         },
+        
+        // Main
         [NetworkRequestKey.GetCourses]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses}/select`,
         },
+        [NetworkRequestKey.ListCourses]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.courses}/list`,
+        },
+
         [NetworkRequestKey.GetCourseById]: {
             method: 'GET',
             url: `${DATA_ENDPOINTS.api.courses}`,
@@ -98,9 +107,9 @@ export class NetworkHelper {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses}/student`,
         },
-        [NetworkRequestKey.EnrollCourse]: {
+        [NetworkRequestKey.CourseMembership]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.courses}/enroll`,
+            url: `${DATA_ENDPOINTS.api.courses}/membership`,
         },
 
         /* REVIEW */
@@ -122,8 +131,12 @@ export class NetworkHelper {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses.review}/create`,
         },
-        [NetworkRequestKey.GetCourseMembers]: {
-            method: 'GET',
+        [NetworkRequestKey.TeacherCourseMembership]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.courses.teacher}/membership`,
+        },
+        [NetworkRequestKey.CourseMembers]: {
+            method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses}/members`,
         },
     }

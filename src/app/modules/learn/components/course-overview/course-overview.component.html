@@ -9,15 +9,27 @@
             <h1 class="title">{{ course.title }}</h1>
             <p class="descr">{{ course.description }}</p>
 
-            <button *ngIf="(canEnroll$ | async) === true && (isEnrolled$ | async) === false" mat-raised-button color="accent" (click)="enrollCourse(course.uuid)">Записаться</button>
+            <button 
+            *ngIf="(canEnroll$ | async) === true && (isEnrolled$ | async) === false" 
+            mat-raised-button 
+            color="accent" 
+            [disabled]="isDisabledEnrollActions"
+            (click)="enrollCourse(course.uuid)">Записаться</button>
 
             <ng-container *ngIf="enrollStatus$ | async as enrollStatus">
                 <div *ngIf="enrollStatus === 'Pending'">
                     <p>Заявка на рассмотрении</p>
-                    <button mat-raised-button (click)="cancelCourseEnroll(course.uuid)">Отозвать</button>
+                    <button 
+                    [disabled]="isDisabledEnrollActions"
+                    mat-raised-button 
+                    (click)="cancelCourseEnroll(course.uuid)">Отозвать</button>
                 </div>
                 <div *ngIf="enrollStatus === 'Approved'">
-                    <button  mat-raised-button color="accent" (click)="leaveCourse(course.uuid)">Покинуть</button>
+                    <button
+                    [disabled]="isDisabledEnrollActions"
+                    mat-raised-button 
+                    color="accent" 
+                    (click)="leaveCourse(course.uuid)">Покинуть</button>
                     <a mat-raised-button [routerLink]="['/app/student/training', course.uuid]">Перейти к треннингу</a>
                 </div>
             </ng-container>

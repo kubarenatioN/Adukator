@@ -1,15 +1,12 @@
 import {
 	ChangeDetectionStrategy,
 	Component,
-	HostBinding,
-	OnDestroy,
-	OnInit,
 } from '@angular/core';
-import { map, Observable, takeUntil, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
+import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UserService } from 'src/app/services/user.service';
-import { BaseComponent } from 'src/app/shared/base.component';
 import { Course } from 'src/app/typings/course.types';
 
 @Component({
@@ -30,6 +27,13 @@ export class CatalogComponent extends CenteredContainerDirective {
 		private userService: UserService
 	) {
 		super();
-		this.courses$ = this.coursesService.courses$;
+		this.courses$ = this.coursesService.catalogCourses$;
+        this.coursesService.getCoursesList({
+            pagination: {
+                offset: 0,
+                limit: 10,
+            },
+            fields: CoursesSelectFields.Short
+        })
 	}
 }

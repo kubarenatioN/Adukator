@@ -212,6 +212,9 @@ export interface CourseBuilderViewData {
 
 export type WrapperType = 'edit' | 'review';
 
+export type CourseMembershipAction = 'enroll' | 'leave' | 'cancel' | 'update'
+export type CourseMembershipStatus = 'pending' | 'approved' | 'rejected'
+
 export type CourseEnrollAction = 
     'enroll' | 
     'approve' | 
@@ -220,7 +223,7 @@ export type CourseEnrollAction =
     'leave' | 
     'lookup'
 
-export interface CourseMembers {
+export interface CourseMembership {
     pending: User[];
     approved: User[];
     rejected: User[];
@@ -236,10 +239,11 @@ export const CourseMembersMap: {
     rejected: 'Rejected', 
 }
 
-export interface GetCourseMembersParams {
+export interface CourseMembershipSearchParams {
     type: 'list' | 'search',
     status: string,
     size: number,
     page: number,
     courseId: string,
+    query?: string
 }
