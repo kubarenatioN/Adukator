@@ -17,14 +17,14 @@
             (click)="enrollCourse(course.uuid)">Записаться</button>
 
             <ng-container *ngIf="enrollStatus$ | async as enrollStatus">
-                <div *ngIf="enrollStatus === 'Pending'">
+                <div *ngIf="enrollStatus === 'pending'">
                     <p>Заявка на рассмотрении</p>
                     <button 
                     [disabled]="isDisabledEnrollActions"
                     mat-raised-button 
                     (click)="cancelCourseEnroll(course.uuid)">Отозвать</button>
                 </div>
-                <div *ngIf="enrollStatus === 'Approved'">
+                <div *ngIf="enrollStatus === 'approved'">
                     <button
                     [disabled]="isDisabledEnrollActions"
                     mat-raised-button 

@@ -5,7 +5,10 @@ import { formatDate } from '../helpers/date-fns.helper';
 	name: 'date',
 })
 export class DatePipe implements PipeTransform {
-	transform(value: string | Date, format?: string): string {
+	transform(value?: string | Date, format?: string): string {
+        if (!value) {
+            return ''
+        }
 		return formatDate(value, format);
 	}
 }
