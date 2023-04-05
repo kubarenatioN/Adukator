@@ -30,7 +30,7 @@ export class TeacherCoursesService {
             switchMap(user => {
                 return this.coursesService.getCourses<TeacherCourses>({
                     requestKey: RequestKey,
-                    id: 'TeacherCourses',
+                    reqId: 'TeacherCourses',
                     type: ['published', 'review'],
                     authorId: user.id,
                     fields: CoursesSelectFields.Short

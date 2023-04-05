@@ -24,12 +24,20 @@
 <ng-template #studentPermissionProfile>
 
     <div class="courses-section" 
-        *ngIf="studentCourses$ | async as courses; else loader">
+        *ngIf="userAsStudentCourses$ | async as courses; else loader">
         <h2>Мои курсы</h2>
-        <div 
-            class="courses-superlist" 
-            *ngIf="courses.length > 0; else noCourses"
-            [ngTemplateOutlet]="coursesSection">
+        <div class="courses-superlist" 
+            *ngIf="courses.length > 0; else noCourses">
+
+            <div class="courses-list">
+                <a class="course-item" *ngFor="let course of courses" [routerLink]="['/app/student/training', course.uuid]">
+                    <div>
+                        <h3>Курс {{course.title}}</h3> 
+                        <span>{{course.uuid}}</span>
+                    </div>
+                </a>
+            </div>
+
         </div>
     </div>
 
@@ -39,23 +47,13 @@
 
 <ng-template #teacherPermissionProfile>
 
-    <div class="courses-section" 
-        *ngIf="studentCourses$ | async as courses; else loader">
-        <h2>Мои курсы</h2>
-        <div 
-            class="courses-superlist" 
-            *ngIf="courses.length > 0; else noCourses"
-            [ngTemplateOutlet]="coursesSection">
-        </div>
-    </div>
-
     <div class="students-section">
         <h2>Еще какой-нибудь раздел в профиле преподавателя</h2>
         <p>Например, информация о студентах, учащихся у этого преподавателя</p>
     </div>
 
 </ng-template>
-
+<!-- 
 <ng-template #coursesSection>
     <div class="courses-list" *ngIf="pendingCourses$ | async as pendingCourses; noCourses">
         <h3 class="courses-list-title">На рассмотрении</h3>
@@ -92,7 +90,7 @@
             </span>
         </a>
     </div>
-</ng-template>
+</ng-template> -->
 
 <ng-template #loader>
     Loading...

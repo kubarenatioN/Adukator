@@ -241,9 +241,9 @@ export const CourseMembersMap: {
 
 export interface CourseMembershipSearchParams {
     type: 'list' | 'search',
-    status: string,
-    size: number,
-    page: number,
     courseId: string,
+    status?: string[],
+    size?: number,
+    page?: number,
     query?: string
 }

@@ -71,8 +71,6 @@ export class ResponseTransformationInterceptor implements HttpInterceptor {
 
     private getBodyTransformFn(reqType: string): (body: any) => Observable<any> {
         if (
-            reqType === NetworkRequestKey.GetCourseById || 
-            reqType === NetworkRequestKey.GetAllCourses || 
             reqType === NetworkRequestKey.GetReviewCourseHistory
         ) {
             return this.transformCoursesBody.bind(this);

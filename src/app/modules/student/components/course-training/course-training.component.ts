@@ -9,6 +9,7 @@ import { CourseTrainingService } from 'src/app/services/course-training.service'
 import { CoursesService } from 'src/app/services/courses.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { CourseModule, ICourseTraining, ModuleTopic } from 'src/app/typings/course.types';
+import { CoursesSelectResponse } from 'src/app/typings/response.types';
 import { isActualTopic } from '../../helpers/course-training.helper';
 
 enum ViewType {
@@ -53,13 +54,15 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
                 if (!courseId) {
                     return of(null)
                 }
-                return this.coursesService.getCourses<ICourseTraining>({
-                    id: 'CourseTraining',
+                return this.coursesService.getCourses<CoursesSelectResponse>({
+                    reqId: 'CourseTraining',
                     type: ['published'],
+                    coursesIds: [courseId],
                     fields: CoursesSelectFields.Full
                 });
             }),
-            map(course => {
+            map(response => {
+                const course = response?.published[0]
                 if (course) {
                     const courseTraining = convertCourseToCourseTraining(course)
                     return new CourseTraining(courseTraining);

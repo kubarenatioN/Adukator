@@ -42,7 +42,7 @@ export class AdminCoursesService {
         return this.coursesService.getCourses<CoursesSelectResponse>({
             requestKey: NetworkRequestKey.GetAdminReviewCourses,
             type: ['review'],
-            id: 'AdminReview',
+            reqId: 'AdminReview',
             fields: CoursesSelectFields.Short
         }).pipe(
             map(response => response.review),

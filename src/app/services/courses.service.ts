@@ -12,22 +12,13 @@ import { UserService } from './user.service';
 })
 export class CoursesService {
     private catalogCoursesStore$ = new BehaviorSubject<Course[]>([]);
-    private resetCoursesCaching$ = new BehaviorSubject<void>(undefined);
-    private resetCoursesForReviewCaching$ = new BehaviorSubject<void>(undefined);
 
     public catalogCourses$: Observable<Course[]>;
-    public courses$: Observable<Course[]>
-    public studentCourses$: Observable<StudentCourse[] | null>
 
 	constructor(private dataService: DataService, private userService: UserService) {
-        this.courses$ = this.getAllCourses()
-        this.studentCourses$ = this.getStudentCourses();
         this.catalogCourses$ = this.catalogCoursesStore$.pipe(
             shareReplay(1)
         )
-
-        this.resetCoursesCaching$.next();
-        this.resetCoursesForReviewCaching$.next();
     }
 
     public getCourseReviewVersion(courseId: string) {
@@ -35,7 +26,7 @@ export class CoursesService {
             switchMap(user => {
                 return this.getCourses<CoursesSelectResponse>({
                     requestKey: NetworkRequestKey.GetCourses,
-                    id: 'CourseReviewVersion',
+                    reqId: 'CourseReviewVersion',
                     type: ['review'],
                     coursesIds: [courseId],
                     fields: CoursesSelectFields.Full,
@@ -64,13 +55,12 @@ export class CoursesService {
     }
 
     // Main generic method to get any course, try to reuse it everywhere
-    public getCourses<T>({ requestKey, type, coursesIds, authorId, studentId, fields, id }: {
+    public getCourses<T>({ requestKey, type, coursesIds, authorId, fields, reqId }: {
         requestKey?: string,
         type: ('published' | 'review')[],
-        id: string,
+        reqId: string,
         coursesIds?: string[],
         authorId?: number,
-        studentId?: number,
         fields?: string[],
     }) {
         const payload = NetworkHelper.createRequestPayload(requestKey ?? NetworkRequestKey.GetCourses, {
@@ -78,10 +68,9 @@ export class CoursesService {
                 type,
                 coursesIds,
                 authorId,
-                studentId,
                 fields: fields ?? []
             },
-            params: { reqId: id }
+            params: { reqId }
         })
 
         return this.dataService.send<T>(payload)
@@ -110,34 +99,28 @@ export class CoursesService {
         return this.dataService.send<unknown>(payload)
     }
 
-    public updateCourse(id: number, form: CourseFormData) {
-        
+    public getStudentCourses(userId: number) {
+        const key = NetworkRequestKey.StudentCourses
+        const payload = NetworkHelper.createRequestPayload(key, {
+            body: {
+                userId,
+                fields: CoursesSelectFields.Short
+            },
+            params: { reqId: 'StudentCourses' }
+        })
+        return this.dataService.send<{ data: { course: Course }[] }>(payload);
     }
 
-    private getAllCourses() {
-        const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetAllCourses)
-		return this.resetCoursesCaching$.pipe(
-            switchMap(() => this.dataService.send<CoursesResponse<Course[]>>(payload)),
-            map(res => res.data),
-            shareReplay(1)
-        )
-	}
-
-    private getStudentCourses() {
-        return this.userService.user$.pipe(
-            switchMap(user => {
-                if (user === null) {
-                    return of(null);
-                }
-
-                const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.GetStudentCourses, {
-                    body: { userId: user.id }
-                })
-                return this.dataService.send<CoursesResponse<StudentCourse[]>>(payload).pipe(
-                    map(res => res.data)
-                )
-            }),
-            shareReplay(1),
-        )
-	}
+    public isTrainingCourseAvailable(courseId: string, userId: number) {
+        const key = NetworkRequestKey.TrainingAvailable
+        const payload = NetworkHelper.createRequestPayload(key, {
+            body: {
+                courseId, userId
+            },
+            params: { reqId: 'IsTrainingAvailable' }
+        })
+        return this.dataService.send<{ isAvailable: boolean }>(payload).pipe(
+            map(res => res.isAvailable)
+        );
+    }
 }

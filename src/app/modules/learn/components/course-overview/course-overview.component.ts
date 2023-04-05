@@ -37,7 +37,7 @@ export class CourseOverviewComponent {
                 const id = String(paramMap.get('id'))
                 if (id) {
                     return this.coursesService.getCourses<CoursesSelectResponse>({
-                        id: 'OverviewCourse',
+                        reqId: 'OverviewCourse',
                         type: ['published'],
                         fields: CoursesSelectFields.Full,
                         coursesIds: [id]

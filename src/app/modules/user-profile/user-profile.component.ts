@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { map, Observable } from 'rxjs';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { CoursesService } from 'src/app/services/courses.service';
+import { StudentCoursesService } from 'src/app/services/student-courses.service';
+import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
 import { UserService } from 'src/app/services/user.service';
 import { Course, CourseReview, StudentCourse } from 'src/app/typings/course.types';
 import { User } from 'src/app/typings/user.types';
@@ -16,37 +18,18 @@ import { User } from 'src/app/typings/user.types';
 export class UserProfileComponent extends CenteredContainerDirective {    
     public user$: Observable<User | null>;
     
-    public studentCourses$!: Observable<StudentCourse[] | null>
+    public userAsStudentCourses$!: Observable<Course[] | null>
+    public userAsTeacherCourses$!: Observable<Course[] | null>
 
-    public pendingCourses$!:Observable<StudentCourse[] | null>
-    public approvedCourses$!:Observable<StudentCourse[] | null>
-    public rejectedCourses$!:Observable<StudentCourse[] | null>
-
-	constructor(private userService: UserService, private router: Router, private coursesService: CoursesService) {
+	constructor(private userService: UserService, private router: Router, private studentCoursesService: StudentCoursesService, private teacherCoursesService: TeacherCoursesService) {
         super();
         this.user$ = this.userService.user$
-        const studentCourses$ = this.coursesService.studentCourses$
-
-        this.studentCourses$ = studentCourses$;
-        this.pendingCourses$ = this.getCoursesByStatus('Pending')
-        this.approvedCourses$ = this.getCoursesByStatus('Approved')
-        this.rejectedCourses$ = this.getCoursesByStatus('Rejected')
+        this.userAsStudentCourses$ = this.studentCoursesService.courses$;
+        
     }
 
     public logOut(): void {
         this.userService.logout()
         this.router.navigate(['/auth'])
-    }
-
-    private getCoursesByStatus(status: string) {
-        return this.studentCourses$.pipe(
-            map(courses => {
-                if (courses === null) {
-                    return null;
-                }
-                const filteredCourses = courses.filter(c => c.status === status)
-                return filteredCourses.length > 0 ? filteredCourses : null
-            })
-        )
     }
 }
