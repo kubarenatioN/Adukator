@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, catchError, map, merge, Observable, of, Subject, Subscription, switchMap, throwError, withLatestFrom, combineLatest, shareReplay } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, Subscription, switchMap, throwError, withLatestFrom, combineLatest, shareReplay } from 'rxjs';
 import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
-import { parseModules } from 'src/app/helpers/courses.helper';
 import { ConfigService } from 'src/app/services/config.service';
 import { CourseManagementService } from 'src/app/services/course-management.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UserService } from 'src/app/services/user.service';
-import { Course, CourseEnrollAction, CourseMembershipAction, CourseModule, ICourseTraining } from 'src/app/typings/course.types';
-import { CourseEnrollResponse, CoursesSelectResponse } from 'src/app/typings/response.types';
+import { Course, CourseMembershipAction, CourseModule } from 'src/app/typings/course.types';
+import { CoursesSelectResponse } from 'src/app/typings/response.types';
 
 @Component({
 	selector: 'app-course-overview',

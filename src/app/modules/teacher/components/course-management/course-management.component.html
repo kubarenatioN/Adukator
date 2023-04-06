@@ -35,7 +35,7 @@
                     class="student-item"    
                     *ngFor="let user of approvedMembers"
                     [user]="user"
-                    type="Approved"
+                    status="approved"
                     (expel)="onExpel($event)"
                 >                
                 </app-course-member>

@@ -3,10 +3,9 @@ import {
 	Component,
 	EventEmitter,
 	Input,
-	OnInit,
     Output,
 } from '@angular/core';
-import { CourseMemberStatus } from 'src/app/typings/course.types';
+import { CourseMembershipStatus } from 'src/app/typings/course.types';
 import { User } from 'src/app/typings/user.types';
 
 @Component({
@@ -17,7 +16,7 @@ import { User } from 'src/app/typings/user.types';
 })
 export class CourseMemberComponent {
 	@Input() public user!: User;
-	@Input() public type!: CourseMemberStatus;
+	@Input() public status!: string;
 
     @Output() public enroll = new EventEmitter<number>();
     @Output() public expel = new EventEmitter<number>();
