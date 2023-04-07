@@ -31,7 +31,7 @@ export class CourseManagementService {
     }
 
 	public setCourseMembershipStatus(
-		usersIds: number[],
+		usersIds: string[],
 		courseId: string,
         status: CourseMembershipStatus,
 	) {
@@ -49,7 +49,7 @@ export class CourseManagementService {
     }
 
 	public updateEnrollment(
-		usersIds: number[],
+		usersIds: string[],
 		courseId: string,
         action: CourseMembershipAction
 	) {
@@ -65,7 +65,7 @@ export class CourseManagementService {
         return this.sendMembershipRequest(payload);
 	}
 
-    public lookupEnrollment(usersIds: number[], courseId: string) {
+    public lookupEnrollment(usersIds: string[], courseId: string) {
         const key = NetworkRequestKey.CourseMembershipLookup;
         const payload = NetworkHelper.createRequestPayload(key, {
             body: {

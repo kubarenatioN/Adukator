@@ -19,7 +19,7 @@ export class UserService {
         return this.userStore$.pipe(map(user => user !== null))
     }
 
-    public get userId(): number | null {
+    public get userId(): string | null {
         return this.userStore$.value?.uuid ?? null
     }
 

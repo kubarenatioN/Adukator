@@ -14,7 +14,7 @@
                     class="student-item"    
                     *ngFor="let user of pendingMembers"
                     [user]="user"
-                    type="Pending"
+                    status="pending"
                     (enroll)="onApproveEnroll($event)"   
                 >                
                 </app-course-member>

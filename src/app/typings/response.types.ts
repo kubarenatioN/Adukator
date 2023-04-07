@@ -21,7 +21,7 @@ export interface CourseReviewHistory {
 
 export interface CourseEnrollResponseData {
     _id: string;
-    userId?: number;
+    userId?: string;
     courseId?: number;
     status: string
 }

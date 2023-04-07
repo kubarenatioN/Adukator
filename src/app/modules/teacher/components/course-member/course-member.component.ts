@@ -18,21 +18,21 @@ export class CourseMemberComponent {
 	@Input() public user!: User;
 	@Input() public status!: string;
 
-    @Output() public enroll = new EventEmitter<number>();
-    @Output() public expel = new EventEmitter<number>();
-    @Output() public reject = new EventEmitter<number>();
+    @Output() public enroll = new EventEmitter<string>();
+    @Output() public expel = new EventEmitter<string>();
+    @Output() public reject = new EventEmitter<string>();
 
 	constructor() {}
 
-    public onEnroll(userId: number) {
+    public onEnroll(userId: string) {
         this.enroll.emit(userId);
     }
 
-    public onExpel(userId: number) {
+    public onExpel(userId: string) {
         this.expel.emit(userId);
     }
 
-    public onReject(userId: number) {
+    public onReject(userId: string) {
         this.reject.emit(userId);
     }
 }

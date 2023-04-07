@@ -169,7 +169,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
         return formData
     }
 
-    private getMasterCourseMetadata(authorId: number): CourseFormMetadata {
+    private getMasterCourseMetadata(authorId: string): CourseFormMetadata {
         return {
             uuid: generateUUID(),
             authorId,

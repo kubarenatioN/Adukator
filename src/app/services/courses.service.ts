@@ -60,7 +60,7 @@ export class CoursesService {
         type: ('published' | 'review')[],
         reqId: string,
         coursesIds?: string[],
-        authorId?: number,
+        authorId?: string,
         fields?: string[],
     }) {
         const payload = NetworkHelper.createRequestPayload(requestKey ?? NetworkRequestKey.GetCourses, {
@@ -99,7 +99,7 @@ export class CoursesService {
         return this.dataService.send<unknown>(payload)
     }
 
-    public getStudentCourses(userId: number) {
+    public getStudentCourses(userId: string) {
         const key = NetworkRequestKey.StudentCourses
         const payload = NetworkHelper.createRequestPayload(key, {
             body: {
@@ -111,7 +111,7 @@ export class CoursesService {
         return this.dataService.send<{ data: StudentCourse[] }>(payload);
     }
 
-    public isTrainingCourseAvailable(courseId: string, userId: number) {
+    public isTrainingCourseAvailable(courseId: string, userId: string) {
         const key = NetworkRequestKey.TrainingAvailable
         const payload = NetworkHelper.createRequestPayload(key, {
             body: {

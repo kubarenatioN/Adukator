@@ -108,12 +108,12 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
         })
     }
 
-    public onApproveEnroll(userId: number) {
-        this.courseManagement.setCourseMembershipStatus([userId], this.courseId, EnrollStatus.Approved)
+    public onApproveEnroll(userId: string) {
+        this.courseManagement.setCourseMembershipStatus([userId], this.courseId, EnrollStatus.Approved).subscribe()
     }
 
-    public onExpel(userId: number) {
-        this.courseManagement.setCourseMembershipStatus([userId], this.courseId, EnrollStatus.Rejected)
+    public onExpel(userId: string) {
+        this.courseManagement.setCourseMembershipStatus([userId], this.courseId, EnrollStatus.Rejected).subscribe()
     }
 
     public refreshMembersList(status: keyof CourseMembershipMap): void {

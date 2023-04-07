@@ -96,7 +96,7 @@ interface CourseCore {
 	description: string;
 	category: string;
     advantages?: string;
-    authorId: number;
+    authorId: string;
     competencies: {
         acquired: string[],
         required: string[],
@@ -174,7 +174,7 @@ export interface ICourseTraining extends CourseCore {
 export interface CourseFormMetadata {
     _id?: string;
     uuid: string;
-    authorId: number;
+    authorId: string;
     masterCourseId: string | null;
     status?: CourseReviewStatus;
 }
