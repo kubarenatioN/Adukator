@@ -138,7 +138,8 @@ export interface TeacherCourses {
 }
 
 
-export interface StudentCourse extends Course {
+export interface StudentCourse {
+    course: Course,
     status: string
     active: boolean
 }
@@ -228,7 +229,7 @@ export interface CourseMembershipMap {
 export interface CourseMembershipSearchParams {
     type: 'list' | 'search',
     courseId: string,
-    status?: CourseMembershipStatus[],
+    status?: CourseMembershipStatus,
     size?: number,
     page?: number,
     query?: string

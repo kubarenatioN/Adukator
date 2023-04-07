@@ -11,23 +11,22 @@ import { DataRequestPayload, DataService } from './data.service';
 	providedIn: 'root',
 })
 export class CourseManagementService {
-    
-    
-
 	constructor(private dataService: DataService) {
         
     }
 
     public getCourseMembers(reqParams: CourseMembershipSearchParams) {
         const payload = NetworkHelper.createRequestPayload(NetworkRequestKey.CourseMembers, {
+            body: {
+                ...reqParams
+            },
             params: {
-                ...reqParams,
-                reqId: 'GetCourseMembers'
+                reqId: 'CourseMembers'
             }
         })
         
-        return this.dataService.send<CoursesResponse<CourseMembershipMap>>(payload).pipe(
-            map(res => res.data)
+        return this.dataService.send<{ data: { user: User }[] }>(payload).pipe(
+            map(res => res.data.map(item => item.user))
         );
     }
 

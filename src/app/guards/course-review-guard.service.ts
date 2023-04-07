@@ -45,7 +45,7 @@ export class CourseReviewGuardService implements CanActivate {
                     }
                     return this.router.parseUrl(`/app/learn/catalog`)
                 }
-                return courseForReview?.authorId === user?.id
+                return courseForReview?.authorId === user?.uuid
             })
         )
     }

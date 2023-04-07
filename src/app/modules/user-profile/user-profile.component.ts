@@ -6,7 +6,7 @@ import { CoursesService } from 'src/app/services/courses.service';
 import { StudentCoursesService } from 'src/app/services/student-courses.service';
 import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
 import { UserService } from 'src/app/services/user.service';
-import { Course, CourseReview, StudentCourse } from 'src/app/typings/course.types';
+import { Course, CourseMembershipStatus, CourseReview, StudentCourse } from 'src/app/typings/course.types';
 import { User } from 'src/app/typings/user.types';
 
 @Component({
@@ -18,13 +18,20 @@ import { User } from 'src/app/typings/user.types';
 export class UserProfileComponent extends CenteredContainerDirective {    
     public user$: Observable<User | null>;
     
-    public userAsStudentCourses$!: Observable<Course[] | null>
-    public userAsTeacherCourses$!: Observable<Course[] | null>
+    private userAsStudentCourses$ = this.studentCoursesService.courses$
+    private userAsTeacherCourses$!: Observable<StudentCourse[] | null>
+
+    public studentPendingCourses$ = this.userAsStudentCourses$.pipe(
+        map(membership => membership?.filter(item => item.status === CourseMembershipStatus.Pending).map(membership => membership.course))
+    )
+
+    public studentApprovedCourses$ = this.userAsStudentCourses$.pipe(
+        map(membership => membership?.filter(item => item.status === CourseMembershipStatus.Approved).map(membership => membership.course))
+    )
 
 	constructor(private userService: UserService, private router: Router, private studentCoursesService: StudentCoursesService, private teacherCoursesService: TeacherCoursesService) {
         super();
         this.user$ = this.userService.user$
-        this.userAsStudentCourses$ = this.studentCoursesService.courses$;
         
     }
 

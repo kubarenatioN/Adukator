@@ -23,22 +23,31 @@
 
 <ng-template #studentPermissionProfile>
 
-    <div class="courses-section" 
-        *ngIf="userAsStudentCourses$ | async as courses; else loader">
+    <div class="courses-section">
         <h2>Мои курсы</h2>
-        <div class="courses-superlist" 
-            *ngIf="courses.length > 0; else noCourses">
 
-            <div class="courses-list">
-                <a class="course-item" *ngFor="let course of courses" [routerLink]="['/app/student/training', course.uuid]">
-                    <div>
-                        <h3>Курс {{course.title}}</h3> 
-                        <span>{{course.uuid}}</span>
-                    </div>
-                </a>
-            </div>
-
+        <div *ngIf="studentApprovedCourses$ | async as courses; else loader">
+            <h3>Зачислен</h3>
+            <ng-container *ngIf="courses.length > 0; else noCourses">
+                <div class="courses-list">
+                    <ng-container *ngFor="let course of courses"
+                    [ngTemplateOutlet]="approvedCourse"
+                    [ngTemplateOutletContext]="{ course }"></ng-container>
+                </div>
+            </ng-container>
         </div>
+
+        <div *ngIf="studentPendingCourses$ | async as courses; else loader">
+            <h3>В ожидании</h3>
+            <ng-container *ngIf="courses.length > 0; else noCourses">
+                <div class="courses-list">
+                    <ng-container *ngFor="let course of courses"
+                    [ngTemplateOutlet]="pendingCourse"
+                    [ngTemplateOutletContext]="{ course }"></ng-container>
+                </div>
+            </ng-container>
+        </div>
+
     </div>
 
     <h2>Еще какой-нибудь раздел в профиле студента</h2>
@@ -53,49 +62,35 @@
     </div>
 
 </ng-template>
-<!-- 
-<ng-template #coursesSection>
-    <div class="courses-list" *ngIf="pendingCourses$ | async as pendingCourses; noCourses">
-        <h3 class="courses-list-title">На рассмотрении</h3>
-        <a class="course-item" *ngFor="let course of pendingCourses" [routerLink]="['/app/learn/course/overview', course.uuid]">
-            <p>
-                Курс {{course.uuid}} {{course.title}}
-            </p>
-            <span class="course-status">
-                {{course.status}}
-            </span>
-        </a>
-    </div>
-    
-    <div class="courses-list" *ngIf="approvedCourses$ | async as approvedCourses; noCourses">
-        <h3 class="courses-list-title">Активные</h3>
-        <a class="course-item" *ngFor="let course of approvedCourses" [routerLink]="['/app/student/training', course.uuid]">
-            <p>
-                Курс {{course.uuid}} {{course.title}}
-            </p>
-            <span class="course-status">
-                {{course.status}}
-            </span>
-        </a>
-    </div>
-    
-    <div class="courses-list" *ngIf="rejectedCourses$ | async as rejectedCourses; noCourses">
-        <h3 class="courses-list-title">Отклоненные</h3>
-        <a class="course-item" *ngFor="let course of rejectedCourses" [routerLink]="['/app/learn/course/overview', course.uuid]">
-            <p>
-                Курс {{course.uuid}} {{course.title}}
-            </p>
-            <span class="course-status">
-                {{course.status}}
-            </span>
-        </a>
-    </div>
-</ng-template> -->
+
+<ng-template #pendingCourse let-course="course">
+    <a class="course-item" 
+    [routerLink]="['/app/learn/course/overview', course.uuid]">
+        <p>
+            {{course.title}}
+        </p>
+        <span class="course-status">
+            Pending
+        </span>
+    </a>
+</ng-template>
+
+<ng-template #approvedCourse let-course="course">
+    <a class="course-item" 
+    [routerLink]="['/app/student/training', course.uuid]">
+        <p>
+            {{course.title}}
+        </p>
+        <span class="course-status">
+            Approved
+        </span>
+    </a>
+</ng-template>
 
 <ng-template #loader>
     Loading...
 </ng-template>
 
 <ng-template #noCourses>
-    Вы пока не записаны ни на один курс.
+    Здесь пусто ;(
 </ng-template>

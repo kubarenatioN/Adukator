@@ -82,16 +82,29 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
     }
 
     public getInitialMembers(courseId: string) {
-        this.courseManagement.getCourseMembers({
-            type: 'list',
-            status: [
-                EnrollStatus.Pending,
-                EnrollStatus.Approved,
-                EnrollStatus.Rejected,
-            ],
-            courseId,
-        }).subscribe(data => {
-            this.courseMembershipStore$.next(data);
+        combineLatest([
+            this.courseManagement.getCourseMembers({
+                type: 'list',
+                status: EnrollStatus.Pending,
+                courseId,
+                size: 10,
+                page: 0,
+            }),
+            this.courseManagement.getCourseMembers({
+                type: 'list',
+                status: EnrollStatus.Approved,
+                courseId,
+                size: 10,
+                page: 0,
+            }),
+        ])
+        .subscribe(([pending, approved]) => {
+            const store = this.courseMembershipStore$.value;
+            this.courseMembershipStore$.next({
+                pending: pending,
+                approved: approved,
+                rejected: store.rejected,
+            });
         })
     }
 

@@ -20,7 +20,7 @@ export class UserService {
     }
 
     public get userId(): number | null {
-        return this.userStore$.value?.id ?? null
+        return this.userStore$.value?.uuid ?? null
     }
 
     public isAdmin$: Observable<boolean>;
@@ -63,7 +63,7 @@ export class UserService {
     }
 
     public isCourseOwner(course: Course): Observable<boolean> {
-        return this.user$.pipe(map(user => user?.role === 'teacher' && user?.id === course.authorId))
+        return this.user$.pipe(map(user => user?.role === 'teacher' && user?.uuid === course.authorId))
     }
 
     public getUserById(userId: number): Observable<User | null> {

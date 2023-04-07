@@ -30,7 +30,7 @@ export class CoursesService {
                     type: ['review'],
                     coursesIds: [courseId],
                     fields: CoursesSelectFields.Full,
-                    authorId: user.role === 'teacher' ? user.id : undefined
+                    authorId: user.role === 'teacher' ? user.uuid : undefined
                 })
             }),
             map(response => response.review[0])
@@ -108,7 +108,7 @@ export class CoursesService {
             },
             params: { reqId: 'StudentCourses' }
         })
-        return this.dataService.send<{ data: { course: Course }[] }>(payload);
+        return this.dataService.send<{ data: StudentCourse[] }>(payload);
     }
 
     public isTrainingCourseAvailable(courseId: string, userId: number) {

@@ -32,7 +32,7 @@ export class TeacherCoursesService {
                     requestKey: RequestKey,
                     reqId: 'TeacherCourses',
                     type: ['published', 'review'],
-                    authorId: user.id,
+                    authorId: user.uuid,
                     fields: CoursesSelectFields.Short
                 })
             }),

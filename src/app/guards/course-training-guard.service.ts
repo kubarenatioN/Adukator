@@ -41,7 +41,7 @@ export class CourseTrainingGuardService implements CanActivate {
 			switchMap((user) => {
 				return this.coursesService.isTrainingCourseAvailable(
 					courseId,
-					user.id
+					user.uuid
 				);
 			}),
 			map((isAvailable) => {

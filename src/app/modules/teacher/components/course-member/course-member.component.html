@@ -23,11 +23,11 @@
 
 <ng-template #approvedActions>
 	<button mat-stroked-button>Прогресс</button>
-	<button mat-stroked-button (click)="onExpel(user.id)">Исключить</button>
+	<button mat-stroked-button (click)="onExpel(user.uuid)">Исключить</button>
 </ng-template>
 
 <ng-template #pendingActions>
 	<button mat-stroked-button>Статус</button>
-	<button mat-stroked-button (click)="onEnroll(user.id)">Зачислить</button>
-	<button mat-stroked-button (click)="onReject(user.id)">Отклонить</button>
+	<button mat-stroked-button (click)="onEnroll(user.uuid)">Зачислить</button>
+	<button mat-stroked-button (click)="onReject(user.uuid)">Отклонить</button>
 </ng-template>

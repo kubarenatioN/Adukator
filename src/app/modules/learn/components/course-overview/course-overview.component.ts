@@ -75,7 +75,7 @@ export class CourseOverviewComponent {
         ]).pipe(
             switchMap(([_, course, user]) => {
                 if (course && user) {
-                    return this.courseManagement.lookupEnrollment([user.id], course.uuid)
+                    return this.courseManagement.lookupEnrollment([user.uuid], course.uuid)
                 }
                 return of(null);
             }),
@@ -85,7 +85,7 @@ export class CourseOverviewComponent {
                     return null;
                 }
                 const { data, action } = result
-                const userEnrollmentIndex = data.findIndex(record => record.userId == user?.id)
+                const userEnrollmentIndex = data.findIndex(record => record.userId == user.uuid)
                 if (action === 'lookup' && userEnrollmentIndex !== -1) {
                     return data[userEnrollmentIndex].status;
                 }
@@ -121,7 +121,7 @@ export class CourseOverviewComponent {
             .pipe(
                 switchMap(user => {
                     if (user) {
-                        return this.courseManagement.updateEnrollment([user.id], courseId, action)
+                        return this.courseManagement.updateEnrollment([user.uuid], courseId, action)
                     }
                     return throwError(() => new Error('No user'))
                 }),

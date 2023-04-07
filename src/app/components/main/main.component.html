@@ -8,7 +8,7 @@
     </div>
     <div class="profile">
         <ng-container *ngIf="user$ | async as user">
-            <a [routerLink]="['/app/user', 'me']" class="user-info">
+            <a [routerLink]="['/app/user', user.uuid]" class="user-info">
                 <span class="user-name">
                     {{user.username}}
                 </span>

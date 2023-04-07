@@ -83,7 +83,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
                 switchMap(([params, user]) => {
                     const { mode } = this.activatedRoute.snapshot.data as { mode: CourseFormViewMode };
                     if (mode === CourseFormViewMode.Create) {
-                        this.courseMetadata = this.getMasterCourseMetadata(user.id)
+                        this.courseMetadata = this.getMasterCourseMetadata(user.uuid)
                         return of(getEmptyCourseFormData(generateUUID()));
                     } else {
                         const courseId = String(params.get('id'));
