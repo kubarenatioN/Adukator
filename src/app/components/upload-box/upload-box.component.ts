@@ -2,6 +2,7 @@ import { HttpEvent, HttpEventType, HttpProgressEvent } from '@angular/common/htt
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { BehaviorSubject, map, Observable } from 'rxjs';
+import { CourseBuilderService } from 'src/app/modules/course-builder/services/course-builder.service';
 import { DataService } from 'src/app/services/data.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { CloudinaryFile, UserFile } from 'src/app/typings/files.types';
@@ -19,6 +20,8 @@ export class UploadBoxComponent implements OnInit {
 
     public filesStore = new Map<string, { userFile: UserFile, uploadFile?: File }>();
 
+    @Input() public controlId!: string;
+    @Input() public tempFolder?: string;
     @Input() public control?: FormControl;
     @Input() public label?: string;
     @Input() public preloadExisting: boolean = false;
@@ -29,7 +32,6 @@ export class UploadBoxComponent implements OnInit {
             return;
         }
         this._folder = value;
-        // TODO: apply files from cache
     };
     @Input() public set files(files: UserFile[]) {
         files.forEach(file => this.filesStore.set(file.filename, {
@@ -48,13 +50,23 @@ export class UploadBoxComponent implements OnInit {
         return `fileInput-${this.folder}`;
     }
 
-	constructor(private uploadService: UploadService, private cd: ChangeDetectorRef) {
+	constructor(private uploadService: UploadService, private cd: ChangeDetectorRef, private courseBuilder: CourseBuilderService) {
 
     }
 
 	public ngOnInit(): void {
-        if (this.type === 'upload' && this.preloadExisting || this.type === 'download') {
-            this.getFilesFromFolder(this.folder).subscribe((files: UserFile[]) => {
+        const cachedFiles = this.restoreFilesFromCache(this.controlId)
+        if (cachedFiles.length > 0) {
+            cachedFiles.forEach(file => this.filesStore.set(file.filename, {
+                userFile: file
+            }))
+            this.cd.detectChanges();
+        } else {
+            // Get files via network
+        }
+
+        if (this.type === 'download') {
+            this.getFilesFromFolder(this.folder, 'remote').subscribe((files: UserFile[]) => {
                 files.forEach(file => this.filesStore.set(file.filename, {
                     userFile: file
                 }))
@@ -91,10 +103,15 @@ export class UploadBoxComponent implements OnInit {
                 uploadFile: file,
             });
         })
+        this.uploadFilesChanged.emit([...this.filesStore.values()].map(({ userFile }) => userFile.filename))
     }
 
-    public onRemove({ filename }: UserFile) {
-        this.filesStore.delete(filename)
+    public onRemove(file: UserFile) {
+        this.filesStore.delete(file.filename)
+        if (this.tempFolder) {
+            this.uploadService.removeTempFile(file.filename, this.tempFolder).subscribe()
+            this.courseBuilder.removeFileFromCache(this.controlId, file)
+        }
     }
 
     public onDownload({ filename, url }: UserFile) {
@@ -103,8 +120,12 @@ export class UploadBoxComponent implements OnInit {
         }
     }
 
-    private getFilesFromFolder(folder: string): Observable<UserFile[]> {
-        return this.uploadService.getFilesFromFolder(folder)
+    public onUpload(file: UserFile) {
+        this.courseBuilder.addFileToCache(this.controlId, file)
+    }
+
+    private getFilesFromFolder(folder: string, type: 'temp' | 'remote'): Observable<UserFile[]> {
+        return this.uploadService.getFilesFromFolder(folder, type)
             .pipe(
                 map(res => {
                     const { resources } = res;
@@ -122,6 +143,11 @@ export class UploadBoxComponent implements OnInit {
             filename: file.name,
             uploadedAt: new Date().toString()
         }
+    }
+
+    private restoreFilesFromCache(key: string) {
+        const files = this.courseBuilder.filesCache.get(key) ?? []
+        return files
     }
 
     private clearBox() {

@@ -5,6 +5,7 @@ import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { UploadHelper } from 'src/app/helpers/upload.helper';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { CourseHierarchyComponent, WrapperType } from 'src/app/typings/course.types';
+import { CourseBuilderService } from '../../services/course-builder.service';
 
 type SectionType = 'materials' | 'theory' | 'practice' | 'test'
 
@@ -16,6 +17,7 @@ type SectionType = 'materials' | 'theory' | 'practice' | 'test'
 })
 export class ModuleTopicComponent extends BaseComponent implements OnInit {
     private _form!: FormGroup;
+    private courseId: string | null = null;
 
     @Input() public set form(form: FormGroup) {
         this._form = form;
@@ -34,6 +36,14 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
     
     public get form() {
         return this._form;
+    }
+    
+    public get tempUploadFolder(): string {
+        return this.courseId || '';
+    }
+    
+    public get controlId(): string {
+        return this._form.value.id;
     }
     
     public get practiceFormGroup() {
@@ -59,8 +69,10 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
         test: false,
     }
 
-	constructor(private fbHelper: FormBuilderHelper) {
+	constructor(private fbHelper: FormBuilderHelper,
+        private courseBuilderService: CourseBuilderService) {
         super()
+        this.courseId = courseBuilderService.courseId;
     }
 
 	public ngOnInit(): void { 

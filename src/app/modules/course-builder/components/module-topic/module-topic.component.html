@@ -45,6 +45,8 @@
         <app-upload-box
             class="upload-box"      
             [folder]="uploadFolder"
+            [tempFolder]="tempUploadFolder"
+            [controlId]="controlId"
             type="upload"
             (uploadFilesChanged)="onUploadFilesChanged($event)"></app-upload-box>
     </div>

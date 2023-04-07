@@ -22,8 +22,10 @@ import {
 import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
+import { UploadService } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
 import { CourseBuilderViewData, CourseBuilderViewType, CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseModule, CourseReview, CourseReviewStatus } from 'src/app/typings/course.types';
+import { CourseBuilderService } from '../../services/course-builder.service';
 
 @Component({
 	selector: 'app-create-course',
@@ -49,6 +51,8 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 		private coursesService: CoursesService,
 		private teacherCoursesService: TeacherCoursesService,
 		private adminCoursesService: AdminCoursesService,
+		private courseBuilderService: CourseBuilderService,
+        private uploadService: UploadService,
 	) {
         super();
         this.modules$ = this.modulesStore$.asObservable();
@@ -97,6 +101,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
                     if (course !== null && !isEmptyCourseFormData(course)) {
                         this.courseMetadata = this.cloneParentCourseMetadata(course)
                     }
+                    this.courseBuilderService.courseId = course.uuid
                 }),
                 shareReplay(1),    
             )
@@ -126,6 +131,13 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
             .subscribe((res) => {
                 console.log('course review new version created!', res);
             });
+
+        const courseId = this.courseBuilderService.courseId;
+        this.uploadService.moveFilesToRemote(courseId).subscribe(res => {
+            console.log('Moved files to remote', res)
+        }, err => {
+            console.warn('Error uploading files to remote.', err);
+        })
 	}
 
     public onPublish(formData: CourseFormData): void {

@@ -1,31 +1,34 @@
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { from, map, Observable } from 'rxjs';
+import { BehaviorSubject, from, map, Observable } from 'rxjs';
 import { apiUrl } from '../constants/urls';
+import { UserFile } from '../typings/files.types';
 import { CourseFilesResponse } from '../typings/response.types';
 
 @Injectable({
 	providedIn: 'root',
 })
-export class UploadService {
+export class UploadService {    
 	constructor(private http: HttpClient) {}
 
-	public uploadFile(file: File, folder: string): Observable<HttpEvent<Object>> {
+	public uploadFile(tempFolder: string, file: File, remoteFolder: string) {
 		const formData = new FormData();
+		formData.append('tempFolder', tempFolder);
 		formData.append('file', file);
-		formData.append('folder', folder);
-		// formData.append('folder', 'course-1/module-3/topic-4')
-		return this.http.post(`${apiUrl}/upload`, formData, {
+		formData.append('folder', remoteFolder);
+        
+		return this.http.post<{ filename: string, file: UserFile }>(`${apiUrl}/upload`, formData, {
             reportProgress: true,
             observe: 'events',
         });
 	}
-
-	public getFilesFromFolder(folder: string): Observable<CourseFilesResponse> {
+    
+	public getFilesFromFolder(folder: string, type: 'temp' | 'remote'): Observable<CourseFilesResponse> {
 		folder = encodeURIComponent(folder);
 		return this.http
 			.get<CourseFilesResponse>(`${apiUrl}/upload/files`, {
 				params: {
+                    type,
 					folder,
 				},
 			})
@@ -64,4 +67,17 @@ export class UploadService {
 			})
 		);
 	}
+
+	public removeTempFile(filename: string, folder: string) {
+		return this.http.post(`${apiUrl}/upload/temp/delete`, {
+            filename,
+            folder
+        })
+	}
+
+    public moveFilesToRemote(tempFolder: string | null) {
+        return this.http.post(`${apiUrl}/upload/remote`, {
+            tempFolder
+        })
+    }
 }
