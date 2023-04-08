@@ -39,7 +39,7 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
     }
     
     public get tempUploadFolder(): string {
-        return this.courseId || '';
+        return `${this.courseId}/topics/${this._form.value.id}` || '';
     }
     
     public get controlId(): string {

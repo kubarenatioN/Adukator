@@ -126,11 +126,12 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 
         const courseData = convertCourseFormDataToCourseReview(formData);
         console.log('111 converted course form', courseData);
+        
         // TODO: Uncomment method below
-        this.coursesService.createCourseReviewVersion(courseData, { isMaster })
-            .subscribe((res) => {
-                console.log('course review new version created!', res);
-            });
+        // this.coursesService.createCourseReviewVersion(courseData, { isMaster })
+        //     .subscribe((res) => {
+        //         console.log('course review new version created!', res);
+        //     });
 
         const courseId = this.courseBuilderService.courseId;
         this.uploadService.moveFilesToRemote(courseId).subscribe(res => {

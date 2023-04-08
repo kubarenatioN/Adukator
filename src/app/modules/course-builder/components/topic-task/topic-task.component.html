@@ -6,10 +6,12 @@
     <div class="field">
         <h3>Ресурсы</h3>
         <app-upload-box 
-        class="upload-box" 
-        type="upload"
-        [folder]="uploadPath"
-        (uploadFilesChanged)="onUploadFilesChanged($event)"></app-upload-box>
+            class="upload-box" 
+            type="upload"
+            [folder]="uploadPath"
+            [tempFolder]="tempFolder"
+            [controlId]="controlId"
+            (uploadFilesChanged)="onUploadFilesChanged($event)"></app-upload-box>
     </div>
 
 </form>

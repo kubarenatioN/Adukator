@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 import { FormGroup } from '@angular/forms';
 import { UploadHelper } from 'src/app/helpers/upload.helper';
 import { WrapperType } from 'src/app/typings/course.types';
+import { CourseBuilderService } from '../../services/course-builder.service';
 
 @Component({
 	selector: 'app-topic-task',
@@ -11,7 +12,17 @@ import { WrapperType } from 'src/app/typings/course.types';
 })
 export class TopicTaskComponent implements OnInit {
     private _form!: FormGroup;
+    private courseId: string | null = null;
+
     public uploadPath = ''
+
+    public get tempFolder(): string {
+        return `${this.courseId}/tasks/${this.form.value.id}` || '';
+    }
+
+    public get controlId(): string {
+        return this.form.value.id;
+    }
     
     public get form() {
         return this._form;
@@ -26,7 +37,9 @@ export class TopicTaskComponent implements OnInit {
 
     @Output() public remove = new EventEmitter<void>();
 
-	constructor() {}
+	constructor(private courseBuilder: CourseBuilderService) {
+        this.courseId = courseBuilder.courseId
+    }
 
     ngOnInit(): void {
 
