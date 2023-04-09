@@ -3,6 +3,7 @@ import { FormArray, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { UploadHelper } from 'src/app/helpers/upload.helper';
+import { UploadService } from 'src/app/services/upload.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { CourseHierarchyComponent, WrapperType } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
@@ -17,12 +18,11 @@ type SectionType = 'materials' | 'theory' | 'practice' | 'test'
 })
 export class ModuleTopicComponent extends BaseComponent implements OnInit {
     private _form!: FormGroup;
-    private courseId: string | null = null;
+    private courseId: string;
 
     @Input() public set form(form: FormGroup) {
         this._form = form;
-        this.uploadFolder = this.courseBuilderService.getFilesFolder('topics', this._form.value.id);
-        this.tempUploadFolder = this.courseBuilderService.getFilesFolder('topics', this._form.value.id)
+        this.uploadFolder = this.uploadService.getFilesFolder(this.courseId, 'topics', this._form.value.id);
         this.activeSections = {
             materials: form.value.materials && form.value.materials.length > 0,
             theory: form.value.theory,
@@ -34,7 +34,6 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
     @Output() public saveTopic = new EventEmitter<FormGroup>();
 
     public uploadFolder: string = '';
-    public tempUploadFolder: string = '';
     
     public get form() {
         return this._form;
@@ -73,7 +72,8 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
 
 	constructor(
         private fbHelper: FormBuilderHelper,
-        private courseBuilderService: CourseBuilderService
+        private courseBuilderService: CourseBuilderService,
+        private uploadService: UploadService
     ) {
         super()
         this.courseId = this.courseBuilderService.courseId;

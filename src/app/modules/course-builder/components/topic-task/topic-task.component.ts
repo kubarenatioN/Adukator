@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UploadHelper } from 'src/app/helpers/upload.helper';
+import { UploadService } from 'src/app/services/upload.service';
 import { WrapperType } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
 
@@ -12,10 +13,9 @@ import { CourseBuilderService } from '../../services/course-builder.service';
 })
 export class TopicTaskComponent implements OnInit {
     private _form!: FormGroup;
-    private courseId: string | null = null;
+    private courseId: string;
 
-    public uploadPath = ''
-    public tempFolder = ''
+    public uploadFolder = ''
 
     public get controlId(): string {
         return this.form.value.id;
@@ -33,13 +33,12 @@ export class TopicTaskComponent implements OnInit {
 
     @Input() public set form(value: FormGroup) {
         this._form = value;
-        this.uploadPath = this.courseBuilder.getFilesFolder('tasks', this.form.value.id)
-        this.tempFolder = this.courseBuilder.getFilesFolder('tasks', this.form.value.id)
+        this.uploadFolder = this.uploadService.getFilesFolder(this.courseId, 'tasks', this.form.value.id)
     }
 
     @Output() public remove = new EventEmitter<void>();
 
-	constructor(private courseBuilder: CourseBuilderService) {
+	constructor(private courseBuilder: CourseBuilderService, private uploadService: UploadService) {
         this.courseId = this.courseBuilder.courseId
     }
 

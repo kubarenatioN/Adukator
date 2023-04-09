@@ -27,7 +27,7 @@ export class TrainingTaskComponent implements OnInit {
     @Output() public send = new EventEmitter<TaskAnswer>()
 
     public form;
-    public uploadFolder: string | null = null;
+    public uploadFolder: string = 'fixme';
     public uploadLabel = UploadLabel;
 
 	constructor(private trainingService: CourseTrainingService, private fbHelper: FormBuilderHelper) {

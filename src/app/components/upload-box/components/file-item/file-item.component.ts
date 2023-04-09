@@ -23,7 +23,6 @@ export class FileItemComponent implements OnInit {
     
     public progress: string = this.formatProgress(1);
     
-	@Input() tempFolder?: string;
 	@Input() folder!: string;
 	@Input() userFile!: UserFile;
 	@Input() file?: File;
@@ -37,8 +36,8 @@ export class FileItemComponent implements OnInit {
 	constructor(private uploadService: UploadService, private cd: ChangeDetectorRef) {}
 
 	ngOnInit(): void {
-        if (this.type === 'upload' && this.file && this.folder && this.tempFolder) {
-            this.uploadService.uploadFile(this.tempFolder, this.file, this.folder)
+        if (this.type === 'upload' && this.file && this.folder) {
+            this.uploadService.uploadFile(this.folder, this.file, 'folder-to-be-removed')
                 .subscribe(e => this.handleUploadEvent(e))
         }
     }

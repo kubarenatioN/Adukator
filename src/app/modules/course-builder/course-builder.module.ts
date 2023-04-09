@@ -14,9 +14,10 @@ import { CourseFormComponent } from './components/course-form/course-form.compon
 import { LayoutComponent } from 'src/app/components/layout/layout.component';
 import { CourseNavComponent } from './components/course-nav/course-nav.component';
 import { ChipsControlComponent } from './controls/chips-control/chips-control.component';
+import { CourseBuilderService } from './services/course-builder.service';
 
 @NgModule({
-	providers: [FormBuilderHelper],
+	providers: [CourseBuilderService],
 	declarations: [
 		CourseBuilderComponent,
         CourseFormComponent,

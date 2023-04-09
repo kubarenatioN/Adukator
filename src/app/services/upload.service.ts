@@ -80,4 +80,8 @@ export class UploadService {
             rootFolder: root
         })
     }
+
+    public getFilesFolder(courseId: string, type?: string, controlId?: string) {
+        return `${courseId}/${type ?? ''}/${controlId ?? ''}`
+    }
 }

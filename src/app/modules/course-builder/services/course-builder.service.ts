@@ -3,9 +3,7 @@ import { generateUUID } from 'src/app/helpers/courses.helper';
 import { UploadHelper } from 'src/app/helpers/upload.helper';
 import { UserFile } from 'src/app/typings/files.types';
 
-@Injectable({
-	providedIn: 'root',
-})
+@Injectable()
 export class CourseBuilderService {
 	public courseId: string;
 
@@ -39,12 +37,5 @@ export class CourseBuilderService {
         }
         files = files.filter(f => f.filename !== file.filename)
         this.materialsCache.set(controlId, files)
-    }
-
-    public getFilesFolder(type?: string, controlId?: string) {
-        if (this.courseId) {
-            return `${this.courseId}/${type ?? ''}/${controlId ?? ''}`
-        }
-        return ''
     }
 }

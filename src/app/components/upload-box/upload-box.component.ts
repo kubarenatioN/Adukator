@@ -16,17 +16,16 @@ import { CloudinaryFile, UserFile } from 'src/app/typings/files.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadBoxComponent implements OnInit {
-    private _folder: string | null = null;
+    private _folder: string = '';
 
     public filesStore = new Map<string, { userFile: UserFile, uploadFile?: File }>();
 
     @Input() public controlId!: string;
-    @Input() public tempFolder?: string;
     @Input() public control?: FormControl;
     @Input() public label?: string;
     @Input() public preloadExisting: boolean = false;
     @Input() public type!: 'upload' | 'download';
-    @Input() public set folder(value: string | null) {            
+    @Input() public set folder(value: string) {            
         this.filesStore.clear();
         if (value === null) {
             return;
@@ -108,8 +107,8 @@ export class UploadBoxComponent implements OnInit {
 
     public onRemove(file: UserFile) {
         this.filesStore.delete(file.filename)
-        if (this.tempFolder) {
-            this.uploadService.removeTempFile(file.filename, this.tempFolder).subscribe()
+        if (this.folder) {
+            this.uploadService.removeTempFile(file.filename, this.folder).subscribe()
             this.courseBuilder.removeFileFromCache(this.controlId, file)
         }
     }
