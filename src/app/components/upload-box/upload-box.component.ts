@@ -1,11 +1,9 @@
-import { HttpEvent, HttpEventType, HttpProgressEvent } from '@angular/common/http';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { CourseBuilderService } from 'src/app/modules/course-builder/services/course-builder.service';
-import { DataService } from 'src/app/services/data.service';
 import { UploadService } from 'src/app/services/upload.service';
-import { CloudinaryFile, UserFile } from 'src/app/typings/files.types';
+import { UserFile } from 'src/app/typings/files.types';
 
 @Component({
 	selector: 'app-upload-box',
@@ -26,10 +24,7 @@ export class UploadBoxComponent implements OnInit {
     @Input() public preloadExisting: boolean = false;
     @Input() public type!: 'upload' | 'download';
     @Input() public set folder(value: string) {            
-        this.filesStore.clear();
-        if (value === null) {
-            return;
-        }
+        // this.filesStore.clear();
         this._folder = value;
     };
     @Input() public set files(files: UserFile[]) {

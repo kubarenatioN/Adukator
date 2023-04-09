@@ -1,6 +1,6 @@
 <form class="course-form" [formGroup]="courseForm">
 
-    <ng-container [ngSwitch]="viewType">
+    <ng-container *ngIf="viewType$ | async as viewType" [ngSwitch]="viewType">
         <ng-container 
             *ngSwitchCase="'main'"
             [ngTemplateOutlet]="courseMainInfo">

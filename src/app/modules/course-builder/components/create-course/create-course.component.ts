@@ -3,6 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, Observable, BehaviorSubject, of, ReplaySubject } from 'rxjs';
 import {
+    distinctUntilChanged,
     map,
 	shareReplay,
 	switchMap,
@@ -103,7 +104,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
                     if (course !== null && !isEmptyCourseFormData(course)) {
                         this.courseMetadata = this.cloneParentCourseMetadata(course)
                     }
-                    console.log('1', course.uuid);
+                    
                     this.courseBuilderService.courseId = course.uuid
                 }),
                 shareReplay(1),    
@@ -111,6 +112,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 
         this.viewData$ = this.formData$.pipe(
             switchMap(() => navQuery$),
+            distinctUntilChanged(),
             map((navQuery) => {
                 const { mode } = this.activatedRoute.snapshot.data as { mode: CourseFormViewMode };
                 return {

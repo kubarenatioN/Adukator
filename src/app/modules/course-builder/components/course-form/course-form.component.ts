@@ -1,19 +1,20 @@
 import {
     ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	EventEmitter,
 	Input,
 	OnInit,
 	Output,
 } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
-import { DateFilterFn, DateRange, MatDatepickerInputEvent } from '@angular/material/datepicker';
-import { addDays } from 'date-fns/esm';
+import { FormGroup } from '@angular/forms';
+import { DateRange, MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { BehaviorSubject } from 'rxjs';
 import {
     EmptyCourseFormData,
 	isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
-import { convertCourseToCourseFormData, stringify } from 'src/app/helpers/courses.helper';
+import { convertCourseToCourseFormData } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { getTopicMinDate, getTopicMaxDate } from 'src/app/helpers/forms.helper';
 import { ConfigService } from 'src/app/services/config.service';
@@ -49,7 +50,8 @@ export class CourseFormComponent implements OnInit {
     };
 
     public formMode!: CourseFormViewMode;
-    public viewType!: CourseBuilderViewType;
+    public viewType$ = new BehaviorSubject<CourseBuilderViewType | null>(null);
+    // private viewType!: CourseBuilderViewType | 'reset';
     public canEditForm = true;
 
     public viewModes = CourseFormViewMode;
@@ -63,7 +65,7 @@ export class CourseFormComponent implements OnInit {
             const formData = convertCourseToCourseFormData(data);
             this.setCourseModel(formData);
         }
-        console.log('2', data.uuid);
+        
         this.formChanged.emit(this.courseForm);
     }
 
@@ -71,13 +73,19 @@ export class CourseFormComponent implements OnInit {
         if (value === null) {
             return;
         }
+
+        // hide view to reinit component 
+        this.viewType$.next(null)
+        
         const { metadata, mode, viewPath } = value;
         this.formMode = mode;
         if (mode === CourseFormViewMode.Review) {
             this.canEditForm = false;
             this.controlsType = 'review';
         }
-        this.viewType = viewPath.type;
+        setTimeout(() => {   
+            this.viewType$.next(viewPath.type);
+        }, 200);
         this.overallInfoSubform.controls.id.setValue(metadata.uuid);
         this.activeFormGroup = this.getFormGroup(viewPath)
     }
@@ -94,6 +102,7 @@ export class CourseFormComponent implements OnInit {
 	constructor(private configService: ConfigService, 
         private fbHelper: FormBuilderHelper,
         private courseBuilderService: CourseBuilderService,
+        private cdRef: ChangeDetectorRef,
     ) {
         const courseId = this.courseBuilderService.courseId
 		this.courseForm = this.fbHelper.getNewCourseFormModel(courseId);
@@ -191,7 +200,7 @@ export class CourseFormComponent implements OnInit {
             }
             throw new Error('Cannot resolve with type. Fallback with overall info form.')
         } catch (error) {
-            this.viewType = 'main';
+            this.viewType$.next('main');
             return this.courseForm.controls.overallInfo
         }
     }
