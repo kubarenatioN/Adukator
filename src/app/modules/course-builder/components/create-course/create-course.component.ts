@@ -87,8 +87,9 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
                 switchMap(([params, user]) => {
                     const { mode } = this.activatedRoute.snapshot.data as { mode: CourseFormViewMode };
                     if (mode === CourseFormViewMode.Create) {
-                        this.courseMetadata = this.getMasterCourseMetadata(user.uuid)
-                        return of(getEmptyCourseFormData(generateUUID()));
+                        const courseId = this.courseBuilderService.courseId
+                        this.courseMetadata = this.getMasterCourseMetadata(courseId, user.uuid)
+                        return of(getEmptyCourseFormData(courseId));
                     } else {
                         const courseId = String(params.get('id'));
                         if (mode === CourseFormViewMode.Review) {
@@ -98,9 +99,11 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
                     }
                 }),
                 tap(course => {
+                    console.log('course', course);
                     if (course !== null && !isEmptyCourseFormData(course)) {
                         this.courseMetadata = this.cloneParentCourseMetadata(course)
                     }
+                    console.log('1', course.uuid);
                     this.courseBuilderService.courseId = course.uuid
                 }),
                 shareReplay(1),    
@@ -128,17 +131,23 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
         console.log('111 converted course form', courseData);
         
         // TODO: Uncomment method below
-        // this.coursesService.createCourseReviewVersion(courseData, { isMaster })
-        //     .subscribe((res) => {
-        //         console.log('course review new version created!', res);
-        //     });
+        this.coursesService.createCourseReviewVersion(courseData, { isMaster })
+            .pipe(
+                switchMap(course => {
+                    console.log('Uploaded course review', course);
+                    
+                    return this.uploadService.moveFilesToRemote(courseId)
+                }),
+                tap((res) => {
+                    console.log('Moved files to remote', res)
+                })
+            )
+            .subscribe((res) => {
+                console.log('Course review new version created!', res);
+            });
 
         const courseId = this.courseBuilderService.courseId;
-        this.uploadService.moveFilesToRemote(courseId).subscribe(res => {
-            console.log('Moved files to remote', res)
-        }, err => {
-            console.warn('Error uploading files to remote.', err);
-        })
+        
 	}
 
     public onPublish(formData: CourseFormData): void {
@@ -182,9 +191,9 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
         return formData
     }
 
-    private getMasterCourseMetadata(authorId: string): CourseFormMetadata {
+    private getMasterCourseMetadata(courseId: string, authorId: string): CourseFormMetadata {
         return {
-            uuid: generateUUID(),
+            uuid: courseId,
             authorId,
             masterCourseId: null,
             status: CourseReviewStatus.Default

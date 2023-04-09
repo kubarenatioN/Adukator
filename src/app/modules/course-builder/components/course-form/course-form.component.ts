@@ -26,6 +26,7 @@ import {
 	CourseReview,
     WrapperType,
 } from 'src/app/typings/course.types';
+import { CourseBuilderService } from '../../services/course-builder.service';
 
 @Component({
 	selector: 'app-course-form',
@@ -62,6 +63,7 @@ export class CourseFormComponent implements OnInit {
             const formData = convertCourseToCourseFormData(data);
             this.setCourseModel(formData);
         }
+        console.log('2', data.uuid);
         this.formChanged.emit(this.courseForm);
     }
 
@@ -90,8 +92,11 @@ export class CourseFormComponent implements OnInit {
 	@Output() public formChanged = new EventEmitter<typeof this.courseForm>();
 
 	constructor(private configService: ConfigService, 
-        private fbHelper: FormBuilderHelper) {
-		this.courseForm = this.fbHelper.getNewCourseFormModel();
+        private fbHelper: FormBuilderHelper,
+        private courseBuilderService: CourseBuilderService,
+    ) {
+        const courseId = this.courseBuilderService.courseId
+		this.courseForm = this.fbHelper.getNewCourseFormModel(courseId);
 	}
 
 	public ngOnInit(): void {

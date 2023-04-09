@@ -15,9 +15,9 @@ export class FormBuilderHelper {
     
 	constructor(private fb: FormBuilder) {}
 
-    public getNewCourseFormModel() {
+    public getNewCourseFormModel(courseId: string) {
         return this.fb.group({
-            [CourseTopFormGroups.OverallInfo]: this.getOverallInfoForm(),			
+            [CourseTopFormGroups.OverallInfo]: this.getOverallInfoForm(courseId),			
 			[CourseTopFormGroups.Modules]: this.getCourseModulesFormArray(),
 		});
     }
@@ -71,7 +71,7 @@ export class FormBuilderHelper {
         return this.fb.group({
             id: task ? task.id : generateUUID(),
             [TaskFormFields.TaskDescr]: task ? task.taskDescr : 'Создать 5 классов с демонстрацией принципов ООП',
-            [TaskFormFields.Materials]: task ? task.materials : [],
+            [TaskFormFields.Materials]: task ? [task.materials] : [[]],
             [TaskFormFields.Comment]: task ? task.comment : 'Очень важный комментарий от студента Васи Васильевича',
             comments: this.getFormGroupComments(TaskFormFields, task?.comments ?? {}),
         })
@@ -93,15 +93,15 @@ export class FormBuilderHelper {
         }
     }
 
-    private getOverallInfoForm(overallInfo: CourseFormOverallInfo | null = null) {
+    private getOverallInfoForm(courseId: string) {
         return this.fb.group({
-            id: overallInfo ? overallInfo.id : generateUUID(),
-            [OverallFormFields.Title]: overallInfo ? overallInfo.title : [CourseFormDataMock.title, Validators.required],
-			[OverallFormFields.Descr]: overallInfo ? overallInfo.description : [CourseFormDataMock.descr, Validators.required],
-			[OverallFormFields.Category]: overallInfo ? overallInfo.category : '',
-			[OverallFormFields.AcquiredCompetencies]: overallInfo ? [overallInfo.acquiredCompetencies] : [[]],
-			[OverallFormFields.RequiredCompetencies]: overallInfo ? [overallInfo.requiredCompetencies] : [[]],
-            comments: this.getFormGroupComments(OverallFormFields, overallInfo?.comments ?? {})
+            id: courseId,
+            [OverallFormFields.Title]: [CourseFormDataMock.title, Validators.required],
+			[OverallFormFields.Descr]: [CourseFormDataMock.descr, Validators.required],
+			[OverallFormFields.Category]: '',
+			[OverallFormFields.AcquiredCompetencies]: [],
+			[OverallFormFields.RequiredCompetencies]: [],
+            comments: this.getFormGroupComments(OverallFormFields, {})
         })
     }
 

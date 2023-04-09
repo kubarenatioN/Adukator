@@ -21,7 +21,7 @@ import { UserFile } from 'src/app/typings/files.types';
 export class FileItemComponent implements OnInit {
     private shouldCancelUpload = true;
     
-    public progress: string = this.formatProgress(0);
+    public progress: string = this.formatProgress(1);
     
 	@Input() tempFolder?: string;
 	@Input() folder!: string;

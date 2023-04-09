@@ -21,7 +21,8 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
 
     @Input() public set form(form: FormGroup) {
         this._form = form;
-        this.uploadFolder = UploadHelper.getTopicReviewUploadFolder('form', form);
+        this.uploadFolder = this.courseBuilderService.getFilesFolder('topics', this._form.value.id);
+        this.tempUploadFolder = this.courseBuilderService.getFilesFolder('topics', this._form.value.id)
         this.activeSections = {
             materials: form.value.materials && form.value.materials.length > 0,
             theory: form.value.theory,
@@ -32,14 +33,15 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
 	@Input() public controlsType!: WrapperType;
     @Output() public saveTopic = new EventEmitter<FormGroup>();
 
-    public uploadFolder: string | null = null;
+    public uploadFolder: string = '';
+    public tempUploadFolder: string = '';
     
     public get form() {
         return this._form;
     }
-    
-    public get tempUploadFolder(): string {
-        return `${this.courseId}/topics/${this._form.value.id}` || '';
+
+    public get uploadType() {
+        return this.controlsType === 'edit' ? 'upload' : 'download'
     }
     
     public get controlId(): string {
@@ -69,10 +71,12 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
         test: false,
     }
 
-	constructor(private fbHelper: FormBuilderHelper,
-        private courseBuilderService: CourseBuilderService) {
+	constructor(
+        private fbHelper: FormBuilderHelper,
+        private courseBuilderService: CourseBuilderService
+    ) {
         super()
-        this.courseId = courseBuilderService.courseId;
+        this.courseId = this.courseBuilderService.courseId;
     }
 
 	public ngOnInit(): void { 

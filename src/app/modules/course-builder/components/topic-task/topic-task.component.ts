@@ -15,10 +15,7 @@ export class TopicTaskComponent implements OnInit {
     private courseId: string | null = null;
 
     public uploadPath = ''
-
-    public get tempFolder(): string {
-        return `${this.courseId}/tasks/${this.form.value.id}` || '';
-    }
+    public tempFolder = ''
 
     public get controlId(): string {
         return this.form.value.id;
@@ -28,17 +25,22 @@ export class TopicTaskComponent implements OnInit {
         return this._form;
     }
 
+    public get uploadType() {
+        return this.controlsType === 'edit' ? 'upload' : 'download'
+    }
+
     @Input() public controlsType!: WrapperType;
 
     @Input() public set form(value: FormGroup) {
         this._form = value;
-        this.uploadPath = UploadHelper.getTaskReviewUploadFolder(value);
+        this.uploadPath = this.courseBuilder.getFilesFolder('tasks', this.form.value.id)
+        this.tempFolder = this.courseBuilder.getFilesFolder('tasks', this.form.value.id)
     }
 
     @Output() public remove = new EventEmitter<void>();
 
 	constructor(private courseBuilder: CourseBuilderService) {
-        this.courseId = courseBuilder.courseId
+        this.courseId = this.courseBuilder.courseId
     }
 
     ngOnInit(): void {
