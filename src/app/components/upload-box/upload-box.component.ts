@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { map, Observable } from 'rxjs';
 import { CourseBuilderService } from 'src/app/modules/course-builder/services/course-builder.service';
@@ -13,7 +13,7 @@ import { UserFile } from 'src/app/typings/files.types';
     ],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UploadBoxComponent implements OnInit {
+export class UploadBoxComponent implements OnInit, OnChanges {
     private _folder: string = '';
 
     public filesStore = new Map<string, { userFile: UserFile, uploadFile?: File }>();
@@ -37,7 +37,7 @@ export class UploadBoxComponent implements OnInit {
     public uploadFilesChanged = new EventEmitter<string[]>();
     
     public get folder(): string {
-        return this._folder || '';
+        return this._folder;
     }
     
     public get fileInputId(): string {
@@ -48,25 +48,15 @@ export class UploadBoxComponent implements OnInit {
 
     }
 
-	public ngOnInit(): void {
-        const cachedFiles = this.restoreFilesFromCache(this.controlId)
-        if (cachedFiles.length > 0) {
-            cachedFiles.forEach(file => this.filesStore.set(file.filename, {
-                userFile: file
-            }))
-            this.cd.detectChanges();
-        } else {
-            // Get files via network
+    public ngOnChanges(changes: SimpleChanges): void {
+        const { controlId } = changes
+        if (!controlId.firstChange && controlId.previousValue !== controlId.currentValue) {
+            this.refresh()
         }
+    }
 
-        if (this.type === 'download') {
-            this.getFilesFromFolder(this.folder, 'remote').subscribe((files: UserFile[]) => {
-                files.forEach(file => this.filesStore.set(file.filename, {
-                    userFile: file
-                }))
-                this.cd.detectChanges();
-            });
-        }
+	public ngOnInit(): void {
+        this.refresh()
 
         this.control?.valueChanges.subscribe((value: UserFile[]) => {
             if (value.length === 0) {
@@ -116,6 +106,33 @@ export class UploadBoxComponent implements OnInit {
 
     public onUpload(file: UserFile) {
         this.courseBuilder.addFileToCache(this.controlId, file)
+    }
+
+    public refreshFiles(): void {
+        this.refresh()
+    }
+
+    private refresh() {
+        this.clearBox()
+        const cachedFiles = this.restoreFilesFromCache(this.controlId)
+        if (cachedFiles.length > 0) {
+            cachedFiles.forEach(file => this.filesStore.set(file.filename, {
+                userFile: file
+            }))
+            
+        } else {
+            if (this.type === 'download') {
+                this.getFilesFromFolder(this.folder, 'remote').subscribe((files: UserFile[]) => {
+                    files.forEach(file => {
+                        this.filesStore.set(file.filename, {
+                            userFile: file
+                        })
+                        this.courseBuilder.addFileToCache(this.controlId, file)
+                    })
+                    this.cd.detectChanges();
+                });
+            }
+        }
     }
 
     private getFilesFromFolder(folder: string, type: 'temp' | 'remote'): Observable<UserFile[]> {

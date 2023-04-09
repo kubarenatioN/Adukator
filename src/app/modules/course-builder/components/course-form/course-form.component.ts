@@ -74,18 +74,13 @@ export class CourseFormComponent implements OnInit {
             return;
         }
 
-        // hide view to reinit component 
-        this.viewType$.next(null)
-        
         const { metadata, mode, viewPath } = value;
         this.formMode = mode;
         if (mode === CourseFormViewMode.Review) {
             this.canEditForm = false;
             this.controlsType = 'review';
         }
-        setTimeout(() => {   
-            this.viewType$.next(viewPath.type);
-        }, 200);
+        this.viewType$.next(viewPath.type);
         this.overallInfoSubform.controls.id.setValue(metadata.uuid);
         this.activeFormGroup = this.getFormGroup(viewPath)
     }
