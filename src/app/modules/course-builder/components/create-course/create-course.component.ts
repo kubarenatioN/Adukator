@@ -45,6 +45,9 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 
 	public ngOnInit(): void {
         const { mode } = this.activatedRoute.snapshot.data as { mode: CourseFormViewMode };
+        
+        this.viewData$ = this.courseBuilderService.viewData$
+        
         const navQuery$ = this.activatedRoute.queryParams
             .pipe(
                 map((query) => {                    
@@ -58,23 +61,25 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
                         topic,
                     }
                 }),
-                shareReplay(),
+                shareReplay(1),
             );
 
 		this.formData$ = this.activatedRoute.paramMap.pipe(
             switchMap(params => {
                 const courseId = String(params.get('id'));
                 return this.courseBuilderService.getFormData(courseId, mode)
-            })
+            }),
+            shareReplay(1)
         )
 
-        navQuery$.pipe(
-            withLatestFrom(this.formData$),
-        ).subscribe(([navQuery]) => {
+        combineLatest([
+            navQuery$,
+            this.formData$,
+        ])
+        .subscribe(([navQuery]) => {
             this.courseBuilderService.setViewData(navQuery, mode)
         })
 
-        this.viewData$ = this.courseBuilderService.viewData$
 	}
 
 	public onCreateReviewVersion(payload: { formData: CourseFormData, isMaster: boolean }): void {

@@ -1,6 +1,7 @@
-<form class="course-form" [formGroup]="courseForm">
 
-    <ng-container *ngIf="viewData" [ngSwitch]="viewData.viewPath.type">
+<form class="course-form" *ngIf="viewData$ | async as viewData" [formGroup]="courseForm">
+    
+    <ng-container [ngSwitch]="viewData.viewPath.type">
         <ng-container 
             *ngSwitchCase="'main'"
             [ngTemplateOutlet]="courseMainInfo"

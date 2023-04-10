@@ -1,15 +1,13 @@
 import {
     ChangeDetectionStrategy,
-	ChangeDetectorRef,
 	Component,
 	EventEmitter,
 	Input,
 	OnInit,
 	Output,
 } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
-import { DateRange, MatDatepickerInputEvent } from '@angular/material/datepicker';
-import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
+import { FormGroup } from '@angular/forms';
+import { BehaviorSubject, Observable, takeUntil, tap } from 'rxjs';
 import {
     EmptyCourseFormData,
 	isEmptyCourseFormData,
@@ -50,9 +48,8 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 
     public formMode!: CourseFormViewMode;
     public viewType$ = new BehaviorSubject<CourseBuilderViewType | null>(null);
-    // private viewType!: CourseBuilderViewType | 'reset';
     public canEditForm = true;
-    public viewData!: CourseBuilderViewData
+    public viewData$!: Observable<CourseBuilderViewData>
 
     public viewModes = CourseFormViewMode;
     public controlsType: WrapperType = 'edit'
@@ -93,22 +90,22 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
             this.formChanged.emit(this.courseForm);
 		});
 
-        this.courseBuilderService.viewData$
-        .pipe(takeUntil(this.componentLifecycle$))
-        .subscribe(viewData => {
-            this.viewData = viewData;
-            console.log(viewData);
-            
-            const { metadata, mode, viewPath } = viewData;
-            this.formMode = mode;
-            if (mode === CourseFormViewMode.Review) {
-                this.canEditForm = false;
-                this.controlsType = 'review';
-            }
-            this.viewType$.next(viewPath.type);
-            this.overallInfoSubform.controls.id.setValue(metadata.uuid);
-            this.activeFormGroup = this.getFormGroup(viewPath)
-        })
+        this.viewData$ = this.courseBuilderService.viewData$
+            .pipe(
+                takeUntil(this.componentLifecycle$),
+                tap(viewData => {
+                    
+                    const { metadata, mode, viewPath } = viewData;
+                    this.formMode = mode;
+                    if (mode === CourseFormViewMode.Review) {
+                        this.canEditForm = false;
+                        this.controlsType = 'review';
+                    }
+                    this.viewType$.next(viewPath.type);
+                    this.overallInfoSubform.controls.id.setValue(metadata.uuid);
+                    this.activeFormGroup = this.getFormGroup(viewPath)
+                })
+            )
 	}
 
     public addModule() {

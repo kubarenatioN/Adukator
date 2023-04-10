@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, ReplaySubject, shareReplay, switchMap, tap } from 'rxjs';
-import { getEmptyCourseFormData } from 'src/app/constants/common.constants';
+import { getEmptyCourseFormData, isEmptyCourseFormData } from 'src/app/constants/common.constants';
 import { convertCourseFormDataToCourse, convertCourseFormDataToCourseReview, generateUUID } from 'src/app/helpers/courses.helper';
 import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
@@ -102,27 +102,29 @@ export class CourseBuilderService {
     }
 
     public getCourse(mode: CourseFormViewMode, courseId: string, author: User) {
-        if (mode === CourseFormViewMode.Create) {
-            this.courseMetadata = this.getMasterCourseMetadata(this.courseId, author.uuid)
-            return of(getEmptyCourseFormData(courseId));
-        }
+        return of(null).pipe(
+            switchMap(() => {
+                if (mode === CourseFormViewMode.Create) {
+                    this.courseMetadata = this.getMasterCourseMetadata(this.courseId, author.uuid)
+                    return of(getEmptyCourseFormData(courseId));
+                }
 
-        let course$: Observable<CourseReview>
-        if (mode === CourseFormViewMode.Review) {
-            course$ = this.adminCoursesService.getCourseReviewVersion(courseId);
-        }
-        else if (mode === CourseFormViewMode.Edit) {
-            course$ = this.teacherCoursesService.getCourseReviewVersion(courseId);
-        } 
-        else {
-            throw new Error('Cannot get course')
-        }
-        course$ = course$.pipe(
+                if (mode === CourseFormViewMode.Review) {
+                    return this.adminCoursesService.getCourseReviewVersion(courseId);
+                }
+                else if (mode === CourseFormViewMode.Edit) {
+                    return this.teacherCoursesService.getCourseReviewVersion(courseId);
+                } 
+                else {
+                    throw new Error('Cannot get course')
+                }
+            }),
             tap(course => {
-                this.courseMetadata = this.cloneParentCourseMetadata(course)
+                if (!isEmptyCourseFormData(course)) {
+                    this.courseMetadata = this.cloneParentCourseMetadata(course)
+                }
             })
         )
-        return course$
     }
 
     public getUploadFolder(type: 'tasks' | 'topics', controlId: string) {
