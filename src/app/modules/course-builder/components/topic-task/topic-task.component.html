@@ -11,7 +11,7 @@
             [folder]="uploadFolder"
             [controlId]="controlId"
             serveFrom="local"
-            [preloadExisting]="true"
+            [preloadExisting]="shouldPreloadExisting"
             (uploadFilesChanged)="onUploadFilesChanged($event)"></app-upload-box>
     </div>
 

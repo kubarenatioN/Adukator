@@ -1,9 +1,10 @@
 <form class="course-form" [formGroup]="courseForm">
 
-    <ng-container *ngIf="viewType$ | async as viewType" [ngSwitch]="viewType">
+    <ng-container *ngIf="viewData" [ngSwitch]="viewData.viewPath.type">
         <ng-container 
             *ngSwitchCase="'main'"
-            [ngTemplateOutlet]="courseMainInfo">
+            [ngTemplateOutlet]="courseMainInfo"
+            [ngTemplateOutletContext]="{ viewData }">
         </ng-container>
         <ng-container 
             *ngSwitchCase="'module'"
@@ -11,7 +12,8 @@
         </ng-container>
         <ng-container 
             *ngSwitchCase="'topic'"
-            [ngTemplateOutlet]="courseTopic">
+            [ngTemplateOutlet]="courseTopic"
+            [ngTemplateOutletContext]="{ viewData }">
         </ng-container>
     </ng-container>
     
@@ -159,7 +161,7 @@
     </div>
 </ng-template>
 
-<ng-template #courseTopic>
+<ng-template #courseTopic let-viewData="viewData">
     <h3>Тема {{ activeFormGroup.value.title }}</h3>
     <app-module-topic 
         [form]="activeFormGroup"

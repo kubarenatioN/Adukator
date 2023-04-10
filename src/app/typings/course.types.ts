@@ -202,8 +202,8 @@ export enum CourseFormViewMode {
 export type CourseBuilderViewType =  'topic' | 'module' | 'main'
 export interface CourseBuilderViewPath {
     type: CourseBuilderViewType
-    module?: number
-    topic?: number
+    module?: string
+    topic?: string
 };
 export interface CourseBuilderViewData {
     metadata: CourseFormMetadata

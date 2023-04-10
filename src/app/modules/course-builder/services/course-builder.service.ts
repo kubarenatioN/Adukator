@@ -1,30 +1,56 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, of, ReplaySubject, shareReplay, switchMap, tap } from 'rxjs';
 import { getEmptyCourseFormData } from 'src/app/constants/common.constants';
 import { convertCourseFormDataToCourse, convertCourseFormDataToCourseReview, generateUUID } from 'src/app/helpers/courses.helper';
 import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
 import { UploadService } from 'src/app/services/upload.service';
-import { CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseReview, CourseReviewStatus } from 'src/app/typings/course.types';
+import { UserService } from 'src/app/services/user.service';
+import { CourseBuilderViewData, CourseBuilderViewType, CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseReview, CourseReviewStatus } from 'src/app/typings/course.types';
 import { User } from 'src/app/typings/user.types';
 
 @Injectable()
 export class CourseBuilderService {
+    private viewDataStore$ = new ReplaySubject<CourseBuilderViewData>(1);
     private courseMetadata!: CourseFormMetadata;
+
 	public courseId: string;
 
     public get metadata() {
         return this.courseMetadata
     }
 
+    public viewData$ = this.viewDataStore$.asObservable().pipe(
+        shareReplay(1)
+    )
+
 	constructor(
+		private userService: UserService,
 		private coursesService: CoursesService,
 		private teacherCoursesService: TeacherCoursesService,
 		private adminCoursesService: AdminCoursesService,
         private uploadService: UploadService,
     ) {
         this.courseId = generateUUID()
+    }
+
+    public getFormData(courseId: string, mode: CourseFormViewMode) {
+        return this.userService.user$.pipe(
+            switchMap((user) => {                
+                return this.getCourse(mode, courseId, user)
+            }),
+            shareReplay(1),
+        )
+    }
+
+    public setViewData(navQuery: { type: CourseBuilderViewType; module?: string; topic?: string; }, mode: CourseFormViewMode) {
+        const viewData = {
+            viewPath: { ...navQuery },
+            mode,
+            metadata: this.metadata,
+        }
+        this.viewDataStore$.next(viewData)
     }
 
     public publishCourse(formData: CourseFormData) {

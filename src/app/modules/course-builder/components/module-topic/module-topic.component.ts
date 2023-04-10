@@ -3,7 +3,7 @@ import { FormArray, FormGroup } from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { WrapperType } from 'src/app/typings/course.types';
+import { CourseBuilderViewData, CourseBuilderViewType, CourseFormViewMode, WrapperType } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
 
 type SectionType = 'materials' | 'theory' | 'practice' | 'test'
@@ -35,9 +35,8 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
         return this._form;
     }
 
-    public get uploadType() {
-        return this.controlsType === 'edit' ? 'upload' : 'download'
-    }
+    public uploadType: 'upload' | 'download' = 'download'
+    public shouldPreloadExisting = false;
     
     public get controlId(): string {
         return this._form.value.id;
@@ -74,14 +73,24 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
     }
 
 	public ngOnInit(): void {
-        
         this.form.valueChanges
             .pipe(takeUntil(this.componentLifecycle$))
             .subscribe(value => {
-                console.log('111 change topic', value);
+                // console.log('111 change topic', value);
             })
 
         this.uploadFolder = this.courseBuilderService.getUploadFolder('topics', this.form.value.id)
+
+        this.courseBuilderService.viewData$
+        .pipe(takeUntil(this.componentLifecycle$))
+        .subscribe(viewData => {
+            const { mode, viewPath } = viewData
+            const { type: viewType } = viewPath
+    
+            this.shouldPreloadExisting = mode !== CourseFormViewMode.Create
+            this.controlsType = mode === CourseFormViewMode.Review ? 'review' : 'edit'
+            this.uploadType = this.controlsType === 'edit' ? 'upload' : 'download'
+        })
     }
 
     public onAddSection(sectionType: SectionType) {

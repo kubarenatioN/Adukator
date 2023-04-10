@@ -49,9 +49,8 @@ export class CourseModuleComponent extends BaseComponent implements OnInit {
 		this.form.valueChanges
             .pipe(takeUntil(this.componentLifecycle$))
             .subscribe((res) => {
-                console.log('111 module form changed', res);
+                // console.log('111 module form changed', res);
             });
-        console.log(this.form)
 	}
 
     public addTopic(): void {

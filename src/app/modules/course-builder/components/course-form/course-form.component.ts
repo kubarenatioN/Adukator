@@ -7,9 +7,9 @@ import {
 	OnInit,
 	Output,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 import { DateRange, MatDatepickerInputEvent } from '@angular/material/datepicker';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
 import {
     EmptyCourseFormData,
 	isEmptyCourseFormData,
@@ -18,6 +18,7 @@ import { convertCourseToCourseFormData } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { getTopicMinDate, getTopicMaxDate } from 'src/app/helpers/forms.helper';
 import { ConfigService } from 'src/app/services/config.service';
+import { BaseComponent } from 'src/app/shared/base.component';
 import {
     CourseBuilderViewData,
     CourseBuilderViewPath,
@@ -35,9 +36,7 @@ import { CourseBuilderService } from '../../services/course-builder.service';
 	styleUrls: ['./course-form.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CourseFormComponent implements OnInit {
-	private courseFormData: CourseFormData | null = null;
-
+export class CourseFormComponent extends BaseComponent implements OnInit {
     public categories$ = this.configService.loadCourseCategories();
 
 	public courseForm;
@@ -53,6 +52,7 @@ export class CourseFormComponent implements OnInit {
     public viewType$ = new BehaviorSubject<CourseBuilderViewType | null>(null);
     // private viewType!: CourseBuilderViewType | 'reset';
     public canEditForm = true;
+    public viewData!: CourseBuilderViewData
 
     public viewModes = CourseFormViewMode;
     public controlsType: WrapperType = 'edit'
@@ -69,22 +69,6 @@ export class CourseFormComponent implements OnInit {
         this.formChanged.emit(this.courseForm);
     }
 
-    @Input() public set viewData(value: CourseBuilderViewData | null) {
-        if (value === null) {
-            return;
-        }
-
-        const { metadata, mode, viewPath } = value;
-        this.formMode = mode;
-        if (mode === CourseFormViewMode.Review) {
-            this.canEditForm = false;
-            this.controlsType = 'review';
-        }
-        this.viewType$.next(viewPath.type);
-        this.overallInfoSubform.controls.id.setValue(metadata.uuid);
-        this.activeFormGroup = this.getFormGroup(viewPath)
-    }
-
 	@Output() public createReviewVersion = new EventEmitter<{
         isMaster: boolean;
         formData: CourseFormData;
@@ -97,17 +81,34 @@ export class CourseFormComponent implements OnInit {
 	constructor(private configService: ConfigService, 
         private fbHelper: FormBuilderHelper,
         private courseBuilderService: CourseBuilderService,
-        private cdRef: ChangeDetectorRef,
     ) {
+        super()
         const courseId = this.courseBuilderService.courseId
 		this.courseForm = this.fbHelper.getNewCourseFormModel(courseId);
 	}
 
 	public ngOnInit(): void {
 		this.courseForm.valueChanges.subscribe((res) => {
-			console.log('111 main course form', res);
+			// console.log('111 main course form', res);
             this.formChanged.emit(this.courseForm);
 		});
+
+        this.courseBuilderService.viewData$
+        .pipe(takeUntil(this.componentLifecycle$))
+        .subscribe(viewData => {
+            this.viewData = viewData;
+            console.log(viewData);
+            
+            const { metadata, mode, viewPath } = viewData;
+            this.formMode = mode;
+            if (mode === CourseFormViewMode.Review) {
+                this.canEditForm = false;
+                this.controlsType = 'review';
+            }
+            this.viewType$.next(viewPath.type);
+            this.overallInfoSubform.controls.id.setValue(metadata.uuid);
+            this.activeFormGroup = this.getFormGroup(viewPath)
+        })
 	}
 
     public addModule() {
@@ -128,15 +129,6 @@ export class CourseFormComponent implements OnInit {
         // IMPLEMENT
 		// this.modulesFormArray.removeAt(index...);
 	}
-
-    public onTopicDateChanged(
-        e: MatDatepickerInputEvent<any, DateRange<any>>, 
-        topicForm: FormGroup,
-        limit: 'start' | 'end'
-    ) {
-        const { value } = e;
-        // console.log(value, topicForm.value.id, limit);
-    }
 
 	public onSubmit(action: CourseFormViewMode | 'publish'): void {
 		const { valid: isValid } = this.courseForm;
@@ -179,21 +171,24 @@ export class CourseFormComponent implements OnInit {
         return getTopicMaxDate(this.courseForm, form);
     }
 
-    private getFormGroup({ type, module, topic}: CourseBuilderViewPath): FormGroup {
+    private getFormGroup({ type, module, topic}: CourseBuilderViewPath): any {
         try {
-            if (type === 'main') {
-                return this.courseForm.controls.overallInfo;
-            }
-            if (module != null) {
-                const moduleForm = this.courseForm.controls.modules.at(module);
+            if (module != null && type === 'module') {
+                const moduleForm = this.findControlById([...this.courseForm.controls.modules.controls], module);
                 if (type === 'module') {
                     return moduleForm;
                 }
-                if (topic != null && type === 'topic') {
-                    return moduleForm.controls.topics.at(topic);
-                }
             }
-            throw new Error('Cannot resolve with type. Fallback with overall info form.')
+            else if (topic != null && type === 'topic') {
+                const topics: FormGroup[] = []
+                this.courseForm.controls.modules.controls.forEach(module => {
+                    topics.push(...module.controls.topics.controls)
+                })
+                return this.findControlById(topics, topic);
+            }
+            else {
+                return this.courseForm.controls.overallInfo
+            }
         } catch (error) {
             this.viewType$.next('main');
             return this.courseForm.controls.overallInfo
@@ -218,4 +213,8 @@ export class CourseFormComponent implements OnInit {
     private setCourseModel(courseData: CourseFormData): void {
         this.fbHelper.fillCourseModel(this.courseForm, courseData)
 	}
+
+    private findControlById(array: FormGroup[], id: string): FormGroup {
+        return array.find(control => control.value.id === id) as FormGroup
+    }
 }

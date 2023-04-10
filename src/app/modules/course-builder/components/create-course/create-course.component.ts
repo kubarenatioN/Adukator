@@ -7,6 +7,7 @@ import {
     map,
 	shareReplay,
 	switchMap,
+    withLatestFrom,
 } from 'rxjs/operators';
 import {
     EmptyCourseFormData,
@@ -29,7 +30,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 
 	public modules$: Observable<CourseModule[]>;
     public formData$!: Observable<CourseReview | EmptyCourseFormData | null>;
-    public viewData$!: Observable<CourseBuilderViewData | null>;
+    public viewData$!: Observable<CourseBuilderViewData>;
 
 	public showLoading$ = new BehaviorSubject<boolean>(false);
 
@@ -43,53 +44,37 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
     }
 
 	public ngOnInit(): void {
-
+        const { mode } = this.activatedRoute.snapshot.data as { mode: CourseFormViewMode };
         const navQuery$ = this.activatedRoute.queryParams
             .pipe(
                 map((query) => {                    
-                    const moduleNumber = Number(query['module']);
-                    const module = Number.isNaN(moduleNumber) ? undefined : moduleNumber;
+                    const module = query['module'];
+                    const topic = query['topic'];
                     
-                    const topicNumber = Number(query['topic']);
-                    const topic = Number.isNaN(topicNumber) ? undefined : topicNumber;
-
                     const viewType = this.resolveViewType(module, topic)
                     return {
                         type: viewType,
-                        module: module ? module - 1 : module,
-                        topic: topic ? topic - 1 : topic,
+                        module,
+                        topic,
                     }
                 }),
                 shareReplay(),
             );
 
-		this.formData$ = combineLatest([
-            this.activatedRoute.paramMap,
-            this.userService.user$,
-        ])
-            .pipe(
-                switchMap(([params, user]) => {
-                    const courseId = String(params.get('id'));
-                    const { mode } = this.activatedRoute.snapshot.data as { mode: CourseFormViewMode };
-                    
-                    return this.courseBuilderService.getCourse(mode, courseId, user)
-                }),
-                shareReplay(1),    
-            )
-
-        this.viewData$ = this.formData$.pipe(
-            switchMap(() => navQuery$),
-            distinctUntilChanged(),
-            map((navQuery) => {
-                const { mode } = this.activatedRoute.snapshot.data as { mode: CourseFormViewMode };
-                return {
-                    viewPath: { ...navQuery },
-                    mode,
-                    metadata: this.courseBuilderService.metadata,
-                }
-            }),
-            shareReplay(1),
+		this.formData$ = this.activatedRoute.paramMap.pipe(
+            switchMap(params => {
+                const courseId = String(params.get('id'));
+                return this.courseBuilderService.getFormData(courseId, mode)
+            })
         )
+
+        navQuery$.pipe(
+            withLatestFrom(this.formData$),
+        ).subscribe(([navQuery]) => {
+            this.courseBuilderService.setViewData(navQuery, mode)
+        })
+
+        this.viewData$ = this.courseBuilderService.viewData$
 	}
 
 	public onCreateReviewVersion(payload: { formData: CourseFormData, isMaster: boolean }): void {
@@ -117,12 +102,12 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
         this.modulesStore$.next(form.controls['modules'].value);
     }
 
-    private resolveViewType(module?: number, topic?: number): CourseBuilderViewType {
+    private resolveViewType(module?: string, topic?: string): CourseBuilderViewType {
         if (module) {
-            if (topic) {
-                return 'topic'
-            }
             return 'module'
+        }
+        if (topic) {
+            return 'topic'
         }
         return 'main';
     }
