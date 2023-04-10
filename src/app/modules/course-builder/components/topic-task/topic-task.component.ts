@@ -13,7 +13,6 @@ import { CourseBuilderService } from '../../services/course-builder.service';
 })
 export class TopicTaskComponent implements OnInit {
     private _form!: FormGroup;
-    private courseId: string;
 
     public uploadFolder = ''
 
@@ -33,17 +32,15 @@ export class TopicTaskComponent implements OnInit {
 
     @Input() public set form(value: FormGroup) {
         this._form = value;
-        this.uploadFolder = this.uploadService.getFilesFolder(this.courseId, 'tasks', this.form.value.id)
     }
 
     @Output() public remove = new EventEmitter<void>();
 
-	constructor(private courseBuilder: CourseBuilderService, private uploadService: UploadService) {
-        this.courseId = this.courseBuilder.courseId
+	constructor(private courseBuilder: CourseBuilderService) {
     }
 
     ngOnInit(): void {
-
+        this.uploadFolder = this.courseBuilder.getUploadFolder('tasks', this.form.value.id)
     }
 
     public onUploadFilesChanged(materials: string[]) {

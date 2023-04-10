@@ -2,12 +2,14 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	Input,
+	OnChanges,
 	OnInit,
+    SimpleChanges,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { getTodayTime } from 'src/app/helpers/date-fns.helper';
-import { UploadHelper } from 'src/app/helpers/upload.helper';
+import { BehaviorSubject, combineLatest, distinctUntilChanged, map, switchMap, takeUntil } from 'rxjs';
 import { CourseTrainingService } from 'src/app/services/course-training.service';
+import { UploadService } from 'src/app/services/upload.service';
+import { BaseComponent } from 'src/app/shared/base.component';
 import { TaskAnswer } from 'src/app/typings/course-training.types';
 import { ModuleTopic } from 'src/app/typings/course.types';
 
@@ -17,12 +19,16 @@ import { ModuleTopic } from 'src/app/typings/course.types';
 	styleUrls: ['./topic-training.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TopicTrainingComponent implements OnInit {
+export class TopicTrainingComponent extends BaseComponent implements OnInit, OnChanges {
+    private topicStore$ = new BehaviorSubject<ModuleTopic>({} as ModuleTopic)
+    
 	@Input() public topic!: ModuleTopic;
-    @Input() public folderPath!: string; 
 
-    public topicFolderPath!: string
-    public tasksFolderPaths: string[] = []
+    public filesFolder!: string; 
+
+    public get controlId(): string {
+        return this.topic.id
+    };
 
     public get isActual() {
         return this.topic.isActual
@@ -32,18 +38,32 @@ export class TopicTrainingComponent implements OnInit {
         return this.topic.isPast
     };
 
-	constructor(private trainingService: CourseTrainingService) {}
+	constructor(private trainingService: CourseTrainingService, private uploadService: UploadService) {
+        super()
+    }
+
+    public ngOnChanges(changes: SimpleChanges): void {
+        const { topic } = changes
+        if (topic && topic.currentValue !== topic.previousValue) {
+            this.topicStore$.next(topic.currentValue);
+        }
+    }
 
 	ngOnInit(): void {
-        this.trainingService.course$.subscribe(course => {
-            if (course) {
-                this.topicFolderPath = UploadHelper.getTopicUploadFolder('course', course, this.topic.id);
-
-                this.tasksFolderPaths = this.topic.practice?.tasks.map(task => {
-                    return UploadHelper.getTopicUploadFolder('course', course, task.id)
-                }) ?? [];
-            }
-        });
+        combineLatest([
+            this.topicStore$.asObservable(),
+            this.trainingService.course$,
+        ])
+        .pipe(
+            takeUntil(this.componentLifecycle$),
+            map(([topic, course]) => {
+                return this.uploadService.getFilesFolder(course.id, 'topics', topic.id)
+            }),
+            distinctUntilChanged(),
+        )
+        .subscribe(folder => {
+            this.filesFolder = folder
+        })
     }
 
     public onSendTask(answer: TaskAnswer) {

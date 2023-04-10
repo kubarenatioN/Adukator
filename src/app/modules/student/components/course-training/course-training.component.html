@@ -8,7 +8,7 @@
                 
                 <ng-container *ngSwitchCase="viewTypes.Main"
                     [ngTemplateOutlet]="mainView"
-                    [ngTemplateOutletContext]="{ course: viewData.course }"
+                    [ngTemplateOutletContext]="{ course: viewData.training.course }"
                 ></ng-container>
 
                 <ng-container 
@@ -29,7 +29,7 @@
 
     <app-course-sidenav 
         class="sidebar" slot="sidebar"
-        [course]="viewData.course"></app-course-sidenav>
+        [course]="viewData.training"></app-course-sidenav>
 
 </app-layout>
 
@@ -46,8 +46,7 @@
 <ng-template #topicView let-topic="topic">
     <app-topic-training 
     *ngIf="topic" 
-    [topic]="topic"
-    [folderPath]="topicUploadPath"></app-topic-training>
+    [topic]="topic"></app-topic-training>
 </ng-template>
 
 <ng-template #loader>

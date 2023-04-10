@@ -8,7 +8,6 @@ import {
 	OnInit,
     Output,
 } from '@angular/core';
-import { CourseBuilderService } from 'src/app/modules/course-builder/services/course-builder.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { UserFile } from 'src/app/typings/files.types';
 

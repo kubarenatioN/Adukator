@@ -34,12 +34,14 @@
 
 <ng-template #downloadZone>
     <div class="files-container">
-        <app-file-item *ngFor="let file of filesStore.values()"
-            class="file-item" 
-            [userFile]="file.userFile"
-            (download)="onDownload($event)"
-            type="download">
-        </app-file-item>
+        <ng-container *ngIf="filesStore.size > 0; else noFiles">
+            <app-file-item *ngFor="let file of filesStore.values()"
+                class="file-item" 
+                [userFile]="file.userFile"
+                (download)="onDownload($event)"
+                type="download">
+            </app-file-item>
+        </ng-container>
     </div>
 </ng-template>
 
@@ -56,5 +58,5 @@
 </ng-template>
 
 <ng-template #noFiles>
-    <p>Нет доступных файлов.</p>
+    <p>Нет файлов.</p>
 </ng-template>

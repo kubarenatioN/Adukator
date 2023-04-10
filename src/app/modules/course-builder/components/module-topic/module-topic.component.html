@@ -47,6 +47,8 @@
             [folder]="uploadFolder"
             [controlId]="controlId"
             [type]="uploadType"
+            serveFrom="local"
+            [preloadExisting]="true"
             (uploadFilesChanged)="onUploadFilesChanged($event)">
         </app-upload-box>
     </div>

@@ -22,7 +22,10 @@
     
     <div *ngIf="topic.materials && topic.materials.length > 0" class="section">
         <h2>Материалы к теме</h2>
-        <app-upload-box type="download" [folder]="topicFolderPath"></app-upload-box>
+        <app-upload-box 
+        type="download" 
+        [folder]="filesFolder"
+        [controlId]="controlId"></app-upload-box>
     </div>
 
     <div *ngIf="topic.practice" class="section">

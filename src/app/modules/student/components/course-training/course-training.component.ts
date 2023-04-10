@@ -20,7 +20,7 @@ enum ViewType {
 
 interface ViewConfig {
     viewType: ViewType,
-    course: CourseTraining,
+    training: CourseTraining,
     module?: CourseModule,
     topic?: ModuleTopic
 }
@@ -36,8 +36,6 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 
     public viewType$: Observable<string> = this.viewTypeStore$.asObservable();
     public viewData$!: Observable<ViewConfig>
-
-    public topicUploadPath: string = '';
 
     public viewTypes = ViewType;
     
@@ -81,28 +79,27 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
         ])
         .pipe(
             takeUntil(this.componentLifecycle$),
-            map(([params, course]: [{module?: string, topic?: string}, CourseTraining]) => {
+            map(([params, training]: [{module?: string, topic?: string}, CourseTraining]) => {
                 const { module: moduleId, topic: topicId } = params;
                 const viewType = this.getViewType(moduleId, topicId)
                 if (viewType === this.viewTypes.Module && moduleId) {
                     return {
                         viewType,
-                        course: course,
-                        module: course.getModule(moduleId),
+                        training,
+                        module: training.getModule(moduleId),
                     }
                 }
                 if (viewType === this.viewTypes.Topic && topicId) {
-                    const topic = course.getTopic(topicId);
-                    this.topicUploadPath = UploadHelper.getTopicUploadFolder('course', course, topicId);
+                    const topic = training.getTopic(topicId);
                     return {
                         viewType,
-                        course: course,
-                        module: course.getTopicModule(topicId),
+                        training,
+                        module: training.getTopicModule(topicId),
                         topic: topic,
                     }
                 }
 
-                return { viewType, course }
+                return { viewType, training }
             })
         )
     }

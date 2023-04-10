@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { map, Observable } from 'rxjs';
-import { CourseBuilderService } from 'src/app/modules/course-builder/services/course-builder.service';
+import { from, map, Observable, Subscription } from 'rxjs';
+import { CacheService } from 'src/app/services/cache.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { UserFile } from 'src/app/typings/files.types';
 
@@ -13,20 +13,20 @@ import { UserFile } from 'src/app/typings/files.types';
     ],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UploadBoxComponent implements OnInit, OnChanges {
-    private _folder: string = '';
-
+export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
+    // private _folder = ''
     public filesStore = new Map<string, { userFile: UserFile, uploadFile?: File }>();
 
+    @Input() public folder = ''
+    // @Input() public set folder(value: string) {
+    //     this._folder = value;
+    // }
+    @Input() public type!: 'upload' | 'download';
     @Input() public controlId!: string;
     @Input() public control?: FormControl;
     @Input() public label?: string;
     @Input() public preloadExisting: boolean = false;
-    @Input() public type!: 'upload' | 'download';
-    @Input() public set folder(value: string) {            
-        // this.filesStore.clear();
-        this._folder = value;
-    };
+    @Input() public serveFrom: 'cloud' | 'local' = 'cloud';
     @Input() public set files(files: UserFile[]) {
         files.forEach(file => this.filesStore.set(file.filename, {
             userFile: file
@@ -36,28 +36,33 @@ export class UploadBoxComponent implements OnInit, OnChanges {
     @Output()
     public uploadFilesChanged = new EventEmitter<string[]>();
     
-    public get folder(): string {
-        return this._folder;
-    }
-    
     public get fileInputId(): string {
         return `fileInput-${this.folder}`;
     }
 
-	constructor(private uploadService: UploadService, private cd: ChangeDetectorRef, private courseBuilder: CourseBuilderService) {
+    // public get folder() {
+    //     return this._folder
+    // }
 
+    private filesUploadSubscription?: Subscription
+
+	constructor(private uploadService: UploadService, private cd: ChangeDetectorRef, private cacheService: CacheService) {
+
+    }
+    
+    public ngOnDestroy(): void {
+        this.filesUploadSubscription?.unsubscribe()
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
-        const { controlId } = changes
-        if (!controlId.firstChange && controlId.previousValue !== controlId.currentValue) {
+        const { controlId, folder } = changes
+
+        if (folder && folder.previousValue !== folder.currentValue) {
             this.refresh()
         }
     }
 
 	public ngOnInit(): void {
-        this.refresh()
-
         this.control?.valueChanges.subscribe((value: UserFile[]) => {
             if (value.length === 0) {
                 this.clearBox();
@@ -73,7 +78,7 @@ export class UploadBoxComponent implements OnInit, OnChanges {
     }
 
     public onFilesDropped(fileList: FileList) {
-        if (this._folder === null) {
+        if (this.folder === null) {
             return;
         }
         Array.from(fileList).forEach(file => {
@@ -94,18 +99,18 @@ export class UploadBoxComponent implements OnInit, OnChanges {
         this.filesStore.delete(file.filename)
         if (this.folder) {
             this.uploadService.removeTempFile(file.filename, this.folder).subscribe()
-            this.courseBuilder.removeFileFromCache(this.controlId, file)
+            this.cacheService.removeFileFromCache(this.controlId, file)
         }
     }
 
     public onDownload({ filename, url }: UserFile) {
         if (url) {
-            this.uploadService.downloadFile(url, filename).subscribe()
+            this.downloadFileFromRemote(url, filename).subscribe()
         }
     }
 
     public onUpload(file: UserFile) {
-        this.courseBuilder.addFileToCache(this.controlId, file)
+        this.cacheService.addFileToCache(this.controlId, file)
     }
 
     public refreshFiles(): void {
@@ -113,21 +118,27 @@ export class UploadBoxComponent implements OnInit, OnChanges {
     }
 
     private refresh() {
+        console.log('refresh upload box', this.controlId);
+        this.filesUploadSubscription?.unsubscribe();
         this.clearBox()
         const cachedFiles = this.restoreFilesFromCache(this.controlId)
         if (cachedFiles.length > 0) {
             cachedFiles.forEach(file => this.filesStore.set(file.filename, {
                 userFile: file
             }))
-            
-        } else {
-            if (this.type === 'download') {
-                this.getFilesFromFolder(this.folder, 'remote').subscribe((files: UserFile[]) => {
+        } 
+        else {
+            // Preload files if specified and have 'upload' type or if have 'download' type
+            const needPreloadForUpload = this.type === 'upload' && this.preloadExisting 
+            if (needPreloadForUpload || this.type === 'download') {
+                const getFrom = this.serveFrom === 'cloud' ? 'remote' : 'temp'
+                this.filesUploadSubscription = this.getFilesFromFolder(this.folder, getFrom)
+                .subscribe((files: UserFile[]) => {
                     files.forEach(file => {
                         this.filesStore.set(file.filename, {
                             userFile: file
                         })
-                        this.courseBuilder.addFileToCache(this.controlId, file)
+                        this.cacheService.addFileToCache(this.controlId, file)
                     })
                     this.cd.detectChanges();
                 });
@@ -137,16 +148,7 @@ export class UploadBoxComponent implements OnInit, OnChanges {
 
     private getFilesFromFolder(folder: string, type: 'temp' | 'remote'): Observable<UserFile[]> {
         return this.uploadService.getFilesFromFolder(folder, type)
-            .pipe(
-                map(res => {
-                    const { resources } = res;
-                    return resources.map(file => ({
-                        filename: file.filename,
-                        uploadedAt: file.uploaded_at,
-                        url: file.url
-                    }))
-                })
-            )
+            .pipe( map(res => res.files) )
     }
 
     private formatFileToUserFile(file: File): UserFile {
@@ -157,11 +159,32 @@ export class UploadBoxComponent implements OnInit, OnChanges {
     }
 
     private restoreFilesFromCache(key: string) {
-        const files = this.courseBuilder.filesCache.get(key) ?? []
+        const files = this.cacheService.filesCache.get(key) ?? []
         return files
     }
 
     private clearBox() {
         this.filesStore.clear();
     }
+
+    private downloadFileFromRemote(url: string, filename: string) {
+		return from(
+			new Promise(async (res, rej) => {
+				const data = await fetch(url);
+				const blob = await data.blob();
+				const objectUrl = URL.createObjectURL(blob);
+
+				const link = document.createElement('a');
+				link.setAttribute('href', objectUrl);
+				link.setAttribute('download', filename);
+				link.style.display = 'none';
+
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+
+				res('success');
+			})
+		);
+	}
 }

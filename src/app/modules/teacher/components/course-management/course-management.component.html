@@ -10,14 +10,18 @@
             <input type="text" placeholder="Поиск...">
             <button (click)="refreshMembersList('pending')">Обновить</button>
             <ng-container *ngIf="pendingStudents$ | async as pendingMembers; else loader">
-                <app-course-member 
-                    class="student-item"    
-                    *ngFor="let user of pendingMembers"
-                    [user]="user"
-                    status="pending"
-                    (enroll)="onApproveEnroll($event)"   
-                >                
-                </app-course-member>
+                
+                <ng-container *ngIf="pendingMembers.length > 0; else emptyList">
+                    <app-course-member 
+                        class="student-item"    
+                        *ngFor="let user of pendingMembers"
+                        [user]="user"
+                        status="pending"
+                        (enroll)="onApproveEnroll($event)"   
+                    >                
+                    </app-course-member>
+                </ng-container>
+                
             </ng-container>
         </div>
 
@@ -26,19 +30,18 @@
             <input type="text" placeholder="Поиск...">
             <button (click)="refreshMembersList('approved')">Обновить</button>
             <ng-container *ngIf="approvedStudents$ | async as approvedMembers; else loader">
-                <ng-container *ngIf="approvedMembers.length === 0">
-                    <p>
-                        Нет зачисленных студентов.
-                    </p>
+                
+                <ng-container *ngIf="approvedMembers.length > 0; else emptyList">
+                    <app-course-member 
+                        class="student-item"    
+                        *ngFor="let user of approvedMembers"
+                        [user]="user"
+                        status="approved"
+                        (expel)="onExpel($event)"
+                    >                
+                    </app-course-member>
                 </ng-container>
-                <app-course-member 
-                    class="student-item"    
-                    *ngFor="let user of approvedMembers"
-                    [user]="user"
-                    status="approved"
-                    (expel)="onExpel($event)"
-                >                
-                </app-course-member>
+                
             </ng-container>
         </div>
     </div>
@@ -46,4 +49,8 @@
 
 <ng-template #loader>
     Loading...
+</ng-template>
+
+<ng-template #emptyList>
+    <p>Пусто.</p>
 </ng-template>

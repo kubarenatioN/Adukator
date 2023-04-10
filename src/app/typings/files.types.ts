@@ -12,5 +12,5 @@ export interface CloudinaryFile {
 export interface UserFile {
     filename: string;
     url?: string;
-    uploadedAt: string;
+    uploadedAt?: string;
 }

@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
-import { UploadHelper } from 'src/app/helpers/upload.helper';
-import { UploadService } from 'src/app/services/upload.service';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { CourseHierarchyComponent, WrapperType } from 'src/app/typings/course.types';
+import { WrapperType } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
 
 type SectionType = 'materials' | 'theory' | 'practice' | 'test'
@@ -18,11 +16,9 @@ type SectionType = 'materials' | 'theory' | 'practice' | 'test'
 })
 export class ModuleTopicComponent extends BaseComponent implements OnInit {
     private _form!: FormGroup;
-    private courseId: string;
 
     @Input() public set form(form: FormGroup) {
         this._form = form;
-        this.uploadFolder = this.uploadService.getFilesFolder(this.courseId, 'topics', this._form.value.id);
         this.activeSections = {
             materials: form.value.materials && form.value.materials.length > 0,
             theory: form.value.theory,
@@ -73,18 +69,19 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
 	constructor(
         private fbHelper: FormBuilderHelper,
         private courseBuilderService: CourseBuilderService,
-        private uploadService: UploadService
     ) {
         super()
-        this.courseId = this.courseBuilderService.courseId;
     }
 
-	public ngOnInit(): void { 
+	public ngOnInit(): void {
+        
         this.form.valueChanges
             .pipe(takeUntil(this.componentLifecycle$))
             .subscribe(value => {
                 console.log('111 change topic', value);
             })
+
+        this.uploadFolder = this.courseBuilderService.getUploadFolder('topics', this.form.value.id)
     }
 
     public onAddSection(sectionType: SectionType) {

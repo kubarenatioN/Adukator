@@ -1,31 +1,19 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, Observable, BehaviorSubject, of, ReplaySubject } from 'rxjs';
+import { combineLatest, Observable, BehaviorSubject, ReplaySubject } from 'rxjs';
 import {
     distinctUntilChanged,
     map,
 	shareReplay,
 	switchMap,
-	tap,
 } from 'rxjs/operators';
 import {
     EmptyCourseFormData,
-	getEmptyCourseFormData,
-    isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
-import {
-    convertCourseFormDataToCourse,
-    convertCourseFormDataToCourseReview,
-	generateUUID,
-} from 'src/app/helpers/courses.helper';
-import { AdminCoursesService } from 'src/app/services/admin-courses.service';
-import { CoursesService } from 'src/app/services/courses.service';
-import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
-import { UploadService } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
-import { CourseBuilderViewData, CourseBuilderViewType, CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseModule, CourseReview, CourseReviewStatus } from 'src/app/typings/course.types';
+import { CourseBuilderViewData, CourseBuilderViewType, CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseModule, CourseReview } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
 
 @Component({
@@ -35,7 +23,6 @@ import { CourseBuilderService } from '../../services/course-builder.service';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateCourseComponent extends CenteredContainerDirective implements OnInit, OnDestroy {
-	private courseMetadata!: CourseFormMetadata;
 	private modulesStore$ = new ReplaySubject<CourseModule[]>(1);
 
     public formMode: CourseFormViewMode = CourseFormViewMode.Create;
@@ -49,11 +36,7 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
 	constructor(
 		private userService: UserService,
 		private activatedRoute: ActivatedRoute,
-		private coursesService: CoursesService,
-		private teacherCoursesService: TeacherCoursesService,
-		private adminCoursesService: AdminCoursesService,
 		private courseBuilderService: CourseBuilderService,
-        private uploadService: UploadService,
 	) {
         super();
         this.modules$ = this.modulesStore$.asObservable();
@@ -86,26 +69,10 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
         ])
             .pipe(
                 switchMap(([params, user]) => {
+                    const courseId = String(params.get('id'));
                     const { mode } = this.activatedRoute.snapshot.data as { mode: CourseFormViewMode };
-                    if (mode === CourseFormViewMode.Create) {
-                        const courseId = this.courseBuilderService.courseId
-                        this.courseMetadata = this.getMasterCourseMetadata(courseId, user.uuid)
-                        return of(getEmptyCourseFormData(courseId));
-                    } else {
-                        const courseId = String(params.get('id'));
-                        if (mode === CourseFormViewMode.Review) {
-                            return this.adminCoursesService.getCourseReviewVersion(courseId);
-                        }
-                        return this.teacherCoursesService.getCourseReviewVersion(courseId);
-                    }
-                }),
-                tap(course => {
-                    console.log('course', course);
-                    if (course !== null && !isEmptyCourseFormData(course)) {
-                        this.courseMetadata = this.cloneParentCourseMetadata(course)
-                    }
                     
-                    this.courseBuilderService.courseId = course.uuid
+                    return this.courseBuilderService.getCourse(mode, courseId, user)
                 }),
                 shareReplay(1),    
             )
@@ -118,59 +85,31 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
                 return {
                     viewPath: { ...navQuery },
                     mode,
-                    metadata: this.courseMetadata,
+                    metadata: this.courseBuilderService.metadata,
                 }
             }),
             shareReplay(1),
         )
 	}
 
-	public onCreateReviewVersion({ formData, isMaster }: { formData: CourseFormData, isMaster: boolean }): void {
-        this.restoreCourseMetadata(formData, this.courseMetadata);
-        console.log('111 course form', formData);
-
-        const courseData = convertCourseFormDataToCourseReview(formData);
-        console.log('111 converted course form', courseData);
-        
-        // TODO: Uncomment method below
-        this.coursesService.createCourseReviewVersion(courseData, { isMaster })
-            .pipe(
-                switchMap(course => {
-                    console.log('Uploaded course review', course);
-                    
-                    return this.uploadService.moveFilesToRemote(courseId)
-                }),
-                tap((res) => {
-                    console.log('Moved files to remote', res)
-                })
-            )
+	public onCreateReviewVersion(payload: { formData: CourseFormData, isMaster: boolean }): void {
+        this.courseBuilderService.createCourseReviewVersion(payload)
             .subscribe((res) => {
                 console.log('Course review new version created!', res);
             });
-
-        const courseId = this.courseBuilderService.courseId;
-        
 	}
 
     public onPublish(formData: CourseFormData): void {
-        formData = this.restoreCourseMetadata(formData, this.courseMetadata)
-        const courseData = convertCourseFormDataToCourse(formData)
-        const masterId = formData.metadata.masterCourseId || formData.metadata.uuid
-        this.adminCoursesService.publish(courseData, masterId)
+        this.courseBuilderService.publishCourse(formData)
             .subscribe(res => {
-                console.log('111 course published', res);
+                console.log('Published course!', res);
             })
 	}
 
 	public onSaveReview(comments: { overallComments: unknown; modules: unknown }): void {
-        const id = this.courseMetadata._id;
-        if (!id) {
-            console.error('No _id provided to save review');
-            return;
-        }
-        this.adminCoursesService.saveCourseReview(id, comments)
-            .subscribe(() => {
-                console.log('course review updated');
+        this.courseBuilderService.saveCourseReview(comments)
+            .subscribe((res) => {
+                console.log('Course review created!', res);
             });
 	}
 
@@ -186,29 +125,5 @@ export class CreateCourseComponent extends CenteredContainerDirective implements
             return 'module'
         }
         return 'main';
-    }
-
-    private restoreCourseMetadata(formData: CourseFormData, metadata: CourseFormMetadata): CourseFormData {
-        formData.metadata = metadata
-        return formData
-    }
-
-    private getMasterCourseMetadata(courseId: string, authorId: string): CourseFormMetadata {
-        return {
-            uuid: courseId,
-            authorId,
-            masterCourseId: null,
-            status: CourseReviewStatus.Default
-        }
-    }
-
-    private cloneParentCourseMetadata(parentCourse: CourseReview): CourseFormMetadata {
-        return {
-            _id: parentCourse._id,
-            uuid: generateUUID(),
-            authorId: parentCourse.authorId,
-            masterCourseId: parentCourse.masterId === null ? parentCourse.uuid : parentCourse.masterId, // all the versions point to the most first course version, the first one points to null
-            status: parentCourse.status
-        }
     }
 }

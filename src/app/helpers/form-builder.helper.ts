@@ -77,11 +77,11 @@ export class FormBuilderHelper {
         })
     }
 
-    public getTrainingTaskForm() {
+    public getTrainingTaskForm(task: TopicTask | null = null) {
         return this.fb.group({
-            id: '',
-            files: [new Array<string>()],
-            comment: ''
+            id: task ? task.id : '',
+            files: task?.materials ? [task.materials] : [[]],
+            comment: task ? task.comment : ''
         })
     }
 

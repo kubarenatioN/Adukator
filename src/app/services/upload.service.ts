@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, map, Observable } from 'rxjs';
 import { apiUrl } from '../constants/urls';
 import { UserFile } from '../typings/files.types';
-import { CourseFilesResponse } from '../typings/response.types';
+import { CloudinaryFilesResponse, CourseFilesResponse } from '../typings/response.types';
 
 @Injectable({
 	providedIn: 'root',
@@ -25,47 +25,10 @@ export class UploadService {
     
 	public getFilesFromFolder(folder: string, type: 'temp' | 'remote'): Observable<CourseFilesResponse> {
 		folder = encodeURIComponent(folder);
-		return this.http
-			.get<CourseFilesResponse>(`${apiUrl}/upload/files`, {
-				params: {
-                    type,
-					folder,
-				},
-			})
-			.pipe(
-				map((res) => {
-					let { resources } = res;
-					resources = resources.map((file) => {
-						if (file.resource_type === 'image') {
-							file.filename = `${file.filename}.${file.format}`;
-						}
-						return file;
-					});
-					res.resources = resources;
-					return res;
-				})
-			);
-	}
-
-	public downloadFile(url: string, filename: string) {
-		return from(
-			new Promise(async (res, rej) => {
-				const data = await fetch(url);
-				const blob = await data.blob();
-				const objectUrl = URL.createObjectURL(blob);
-
-				const link = document.createElement('a');
-				link.setAttribute('href', objectUrl);
-				link.setAttribute('download', filename);
-				link.style.display = 'none';
-
-				document.body.appendChild(link);
-				link.click();
-				document.body.removeChild(link);
-
-				res('success');
-			})
-		);
+		if (type === 'remote') {
+            return this.getFilesFromCloud(folder)
+        }
+        return this.getFilesFromLocal(folder)
 	}
 
 	public removeTempFile(filename: string, folder: string) {
@@ -83,5 +46,43 @@ export class UploadService {
 
     public getFilesFolder(courseId: string, type?: string, controlId?: string) {
         return `${courseId}/${type ?? ''}/${controlId ?? ''}`
+    }
+
+    private getFilesFromCloud(folder: string): Observable<CourseFilesResponse> {
+        return this.http.get<CloudinaryFilesResponse>(`${apiUrl}/upload/files`, {
+                params: {
+                    type: 'remote',
+                    folder,
+                },
+            })
+            .pipe(
+                map((res) => {
+                    let { resources } = res;
+                    const files: UserFile[] = resources.map((file) => {
+                        if (file.resource_type === 'image') {
+                            file.filename = `${file.filename}.${file.format}`;
+                        }
+                        return {
+                            filename: file.filename,
+                            uploadedAt: file.uploaded_at,
+                            url: file.url
+                        };
+                    });
+                    
+                    return {
+                        files,
+                        total: res.total_count
+                    };
+                })
+            );
+    }
+
+    private getFilesFromLocal(folder: string): Observable<CourseFilesResponse> {
+        return this.http.get<CourseFilesResponse>(`${apiUrl}/upload/files`, {
+                params: {
+                    type: 'temp',
+                    folder,
+                },
+            })
     }
 }

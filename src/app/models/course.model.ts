@@ -7,6 +7,10 @@ export class CourseTraining {
     public get course() {
         return this._course;
     }
+    
+    public get id() {
+        return this._course.uuid;
+    }
 
     private set course(value: ICourseTraining) {
         this._course = value;

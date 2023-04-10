@@ -1,5 +1,5 @@
 import { Course, CourseMembershipAction, CourseReview } from "./course.types";
-import { CloudinaryFile } from "./files.types";
+import { CloudinaryFile, UserFile } from "./files.types";
 
 export interface CoursesResponse<T> {
     data: T
@@ -33,6 +33,11 @@ export interface CourseEnrollResponse {
 }
 
 export interface CourseFilesResponse {
+    files: UserFile[],
+    total: number
+}
+
+export interface CloudinaryFilesResponse {
     resources: CloudinaryFile[],
     total_count: number
 }
