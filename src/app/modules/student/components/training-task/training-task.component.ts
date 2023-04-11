@@ -24,28 +24,19 @@ const UploadLabel = 'Загрузите файлы с выполненным з�
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrainingTaskComponent implements OnInit, OnChanges {
-    private _task!: TopicTask;
 	private initialValue!: TaskAnswer;
-    private taskStore$ = new BehaviorSubject<TopicTask>({} as TopicTask)
-    private uploadFolderStore$ = new BehaviorSubject<string>('')
 
-	@Input() public set task(value: TopicTask) {
-        this._task = value;
-    }
+	@Input() public task!: TopicTask
 
 	@Output() public send = new EventEmitter<TaskAnswer>();
 
 	public form;
-	public uploadFolder = '';
-	// public uploadFolder$ = this.uploadFolderStore$.asObservable();
+	public uploadFilesFolder = '';
+	public taskMaterialsFolder = '';
 	public uploadLabel = UploadLabel;
 
     public get controlId(): string {
         return this.task.id
-    }
-
-    public get task(): TopicTask {
-        return this._task
     }
 
 	constructor(
@@ -57,42 +48,41 @@ export class TrainingTaskComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        const { task } = changes
-        if (task && !task.firstChange && task.previousValue.id !== task.currentValue.id) {
-            // this.taskStore$.next(task.currentValue)
-            console.log('task', task.currentValue.id);
-        }
+        
     }
 
 	ngOnInit(): void {
-        
-        // combineLatest([
-        //     this.trainingService.course$,
-        //     this.taskStore$,
-        // ]).subscribe(([course, task]) => {
-        //     const uploadFolder = this.uploadService.getFilesFolder(course.id, 'tasks', task.id)
-        //     this.uploadFolderStore$.next(uploadFolder) 
-        // })
-
-        this.trainingService.getUploadFolder('tasks', this.task.id).pipe(
+        this.trainingService.getUploadFolders([
+            { segments: ['tasks'], controlId: this.task.id },
+            { segments: ['training', 'tasks'], controlId: this.task.id },
+        ]).pipe(
             take(1)
-        ).subscribe(folder => {
-            this.uploadFolder = folder
+        ).subscribe(folders => {
+            this.taskMaterialsFolder = folders[0]
+            this.uploadFilesFolder = folders[1]
         })
 
-		// Fill with task data
+        // Fill with task data
         this.form = this.fbHelper.getTrainingTaskForm(this.task);
 
-		this.initialValue = this.fbHelper.getTrainingTaskDefaultValue(
-			this.task.id
-		);
+        this.form.valueChanges.subscribe(res => {
+            console.log('task model', res);
+        })
+
+		// this.initialValue = this.fbHelper.getTrainingTaskDefaultValue(
+		// 	this.task.id
+		// );
 	}
+
+    public onUpload(files: string[]) {
+        this.form.controls.files.setValue(files)
+    }
 
 	public onSend() {
 		const answer = this.form.value as TaskAnswer;
 		if (answer.files.length > -1) {
 			this.send.emit(answer);
-			this.form.reset(this.initialValue);
+			this.form.reset();
 		} else {
 			console.warn('No files attached');
 		}

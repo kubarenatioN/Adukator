@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { UserFile } from '../typings/files.types';
 
-@Injectable({
-	providedIn: 'root',
-})
-export class CacheService {
+@Injectable()
+export class UploadCacheService {
 	private materialsCache = new Map<string, UserFile[]>();
 
 	public get filesCache() {

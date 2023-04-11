@@ -5,7 +5,7 @@ import { StudentTraining } from '../../../models/course.model';
 import { CourseTrainingMeta } from '../../../typings/course.types';
 import { DataResponse } from '../../../typings/response.types';
 import { CoursesService } from '../../../services/courses.service';
-import { UploadService } from '../../../services/upload.service';
+import { UploadPathSegment, UploadService } from '../../../services/upload.service';
 
 @Injectable()
 export class CourseTrainingService {
@@ -32,9 +32,13 @@ export class CourseTrainingService {
         })
     }
 
-    public getUploadFolder(type: 'tasks' | 'topics', controlId: string): Observable<string> {
+    public getUploadFolders(components: { segments: UploadPathSegment[], controlId: string}[]): Observable<string[]> {
         return this.training$.pipe(
-            map(course => this.uploadService.getFilesFolder(course.id, type, controlId))
+            map(course => {
+                return components.map(({ segments, controlId }) => {
+                    return this.uploadService.getFilesFolder(course.id, segments, controlId)
+                })
+            })
         )
     }
 }

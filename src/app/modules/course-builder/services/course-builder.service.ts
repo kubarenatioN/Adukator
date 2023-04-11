@@ -5,7 +5,7 @@ import { convertCourseFormDataToCourse, convertCourseFormDataToCourseReview, gen
 import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
-import { UploadService } from 'src/app/services/upload.service';
+import { UploadPathSegment, UploadService } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
 import { CourseBuilderViewData, CourseBuilderViewType, CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseReview, CourseReviewStatus } from 'src/app/typings/course.types';
 import { User } from 'src/app/typings/user.types';
@@ -127,9 +127,9 @@ export class CourseBuilderService {
         )
     }
 
-    public getUploadFolder(type: 'tasks' | 'topics', controlId: string) {
+    public getUploadFolder(segments: UploadPathSegment[], controlId: string) {
         const rootCourseId = this.metadata.masterCourseId === null ? this.metadata.uuid : this.metadata.masterCourseId
-        return this.uploadService.getFilesFolder(rootCourseId, type, controlId)
+        return this.uploadService.getFilesFolder(rootCourseId, segments, controlId)
     }
 
     private restoreCourseMetadata(formData: CourseFormData, metadata: CourseFormMetadata): CourseFormData {

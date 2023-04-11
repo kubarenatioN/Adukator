@@ -11,25 +11,26 @@ import { SharedModule } from '../shared/shared.module';
 import { TrainingTaskComponent } from './components/training-task/training-task.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CourseTrainingService } from './services/course-training.service';
-
+import { UploadCacheService } from 'src/app/services/upload-cache.service';
 
 @NgModule({
-  declarations: [
-    StudentComponent,
-    CourseTrainingComponent,
-    CourseSidenavComponent,
-    TopicTrainingComponent,
-    TrainingTaskComponent
-  ],
-  imports: [
-    CommonModule,
-    LayoutComponent,
-    SharedModule,
-    StudentRoutingModule,
-    ReactiveFormsModule,
-  ],
-  providers: [
-    CourseTrainingService
-  ]
+	declarations: [
+		StudentComponent,
+		CourseTrainingComponent,
+		CourseSidenavComponent,
+		TopicTrainingComponent,
+		TrainingTaskComponent,
+	],
+	imports: [
+		CommonModule,
+		LayoutComponent,
+		SharedModule,
+		StudentRoutingModule,
+		ReactiveFormsModule,
+	],
+	providers: [
+        CourseTrainingService,
+        UploadCacheService,
+    ],
 })
-export class StudentModule { }
+export class StudentModule {}

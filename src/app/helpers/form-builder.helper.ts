@@ -80,8 +80,8 @@ export class FormBuilderHelper {
     public getTrainingTaskForm(task: TopicTask | null = null) {
         return this.fb.group({
             id: task ? task.id : '',
-            files: task?.materials ? [task.materials] : [[]],
-            comment: task ? task.comment : ''
+            files: [[] as string[]],
+            comment: ''
         })
     }
 

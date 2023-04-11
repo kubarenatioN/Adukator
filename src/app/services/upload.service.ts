@@ -5,6 +5,8 @@ import { apiUrl } from '../constants/urls';
 import { UserFile } from '../typings/files.types';
 import { CloudinaryFilesResponse, CourseFilesResponse } from '../typings/response.types';
 
+export type UploadPathSegment = 'tasks' | 'topics' | 'training' 
+
 @Injectable({
 	providedIn: 'root',
 })
@@ -44,8 +46,8 @@ export class UploadService {
         })
     }
 
-    public getFilesFolder(courseId: string, type?: string, controlId?: string) {
-        return `${courseId}/${type ?? ''}/${controlId ?? ''}`
+    public getFilesFolder(courseId: string, segments: UploadPathSegment[], controlId: string) {
+        return `${courseId}/${segments.join('/')}/${controlId}`
     }
 
     private getFilesFromCloud(folder: string): Observable<CourseFilesResponse> {

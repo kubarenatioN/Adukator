@@ -57,7 +57,7 @@ export class TopicTrainingComponent extends BaseComponent implements OnInit, OnC
         .pipe(
             takeUntil(this.componentLifecycle$),
             map(([topic, training]) => {
-                return this.uploadService.getFilesFolder(training.id, 'topics', topic.id)
+                return this.uploadService.getFilesFolder(training.id, ['topics'], topic.id)
             }),
             distinctUntilChanged(),
         )

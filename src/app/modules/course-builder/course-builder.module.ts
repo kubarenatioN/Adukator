@@ -9,15 +9,18 @@ import { ModuleTopicComponent } from './components/module-topic/module-topic.com
 import { TopicTaskComponent } from './components/topic-task/topic-task.component';
 import { SharedModule } from '../shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
-import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { CourseFormComponent } from './components/course-form/course-form.component';
 import { LayoutComponent } from 'src/app/components/layout/layout.component';
 import { CourseNavComponent } from './components/course-nav/course-nav.component';
 import { ChipsControlComponent } from './controls/chips-control/chips-control.component';
 import { CourseBuilderService } from './services/course-builder.service';
+import { UploadCacheService } from 'src/app/services/upload-cache.service';
 
 @NgModule({
-	providers: [CourseBuilderService],
+	providers: [
+        CourseBuilderService,
+        UploadCacheService,
+    ],
 	declarations: [
 		CourseBuilderComponent,
         CourseFormComponent,

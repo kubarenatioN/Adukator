@@ -39,7 +39,7 @@ export class TopicTaskComponent extends BaseComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.uploadFolder = this.courseBuilder.getUploadFolder('tasks', this.form.value.id)
+        this.uploadFolder = this.courseBuilder.getUploadFolder(['tasks'], this.form.value.id)
         this.courseBuilder.viewData$.pipe(
             takeUntil(this.componentLifecycle$)
         ).subscribe(viewData => {

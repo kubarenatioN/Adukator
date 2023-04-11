@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { from, map, Observable, Subscription } from 'rxjs';
-import { CacheService } from 'src/app/services/cache.service';
+import { UploadCacheService } from 'src/app/services/upload-cache.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { UserFile } from 'src/app/typings/files.types';
 
@@ -14,16 +13,12 @@ import { UserFile } from 'src/app/typings/files.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
-    // private _folder = ''
     public filesStore = new Map<string, { userFile: UserFile, uploadFile?: File }>();
 
     @Input() public folder = ''
-    // @Input() public set folder(value: string) {
-    //     this._folder = value;
-    // }
     @Input() public type!: 'upload' | 'download';
     @Input() public controlId!: string;
-    @Input() public control?: FormControl;
+    // @Input() public control?: FormControl;
     @Input() public label?: string;
     @Input() public preloadExisting: boolean = false;
     @Input() public serveFrom: 'cloud' | 'local' = 'cloud';
@@ -40,13 +35,12 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
         return `fileInput-${this.folder}`;
     }
 
-    // public get folder() {
-    //     return this._folder
-    // }
-
     private filesUploadSubscription?: Subscription
+    private get cacheKey() {
+        return this.folder
+    }
 
-	constructor(private uploadService: UploadService, private cd: ChangeDetectorRef, private cacheService: CacheService) {
+	constructor(private uploadService: UploadService, private cd: ChangeDetectorRef, private cacheService: UploadCacheService) {
 
     }
     
@@ -63,11 +57,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
     }
 
 	public ngOnInit(): void {
-        this.control?.valueChanges.subscribe((value: UserFile[]) => {
-            if (value.length === 0) {
-                this.clearBox();
-            }
-        })
+        
     }
 
     public onChange(e: Event) {
@@ -99,7 +89,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
         this.filesStore.delete(file.filename)
         if (this.folder) {
             this.uploadService.removeTempFile(file.filename, this.folder).subscribe()
-            this.cacheService.removeFileFromCache(this.controlId, file)
+            this.cacheService.removeFileFromCache(this.cacheKey, file)
         }
     }
 
@@ -110,7 +100,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     public onUpload(file: UserFile) {
-        this.cacheService.addFileToCache(this.controlId, file)
+        this.cacheService.addFileToCache(this.cacheKey, file)
     }
 
     public refreshFiles(): void {
@@ -118,10 +108,10 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private refresh() {
-        console.log('refresh upload box', this.controlId);
         this.filesUploadSubscription?.unsubscribe();
         this.clearBox()
-        const cachedFiles = this.restoreFilesFromCache(this.controlId)
+
+        const cachedFiles = this.restoreFilesFromCache(this.cacheKey)
         if (cachedFiles.length > 0) {
             cachedFiles.forEach(file => this.filesStore.set(file.filename, {
                 userFile: file
@@ -138,7 +128,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
                         this.filesStore.set(file.filename, {
                             userFile: file
                         })
-                        this.cacheService.addFileToCache(this.controlId, file)
+                        this.cacheService.addFileToCache(this.cacheKey, file)
                     })
                     this.cd.detectChanges();
                 });

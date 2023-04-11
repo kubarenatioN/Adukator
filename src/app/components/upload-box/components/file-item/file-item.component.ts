@@ -73,10 +73,6 @@ export class FileItemComponent implements OnInit {
         }
     }
 
-    private cancelUploadedFile() {
-        
-    }
-
     private formatProgress(progress: number): string {
         return `${progress * 100}px`
     }

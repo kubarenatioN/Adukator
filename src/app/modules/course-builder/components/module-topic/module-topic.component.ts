@@ -79,7 +79,7 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
                 // console.log('111 change topic', value);
             })
 
-        this.uploadFolder = this.courseBuilderService.getUploadFolder('topics', this.form.value.id)
+        this.uploadFolder = this.courseBuilderService.getUploadFolder(['topics'], this.form.value.id)
 
         this.courseBuilderService.viewData$
         .pipe(takeUntil(this.componentLifecycle$))
