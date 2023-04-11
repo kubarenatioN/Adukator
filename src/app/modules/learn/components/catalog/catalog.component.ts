@@ -7,7 +7,7 @@ import { CoursesSelectFields } from 'src/app/config/course-select-fields.config'
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UserService } from 'src/app/services/user.service';
-import { Course } from 'src/app/typings/course.types';
+import { Course, CourseTrainingMeta } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-courses-catalog',
@@ -16,7 +16,7 @@ import { Course } from 'src/app/typings/course.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CatalogComponent extends CenteredContainerDirective {
-	public courses$: Observable<Course[]>;
+	public trainings$: Observable<CourseTrainingMeta[]>;
 
 	public isTeacherUser$ = this.userService.user$.pipe(
 		map((user) => user?.role === 'teacher')
@@ -27,7 +27,7 @@ export class CatalogComponent extends CenteredContainerDirective {
 		private userService: UserService
 	) {
 		super();
-		this.courses$ = this.coursesService.catalogCourses$;
+		this.trainings$ = this.coursesService.catalogCourses$;
         this.coursesService.getCoursesList({
             pagination: {
                 offset: 0,

@@ -6,6 +6,7 @@ import { CourseTrainingMeta } from '../../../typings/course.types';
 import { DataResponse } from '../../../typings/response.types';
 import { CoursesService } from '../../../services/courses.service';
 import { UploadPathSegment, UploadService } from '../../../services/upload.service';
+import { TaskAnswer } from 'src/app/typings/course-training.types';
 
 @Injectable()
 export class CourseTrainingService {
@@ -40,5 +41,10 @@ export class CourseTrainingService {
                 })
             })
         )
+    }
+
+    public sendTaskAnswer(answer: TaskAnswer) {
+		console.log('111 send answer', answer);
+    
     }
 }

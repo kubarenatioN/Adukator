@@ -85,7 +85,7 @@ export class FormBuilderHelper {
         })
     }
 
-    public getTrainingTaskDefaultValue(id: string): TaskAnswer {
+    public getTrainingTaskInitialValue(id: string): TaskAnswer {
         return {
             id,
             files: [],

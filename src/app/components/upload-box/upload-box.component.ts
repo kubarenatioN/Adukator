@@ -18,7 +18,6 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
     @Input() public folder = ''
     @Input() public type!: 'upload' | 'download';
     @Input() public controlId!: string;
-    // @Input() public control?: FormControl;
     @Input() public label?: string;
     @Input() public preloadExisting: boolean = false;
     @Input() public serveFrom: 'cloud' | 'local' = 'cloud';
@@ -153,7 +152,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
         return files
     }
 
-    private clearBox() {
+    public clearBox() {
         this.filesStore.clear();
     }
 

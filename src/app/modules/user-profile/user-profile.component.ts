@@ -21,11 +21,11 @@ export class UserProfileComponent extends CenteredContainerDirective {
     private userAsTeacherCourses$!: Observable<StudentCourse[] | null>
 
     public studentPendingCourses$ = this.userAsStudentCourses$.pipe(
-        map(membership => membership.filter(item => item.status === CourseMembershipStatus.Pending).map(membership => membership.course)),
+        map(membership => membership.filter(item => item.membership.status === CourseMembershipStatus.Pending)),
     )
 
     public studentApprovedCourses$ = this.userAsStudentCourses$.pipe(
-        map(membership => membership.filter(item => item.status === CourseMembershipStatus.Approved).map(membership => membership.course))
+        map(membership => membership.filter(item => item.membership.status === CourseMembershipStatus.Approved))
     )
 
 	constructor(private userService: UserService, private router: Router, private studentCoursesService: StudentCoursesService, private teacherCoursesService: TeacherCoursesService) {

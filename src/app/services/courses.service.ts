@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { Course, CourseFormData, CourseReview, StudentCourse } from '../typings/course.types';
+import { Course, CourseFormData, CourseMembershipMap, CourseMembershipStatus, CourseReview, CourseTrainingMeta, StudentCourse } from '../typings/course.types';
 import { CoursesResponse, CoursesSelectResponse, CourseReviewHistory } from '../typings/response.types';
 import { DataService } from './data.service';
 import { UserService } from './user.service';
@@ -11,9 +11,9 @@ import { UserService } from './user.service';
 	providedIn: 'root',
 })
 export class CoursesService {
-    private catalogCoursesStore$ = new BehaviorSubject<Course[]>([]);
+    private catalogCoursesStore$ = new BehaviorSubject<CourseTrainingMeta[]>([]);
 
-    public catalogCourses$: Observable<Course[]>;
+    public catalogCourses$: Observable<CourseTrainingMeta[]>;
 
 	constructor(private dataService: DataService, private userService: UserService) {
         this.catalogCourses$ = this.catalogCoursesStore$.pipe(
@@ -24,7 +24,7 @@ export class CoursesService {
     public getCourseReviewVersion(courseId: string) {
         return this.userService.user$.pipe(
             switchMap(user => {
-                return this.getCourses<CoursesSelectResponse>({
+                return this.getCourses<{ data: CourseReview[] }>({
                     requestKey: NetworkRequestKey.GetCourses,
                     reqId: 'CourseReviewVersion',
                     type: 'review',
@@ -33,7 +33,7 @@ export class CoursesService {
                     authorId: user.role === 'teacher' ? user.uuid : undefined
                 })
             }),
-            map(response => response.review[0])
+            map(response => response.data[0])
         )
     }
 
@@ -50,14 +50,14 @@ export class CoursesService {
             body: options,
             params: { reqId: 'CoursesList' }
         })
-        this.dataService.send<{ data: Course[] }>(payload)
+        this.dataService.send<{ data: CourseTrainingMeta[] }>(payload)
             .subscribe(res => this.catalogCoursesStore$.next(res.data))
     }
 
     // Main generic method to get any course, try to reuse it everywhere
     public getCourses<T>({ requestKey, type, coursesIds, authorId, fields, reqId }: {
         requestKey?: string,
-        type: 'training' | 'review',
+        type: 'training' | 'review' | 'published',
         reqId: string,
         coursesIds?: string[],
         authorId?: string,
@@ -108,7 +108,9 @@ export class CoursesService {
             },
             params: { reqId: 'StudentCourses' }
         })
-        return this.dataService.send<{ data: StudentCourse[] }>(payload);
+        return this.dataService.send<{ 
+            data: StudentCourse[] 
+        }>(payload);
     }
 
     public isTrainingCourseAvailable(courseId: string, userId: string) {

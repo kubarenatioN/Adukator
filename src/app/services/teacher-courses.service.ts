@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { TeacherCourses } from '../typings/course.types';
+import { Course, CourseReview, CourseTraining, CourseTrainingMeta, TeacherCourses } from '../typings/course.types';
 import { CoursesSelectResponse } from '../typings/response.types';
 import { CoursesService } from './courses.service';
 import { DataService } from './data.service';
@@ -15,28 +15,69 @@ const RequestKey = NetworkRequestKey.GetCourses
 	providedIn: 'root',
 })
 export class TeacherCoursesService {
-    public courses$: Observable<TeacherCourses | null>
+    private initialStore = {
+        trainings: [] as CourseTrainingMeta[],
+        published: [] as Course[],
+        review: [] as CourseReview[],
+    };
+
+    private coursesStore$ = new BehaviorSubject(this.initialStore);
+
+    public trainings$ = this.selectObservableFromStore<typeof this.initialStore.trainings>('trainings');
+    public published$ = this.selectObservableFromStore<typeof this.initialStore.published>('published');
+    public review$ = this.selectObservableFromStore<typeof this.initialStore.review>('review');
     
-	constructor(private dataService: DataService, private userService: UserService, private coursesService: CoursesService) {
-        this.courses$ = this.getCourses();
+	constructor(
+        private userService: UserService, 
+        private coursesService: CoursesService
+    ) {
+        this.getCourses()
     }
 
     public getCourseReviewVersion(courseId: string) {
         return this.coursesService.getCourseReviewVersion(courseId);   
     }
 
-    private getCourses() {
-        return this.userService.user$.pipe(
+    public getCourses() {
+        this.userService.user$.pipe(
             switchMap(user => {
-                return this.coursesService.getCourses<TeacherCourses>({
+                const options = {
                     requestKey: RequestKey,
-                    reqId: 'TeacherReviewCourses',
-                    type: 'review',
                     authorId: user.uuid,
-                    fields: CoursesSelectFields.Short
+                    fields: CoursesSelectFields.Short,
+                }
+                return forkJoin({
+                    trainings: this.coursesService.getCourses<{ data: CourseTrainingMeta[] }>({
+                        ...options,
+                        reqId: 'SelectTeacherTrainingCourses',
+                        type: 'training',
+                    }),
+                    published: this.coursesService.getCourses<{ data: Course[] }>({
+                        ...options,
+                        reqId: 'SelectTeacherPublishedCourses',
+                        type: 'published',
+                    }),
+                    review: this.coursesService.getCourses<{ data: CourseReview[] }>({
+                        ...options,
+                        reqId: 'SelectTeacherReviewCourses',
+                        type: 'review',
+                    }),
                 })
             }),
+        ).subscribe(response => {
+            const { published, trainings, review } = response
+            this.coursesStore$.next({
+                published: published.data,
+                trainings: trainings.data,
+                review: review.data,
+            });
+        })
+    }
+
+    private selectObservableFromStore<T>(key: keyof typeof this.initialStore): Observable<T> {
+        return this.coursesStore$.pipe(
+            map(store => store[key] as unknown as T),
             shareReplay(1),
-        )
+        );
     }
 }

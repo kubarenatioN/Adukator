@@ -26,24 +26,24 @@
     <div class="courses-section">
         <h2>Мои курсы</h2>
 
-        <div *ngIf="studentApprovedCourses$ | async as courses; else loader">
+        <div *ngIf="studentApprovedCourses$ | async as trainings; else loader">
             <h3>Зачислен</h3>
-            <ng-container *ngIf="courses.length > 0; else noCourses">
+            <ng-container *ngIf="trainings.length > 0; else noCourses">
                 <div class="courses-list">
-                    <ng-container *ngFor="let course of courses"
+                    <ng-container *ngFor="let training of trainings"
                     [ngTemplateOutlet]="approvedCourse"
-                    [ngTemplateOutletContext]="{ course }"></ng-container>
+                    [ngTemplateOutletContext]="{ training }"></ng-container>
                 </div>
             </ng-container>
         </div>
 
-        <div *ngIf="studentPendingCourses$ | async as courses; else loader">
+        <div *ngIf="studentPendingCourses$ | async as trainings; else loader">
             <h3>В ожидании</h3>
-            <ng-container *ngIf="courses.length > 0; else noCourses">
+            <ng-container *ngIf="trainings.length > 0; else noCourses">
                 <div class="courses-list">
-                    <ng-container *ngFor="let course of courses"
+                    <ng-container *ngFor="let training of trainings"
                     [ngTemplateOutlet]="pendingCourse"
-                    [ngTemplateOutletContext]="{ course }"></ng-container>
+                    [ngTemplateOutletContext]="{ training }"></ng-container>
                 </div>
             </ng-container>
         </div>
@@ -63,11 +63,11 @@
 
 </ng-template>
 
-<ng-template #pendingCourse let-course="course">
+<ng-template #pendingCourse let-training="training">
     <a class="course-item" 
-    [routerLink]="['/app/learn/course/overview', course.uuid]">
+    [routerLink]="['/app/learn/course/overview', training.uuid]">
         <p>
-            {{course.title}}
+            {{training.course.title}}
         </p>
         <span class="course-status">
             Pending
@@ -75,11 +75,11 @@
     </a>
 </ng-template>
 
-<ng-template #approvedCourse let-course="course">
+<ng-template #approvedCourse let-training="training">
     <a class="course-item" 
-    [routerLink]="['/app/student/training', course.uuid]">
+    [routerLink]="['/app/student/training', training.uuid]">
         <p>
-            {{course.title}}
+            {{training.course.title}}
         </p>
         <span class="course-status">
             Approved

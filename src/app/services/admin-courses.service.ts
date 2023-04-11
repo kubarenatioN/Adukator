@@ -14,7 +14,9 @@ export class AdminCoursesService {
     public reviewCoursesList$: Observable<CourseReview[]>
     
 	constructor(private dataService: DataService, private coursesService: CoursesService) {
-        this.reviewCoursesList$ = this.getReviewCourses().pipe(map(courses => courses.filter(course => !course.masterId)))
+        this.reviewCoursesList$ = this.getReviewCourses().pipe(
+            map(courses => courses.filter(course => !course.masterId))
+        )
     }
 
     // get any course under review by id
@@ -39,13 +41,13 @@ export class AdminCoursesService {
     }
 
 	private getReviewCourses(): Observable<CourseReview[]> {
-        return this.coursesService.getCourses<CoursesSelectResponse>({
+        return this.coursesService.getCourses<{ data: CourseReview[] }>({
             requestKey: NetworkRequestKey.GetAdminReviewCourses,
             type: 'review',
             reqId: 'AdminReview',
             fields: CoursesSelectFields.Short
         }).pipe(
-            map(response => response.review),
+            map(response => response.data),
             shareReplay(1),
         )
     }

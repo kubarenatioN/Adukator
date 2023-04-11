@@ -30,21 +30,17 @@ export class CourseReviewGuardService implements CanActivate {
                 }
                 return this.isTeacherAuthor(courseId)
             }),
+            map(isTeacherAuthor => {
+                return isTeacherAuthor ? true : this.router.parseUrl('/app/learn')
+            })
         )
     }
 
     private isTeacherAuthor(courseId: string) {
-        return this.teacherCourses.courses$.pipe(
+        return this.teacherCourses.review$.pipe(
             withLatestFrom(this.userService.user$),
-            map(([courses, user]) => {
-                const courseForReview = courses?.review?.find(course => course.uuid === courseId)
-                if (!courseForReview) {
-                    const publishedCourse = courses?.published?.find(course => course.uuid === courseId)
-                    if (publishedCourse) {
-                        return this.router.parseUrl(`/app/learn/course/overview/${publishedCourse.uuid}`)
-                    }
-                    return this.router.parseUrl(`/app/learn/catalog`)
-                }
+            map(([reviewCourses, user]) => {
+                const courseForReview = reviewCourses.find(course => course.uuid === courseId)
                 return courseForReview?.authorId === user?.uuid
             })
         )

@@ -5,7 +5,7 @@ import { distinctUntilChanged, map, shareReplay, take, tap } from 'rxjs/operator
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { CourseManagementService } from 'src/app/services/course-management.service';
 import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
-import { Course, CourseMembershipMap, CourseMembershipStatus as EnrollStatus } from 'src/app/typings/course.types';
+import { Course, CourseMembershipMap, CourseMembershipStatus as EnrollStatus, CourseTraining } from 'src/app/typings/course.types';
 import { User } from 'src/app/typings/user.types';
 
 @Component({
@@ -22,7 +22,7 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
     })
     private courseId!: string;
 
-    public course$!: Observable<Course | null>
+    public course$!: Observable<CourseTraining | null>
     
     public get approvedStudents$(): Observable<User[]> {
         return this.courseMembershipStore$.pipe(
@@ -59,21 +59,20 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
 	public ngOnInit(): void {
         this.course$ = combineLatest([
             this.activatedRoute.paramMap,
-            this.teacherCourses.courses$,
+            this.teacherCourses.trainings$,
         ]).pipe(
-            take(1),
-            map(([params, teacherCourses]) => {
+            map(([params, trainings]) => {
                 const id = String(params.get('id'));
+                console.log(id, trainings);
                 if (id) {
                     this.courseId = id;
-                    const course = teacherCourses?.published?.find(course => course.uuid === id)
-                    return course ? course : null
+                    const training = trainings.find(training => training.uuid === id)
+                    return training?.course ?? null
                 }
                 return null
             }),
-            tap(course => {
-                if (course) {
-                    this.courseId = course.uuid;
+            tap(training => {
+                if (training) {
                     this.getInitialMembers(this.courseId);
                 }
             }),

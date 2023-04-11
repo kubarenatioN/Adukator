@@ -9,10 +9,10 @@
 	<div class="catalog-content">
 		<a
 			class="catalog-item"
-			[routerLink]="['../course', 'overview', item.uuid]"
-			*ngFor="let item of courses$ | async"
+			[routerLink]="['../course', 'overview', training.uuid]"
+			*ngFor="let training of trainings$ | async"
 		>
-			<h3>{{ item.title }}</h3>
+			<h3>{{ training.course.title }}</h3>
 			<div class="catalog-item__footer">
 				<span class="catalog-item__views">Views: 2.3k</span
 				><span class="catalog-item__participants"

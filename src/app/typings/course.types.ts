@@ -139,9 +139,15 @@ export interface TeacherCourses {
 
 
 export interface StudentCourse {
-    course: Course,
-    status: string
-    active: boolean
+    uuid: string
+    courseId: string,
+    course: CourseTraining,
+    membership: {
+        status: string
+        active: boolean
+    }
+    status: 'active' | 'archived',
+    startAt: string,
 }
 
 export interface CourseOverallInfo {
@@ -173,6 +179,7 @@ export interface CourseTraining extends CourseCore {
 
 export interface CourseTrainingMeta {
     _id: string,
+    uuid: string,
     course: CourseTraining,
     courseId: string,
     startAt: string,

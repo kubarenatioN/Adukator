@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { takeUntil } from 'rxjs';
+import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { CourseFormViewMode, WrapperType } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';

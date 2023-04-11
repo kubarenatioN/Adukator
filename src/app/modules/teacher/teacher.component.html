@@ -8,16 +8,30 @@
 
     <h2>Мои курсы</h2>
 
-    <h3>Опубликованные</h3>
+    <h3>Тренинги</h3>
+    <div class="courses-list">
+        <ng-container *ngIf="trainings$ | async as trainings; else loader">
+            <a class="course-item" 
+            *ngFor="let training of trainings"
+            [routerLink]="['/app/teacher/course', training.uuid, 'manage']">
+                <span>Треннинг</span>
+                <h4>{{training.course.title}}</h4>
+                <p>Статус: {{ training.status }}</p>
+            </a>
+        </ng-container>
+    </div>
+
+    <!-- <h3>Опубликованные</h3>
     <div class="courses-list">
         <ng-container *ngIf="publishedCourses$ | async as publishedCourses; else loader">
             <a class="course-item" 
             *ngFor="let course of publishedCourses"
-            [routerLink]="['/app/teacher/course', course.uuid, 'manage']">
+            [routerLink]="['/app/learn/course/overview', course.uuid]">
+                <span>Курс</span>
                 <h4>{{course.title}}</h4>
             </a>
         </ng-container>
-    </div>
+    </div> -->
     
     <h3>Ожидают публикации</h3>
     <div class="courses-list">
@@ -25,6 +39,7 @@
             <a class="course-item" 
             *ngFor="let course of reviewCourses"
             [routerLink]="['/app/course-review/review', course.uuid]">
+                <span>На проверке</span>
                 <h4>{{course.title}}</h4>
             </a>
         </ng-container>

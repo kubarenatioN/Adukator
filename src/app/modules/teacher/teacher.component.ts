@@ -3,7 +3,7 @@ import { map, Observable } from 'rxjs';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { CoursesService } from 'src/app/services/courses.service';
 import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
-import { Course, CourseReview, TeacherCourses } from 'src/app/typings/course.types';
+import { Course, CourseReview, CourseTraining, CourseTrainingMeta, TeacherCourses } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-teacher',
@@ -12,22 +12,21 @@ import { Course, CourseReview, TeacherCourses } from 'src/app/typings/course.typ
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TeacherComponent extends CenteredContainerDirective implements OnInit {
-    private teacherCourses$: Observable<TeacherCourses | null>
-
-    public publishedCourses$: Observable<Course[] | null>
-    public reviewCourses$: Observable<CourseReview[] | null>
+    public trainings$: Observable<CourseTrainingMeta[]>
+    public publishedCourses$: Observable<Course[]>
+    public reviewCourses$: Observable<CourseReview[]>
 
 	constructor(private teacherCourses: TeacherCoursesService) {
         super();
-        this.teacherCourses$ = this.teacherCourses.courses$;
-        
-        this.publishedCourses$ = this.teacherCourses$.pipe(
-            map(courses => courses?.published ?? [])
-        )
-        this.reviewCourses$ = this.teacherCourses$.pipe(
-            map(courses => courses?.review?.filter(course => !course.masterId) ?? [])
-        )
+
+        this.publishedCourses$ = this.teacherCourses.published$;
+        this.trainings$ = this.teacherCourses.trainings$;
+        this.reviewCourses$ = this.teacherCourses.review$.pipe(
+            map(courses => courses.filter(c => c.masterId === null))
+        );
     }
 
-	ngOnInit(): void {}
+	ngOnInit(): void {
+        // this.teacherCourses.getCourses()
+    }
 }

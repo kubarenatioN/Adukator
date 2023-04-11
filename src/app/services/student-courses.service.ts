@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
-import { Course, StudentCourse } from '../typings/course.types';
+import { Course, CourseTrainingMeta, StudentCourse } from '../typings/course.types';
 import { CoursesService } from './courses.service';
 import { UserService } from './user.service';
 
