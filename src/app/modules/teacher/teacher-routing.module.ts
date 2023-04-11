@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CourseManagementComponent } from './components/course-management/course-management.component';
+import { CourseTopicCheckComponent } from './components/course-topic-check/course-topic-check.component';
 import { TeacherComponent } from './teacher.component';
 
 const routes: Routes = [
@@ -9,11 +10,19 @@ const routes: Routes = [
 		component: TeacherComponent,
 	},
 	{
-		path: 'manage',
+		path: 'course/:id',
 		children: [
 			{
-				path: 'course/:id',
+				path: 'manage',
                 component: CourseManagementComponent
+			},
+			{
+				path: 'check/:studentId',
+                component: CourseTopicCheckComponent
+			},
+			{
+				path: 'check',
+                component: CourseTopicCheckComponent
 			},
 		],
 	},

@@ -22,7 +22,7 @@
 </div>
 
 <ng-template #approvedActions>
-	<button mat-stroked-button>Прогресс</button>
+	<a [routerLink]="['../check', user.uuid]" mat-stroked-button>Прогресс</a>
 	<button mat-stroked-button (click)="onExpel(user.uuid)">Исключить</button>
 </ng-template>
 

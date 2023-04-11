@@ -6,13 +6,15 @@ import { TeacherComponent } from './teacher.component';
 import { CourseManagementComponent } from './components/course-management/course-management.component';
 import { SharedModule } from '../shared/shared.module';
 import { CourseMemberComponent } from './components/course-member/course-member.component';
+import { CourseTopicCheckComponent } from './components/course-topic-check/course-topic-check.component';
 
 
 @NgModule({
   declarations: [
     TeacherComponent,
     CourseManagementComponent,
-    CourseMemberComponent
+    CourseMemberComponent,
+    CourseTopicCheckComponent
   ],
   imports: [
     CommonModule,

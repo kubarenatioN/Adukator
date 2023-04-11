@@ -1,0 +1,40 @@
+.header {
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.filters {
+    display: flex;
+    padding: 20px 0;
+}
+
+.topic-answer-container {
+    padding: 10px;
+    border: 1px solid #333;
+    min-height: 300px;
+}
+
+.check-results {
+    padding: 20px;
+    margin-top: 10px;
+}
+
+.task-check-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 5px;
+    margin: 10px 0;
+    max-width: 400px;
+    & p {
+        white-space: nowrap;
+        padding-right: 10px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+}
+
+.check-comment {
+    display: block;
+    margin: 10px 0;
+}
