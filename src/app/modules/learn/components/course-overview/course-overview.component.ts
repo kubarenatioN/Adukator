@@ -37,7 +37,7 @@ export class CourseOverviewComponent {
                 if (id) {
                     return this.coursesService.getCourses<CoursesSelectResponse>({
                         reqId: 'OverviewCourse',
-                        type: ['published'],
+                        type: 'training',
                         fields: CoursesSelectFields.Full,
                         coursesIds: [id]
                     });

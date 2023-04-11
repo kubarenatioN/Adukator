@@ -7,7 +7,7 @@ import {
     SimpleChanges,
 } from '@angular/core';
 import { BehaviorSubject, combineLatest, distinctUntilChanged, map, switchMap, takeUntil } from 'rxjs';
-import { CourseTrainingService } from 'src/app/services/course-training.service';
+import { CourseTrainingService } from 'src/app/modules/student/services/course-training.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { TaskAnswer } from 'src/app/typings/course-training.types';
@@ -52,12 +52,12 @@ export class TopicTrainingComponent extends BaseComponent implements OnInit, OnC
 	ngOnInit(): void {
         combineLatest([
             this.topicStore$.asObservable(),
-            this.trainingService.course$,
+            this.trainingService.training$,
         ])
         .pipe(
             takeUntil(this.componentLifecycle$),
-            map(([topic, course]) => {
-                return this.uploadService.getFilesFolder(course.id, 'topics', topic.id)
+            map(([topic, training]) => {
+                return this.uploadService.getFilesFolder(training.id, 'topics', topic.id)
             }),
             distinctUntilChanged(),
         )

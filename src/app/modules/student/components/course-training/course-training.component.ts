@@ -1,16 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
-import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
-import { convertCourseToCourseTraining } from 'src/app/helpers/courses.helper';
-import { UploadHelper } from 'src/app/helpers/upload.helper';
-import { CourseTraining } from 'src/app/models/course.model';
-import { CourseTrainingService } from 'src/app/services/course-training.service';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs';
+import { StudentTraining } from 'src/app/models/course.model';
+import { CourseTrainingService } from 'src/app/modules/student/services/course-training.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { CourseModule, ICourseTraining, ModuleTopic } from 'src/app/typings/course.types';
-import { CoursesSelectResponse } from 'src/app/typings/response.types';
-import { isActualTopic } from '../../helpers/course-training.helper';
+import { CourseModule, ModuleTopic } from 'src/app/typings/course.types';
 
 enum ViewType {
     Main = 'main',
@@ -20,7 +15,7 @@ enum ViewType {
 
 interface ViewConfig {
     viewType: ViewType,
-    training: CourseTraining,
+    training: StudentTraining,
     module?: CourseModule,
     topic?: ModuleTopic
 }
@@ -38,6 +33,7 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
     public viewData$!: Observable<ViewConfig>
 
     public viewTypes = ViewType;
+    public training$ = this.trainingService.training$;
     
 	constructor(
         private trainingService: CourseTrainingService,
@@ -46,40 +42,23 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
     }
 
 	ngOnInit(): void {
-        const course$ = this.activatedRoute.paramMap.pipe(
-            switchMap(params => {
-                const courseId = String(params.get('id'));
-                if (!courseId) {
-                    return of(null)
-                }
-                return this.coursesService.getCourses<CoursesSelectResponse>({
-                    reqId: 'CourseTraining',
-                    type: ['published'],
-                    coursesIds: [courseId],
-                    fields: CoursesSelectFields.Full
-                });
-            }),
-            map(response => {
-                const course = response?.published[0]
-                if (course) {
-                    const courseTraining = convertCourseToCourseTraining(course)
-                    return new CourseTraining(courseTraining);
-                }
-                return null;
-            }),
-            tap(course => {
-                this.trainingService.course = course;
-            }),
-            shareReplay(1)
-        )
+        this.activatedRoute.paramMap
+        .pipe(take(1))
+        .subscribe(params => {
+            const courseId = String(params.get('id'));
+            if (!courseId) {
+                return of(null)
+            }
+            return this.trainingService.getCourseTraining(courseId);
+        })
 
         this.viewData$ = combineLatest([
             this.activatedRoute.queryParams,
-            course$.pipe(filter(Boolean)),
+            this.training$.pipe(filter(Boolean)),
         ])
         .pipe(
             takeUntil(this.componentLifecycle$),
-            map(([params, training]: [{module?: string, topic?: string}, CourseTraining]) => {
+            map(([params, training]: [{module?: string, topic?: string}, StudentTraining]) => {
                 const { module: moduleId, topic: topicId } = params;
                 const viewType = this.getViewType(moduleId, topicId)
                 if (viewType === this.viewTypes.Module && moduleId) {

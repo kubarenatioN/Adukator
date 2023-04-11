@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { takeUntil } from 'rxjs';
-import { UploadHelper } from 'src/app/helpers/upload.helper';
-import { UploadService } from 'src/app/services/upload.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { CourseFormViewMode, WrapperType } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
@@ -26,9 +24,6 @@ export class TopicTaskComponent extends BaseComponent implements OnInit {
         return this._form;
     }
 
-    // public get uploadType() {
-    //     return this.controlsType === 'edit' ? 'upload' : 'download'
-    // }
     public uploadType!: 'upload' | 'download';
     public shouldPreloadExisting = false;
     public controlsType!: WrapperType;

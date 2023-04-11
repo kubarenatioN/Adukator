@@ -10,6 +10,7 @@ import { TopicTrainingComponent } from './components/topic-training/topic-traini
 import { SharedModule } from '../shared/shared.module';
 import { TrainingTaskComponent } from './components/training-task/training-task.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CourseTrainingService } from './services/course-training.service';
 
 
 @NgModule({
@@ -26,6 +27,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     SharedModule,
     StudentRoutingModule,
     ReactiveFormsModule,
+  ],
+  providers: [
+    CourseTrainingService
   ]
 })
 export class StudentModule { }

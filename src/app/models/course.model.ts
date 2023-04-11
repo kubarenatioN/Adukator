@@ -1,8 +1,9 @@
 import { isActualTopic, isPastTopic } from "../modules/student/helpers/course-training.helper";
-import { CourseModule, ICourseTraining, ModuleTopic } from "../typings/course.types";
+import { CourseModule, CourseTraining, ModuleTopic } from "../typings/course.types";
 
-export class CourseTraining {
-    private _course: ICourseTraining
+export class StudentTraining {
+    private _course: CourseTraining
+    private _topics: ModuleTopic[] = []
     
     public get course() {
         return this._course;
@@ -12,21 +13,27 @@ export class CourseTraining {
         return this._course.uuid;
     }
 
-    private set course(value: ICourseTraining) {
+    private set course(value: CourseTraining) {
         this._course = value;
     }
 
     public get modules() {
         return this._course.modules;
     }
+
+    public get topics() {
+        return this._topics;
+    }
     
-    constructor(course: ICourseTraining) {
+    constructor(course: CourseTraining) {
         this._course = this.patchCourse(course);
     }
 
-    private patchCourse(course: ICourseTraining): ICourseTraining {
+    private patchCourse(course: CourseTraining): CourseTraining {
         const topics = this.getTopics(course.modules);
-        topics.forEach(topic => {
+        this._topics = topics
+
+        this.topics.forEach(topic => {
             topic.isPast = isPastTopic(topic);
         })
         for (let i = topics.length - 1; i >= 0; i--) {

@@ -41,7 +41,7 @@ export class AdminCoursesService {
 	private getReviewCourses(): Observable<CourseReview[]> {
         return this.coursesService.getCourses<CoursesSelectResponse>({
             requestKey: NetworkRequestKey.GetAdminReviewCourses,
-            type: ['review'],
+            type: 'review',
             reqId: 'AdminReview',
             fields: CoursesSelectFields.Short
         }).pipe(

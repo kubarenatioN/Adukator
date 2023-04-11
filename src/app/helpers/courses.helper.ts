@@ -4,7 +4,7 @@ import {
 	CourseFormMetadata,
 	CourseModule,
 	CourseReview,
-    ICourseTraining,
+    CourseTraining,
 } from '../typings/course.types';
 import { nanoid } from 'nanoid';
 
@@ -117,7 +117,7 @@ export const convertCourseFormDataToCourse = (
 
 export const convertCourseToCourseTraining = (
 	course: Course
-): ICourseTraining => {
+): CourseTraining => {
 	const { _id, uuid, title, description, category, competencies, advantages, modules, authorId } =
 		course;
 	return {

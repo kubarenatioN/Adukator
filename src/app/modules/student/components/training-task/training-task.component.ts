@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { BehaviorSubject, combineLatest, take } from 'rxjs';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
-import { CourseTrainingService } from 'src/app/services/course-training.service';
+import { CourseTrainingService } from 'src/app/modules/student/services/course-training.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { TaskAnswer } from 'src/app/typings/course-training.types';
 import { TopicTask } from 'src/app/typings/course.types';

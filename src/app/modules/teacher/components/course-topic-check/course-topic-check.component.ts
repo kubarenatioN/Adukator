@@ -2,18 +2,18 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 
 @Component({
-  selector: 'app-course-topic-check',
-  templateUrl: './course-topic-check.component.html',
-  styleUrls: ['./course-topic-check.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: 'app-course-topic-check',
+	templateUrl: './course-topic-check.component.html',
+	styleUrls: ['./course-topic-check.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CourseTopicCheckComponent extends CenteredContainerDirective implements OnInit {
+export class CourseTopicCheckComponent
+	extends CenteredContainerDirective
+	implements OnInit
+{
+	constructor() {
+		super();
+	}
 
-  constructor() {
-    super()
-  }
-
-  ngOnInit(): void {
-  }
-
+	ngOnInit(): void {}
 }

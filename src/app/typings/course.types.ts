@@ -165,10 +165,18 @@ export interface CourseFormData {
 }
 
 
-export interface ICourseTraining extends CourseCore {
+export interface CourseTraining extends CourseCore {
     _id: string;
     uuid: string;
     modules: CourseModule[];
+}
+
+export interface CourseTrainingMeta {
+    _id: string,
+    course: CourseTraining,
+    courseId: string,
+    startAt: string,
+    status: 'active' | 'archived',
 }
 
 export interface CourseFormMetadata {

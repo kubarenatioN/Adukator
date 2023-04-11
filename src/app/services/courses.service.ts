@@ -27,7 +27,7 @@ export class CoursesService {
                 return this.getCourses<CoursesSelectResponse>({
                     requestKey: NetworkRequestKey.GetCourses,
                     reqId: 'CourseReviewVersion',
-                    type: ['review'],
+                    type: 'review',
                     coursesIds: [courseId],
                     fields: CoursesSelectFields.Full,
                     authorId: user.role === 'teacher' ? user.uuid : undefined
@@ -57,7 +57,7 @@ export class CoursesService {
     // Main generic method to get any course, try to reuse it everywhere
     public getCourses<T>({ requestKey, type, coursesIds, authorId, fields, reqId }: {
         requestKey?: string,
-        type: ('published' | 'review')[],
+        type: 'training' | 'review',
         reqId: string,
         coursesIds?: string[],
         authorId?: string,
