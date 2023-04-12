@@ -32,6 +32,10 @@ export enum NetworkRequestKey {
     CourseMembers = 'CourseMembers',
     GetReviewCourses = 'GetReviewCourses',
     TeacherCourses = 'TeacherCourses',
+
+    // TRAINING
+    TrainingProgress = 'TrainingProgress',
+    TrainingReply = 'TrainingReply',
 }
 
 export const REQUEST_TYPE = new HttpContextToken<string>(() => '');
@@ -145,6 +149,15 @@ export class NetworkHelper {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses.teacher}/membership/update`,
         },
+
+        [NetworkRequestKey.TrainingProgress]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.training}/profile`
+        },
+        [NetworkRequestKey.TrainingReply]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.training}/reply`
+        }
     }
 
     public static createRequestPayload(key: string, extendedPayload?: RequestMetadata): DataRequestPayload {

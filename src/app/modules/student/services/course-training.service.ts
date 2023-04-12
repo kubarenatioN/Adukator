@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, filter, map, Observable, shareReplay, switchMap, tap } from 'rxjs';
 import { CoursesSelectFields } from '../../../config/course-select-fields.config';
 import { StudentTraining } from '../../../models/course.model';
-import { CourseTrainingMeta } from '../../../typings/course.types';
 import { DataResponse } from '../../../typings/response.types';
 import { CoursesService } from '../../../services/courses.service';
 import { UploadPathSegment, UploadService } from '../../../services/upload.service';
-import { TaskAnswer } from 'src/app/typings/course-training.types';
+import { Training, TrainingProfile, TrainingReply, TrainingTaskAnswer } from 'src/app/typings/training.types';
+import { TrainingDataService } from './training-data.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Injectable()
 export class CourseTrainingService {
@@ -14,7 +15,12 @@ export class CourseTrainingService {
     
 	public training$: Observable<StudentTraining>;
     
-	constructor(private uploadService: UploadService, private coursesService: CoursesService) {
+	constructor(
+        private userService: UserService,
+        private trainingData: TrainingDataService,
+        private uploadService: UploadService, 
+        private coursesService: CoursesService
+    ) {
 		this.training$ = this.trainingStore$.asObservable().pipe(
             filter(Boolean),
             shareReplay(1)
@@ -22,29 +28,19 @@ export class CourseTrainingService {
 	}
 
     public getCourseTraining(courseId: string) {
-        this.coursesService.getCourses<DataResponse<CourseTrainingMeta[]>>({
+        return this.coursesService.getCourses<DataResponse<Training[]>>({
             coursesIds: [courseId],
             type: 'training',
             fields: CoursesSelectFields.Full,
             reqId: 'StudentCourseTraining'
         }).subscribe(trainingMeta => {
-            const course = trainingMeta.data[0].course;
-            this.trainingStore$.next(new StudentTraining(course))
+            const training = trainingMeta.data[0];
+            this.trainingStore$.next(new StudentTraining(training))
         })
     }
 
-    public getUploadFolders(components: { segments: UploadPathSegment[], controlId: string}[]): Observable<string[]> {
-        return this.training$.pipe(
-            map(course => {
-                return components.map(({ segments, controlId }) => {
-                    return this.uploadService.getFilesFolder(course.id, segments, controlId)
-                })
-            })
-        )
-    }
-
-    public sendTaskAnswer(answer: TaskAnswer) {
-		console.log('111 send answer', answer);
-    
+    public sendTrainingReply(reply: TrainingReply) {
+		console.log('111 send answer', reply);
+        return this.trainingData.sendTrainingReply(reply)
     }
 }

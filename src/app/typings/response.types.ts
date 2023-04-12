@@ -41,11 +41,3 @@ export interface CloudinaryFilesResponse {
     resources: CloudinaryFile[],
     total_count: number
 }
-
-// export interface CourseTraining {
-//     _id: string,
-//     course: Course,
-//     courseId: string,
-//     startAt: string,
-//     status: 'active' | 'archived',
-// }

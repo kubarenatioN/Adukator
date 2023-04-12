@@ -129,7 +129,7 @@ export class CourseBuilderService {
 
     public getUploadFolder(segments: UploadPathSegment[], controlId: string) {
         const rootCourseId = this.metadata.masterCourseId === null ? this.metadata.uuid : this.metadata.masterCourseId
-        return this.uploadService.getFilesFolder(rootCourseId, segments, controlId)
+        return this.uploadService.getFilesFolder('review', rootCourseId, ...segments, controlId)
     }
 
     private restoreCourseMetadata(formData: CourseFormData, metadata: CourseFormMetadata): CourseFormData {

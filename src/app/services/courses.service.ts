@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { Course, CourseFormData, CourseMembershipMap, CourseMembershipStatus, CourseReview, CourseTrainingMeta, StudentCourse } from '../typings/course.types';
+import { Course, CourseFormData, CourseMembershipMap, CourseMembershipStatus, CourseReview } from '../typings/course.types';
 import { CoursesResponse, CoursesSelectResponse, CourseReviewHistory } from '../typings/response.types';
+import { Training } from '../typings/training.types';
 import { DataService } from './data.service';
 import { UserService } from './user.service';
 
@@ -11,9 +12,9 @@ import { UserService } from './user.service';
 	providedIn: 'root',
 })
 export class CoursesService {
-    private catalogCoursesStore$ = new BehaviorSubject<CourseTrainingMeta[]>([]);
+    private catalogCoursesStore$ = new BehaviorSubject<Training[]>([]);
 
-    public catalogCourses$: Observable<CourseTrainingMeta[]>;
+    public catalogCourses$: Observable<Training[]>;
 
 	constructor(private dataService: DataService, private userService: UserService) {
         this.catalogCourses$ = this.catalogCoursesStore$.pipe(
@@ -50,7 +51,7 @@ export class CoursesService {
             body: options,
             params: { reqId: 'CoursesList' }
         })
-        this.dataService.send<{ data: CourseTrainingMeta[] }>(payload)
+        this.dataService.send<{ data: Training[] }>(payload)
             .subscribe(res => this.catalogCoursesStore$.next(res.data))
     }
 
@@ -109,7 +110,7 @@ export class CoursesService {
             params: { reqId: 'StudentCourses' }
         })
         return this.dataService.send<{ 
-            data: StudentCourse[] 
+            data: Training[]
         }>(payload);
     }
 

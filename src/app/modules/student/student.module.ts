@@ -12,6 +12,7 @@ import { TrainingTaskComponent } from './components/training-task/training-task.
 import { ReactiveFormsModule } from '@angular/forms';
 import { CourseTrainingService } from './services/course-training.service';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
+import { TrainingDataService } from './services/training-data.service';
 
 @NgModule({
 	declarations: [
@@ -30,6 +31,7 @@ import { UploadCacheService } from 'src/app/services/upload-cache.service';
 	],
 	providers: [
         CourseTrainingService,
+        TrainingDataService,
         UploadCacheService,
     ],
 })

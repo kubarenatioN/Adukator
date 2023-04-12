@@ -6,8 +6,8 @@ import { ConfigService } from 'src/app/services/config.service';
 import { CourseManagementService } from 'src/app/services/course-management.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UserService } from 'src/app/services/user.service';
-import { Course, CourseMembershipAction, CourseModule, CourseTraining, CourseTrainingMeta } from 'src/app/typings/course.types';
-import { CoursesSelectResponse } from 'src/app/typings/response.types';
+import { CourseMembershipAction, CourseModule } from 'src/app/typings/course.types';
+import { Training } from 'src/app/typings/training.types';
 
 @Component({
 	selector: 'app-course-overview',
@@ -19,7 +19,7 @@ export class CourseOverviewComponent {
     private enrollmentSub?: Subscription
     private courseEnrollTrigger$ = new BehaviorSubject<void>(undefined);
 
-    public course$: Observable<CourseTrainingMeta | null>;
+    public course$: Observable<Training | null>;
 
     public modules$: Observable<CourseModule[]>
 
@@ -35,7 +35,7 @@ export class CourseOverviewComponent {
             switchMap(paramMap => {
                 const id = String(paramMap.get('id'))
                 if (id) {
-                    return this.coursesService.getCourses<{data: CourseTrainingMeta[]}>({
+                    return this.coursesService.getCourses<{data: Training[]}>({
                         reqId: 'OverviewCourse',
                         type: 'training',
                         fields: CoursesSelectFields.Full,

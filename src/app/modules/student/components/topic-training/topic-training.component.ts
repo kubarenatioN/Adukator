@@ -1,23 +1,28 @@
 import {
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
+	EventEmitter,
 	Input,
 	OnChanges,
 	OnInit,
+	Output,
 	SimpleChanges,
 } from '@angular/core';
 import {
 	BehaviorSubject,
 	combineLatest,
+	delay,
 	distinctUntilChanged,
 	map,
 	takeUntil,
 } from 'rxjs';
 import { CourseTrainingService } from 'src/app/modules/student/services/course-training.service';
+import { TrainingProgressService } from 'src/app/services/training-progress.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { TaskAnswer } from 'src/app/typings/course-training.types';
 import { ModuleTopic } from 'src/app/typings/course.types';
+import { TrainingReply, TrainingReplyMessage, TrainingTaskAnswer } from 'src/app/typings/training.types';
 
 @Component({
 	selector: 'app-topic-training',
@@ -33,7 +38,9 @@ export class TopicTrainingComponent
 
 	@Input() public topic!: ModuleTopic;
 
-	public filesFolder!: string;
+    @Output() public sendReply = new EventEmitter()
+
+	public courseMaterialsFolder: string = '';
 
 	public get controlId(): string {
 		return this.topic.id;
@@ -49,7 +56,8 @@ export class TopicTrainingComponent
 
 	constructor(
 		private trainingService: CourseTrainingService,
-		private uploadService: UploadService
+		private uploadService: UploadService,
+        private cdRef: ChangeDetectorRef
 	) {
 		super();
 	}
@@ -70,19 +78,25 @@ export class TopicTrainingComponent
 				takeUntil(this.componentLifecycle$),
 				map(([topic, training]) => {
 					return this.uploadService.getFilesFolder(
-						training.id,
-						['topics'],
+						'course',
+                        training.course.uuid,
+						'topics',
 						topic.id
 					);
 				}),
+                delay(2000),
 				distinctUntilChanged()
 			)
 			.subscribe((folder) => {
-				this.filesFolder = folder;
+                this.courseMaterialsFolder = folder;
+                this.cdRef.detectChanges()
 			});
 	}
 
-	public onSendTask(answer: TaskAnswer) {
-        this.trainingService.sendTaskAnswer(answer);
+	public onSendTask(message: TrainingReplyMessage): void {
+        this.sendReply.emit({
+            message,
+            topicId: this.topic.id
+        });
 	}
 }

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { CourseTraining } from 'src/app/typings/course.types';
+import { Course } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-course-sidenav',
@@ -8,7 +8,7 @@ import { CourseTraining } from 'src/app/typings/course.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseSidenavComponent implements OnInit {
-    @Input() public course!: CourseTraining
+    @Input() public course!: Course
     
 	constructor() {}
 

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CourseFormDataMock } from '../mocks/course-form-data';
-import { TaskAnswer } from '../typings/course-training.types';
-import { CourseFormData, CourseFormOverallInfo, CourseModule, CourseTopFormGroups, ModuleFormFields, ModuleTopic, OverallFormFields, PracticeFormFields, TaskFormFields, TopicFormFields, TopicPractice, TopicTask } from '../typings/course.types';
+import { CourseFormData, CourseModule, CourseTopFormGroups, ModuleFormFields, ModuleTopic, OverallFormFields, PracticeFormFields, TaskFormFields, TopicFormFields, TopicPractice, TopicTask } from '../typings/course.types';
+import { TrainingTaskAnswer } from '../typings/training.types';
 import { generateUUID } from './courses.helper';
 
 @Injectable({
@@ -85,7 +85,7 @@ export class FormBuilderHelper {
         })
     }
 
-    public getTrainingTaskInitialValue(id: string): TaskAnswer {
+    public getTrainingTaskInitialValue(id: string): TrainingTaskAnswer {
         return {
             id,
             files: [],

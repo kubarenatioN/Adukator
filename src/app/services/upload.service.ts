@@ -46,8 +46,8 @@ export class UploadService {
         })
     }
 
-    public getFilesFolder(courseId: string, segments: UploadPathSegment[], controlId: string) {
-        return `${courseId}/${segments.join('/')}/${controlId}`
+    public getFilesFolder(...segments: string[]) {
+        return segments.join('/')
     }
 
     private getFilesFromCloud(folder: string): Observable<CourseFilesResponse> {

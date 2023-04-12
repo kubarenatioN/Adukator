@@ -45,7 +45,8 @@
 
 <ng-template #topicView let-topic="topic">
     <app-topic-training 
-    *ngIf="topic" 
+    *ngIf="topic"
+    (sendReply)="onSendReply($event)"
     [topic]="topic"></app-topic-training>
 </ng-template>
 

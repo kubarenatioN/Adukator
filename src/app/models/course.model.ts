@@ -1,8 +1,10 @@
 import { isActualTopic, isPastTopic } from "../modules/student/helpers/course-training.helper";
-import { CourseModule, CourseTraining, ModuleTopic } from "../typings/course.types";
+import { Course, CourseModule, ModuleTopic } from "../typings/course.types";
+import { Training } from "../typings/training.types";
 
 export class StudentTraining {
-    private _course: CourseTraining
+    private _training: Training
+    private _course: Course
     private _topics: ModuleTopic[] = []
     
     public get course() {
@@ -10,10 +12,14 @@ export class StudentTraining {
     }
     
     public get id() {
-        return this._course.uuid;
+        return this._training.uuid;
+    }
+    
+    public get _id() {
+        return this._training._id;
     }
 
-    private set course(value: CourseTraining) {
+    private set course(value: Course) {
         this._course = value;
     }
 
@@ -25,11 +31,12 @@ export class StudentTraining {
         return this._topics;
     }
     
-    constructor(course: CourseTraining) {
-        this._course = this.patchCourse(course);
+    constructor(training: Training) {
+        this._training = training;
+        this._course = this.patchCourse(training.course);
     }
 
-    private patchCourse(course: CourseTraining): CourseTraining {
+    private patchCourse(course: Course): Course {
         const topics = this.getTopics(course.modules);
         this._topics = topics
 

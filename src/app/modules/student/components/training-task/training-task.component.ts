@@ -1,5 +1,6 @@
 import {
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	ElementRef,
 	EventEmitter,
@@ -11,13 +12,14 @@ import {
     ViewChild,
 } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { BehaviorSubject, combineLatest, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, take } from 'rxjs';
 import { UploadBoxComponent } from 'src/app/components/upload-box/upload-box.component';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { CourseTrainingService } from 'src/app/modules/student/services/course-training.service';
+import { TrainingProgressService } from 'src/app/services/training-progress.service';
 import { UploadService } from 'src/app/services/upload.service';
-import { TaskAnswer } from 'src/app/typings/course-training.types';
 import { TopicTask } from 'src/app/typings/course.types';
+import { TrainingReply, TrainingReplyMessage, TrainingTaskAnswer } from 'src/app/typings/training.types';
 
 const UploadLabel = 'Загрузите файлы с выполненным заданием сюда.';
 
@@ -38,9 +40,9 @@ export class TrainingTaskComponent implements OnInit, OnChanges {
 
 	@Input() public task!: TopicTask;
 
-	@Output() public send = new EventEmitter<TaskAnswer>();
+	@Output() public send = new EventEmitter<TrainingReplyMessage>();
 
-    @ViewChild('uploadBox') public uploadBoxRef!: ElementRef<UploadBoxComponent>
+    public clearUploadBox$ = new EventEmitter<void>();
 
 	public form!: FormGroup<{
 		id: FormControl<string | null>;
@@ -57,8 +59,10 @@ export class TrainingTaskComponent implements OnInit, OnChanges {
 
 	constructor(
 		private trainingService: CourseTrainingService,
+		private trainingProgress: TrainingProgressService,
 		private uploadService: UploadService,
-		private fbHelper: FormBuilderHelper
+		private fbHelper: FormBuilderHelper,
+		private cdRef: ChangeDetectorRef,
 	) { }
 
 	ngOnChanges(changes: SimpleChanges): void {}
@@ -67,20 +71,22 @@ export class TrainingTaskComponent implements OnInit, OnChanges {
 		this.form = this.fbHelper.getTrainingTaskForm(this.task);
 		this.initialValue = this.form.value;
 
-		this.trainingService
-			.getUploadFolders([
-				{ segments: ['tasks'], controlId: this.task.id },
-				{ segments: ['training', 'tasks'], controlId: this.task.id },
-			])
-			.pipe(take(1))
-			.subscribe((folders) => {
-				this.taskMaterialsFolder = folders[0];
-				this.uploadFilesFolder = folders[1];
+		this.trainingProgress.profile$
+			.subscribe(profile => {
+                this.taskMaterialsFolder = this.uploadService.getFilesFolder(
+                    'course',
+                    profile.training.course.uuid, 
+                    'tasks', 
+                    this.controlId
+                )
+                this.uploadFilesFolder = this.uploadService.getFilesFolder(
+                    'training',
+                    profile.uuid, 
+                    'tasks', 
+                    this.controlId
+                )
+                this.cdRef.detectChanges()
 			});
-
-		// this.form.valueChanges.subscribe((res: any) => {
-		// 	console.log('task model', res);
-		// });
 	}
 
 	public onUpload(files: string[]) {
@@ -88,11 +94,15 @@ export class TrainingTaskComponent implements OnInit, OnChanges {
 	}
 
 	public onSend() {
-		const answer = this.form.value as TaskAnswer;
+		const answer = this.form.value as TrainingTaskAnswer;
 		if (answer.files.length > 0) {
-			this.send.emit(answer);
+			this.send.emit({
+                type: 'task',
+                data: answer,
+                taskId: this.task.id
+            });
 			this.form.reset(this.initialValue);
-            this.uploadBoxRef.nativeElement.clearBox()
+            this.clearUploadBox$.emit()
 		} else {
 			console.warn('No files attached');
 		}

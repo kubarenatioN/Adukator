@@ -1,11 +1,14 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { StudentTraining } from 'src/app/models/course.model';
 import { CourseTrainingService } from 'src/app/modules/student/services/course-training.service';
 import { CoursesService } from 'src/app/services/courses.service';
+import { TrainingProgressService } from 'src/app/services/training-progress.service';
+import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { CourseModule, ModuleTopic } from 'src/app/typings/course.types';
+import { TrainingReply, TrainingReplyMessage, TrainingTaskAnswer } from 'src/app/typings/training.types';
 
 enum ViewType {
     Main = 'main',
@@ -34,24 +37,33 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 
     public viewTypes = ViewType;
     public training$ = this.trainingService.training$;
+    public profile$ = this.trainingProgressService.profile$;
     
 	constructor(
+        private userService: UserService,
+        private trainingProgressService: TrainingProgressService,
         private trainingService: CourseTrainingService,
-        private activatedRoute: ActivatedRoute, private coursesService: CoursesService) {
+        private activatedRoute: ActivatedRoute) {
         super();
     }
 
-	ngOnInit(): void {
+	public ngOnInit(): void {
         this.activatedRoute.paramMap
-        .pipe(take(1))
-        .subscribe(params => {
-            const courseId = String(params.get('id'));
-            if (!courseId) {
-                return of(null)
-            }
-            return this.trainingService.getCourseTraining(courseId);
-        })
+            .pipe(
+                take(1),
+                map(params => {
+                    const trainingId = String(params.get('id'));
+                    return trainingId
+                }),
+            )
+            .subscribe((trainingId) => {
+                this.trainingService.getCourseTraining(trainingId);
+            })
 
+        this.training$.subscribe(training => {
+            this.trainingProgressService.getTrainingProfile(training._id);
+        })
+    
         this.viewData$ = combineLatest([
             this.activatedRoute.queryParams,
             this.training$.pipe(filter(Boolean)),
@@ -81,6 +93,27 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
                 return { viewType, training }
             })
         )
+    }
+
+    public onSendReply({ message, topicId } : {message: TrainingReplyMessage, topicId: string }) {
+        this.profile$.pipe(
+            withLatestFrom(this.userService.user$),
+            switchMap(([profile, user]) => {
+                console.log(profile);
+
+                const reply: TrainingReply = {
+                    topicId,
+                    message,
+                    profile: profile._id,
+                    sender: user._id,
+                }
+                console.log(reply);
+
+                return this.trainingService.sendTrainingReply(reply);
+            })
+        ).subscribe(response => {
+            console.log('send', response);
+        })
     }
 
     private getViewType(moduleId?: string, topicId?: string): ViewType {

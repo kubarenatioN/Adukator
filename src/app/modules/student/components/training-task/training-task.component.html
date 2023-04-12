@@ -11,10 +11,12 @@
 <form [formGroup]="form">
 
     <app-upload-box 
+        #uploadBox
         [label]="uploadLabel" 
         [folder]="uploadFilesFolder"
         [controlId]="controlId"
         type="upload"
+        [clearObs$]="clearUploadBox$"
         (uploadFilesChanged)="onUpload($event)"></app-upload-box>
 
     <textarea formControlName="comment" cols="50" rows="6" placeholder="Комментарий"></textarea>

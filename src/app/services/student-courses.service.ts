@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
-import { Course, CourseTrainingMeta, StudentCourse } from '../typings/course.types';
+import { Training } from '../typings/training.types';
 import { CoursesService } from './courses.service';
 import { UserService } from './user.service';
 
@@ -9,13 +9,13 @@ import { UserService } from './user.service';
 	providedIn: 'root',
 })
 export class StudentCoursesService {
-	public courses$!: Observable<StudentCourse[]>;
+	public courses$!: Observable<Training[]>;
 
 	constructor(private userService: UserService, private coursesService: CoursesService) {
         this.courses$ = this.getCourses()
     }
 
-	private getCourses(): Observable<StudentCourse[]> {
+	private getCourses(): Observable<Training[]> {
         return this.userService.user$.pipe(
             switchMap(user => this.coursesService.getStudentCourses(user.uuid)),
             map(response => response.data),

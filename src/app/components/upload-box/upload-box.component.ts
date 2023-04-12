@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { from, map, Observable, Subscription } from 'rxjs';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
 import { UploadService } from 'src/app/services/upload.service';
@@ -20,12 +21,10 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
     @Input() public controlId!: string;
     @Input() public label?: string;
     @Input() public preloadExisting: boolean = false;
+    @Input() public needCache: boolean = true;
     @Input() public serveFrom: 'cloud' | 'local' = 'cloud';
-    @Input() public set files(files: UserFile[]) {
-        files.forEach(file => this.filesStore.set(file.filename, {
-            userFile: file
-        }))
-    }
+    
+    @Input() public clearObs$?: EventEmitter<void>;
 
     @Output()
     public uploadFilesChanged = new EventEmitter<string[]>();
@@ -56,7 +55,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
     }
 
 	public ngOnInit(): void {
-        
+        this.clearObs$?.subscribe(() => this.clearBox())
     }
 
     public onChange(e: Event) {
@@ -107,11 +106,15 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private refresh() {
+        if (!this.folder) {
+            return;
+        }
+
         this.filesUploadSubscription?.unsubscribe();
         this.clearBox()
 
         const cachedFiles = this.restoreFilesFromCache(this.cacheKey)
-        if (cachedFiles.length > 0) {
+        if (this.needCache && cachedFiles.length > 0) {
             cachedFiles.forEach(file => this.filesStore.set(file.filename, {
                 userFile: file
             }))
@@ -121,6 +124,9 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
             const needPreloadForUpload = this.type === 'upload' && this.preloadExisting 
             if (needPreloadForUpload || this.type === 'download') {
                 const getFrom = this.serveFrom === 'cloud' ? 'remote' : 'temp'
+                if (!this.folder) {
+                    return;
+                }
                 this.filesUploadSubscription = this.getFilesFromFolder(this.folder, getFrom)
                 .subscribe((files: UserFile[]) => {
                     files.forEach(file => {
@@ -154,6 +160,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
 
     public clearBox() {
         this.filesStore.clear();
+        this.cd.markForCheck()
     }
 
     private downloadFileFromRemote(url: string, filename: string) {

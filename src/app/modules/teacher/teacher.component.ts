@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
-import { CoursesService } from 'src/app/services/courses.service';
 import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
-import { Course, CourseReview, CourseTraining, CourseTrainingMeta, TeacherCourses } from 'src/app/typings/course.types';
+import { Course, CourseReview } from 'src/app/typings/course.types';
+import { Training } from 'src/app/typings/training.types';
 
 @Component({
 	selector: 'app-teacher',
@@ -12,7 +12,7 @@ import { Course, CourseReview, CourseTraining, CourseTrainingMeta, TeacherCourse
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TeacherComponent extends CenteredContainerDirective implements OnInit {
-    public trainings$: Observable<CourseTrainingMeta[]>
+    public trainings$: Observable<Training[]>
     public publishedCourses$: Observable<Course[]>
     public reviewCourses$: Observable<CourseReview[]>
 

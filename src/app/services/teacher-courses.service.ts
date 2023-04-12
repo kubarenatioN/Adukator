@@ -2,11 +2,10 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
-import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { Course, CourseReview, CourseTraining, CourseTrainingMeta, TeacherCourses } from '../typings/course.types';
-import { CoursesSelectResponse } from '../typings/response.types';
+import { NetworkRequestKey } from '../helpers/network.helper';
+import { Course, CourseReview } from '../typings/course.types';
+import { Training } from '../typings/training.types';
 import { CoursesService } from './courses.service';
-import { DataService } from './data.service';
 import { UserService } from './user.service';
 
 const RequestKey = NetworkRequestKey.GetCourses
@@ -16,7 +15,7 @@ const RequestKey = NetworkRequestKey.GetCourses
 })
 export class TeacherCoursesService {
     private initialStore = {
-        trainings: [] as CourseTrainingMeta[],
+        trainings: [] as Training[],
         published: [] as Course[],
         review: [] as CourseReview[],
     };
@@ -47,7 +46,7 @@ export class TeacherCoursesService {
                     fields: CoursesSelectFields.Short,
                 }
                 return forkJoin({
-                    trainings: this.coursesService.getCourses<{ data: CourseTrainingMeta[] }>({
+                    trainings: this.coursesService.getCourses<{ data: Training[] }>({
                         ...options,
                         reqId: 'SelectTeacherTrainingCourses',
                         type: 'training',

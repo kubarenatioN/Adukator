@@ -137,19 +137,6 @@ export interface TeacherCourses {
     review?: CourseReview[]
 }
 
-
-export interface StudentCourse {
-    uuid: string
-    courseId: string,
-    course: CourseTraining,
-    membership: {
-        status: string
-        active: boolean
-    }
-    status: 'active' | 'archived',
-    startAt: string,
-}
-
 export interface CourseOverallInfo {
     id: string;
     title: string;
@@ -168,22 +155,6 @@ export interface CourseFormData {
 	modules: CourseModule[];
     createdAt?: string;
     metadata: CourseFormMetadata
-}
-
-
-export interface CourseTraining extends CourseCore {
-    _id: string;
-    uuid: string;
-    modules: CourseModule[];
-}
-
-export interface CourseTrainingMeta {
-    _id: string,
-    uuid: string,
-    course: CourseTraining,
-    courseId: string,
-    startAt: string,
-    status: 'active' | 'archived',
 }
 
 export interface CourseFormMetadata {

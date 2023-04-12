@@ -1,36 +1,36 @@
-<ng-container *ngIf="true">
+<p *ngIf="label">{{ label }}</p>
+<p>[dev] Folder: {{ folder }}</p>
+<div 
+    *ngIf="type === 'upload'" 
+    appDnd
+    class="dropzone" 
+    (filesDropped)="onFilesDropped($event)">
 
-    <p *ngIf="label">{{ label }}</p>
-    <div  *ngIf="type === 'upload'" class="dropzone" appDnd (filesDropped)="onFilesDropped($event)">
-
-        <div class="dropzone-wrapper">
-            Отпустите файлы здесь.
-        </div>
-        <input class="file-input" type="file" [id]="fileInputId" multiple (change)="onChange($event)">
-
-        <ng-container *ngIf="filesStore.size > 0; else emptyDropzone">    
-            <div class="files-container">
-                <app-file-item *ngFor="let file of filesStore.values()"
-                    class="file-item"
-                    [controlId]="controlId"
-                    [userFile]="file.userFile"
-                    [file]="file.uploadFile"
-                    [folder]="folder"
-                    (remove)="onRemove($event)"
-                    (uploaded)="onUpload($event)"
-                    type="upload">
-                </app-file-item>
-            </div>
-            <label class="pick-files-btn" [for]="fileInputId">Добавить файлы</label>
-        </ng-container>
-
+    <div class="dropzone-wrapper">
+        Отпустите файлы здесь.
     </div>
-    
-    <ng-container 
-        [ngTemplateOutlet]="downloadZone"
-        *ngIf="type === 'download'"></ng-container>
+    <input class="file-input" type="file" [id]="fileInputId" multiple (change)="onChange($event)">
 
-</ng-container>
+    <ng-container *ngIf="filesStore.size > 0; else emptyDropzone">    
+        <div class="files-container">
+            <app-file-item *ngFor="let file of filesStore.values()"
+                class="file-item"
+                [controlId]="controlId"
+                [userFile]="file.userFile"
+                [file]="file.uploadFile"
+                [folder]="folder"
+                (remove)="onRemove($event)"
+                (uploaded)="onUpload($event)"
+                type="upload">
+            </app-file-item>
+        </div>
+        <label class="pick-files-btn" [for]="fileInputId">Добавить файлы</label>
+    </ng-container>
+
+</div>
+
+<ng-container *ngIf="type === 'download'" 
+    [ngTemplateOutlet]="downloadZone"></ng-container>
 
 <ng-template #downloadZone>
     <div class="files-container">
