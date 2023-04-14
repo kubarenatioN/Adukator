@@ -1,5 +1,6 @@
-import { Course, CourseMembershipAction, CourseReview } from "./course.types";
+import { Course, CourseReview } from "./course.types";
 import { CloudinaryFile, UserFile } from "./files.types";
+import { TrainingMembershipAction } from "./training.types";
 
 export interface CoursesResponse<T> {
     data: T
@@ -29,7 +30,7 @@ export interface CourseEnrollResponseData {
 export interface CourseEnrollResponse {
     data: CourseEnrollResponseData[];
     message: string;
-    action: CourseMembershipAction
+    action: TrainingMembershipAction
 }
 
 export interface CourseFilesResponse {

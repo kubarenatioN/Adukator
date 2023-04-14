@@ -15,11 +15,15 @@ export interface DataRequestPayload {
 	providedIn: 'root',
 })
 export class DataService {
-	constructor(private http: HttpClient) {}
+	constructor(private httpClient: HttpClient) {}
+
+    // public get http() {
+    //     return this.httpClient
+    // }
 
 	public send<T>(payload: DataRequestPayload): Observable<T> {
 		const { method, url, headers, body, params, context } = payload;
-		return this.http.request<T>(method, url, {
+		return this.httpClient.request<T>(method, url, {
 			body,
 			headers,
             params,

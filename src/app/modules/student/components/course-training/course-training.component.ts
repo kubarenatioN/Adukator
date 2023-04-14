@@ -1,14 +1,12 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { StudentTraining } from 'src/app/models/course.model';
-import { CourseTrainingService } from 'src/app/modules/student/services/course-training.service';
-import { CoursesService } from 'src/app/services/courses.service';
-import { TrainingProgressService } from 'src/app/services/training-progress.service';
+import { StudentTrainingService } from 'src/app/modules/student/services/student-training.service';
 import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { CourseModule, ModuleTopic } from 'src/app/typings/course.types';
-import { TrainingReply, TrainingReplyMessage, TrainingTaskAnswer } from 'src/app/typings/training.types';
+import { Training, TrainingAccess, TrainingProfile, TrainingReply, TrainingReplyMessage } from 'src/app/typings/training.types';
 
 enum ViewType {
     Main = 'main',
@@ -36,36 +34,44 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
     public viewData$!: Observable<ViewConfig>
 
     public viewTypes = ViewType;
-    public training$ = this.trainingService.training$;
-    public profile$ = this.trainingProgressService.profile$;
+    public profile$!: Observable<TrainingProfile | null>;
+    public training$!: Observable<StudentTraining>;
     
 	constructor(
         private userService: UserService,
-        private trainingProgressService: TrainingProgressService,
-        private trainingService: CourseTrainingService,
+        private trainingService: StudentTrainingService,
         private activatedRoute: ActivatedRoute) {
         super();
     }
 
 	public ngOnInit(): void {
-        this.activatedRoute.paramMap
-            .pipe(
-                take(1),
-                map(params => {
-                    const trainingId = String(params.get('id'));
-                    return trainingId
-                }),
-            )
-            .subscribe((trainingId) => {
-                this.trainingService.getCourseTraining(trainingId);
-            })
+        this.profile$ = this.activatedRoute.data.pipe(
+            switchMap((resolved) => {
+                const { trainingAccess } = resolved as { trainingAccess: TrainingAccess }
+                if (trainingAccess) {
+                    const { hasAccess, profile } = trainingAccess
+                    if (hasAccess && profile != null) {
+                        return this.trainingService.getProfile({ trainingId: profile.training, studentId: profile.student })
+                    }
+                }
+                return of(null)
+            }),
+        )
 
-        this.training$.subscribe(training => {
-            this.trainingProgressService.getTrainingProfile(training._id);
-        })
+        this.training$ = this.profile$.pipe(
+            tap(q => {
+                console.log('123', q);                
+            }),
+            filter(Boolean),
+            map(profile => {
+                console.log(profile);
+                return new StudentTraining(profile.training)
+            }),
+            tap(profile => console.log('profile', profile))
+        )
     
         this.viewData$ = combineLatest([
-            this.activatedRoute.queryParams,
+            this.activatedRoute.queryParams.pipe(tap(q => console.log('q', q))),
             this.training$.pipe(filter(Boolean)),
         ])
         .pipe(
@@ -97,6 +103,7 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 
     public onSendReply({ message, topicId } : {message: TrainingReplyMessage, topicId: string }) {
         this.profile$.pipe(
+            filter(Boolean),
             withLatestFrom(this.userService.user$),
             switchMap(([profile, user]) => {
                 console.log(profile);

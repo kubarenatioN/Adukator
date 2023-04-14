@@ -1,13 +1,23 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, catchError, map, Observable, of, Subscription, switchMap, throwError, withLatestFrom, combineLatest, shareReplay } from 'rxjs';
-import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
-import { ConfigService } from 'src/app/services/config.service';
-import { CourseManagementService } from 'src/app/services/course-management.service';
-import { CoursesService } from 'src/app/services/courses.service';
+import {
+	BehaviorSubject,
+	catchError,
+	map,
+	Observable,
+	of,
+	Subscription,
+	switchMap,
+	throwError,
+	withLatestFrom,
+	combineLatest,
+	shareReplay,
+} from 'rxjs';
+import { NetworkRequestKey } from 'src/app/helpers/network.helper';
 import { UserService } from 'src/app/services/user.service';
-import { CourseMembershipAction, CourseModule } from 'src/app/typings/course.types';
-import { Training } from 'src/app/typings/training.types';
+import { CourseModule } from 'src/app/typings/course.types';
+import { Training, TrainingMembershipStatus, TrainingProfile } from 'src/app/typings/training.types';
+import { LearnService } from '../../services/learn.service';
 
 @Component({
 	selector: 'app-course-overview',
@@ -16,131 +26,146 @@ import { Training } from 'src/app/typings/training.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseOverviewComponent {
-    private enrollmentSub?: Subscription
-    private courseEnrollTrigger$ = new BehaviorSubject<void>(undefined);
+	private enrollmentSub?: Subscription;
+	private courseEnrollTrigger$ = new BehaviorSubject<void>(undefined);
 
-    public course$: Observable<Training | null>;
+	public training$: Observable<Training | null>;
 
-    public modules$: Observable<CourseModule[]>
+	public modules$: Observable<CourseModule[]>;
 
-    public canEnroll$: Observable<boolean>;
-    public isEnrolled$: Observable<boolean>;
-    public enrollStatus$: Observable<string | null>;
-    public isUserOwner$: Observable<boolean>;
+	public canEnroll$: Observable<boolean>;
+	public isEnrolled$: Observable<boolean>;
+	public enrollStatus$: Observable<TrainingMembershipStatus | null>;
+	public isUserOwner$: Observable<boolean>;
 
-    public isDisabledEnrollActions = false;
-    
-	constructor(private activatedRoute: ActivatedRoute, private coursesService: CoursesService, private configService: ConfigService, private userService: UserService, private courseManagement: CourseManagementService) {
-        this.course$ = this.activatedRoute.paramMap.pipe(
-            switchMap(paramMap => {
-                const id = String(paramMap.get('id'))
-                if (id) {
-                    return this.coursesService.getCourses<{data: Training[]}>({
-                        reqId: 'OverviewCourse',
-                        type: 'training',
-                        fields: CoursesSelectFields.Full,
-                        coursesIds: [id]
-                    });
-                }
-                return of(null);
-            }),
-            map(res => res ? res.data[0] : null),
+	public isDisabledEnrollActions = false;
+
+	constructor(
+		private activatedRoute: ActivatedRoute,
+		private userService: UserService,
+        private learnService: LearnService,
+	) {
+		this.training$ = this.activatedRoute.paramMap.pipe(
+			switchMap((paramMap) => {
+				const id = String(paramMap.get('id'));
+				if (id) {
+					return this.learnService.getTraining(id);
+				}
+				return of(null);
+			}),
+			map((res) => (res ? res[0] : null)),
+			shareReplay(1)
+		);
+
+		this.modules$ = this.training$.pipe(
+			map((training) => (training ? training.course.modules : []))
+		);
+
+		this.isUserOwner$ = this.training$.pipe(
+			switchMap((training) => {
+				if (training) {
+					return this.userService.isCourseOwner(training.course);
+				}
+				return of(false);
+			})
+		);
+
+		this.canEnroll$ = this.userService.user$.pipe(
+			withLatestFrom(this.isUserOwner$),
+			map(([user, isOwner]) => {
+				return user?.role !== 'admin' && !isOwner;
+			})
+		);
+
+		const courseEnrollmentStatus$ = combineLatest([
+			this.courseEnrollTrigger$.asObservable(),
+			this.training$,
+			this.userService.user$,
+		]).pipe(
+			switchMap(([_, training, user]) => {
+				if (training && user) {
+					return this.learnService.lookupTraining(
+						[user._id],
+						training._id
+					);
+				}
+				return of(null);
+			}),
+			withLatestFrom(this.userService.user$),
+			map(([lookup, user]) => {
+				if (lookup === null) {
+					return null;
+				}
+				const userEnrollmentIndex = lookup.findIndex(
+					(record) => record.student === user._id
+				);
+				if (userEnrollmentIndex !== -1) {
+					return lookup[userEnrollmentIndex].enrollment;
+				}
+				return null;
+			}),
+			shareReplay(1)
+		);
+
+		this.enrollStatus$ = courseEnrollmentStatus$;
+
+		this.isEnrolled$ = this.enrollStatus$.pipe(
+			map((status) => status !== null),
             shareReplay(1),
+		);
+	}
+
+	public enrollTraining(training: Training): void {
+		this.makeCourseEnrollAction(training._id, NetworkRequestKey.CreateTrainingEnroll);
+	}
+
+	public cancelTrainingEnroll(training: Training): void {
+		this.makeCourseEnrollAction(
+            training._id,
+            NetworkRequestKey.UpdateTrainingEnroll,
         );
+	}
 
-        this.modules$ = this.course$.pipe(
-            map(training => training ? training.course.modules : [])
-        )
-        
-        this.isUserOwner$ = this.course$.pipe(
-            switchMap(training => {
-                if (training) {
-                    return this.userService.isCourseOwner(training.course)
-                }
-                return of(false);
-            }),
-        )
-            
-        this.canEnroll$ = this.userService.user$.pipe(
-            withLatestFrom(this.isUserOwner$),
-            map(([user, isOwner]) => {
-                return user?.role !== 'admin' && !isOwner
-            })
-        )
+	public leaveTraining(training: Training) {
+		this.makeCourseEnrollAction(
+			training._id,
+			NetworkRequestKey.DeleteTrainingEnroll
+		);
+	}
 
-        const courseEnrollmentStatus$ = combineLatest([
-            this.courseEnrollTrigger$.asObservable(),
-            this.course$,
-            this.userService.user$,
-        ]).pipe(
-            switchMap(([_, course, user]) => {
-                if (course && user) {
-                    return this.courseManagement.lookupEnrollment([user.uuid], course.uuid)
-                }
-                return of(null);
-            }),
-            withLatestFrom(this.userService.user$),
-            map(([result, user]) => {
-                if (result === null) {
-                    return null;
-                }
-                const { data, action } = result
-                const userEnrollmentIndex = data.findIndex(record => record.userId == user.uuid)
-                if (action === 'lookup' && userEnrollmentIndex !== -1) {
-                    return data[userEnrollmentIndex].status;
-                }
-                return null;
-            }),
-            shareReplay(1),
-        )
-
-        this.enrollStatus$ = courseEnrollmentStatus$
-        this.isEnrolled$ = this.enrollStatus$.pipe(
-            map(status => status !== null)
-        )
-    }
-
-    public enrollCourse(courseId: string): void {
-        this.makeCourseEnrollAction(courseId, 'enroll')
-    }
-
-    public cancelCourseEnroll(courseId: string): void {
-        this.makeCourseEnrollAction(courseId, 'cancel')
-    }
-
-    public leaveCourse(courseId: string) {
-        this.makeCourseEnrollAction(courseId, 'leave')
-    }
-
-    private makeCourseEnrollAction(courseId: string, action: CourseMembershipAction): void {
-        this.isDisabledEnrollActions = true;
-        if(this.enrollmentSub && !this.enrollmentSub.closed) {
-            return;
-        }
-        this.enrollmentSub = this.userService.user$
-            .pipe(
-                switchMap(user => {
-                    if (user) {
-                        return this.courseManagement.updateEnrollment([user.uuid], courseId, action)
-                    }
-                    return throwError(() => new Error('No user'))
-                }),
-                catchError(err => {
-                    return throwError(() => new Error(err.error.message))
-                }),
-            )
-            .subscribe({
-                next: (res) => {
-                    console.log('Perform course enroll action', res);
-                    this.courseEnrollTrigger$.next();
-                    this.enrollmentSub?.unsubscribe()
-                    this.isDisabledEnrollActions = false;
-                },
-                error: (err) => {
-                    console.warn(err);
-                    this.enrollmentSub?.unsubscribe()
-                    this.isDisabledEnrollActions = false;
-                }
-            })
-    }
+	private makeCourseEnrollAction(trainingId: string, key: string): void {
+		this.isDisabledEnrollActions = true;
+		if (this.enrollmentSub && !this.enrollmentSub.closed) {
+			return;
+		}
+		this.enrollmentSub = this.userService.user$
+			.pipe(
+				switchMap((user) => {
+					if (user) {
+						return this.learnService.changeProfileEnrollment(
+							[user._id],
+							trainingId,
+							key
+						);
+					}
+					return throwError(() => new Error('No user'));
+				}),
+				catchError((err) => {
+					return throwError(() => new Error(err.error.message));
+				})
+			)
+			.subscribe({
+				next: (res) => {
+					console.log('Perform course enroll action', res);
+					this.courseEnrollTrigger$.next();
+					this.enrollmentSub?.unsubscribe();
+					this.isDisabledEnrollActions = false;
+				},
+				error: (err) => {
+					console.warn(err);
+					this.enrollmentSub?.unsubscribe();
+					this.isDisabledEnrollActions = false;
+				},
+			});
+	}
 }

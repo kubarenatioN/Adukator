@@ -3,10 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 import { combineLatest, BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map, shareReplay, take, tap } from 'rxjs/operators';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
-import { CourseManagementService } from 'src/app/services/course-management.service';
-import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
-import { Course, CourseMembershipMap, CourseMembershipStatus as EnrollStatus } from 'src/app/typings/course.types';
-import { Training } from 'src/app/typings/training.types';
+import { NetworkRequestKey } from 'src/app/helpers/network.helper';
+import { TrainingManagementService } from 'src/app/modules/teacher/services/course-management.service';
+import { TeacherCoursesService } from 'src/app/modules/teacher/services/teacher-courses.service';
+import { Course } from 'src/app/typings/course.types';
+import { Training, TrainingMembershipMap, TrainingMembershipSearchParams, TrainingMembershipStatus as EnrollStatus, TrainingProfile } from 'src/app/typings/training.types';
 import { User } from 'src/app/typings/user.types';
 
 @Component({
@@ -16,16 +17,15 @@ import { User } from 'src/app/typings/user.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseManagementComponent extends CenteredContainerDirective implements OnInit {
-    private courseMembershipStore$ = new BehaviorSubject<CourseMembershipMap>({
+    private courseMembershipStore$ = new BehaviorSubject<TrainingMembershipMap>({
         pending: [],
         approved: [],
         rejected: [],
     })
-    private courseId!: string;
 
-    public course$!: Observable<Course | null>
+    public training$!: Observable<Training | null>
     
-    public get approvedStudents$(): Observable<User[]> {
+    public get approvedStudents$(): Observable<TrainingProfile[]> {
         return this.courseMembershipStore$.pipe(
             distinctUntilChanged(),
             map(store => store.approved),
@@ -33,7 +33,7 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
         )
     }
     
-    public get pendingStudents$(): Observable<User[]> {
+    public get pendingStudents$(): Observable<TrainingProfile[]> {
         return this.courseMembershipStore$.pipe(
             distinctUntilChanged(),
             map(store => store.pending),
@@ -41,7 +41,7 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
         )
     }
     
-    public get rejectedStudents$(): Observable<User[]> {
+    public get rejectedStudents$(): Observable<TrainingProfile[]> {
         return this.courseMembershipStore$.pipe(
             distinctUntilChanged(),
             map(store => store.rejected),
@@ -51,14 +51,14 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
 
 	constructor(
         private activatedRoute: ActivatedRoute, 
-        private courseManagement: CourseManagementService,
+        private trainingManagement: TrainingManagementService,
         private teacherCourses: TeacherCoursesService
     ) {
         super();
     }
 
 	public ngOnInit(): void {
-        this.course$ = combineLatest([
+        this.training$ = combineLatest([
             this.activatedRoute.paramMap,
             this.teacherCourses.trainings$,
         ]).pipe(
@@ -66,36 +66,36 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
                 const id = String(params.get('id'));
                 console.log(id, trainings);
                 if (id) {
-                    this.courseId = id;
                     const training = trainings.find(training => training.uuid === id)
-                    return training?.course ?? null
+                    return training ?? null
                 }
                 return null
             }),
             tap(training => {
                 if (training) {
-                    this.getInitialMembers(this.courseId);
+                    this.getInitialMembers(training._id);
                 }
             }),
             shareReplay(1),
         )
     }
 
-    public getInitialMembers(courseId: string) {
+    public getInitialMembers(trainingId: string) {
+        const options: TrainingMembershipSearchParams = {
+            type: 'list',
+            trainingId,
+            size: 10,
+            page: 0,
+            populate: ['student', 'training']
+        }
         combineLatest([
-            this.courseManagement.getCourseMembers({
-                type: 'list',
+            this.trainingManagement.getProfiles({
+                ...options,
                 status: EnrollStatus.Pending,
-                courseId,
-                size: 10,
-                page: 0,
             }),
-            this.courseManagement.getCourseMembers({
-                type: 'list',
+            this.trainingManagement.getProfiles({
+                ...options,
                 status: EnrollStatus.Approved,
-                courseId,
-                size: 10,
-                page: 0,
             }),
         ])
         .subscribe(([pending, approved]) => {
@@ -108,18 +108,19 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
         })
     }
 
-    public onApproveEnroll(userId: string) {
-        this.courseManagement.setCourseMembershipStatus([userId], this.courseId, EnrollStatus.Approved).subscribe()
+    public onApproveEnroll(profile: TrainingProfile) {
+        this.trainingManagement.updateStudentTrainingEnrollment(
+            [profile.student._id], 
+            profile.training._id,
+            EnrollStatus.Approved
+        ).subscribe()
     }
 
-    public onExpel(userId: string) {
-        this.courseManagement.setCourseMembershipStatus([userId], this.courseId, EnrollStatus.Rejected).subscribe()
-    }
-
-    public refreshMembersList(status: keyof CourseMembershipMap): void {
-        if (!this.courseId) {
-            throw new Error('No course ID was provided');
-        }
-        
+    public onExpel(profile: TrainingProfile) {
+        this.trainingManagement.updateStudentTrainingEnrollment(
+            [profile.student._id], 
+            profile.training._id,
+            EnrollStatus.Rejected
+        ).subscribe()
     }
 }

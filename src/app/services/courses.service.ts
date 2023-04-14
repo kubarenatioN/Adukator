@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { Course, CourseFormData, CourseMembershipMap, CourseMembershipStatus, CourseReview } from '../typings/course.types';
+import { CourseReview } from '../typings/course.types';
 import { CoursesResponse, CoursesSelectResponse, CourseReviewHistory } from '../typings/response.types';
 import { Training } from '../typings/training.types';
 import { DataService } from './data.service';
@@ -112,18 +112,5 @@ export class CoursesService {
         return this.dataService.send<{ 
             data: Training[]
         }>(payload);
-    }
-
-    public isTrainingCourseAvailable(courseId: string, userId: string) {
-        const key = NetworkRequestKey.TrainingAvailable
-        const payload = NetworkHelper.createRequestPayload(key, {
-            body: {
-                courseId, userId
-            },
-            params: { reqId: 'IsTrainingAvailable' }
-        })
-        return this.dataService.send<{ isAvailable: boolean }>(payload).pipe(
-            map(res => res.isAvailable)
-        );
     }
 }

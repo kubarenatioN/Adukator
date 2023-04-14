@@ -1,17 +1,19 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
-import { CoursesSelectFields } from '../config/course-select-fields.config';
-import { NetworkRequestKey } from '../helpers/network.helper';
-import { Course, CourseReview } from '../typings/course.types';
-import { Training } from '../typings/training.types';
-import { CoursesService } from './courses.service';
-import { UserService } from './user.service';
+import { CoursesSelectFields } from '../../../config/course-select-fields.config';
+import { NetworkRequestKey } from '../../../helpers/network.helper';
+import { Course, CourseReview } from '../../../typings/course.types';
+import { Training } from '../../../typings/training.types';
+import { CoursesService } from '../../../services/courses.service';
+import { UserService } from '../../../services/user.service';
+import { TrainingService } from 'src/app/services/training.service';
+import { TrainingDataService } from 'src/app/services/training-data.service';
 
 const RequestKey = NetworkRequestKey.GetCourses
 
 @Injectable({
-	providedIn: 'root',
+    providedIn: 'root'
 })
 export class TeacherCoursesService {
     private initialStore = {
@@ -28,7 +30,8 @@ export class TeacherCoursesService {
     
 	constructor(
         private userService: UserService, 
-        private coursesService: CoursesService
+        private trainingDataService: TrainingDataService,
+        private coursesService: CoursesService,
     ) {
         this.getCourses()
     }
@@ -46,11 +49,7 @@ export class TeacherCoursesService {
                     fields: CoursesSelectFields.Short,
                 }
                 return forkJoin({
-                    trainings: this.coursesService.getCourses<{ data: Training[] }>({
-                        ...options,
-                        reqId: 'SelectTeacherTrainingCourses',
-                        type: 'training',
-                    }),
+                    trainings: this.getTrainings(user.uuid),
                     published: this.coursesService.getCourses<{ data: Course[] }>({
                         ...options,
                         reqId: 'SelectTeacherPublishedCourses',
@@ -67,10 +66,14 @@ export class TeacherCoursesService {
             const { published, trainings, review } = response
             this.coursesStore$.next({
                 published: published.data,
-                trainings: trainings.data,
+                trainings: trainings,
                 review: review.data,
             });
         })
+    }
+
+    private getTrainings(authorId: string) {
+        return this.trainingDataService.getTrainings({ authorId })
     }
 
     private selectObservableFromStore<T>(key: keyof typeof this.initialStore): Observable<T> {

@@ -17,12 +17,11 @@ import {
 	map,
 	takeUntil,
 } from 'rxjs';
-import { CourseTrainingService } from 'src/app/modules/student/services/course-training.service';
-import { TrainingProgressService } from 'src/app/services/training-progress.service';
+import { StudentTrainingService } from 'src/app/modules/student/services/student-training.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { ModuleTopic } from 'src/app/typings/course.types';
-import { TrainingReply, TrainingReplyMessage, TrainingTaskAnswer } from 'src/app/typings/training.types';
+import { TrainingReplyMessage } from 'src/app/typings/training.types';
 
 @Component({
 	selector: 'app-topic-training',
@@ -40,7 +39,7 @@ export class TopicTrainingComponent
 
     @Output() public sendReply = new EventEmitter()
 
-	public courseMaterialsFolder: string = '';
+	public trainingMaterialsFolder: string = '';
 
 	public get controlId(): string {
 		return this.topic.id;
@@ -55,7 +54,7 @@ export class TopicTrainingComponent
 	}
 
 	constructor(
-		private trainingService: CourseTrainingService,
+		private trainingService: StudentTrainingService,
 		private uploadService: UploadService,
         private cdRef: ChangeDetectorRef
 	) {
@@ -72,14 +71,14 @@ export class TopicTrainingComponent
 	ngOnInit(): void {
 		combineLatest([
 			this.topicStore$.asObservable(),
-			this.trainingService.training$,
+			this.trainingService.profile$,
 		])
 			.pipe(
 				takeUntil(this.componentLifecycle$),
-				map(([topic, training]) => {
+				map(([topic, profile]) => {
 					return this.uploadService.getFilesFolder(
 						'course',
-                        training.course.uuid,
+                        profile.training.course.uuid,
 						'topics',
 						topic.id
 					);
@@ -88,7 +87,7 @@ export class TopicTrainingComponent
 				distinctUntilChanged()
 			)
 			.subscribe((folder) => {
-                this.courseMaterialsFolder = folder;
+                this.trainingMaterialsFolder = folder;
                 this.cdRef.detectChanges()
 			});
 	}

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
-import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
+import { TeacherCoursesService } from 'src/app/modules/teacher/services/teacher-courses.service';
 import { Course, CourseReview } from 'src/app/typings/course.types';
 import { Training } from 'src/app/typings/training.types';
 

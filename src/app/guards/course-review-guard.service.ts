@@ -8,7 +8,7 @@ import {
 } from '@angular/router';
 import { combineLatest, map, Observable, of, switchMap, take, withLatestFrom } from 'rxjs';
 import { CoursesService } from '../services/courses.service';
-import { TeacherCoursesService } from '../services/teacher-courses.service';
+import { TeacherCoursesService } from '../modules/teacher/services/teacher-courses.service';
 import { UserService } from '../services/user.service';
 
 @Injectable({

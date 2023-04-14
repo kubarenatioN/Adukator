@@ -1,6 +1,6 @@
 <app-back-btn>Назад</app-back-btn>
-<ng-container *ngIf="course$ | async as course; else loader">
-    <h2>Управление курсом "{{course.title}}"</h2>
+<ng-container *ngIf="training$ | async as training; else loader">
+    <h2>Управление курсом "{{training.course.title}}"</h2>
 
     <div class="course-students">
         <h3>Студенты</h3>
@@ -8,14 +8,14 @@
         <div class="pending-students students-list">
             <h4>Ожидают зачисления</h4>
             <input type="text" placeholder="Поиск...">
-            <button (click)="refreshMembersList('pending')">Обновить</button>
+            <button>Обновить</button>
             <ng-container *ngIf="pendingStudents$ | async as pendingMembers; else loader">
                 
                 <ng-container *ngIf="pendingMembers.length > 0; else emptyList">
                     <app-course-member 
                         class="student-item"    
-                        *ngFor="let user of pendingMembers"
-                        [user]="user"
+                        *ngFor="let profile of pendingMembers"
+                        [profile]="profile"
                         status="pending"
                         (enroll)="onApproveEnroll($event)"   
                     >                
@@ -28,14 +28,14 @@
         <div class="approved-students students-list">
             <h4>Зачисленные на курс</h4>
             <input type="text" placeholder="Поиск...">
-            <button (click)="refreshMembersList('approved')">Обновить</button>
+            <button>Обновить</button>
             <ng-container *ngIf="approvedStudents$ | async as approvedMembers; else loader">
                 
                 <ng-container *ngIf="approvedMembers.length > 0; else emptyList">
                     <app-course-member 
                         class="student-item"    
-                        *ngFor="let user of approvedMembers"
-                        [user]="user"
+                        *ngFor="let profile of approvedMembers"
+                        [profile]="profile"
                         status="approved"
                         (expel)="onExpel($event)"
                     >                

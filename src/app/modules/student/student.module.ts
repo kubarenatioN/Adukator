@@ -10,9 +10,9 @@ import { TopicTrainingComponent } from './components/topic-training/topic-traini
 import { SharedModule } from '../shared/shared.module';
 import { TrainingTaskComponent } from './components/training-task/training-task.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CourseTrainingService } from './services/course-training.service';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
-import { TrainingDataService } from './services/training-data.service';
+import { StudentTrainingService } from './services/student-training.service';
+import { CourseTrainingGuardService } from './guards/course-training-guard.service';
 
 @NgModule({
 	declarations: [
@@ -30,8 +30,8 @@ import { TrainingDataService } from './services/training-data.service';
 		ReactiveFormsModule,
 	],
 	providers: [
-        CourseTrainingService,
-        TrainingDataService,
+        StudentTrainingService,
+        CourseTrainingGuardService,
         UploadCacheService,
     ],
 })

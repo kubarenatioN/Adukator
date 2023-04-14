@@ -18,6 +18,7 @@ export const DATA_ENDPOINTS = {
             toString: () => `${apiUrl}/api/courses`
         },
         training: {
+            membership: `${apiUrl}/api/training/membership`,
             progress: `${apiUrl}/api/training/progress`,
             toString: () => `${apiUrl}/api/training`
         },

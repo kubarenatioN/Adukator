@@ -5,7 +5,7 @@ import {
 	Input,
     Output,
 } from '@angular/core';
-import { CourseMembershipStatus } from 'src/app/typings/course.types';
+import { TrainingProfile } from 'src/app/typings/training.types';
 import { User } from 'src/app/typings/user.types';
 
 @Component({
@@ -15,24 +15,24 @@ import { User } from 'src/app/typings/user.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseMemberComponent {
-	@Input() public user!: User;
+	@Input() public profile!: TrainingProfile;
 	@Input() public status!: string;
 
-    @Output() public enroll = new EventEmitter<string>();
-    @Output() public expel = new EventEmitter<string>();
-    @Output() public reject = new EventEmitter<string>();
+    @Output() public enroll = new EventEmitter<TrainingProfile>();
+    @Output() public expel = new EventEmitter<TrainingProfile>();
+    @Output() public reject = new EventEmitter<TrainingProfile>();
 
 	constructor() {}
 
-    public onEnroll(userId: string) {
-        this.enroll.emit(userId);
+    public onEnroll() {
+        this.enroll.emit(this.profile);
     }
 
-    public onExpel(userId: string) {
-        this.expel.emit(userId);
+    public onExpel() {
+        this.expel.emit(this.profile);
     }
 
-    public onReject(userId: string) {
-        this.reject.emit(userId);
+    public onReject() {
+        this.reject.emit(this.profile);
     }
 }

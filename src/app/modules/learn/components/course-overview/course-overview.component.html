@@ -1,4 +1,4 @@
-<ng-container *ngIf="course$ | async as training; else loader">
+<ng-container *ngIf="training$ | async as training; else loader">
     <div class="course-banner-wrapper" style="background-image: url('http://localhost:8080/static/images/course-bg-1.jpg');">
         <app-back-btn class="back-btn">
             Назад
@@ -14,7 +14,7 @@
             mat-raised-button 
             color="accent" 
             [disabled]="isDisabledEnrollActions"
-            (click)="enrollCourse(training.uuid)">Записаться</button>
+            (click)="enrollTraining(training)">Записаться</button>
 
             <ng-container *ngIf="enrollStatus$ | async as enrollStatus">
                 <div *ngIf="enrollStatus === 'pending'">
@@ -22,14 +22,14 @@
                     <button 
                     [disabled]="isDisabledEnrollActions"
                     mat-raised-button 
-                    (click)="cancelCourseEnroll(training.uuid)">Отозвать</button>
+                    (click)="cancelTrainingEnroll(training)">Отозвать</button>
                 </div>
                 <div *ngIf="enrollStatus === 'approved'">
                     <button
                     [disabled]="isDisabledEnrollActions"
                     mat-raised-button 
                     color="accent" 
-                    (click)="leaveCourse(training.uuid)">Покинуть</button>
+                    (click)="leaveTraining(training)">Покинуть</button>
                     <a mat-raised-button [routerLink]="['/app/student/training', training.uuid]">Перейти к треннингу</a>
                 </div>
             </ng-container>

@@ -2,24 +2,19 @@ import {
 	ChangeDetectionStrategy,
 	ChangeDetectorRef,
 	Component,
-	ElementRef,
 	EventEmitter,
 	Input,
 	OnChanges,
 	OnInit,
 	Output,
 	SimpleChanges,
-    ViewChild,
 } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { BehaviorSubject, combineLatest, map, take } from 'rxjs';
-import { UploadBoxComponent } from 'src/app/components/upload-box/upload-box.component';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
-import { CourseTrainingService } from 'src/app/modules/student/services/course-training.service';
-import { TrainingProgressService } from 'src/app/services/training-progress.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { TopicTask } from 'src/app/typings/course.types';
-import { TrainingReply, TrainingReplyMessage, TrainingTaskAnswer } from 'src/app/typings/training.types';
+import { TrainingReplyMessage, TrainingTaskAnswer } from 'src/app/typings/training.types';
+import { StudentTrainingService } from '../../services/student-training.service';
 
 const UploadLabel = 'Загрузите файлы с выполненным заданием сюда.';
 
@@ -58,8 +53,7 @@ export class TrainingTaskComponent implements OnInit, OnChanges {
 	}
 
 	constructor(
-		private trainingService: CourseTrainingService,
-		private trainingProgress: TrainingProgressService,
+		private trainingService: StudentTrainingService,
 		private uploadService: UploadService,
 		private fbHelper: FormBuilderHelper,
 		private cdRef: ChangeDetectorRef,
@@ -71,7 +65,7 @@ export class TrainingTaskComponent implements OnInit, OnChanges {
 		this.form = this.fbHelper.getTrainingTaskForm(this.task);
 		this.initialValue = this.form.value;
 
-		this.trainingProgress.profile$
+		this.trainingService.profile$
 			.subscribe(profile => {
                 this.taskMaterialsFolder = this.uploadService.getFilesFolder(
                     'course',

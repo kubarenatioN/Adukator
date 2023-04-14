@@ -198,25 +198,3 @@ export interface CourseBuilderViewData {
 }
 
 export type WrapperType = 'edit' | 'review';
-
-export type CourseMembershipAction = 'enroll' | 'leave' | 'cancel' | 'update'
-export enum CourseMembershipStatus {
-    Pending = 'pending',
-    Approved = 'approved',
-    Rejected = 'rejected',
-}
-
-export interface CourseMembershipMap {
-    pending: User[];
-    approved: User[];
-    rejected: User[];
-}
-
-export interface CourseMembershipSearchParams {
-    type: 'list' | 'search',
-    courseId: string,
-    status?: CourseMembershipStatus,
-    size?: number,
-    page?: number,
-    query?: string
-}

@@ -12,11 +12,18 @@ export enum NetworkRequestKey {
     GetCourses = 'GetCourses',
     ListCourses = 'ListCourses',
     StudentCourses = 'StudentCourses',
-    TrainingAvailable = 'TrainingAvailable',
     
-    CourseMembership = 'CourseMembership',
-    CourseEnroll = 'CourseEnroll',
-    CourseMembershipLookup = 'CourseMembershipLookup',
+    // TRAINING
+    SelectTrainings = 'SelectTrainings',
+    TrainingList = 'TrainingList',
+    TrainingProgress = 'TrainingProgress',
+    TrainingReply = 'TrainingReply',
+    CreateTrainingEnroll = 'CreateTrainingEnroll',
+    UpdateTrainingEnroll = 'UpdateTrainingEnroll',
+    DeleteTrainingEnroll = 'DeleteTrainingEnroll',
+    TrainingMembers = 'TrainingMembers',
+    TrainingMembershipLookup = 'TrainingMembershipLookup',
+    TrainingAccess = 'TrainingAccess',
 
     // REVIEW
     GetReviewCourseHistory = 'GetReviewCourseHistory',
@@ -28,14 +35,8 @@ export enum NetworkRequestKey {
     PublishCourse = 'PublishCourse',
 
     // TEACHER
-    UpdateMembership = 'UpdateMembership',
-    CourseMembers = 'CourseMembers',
     GetReviewCourses = 'GetReviewCourses',
     TeacherCourses = 'TeacherCourses',
-
-    // TRAINING
-    TrainingProgress = 'TrainingProgress',
-    TrainingReply = 'TrainingReply',
 }
 
 export const REQUEST_TYPE = new HttpContextToken<string>(() => '');
@@ -106,24 +107,48 @@ export class NetworkHelper {
             url: `${DATA_ENDPOINTS.api.courses}/student`,
         },
 
-        
-        [NetworkRequestKey.CourseMembers]: {
+        /* TRAINING */
+        [NetworkRequestKey.SelectTrainings]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.courses.membership}/members`,
+            url: `${DATA_ENDPOINTS.api.training}/select`,
         },
-        [NetworkRequestKey.CourseMembershipLookup]: {
+        [NetworkRequestKey.TrainingList]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.courses.membership}/lookup`,
+            url: `${DATA_ENDPOINTS.api.training}/list`,
         },
-        [NetworkRequestKey.CourseEnroll]: {
+        [NetworkRequestKey.TrainingAccess]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.courses.membership}/enroll`,
+            url: `${DATA_ENDPOINTS.api.training}/access`,
         },
 
-        /* TRAINING */
-        [NetworkRequestKey.TrainingAvailable]: {
+        [NetworkRequestKey.CreateTrainingEnroll]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.training}/available`,
+            url: `${DATA_ENDPOINTS.api.training.membership}/enroll`,
+        },
+        [NetworkRequestKey.UpdateTrainingEnroll]: {
+            method: 'PATCH',
+            url: `${DATA_ENDPOINTS.api.training.membership}/enroll`,
+        },
+        [NetworkRequestKey.DeleteTrainingEnroll]: {
+            method: 'DELETE',
+            url: `${DATA_ENDPOINTS.api.training.membership}/enroll`,
+        },
+        [NetworkRequestKey.TrainingMembers]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.training.membership}/members`,
+        },
+        [NetworkRequestKey.TrainingMembershipLookup]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.training.membership}/lookup`,
+        },
+
+        [NetworkRequestKey.TrainingProgress]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.training}/profile`
+        },
+        [NetworkRequestKey.TrainingReply]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.training}/reply`
         },
 
         /* REVIEW */
@@ -145,19 +170,6 @@ export class NetworkHelper {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses.review}/create`,
         },
-        [NetworkRequestKey.UpdateMembership]: {
-            method: 'POST',
-            url: `${DATA_ENDPOINTS.api.courses.teacher}/membership/update`,
-        },
-
-        [NetworkRequestKey.TrainingProgress]: {
-            method: 'POST',
-            url: `${DATA_ENDPOINTS.api.training}/profile`
-        },
-        [NetworkRequestKey.TrainingReply]: {
-            method: 'POST',
-            url: `${DATA_ENDPOINTS.api.training}/reply`
-        }
     }
 
     public static createRequestPayload(key: string, extendedPayload?: RequestMetadata): DataRequestPayload {
@@ -171,26 +183,19 @@ export class NetworkHelper {
             headers,
             context,
         }
-
+        request.body = extendedPayload?.body;
+        
         const { params } = extendedPayload ?? {}
         const searchParams = new HttpParams({ fromObject: params })
         request.params = searchParams;
 
-        if (method === 'POST' || method === 'PUT') {
-            request.body = extendedPayload?.body;
+        let { url } = basePayload
+        const { urlId } = extendedPayload ?? {}
+        
+        if (urlId) {
+            url = `${url}/${String(urlId)}`
         }
-        else if (method === 'GET') {
-            let { url } = basePayload
-            const { urlId } = extendedPayload ?? {}
-            
-            if (urlId) {
-                url = `${url}/${String(urlId)}`
-            }
-            request.url = url
-        }
-        else {
-            throw new Error('Unknown request method.')
-        }
+        request.url = url
 
         return request;
     }

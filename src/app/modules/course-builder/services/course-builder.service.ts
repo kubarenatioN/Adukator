@@ -4,7 +4,7 @@ import { getEmptyCourseFormData, isEmptyCourseFormData } from 'src/app/constants
 import { convertCourseFormDataToCourse, convertCourseFormDataToCourseReview, generateUUID } from 'src/app/helpers/courses.helper';
 import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
-import { TeacherCoursesService } from 'src/app/services/teacher-courses.service';
+import { TeacherCoursesService } from 'src/app/modules/teacher/services/teacher-courses.service';
 import { UploadPathSegment, UploadService } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
 import { CourseBuilderViewData, CourseBuilderViewType, CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseReview, CourseReviewStatus } from 'src/app/typings/course.types';
