@@ -83,7 +83,6 @@ export class TopicTrainingComponent
 						topic.id
 					);
 				}),
-                delay(2000),
 				distinctUntilChanged()
 			)
 			.subscribe((folder) => {

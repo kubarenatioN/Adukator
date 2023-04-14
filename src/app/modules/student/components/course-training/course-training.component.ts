@@ -34,8 +34,10 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
     public viewData$!: Observable<ViewConfig>
 
     public viewTypes = ViewType;
-    public profile$!: Observable<TrainingProfile | null>;
-    public training$!: Observable<StudentTraining>;
+    public profile$: Observable<TrainingProfile> = this.trainingService.profile$;
+    public training$: Observable<StudentTraining> = this.profile$.pipe(
+        map(profile => new StudentTraining(profile.training)),
+    );
     
 	constructor(
         private userService: UserService,
@@ -45,33 +47,21 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
     }
 
 	public ngOnInit(): void {
-        this.profile$ = this.activatedRoute.data.pipe(
+        this.activatedRoute.data.pipe(
             switchMap((resolved) => {
                 const { trainingAccess } = resolved as { trainingAccess: TrainingAccess }
                 if (trainingAccess) {
                     const { hasAccess, profile } = trainingAccess
                     if (hasAccess && profile != null) {
-                        return this.trainingService.getProfile({ trainingId: profile.training, studentId: profile.student })
+                        this.trainingService.getProfile({ trainingId: profile.training, studentId: profile.student })
                     }
                 }
                 return of(null)
             }),
-        )
-
-        this.training$ = this.profile$.pipe(
-            tap(q => {
-                console.log('123', q);                
-            }),
-            filter(Boolean),
-            map(profile => {
-                console.log(profile);
-                return new StudentTraining(profile.training)
-            }),
-            tap(profile => console.log('profile', profile))
-        )
+        ).subscribe()
     
         this.viewData$ = combineLatest([
-            this.activatedRoute.queryParams.pipe(tap(q => console.log('q', q))),
+            this.activatedRoute.queryParams,
             this.training$.pipe(filter(Boolean)),
         ])
         .pipe(
