@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from 'src/app/helpers/network.helper';
 import { DataService } from 'src/app/services/data.service';
-import { Training, TrainingProfile, TrainingProfileLookup, TrainingReply } from 'src/app/typings/training.types';
+import { TopicDiscussionReply, Training, TrainingMembershipSearchParams, TrainingProfile, TrainingProfileFull, TrainingProfileLookup, TrainingReply } from 'src/app/typings/training.types';
+import { CoursesSelectResponse } from '../typings/response.types';
+import { User } from '../typings/user.types';
 
 @Injectable({
     providedIn: 'root'
@@ -13,6 +15,7 @@ export class TrainingDataService {
     public getTrainings(options?: {
         trainingsIds?: string[],
         authorId?: string,
+        fields?: string[]
     }) {
         const key = NetworkRequestKey.SelectTrainings
         const payload = NetworkHelper.createRequestPayload(key, {
@@ -44,15 +47,27 @@ export class TrainingDataService {
         )
     }
 
-    public getProfile(options: { trainingId: string, studentId: string }): Observable<TrainingProfile | null> {
+    public getProfile(options: { trainingId: string, studentId: string }) {
         const key = NetworkRequestKey.TrainingProgress
         const payload = NetworkHelper.createRequestPayload(key, {
             body: options
         })
-        console.log('get profile', options);
-        return this.dataService.send<{ profile: TrainingProfile | null }>(payload).pipe(
+        
+        return this.dataService.send<{ profile: TrainingProfileFull | null }>(payload).pipe(
             map(response => response.profile)
         )
+    }
+
+    public getMembers(query: TrainingMembershipSearchParams) {
+        const key = NetworkRequestKey.TrainingMembers
+        const payload = NetworkHelper.createRequestPayload(key, {
+            body: { ...query },
+            params: { reqId: key }
+        })
+        
+        return this.dataService.send<{ data: TrainingProfile<string, User>[] }>(payload).pipe(
+            map(res => res.data)
+        );
     }
 
     public sendTrainingReply(reply: TrainingReply) {
@@ -101,6 +116,15 @@ export class TrainingDataService {
             body,
             params: { reqId: key }
         })
-        return this.dataService.send<{ hasAccess: boolean, profile?: TrainingProfile }>(payload)
+        return this.dataService.send<{ hasAccess: boolean, profile?: TrainingProfile<string, User> }>(payload)
+    }
+
+    public loadTopicDiscussion(body: { profileId: string, topicId: string }) {
+        const key = NetworkRequestKey.TrainingTopicDiscussion
+        const payload = NetworkHelper.createRequestPayload(key, {
+            body,
+            params: { reqId: key }
+        })
+        return this.dataService.send<{ discussion: TopicDiscussionReply[] | null }>(payload)
     }
 }

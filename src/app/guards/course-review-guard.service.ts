@@ -4,18 +4,16 @@ import {
 	CanActivate,
 	Router,
 	RouterStateSnapshot,
-	UrlTree,
 } from '@angular/router';
-import { combineLatest, map, Observable, of, switchMap, take, withLatestFrom } from 'rxjs';
+import { map, of, switchMap, withLatestFrom } from 'rxjs';
 import { CoursesService } from '../services/courses.service';
-import { TeacherCoursesService } from '../modules/teacher/services/teacher-courses.service';
 import { UserService } from '../services/user.service';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class CourseReviewGuardService implements CanActivate {
-	constructor(private userService: UserService, private teacherCourses: TeacherCoursesService, private router: Router) {}
+	constructor(private userService: UserService, private coursesService: CoursesService, private router: Router) {}
 
 	canActivate(
 		route: ActivatedRouteSnapshot,
@@ -37,7 +35,7 @@ export class CourseReviewGuardService implements CanActivate {
     }
 
     private isTeacherAuthor(courseId: string) {
-        return this.teacherCourses.review$.pipe(
+        return this.coursesService.review$.pipe(
             withLatestFrom(this.userService.user$),
             map(([reviewCourses, user]) => {
                 const courseForReview = reviewCourses.find(course => course.uuid === courseId)

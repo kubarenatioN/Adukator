@@ -6,7 +6,7 @@ import { StudentTrainingService } from 'src/app/modules/student/services/student
 import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { CourseModule, ModuleTopic } from 'src/app/typings/course.types';
-import { Training, TrainingAccess, TrainingProfile, TrainingReply, TrainingReplyMessage } from 'src/app/typings/training.types';
+import { Training, TrainingAccess, TrainingProfile, TrainingProfileFull, TrainingProfileTraining, TrainingProfileUser, TrainingReply, TrainingReplyMessage } from 'src/app/typings/training.types';
 
 enum ViewType {
     Main = 'main',
@@ -34,7 +34,7 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
     public viewData$!: Observable<ViewConfig>
 
     public viewTypes = ViewType;
-    public profile$: Observable<TrainingProfile> = this.trainingService.profile$;
+    public profile$: Observable<TrainingProfileFull> = this.trainingService.profile$;
     public training$: Observable<StudentTraining> = this.profile$.pipe(
         map(profile => new StudentTraining(profile.training)),
     );

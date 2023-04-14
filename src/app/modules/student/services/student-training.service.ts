@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ReplaySubject, shareReplay } from 'rxjs';
-import { TrainingProfile, TrainingReply } from 'src/app/typings/training.types';
+import { TrainingProfile, TrainingProfileFull, TrainingProfileTraining, TrainingProfileUser, TrainingReply } from 'src/app/typings/training.types';
 import { TrainingDataService } from '../../../services/training-data.service';
 
 @Injectable()
 export class StudentTrainingService {
-    private profileStore$ = new ReplaySubject<TrainingProfile>(1)
+    private profileStore$ = new ReplaySubject<TrainingProfileFull>(1)
 
     public profile$ = this.profileStore$.pipe(shareReplay(1))
     

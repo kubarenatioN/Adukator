@@ -1,0 +1,73 @@
+<ng-container *ngIf="viewData$ | async as viewData; else loader">
+
+    <div class="header">
+        <h2>Оценивание</h2>
+        <p>Выберите студента и тему курса, для того чтобы начать оценивание.</p>
+    </div>
+    
+    <div class="filters" [formGroup]="checkForm">
+    
+        <label>
+            <span>Студент</span>
+            <select formControlName="profile" (change)="onProfileChanged($event)" name="student">
+                <option *ngFor="let profile of viewData.members" [value]="profile._id">{{ profile.student.username }}</option>
+            </select>
+        </label>
+    
+        <label>
+            <span>Тема</span>
+            <select formControlName="topic" name="topic">
+                <option *ngFor="let topic of viewData.training.topics" [value]="topic.id">
+                    {{ topic.title }}
+                </option>
+            </select>
+        </label>
+    
+    </div>
+    
+    <p>Последняя версия выполненных заданий по теме.</p>
+    <div class="topic-answer-container">
+
+        <ng-container *ngIf="checkTasks$ | async as checkTasks">
+
+            <div class="topic-task" *ngFor="let checkTask of checkTasks; let i = index">
+                <h3>Задание {{ i + 1 }}. {{ checkTask.task.taskDescr }}</h3>
+                <div>
+                    Файлы здесь
+                </div>
+                <div>
+                    {{ checkTask.thread | json }}
+                </div>
+            </div>
+
+        </ng-container>
+
+    </div>
+        
+    <div class="check-results">
+        <p>Подведение результатов</p>
+    
+        <div class="task-check-item">
+            <p>Задание 1. Сделать то не знаю что.</p>
+            <input type="number" max="10" min="0">
+        </div>
+        <div class="task-check-item">
+            <p>Задание 2. Пойти туда не знаю куда.</p>
+            <input type="number" max="10" min="0">
+        </div>
+        <div class="task-check-item">
+            <p>Задание 3. Найти то не знаю что.</p>
+            <input type="number" max="10" min="0">
+        </div>
+    
+        <textarea class="check-comment" name="comment" cols="50" rows="6" placeholder="Комментарий к оценке"></textarea>
+    
+        <button mat-raised-button color="accent">Сохранить</button>
+    
+    </div>    
+
+</ng-container>
+
+<ng-template #loader>
+    <p>Please wait. Loading training data...</p>
+</ng-template>

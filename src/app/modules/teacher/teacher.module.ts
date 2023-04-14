@@ -6,7 +6,8 @@ import { TeacherComponent } from './teacher.component';
 import { CourseManagementComponent } from './components/course-management/course-management.component';
 import { SharedModule } from '../shared/shared.module';
 import { CourseMemberComponent } from './components/course-member/course-member.component';
-import { CourseTopicCheckComponent } from './components/course-topic-check/course-topic-check.component';
+import { TrainingCheckComponent } from './components/training-check/training-check.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
 	providers: [],
@@ -14,8 +15,13 @@ import { CourseTopicCheckComponent } from './components/course-topic-check/cours
 		TeacherComponent,
 		CourseManagementComponent,
 		CourseMemberComponent,
-		CourseTopicCheckComponent,
+		TrainingCheckComponent,
 	],
-	imports: [CommonModule, TeacherRoutingModule, SharedModule],
+	imports: [
+        CommonModule, 
+        TeacherRoutingModule, 
+        ReactiveFormsModule,
+        SharedModule
+    ],
 })
 export class TeacherModule {}

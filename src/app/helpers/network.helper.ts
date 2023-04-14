@@ -17,13 +17,15 @@ export enum NetworkRequestKey {
     SelectTrainings = 'SelectTrainings',
     TrainingList = 'TrainingList',
     TrainingProgress = 'TrainingProgress',
-    TrainingReply = 'TrainingReply',
     CreateTrainingEnroll = 'CreateTrainingEnroll',
     UpdateTrainingEnroll = 'UpdateTrainingEnroll',
     DeleteTrainingEnroll = 'DeleteTrainingEnroll',
     TrainingMembers = 'TrainingMembers',
     TrainingMembershipLookup = 'TrainingMembershipLookup',
     TrainingAccess = 'TrainingAccess',
+    
+    TrainingReply = 'TrainingReply',
+    TrainingTopicDiscussion = 'TrainingTopicDiscussion',
 
     // REVIEW
     GetReviewCourseHistory = 'GetReviewCourseHistory',
@@ -149,6 +151,10 @@ export class NetworkHelper {
         [NetworkRequestKey.TrainingReply]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.training}/reply`
+        },
+        [NetworkRequestKey.TrainingTopicDiscussion]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.training}/discussion`
         },
 
         /* REVIEW */

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CourseManagementComponent } from './components/course-management/course-management.component';
-import { CourseTopicCheckComponent } from './components/course-topic-check/course-topic-check.component';
+import { TrainingCheckComponent } from './components/training-check/training-check.component';
 import { TeacherComponent } from './teacher.component';
 
 const routes: Routes = [
@@ -10,7 +10,7 @@ const routes: Routes = [
 		component: TeacherComponent,
 	},
 	{
-		path: 'course/:id',
+		path: 'training/:id',
 		children: [
 			{
 				path: 'manage',
@@ -18,11 +18,11 @@ const routes: Routes = [
 			},
 			{
 				path: 'check/:studentId',
-                component: CourseTopicCheckComponent
+                component: TrainingCheckComponent
 			},
 			{
 				path: 'check',
-                component: CourseTopicCheckComponent
+                component: TrainingCheckComponent
 			},
 		],
 	},

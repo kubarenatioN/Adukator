@@ -2,6 +2,8 @@
 <ng-container *ngIf="training$ | async as training; else loader">
     <h2>Управление курсом "{{training.course.title}}"</h2>
 
+    <a mat-raised-button color="primary" [routerLink]="['../check']">Перейти к проверке</a>
+
     <div class="course-students">
         <h3>Студенты</h3>
 

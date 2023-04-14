@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, ReplaySubject, shareReplay, switchMap, tap } from 'rxjs';
+import { of, ReplaySubject, shareReplay, switchMap, tap } from 'rxjs';
 import { getEmptyCourseFormData, isEmptyCourseFormData } from 'src/app/constants/common.constants';
 import { convertCourseFormDataToCourse, convertCourseFormDataToCourseReview, generateUUID } from 'src/app/helpers/courses.helper';
 import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
-import { TeacherCoursesService } from 'src/app/modules/teacher/services/teacher-courses.service';
 import { UploadPathSegment, UploadService } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
 import { CourseBuilderViewData, CourseBuilderViewType, CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseReview, CourseReviewStatus } from 'src/app/typings/course.types';
@@ -28,7 +27,6 @@ export class CourseBuilderService {
 	constructor(
 		private userService: UserService,
 		private coursesService: CoursesService,
-		private teacherCoursesService: TeacherCoursesService,
 		private adminCoursesService: AdminCoursesService,
         private uploadService: UploadService,
     ) {
@@ -113,7 +111,7 @@ export class CourseBuilderService {
                     return this.adminCoursesService.getCourseReviewVersion(courseId);
                 }
                 else if (mode === CourseFormViewMode.Edit) {
-                    return this.teacherCoursesService.getCourseReviewVersion(courseId);
+                    return this.coursesService.getCourseReviewVersion(courseId);
                 } 
                 else {
                     throw new Error('Cannot get course')

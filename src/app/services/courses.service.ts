@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, of, shareReplay, switchMap } from 'rxjs';
+import { BehaviorSubject, forkJoin, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { CourseReview } from '../typings/course.types';
+import { Course, CourseReview } from '../typings/course.types';
 import { CoursesResponse, CoursesSelectResponse, CourseReviewHistory } from '../typings/response.types';
 import { Training } from '../typings/training.types';
 import { DataService } from './data.service';
@@ -12,14 +12,49 @@ import { UserService } from './user.service';
 	providedIn: 'root',
 })
 export class CoursesService {
-    private catalogCoursesStore$ = new BehaviorSubject<Training[]>([]);
+    private coursesStore$ = new BehaviorSubject<{
+        published: Course[],
+        review: CourseReview[]
+    }>({
+        published: [],
+        review: []
+    });
 
-    public catalogCourses$: Observable<Training[]>;
+    public published$ = this.coursesStore$.asObservable().pipe(map(store => store.published), shareReplay(1));
+    public review$ = this.coursesStore$.asObservable().pipe(map(store => store.review), shareReplay(1));
 
 	constructor(private dataService: DataService, private userService: UserService) {
-        this.catalogCourses$ = this.catalogCoursesStore$.pipe(
-            shareReplay(1)
-        )
+        
+    }
+
+    public getTeacherCourses() {
+        this.userService.user$.pipe(
+            switchMap(user => {
+                const options = {
+                    requestKey: NetworkRequestKey.GetCourses,
+                    authorId: user.uuid,
+                    fields: CoursesSelectFields.Short,
+                }
+                return forkJoin({
+                    published: this.getCourses<{ data: Course[] }>({
+                        ...options,
+                        reqId: 'SelectTeacherPublishedCourses',
+                        type: 'published',
+                    }),
+                    review: this.getCourses<{ data: CourseReview[] }>({
+                        ...options,
+                        reqId: 'SelectTeacherReviewCourses',
+                        type: 'review',
+                    }),
+                })
+            }),
+        ).subscribe(response => {
+            const { published, review } = response
+            this.coursesStore$.next({
+                published: published.data,
+                review: review.data,
+            });
+        })
     }
 
     public getCourseReviewVersion(courseId: string) {
@@ -36,23 +71,6 @@ export class CoursesService {
             }),
             map(response => response.data[0])
         )
-    }
-
-    public getCoursesList(options: {
-        pagination?: {
-            offset: number,
-            limit: number
-        },
-        filters?: {},
-        fields: string[]
-    }): void {
-        const key = NetworkRequestKey.ListCourses
-        const payload = NetworkHelper.createRequestPayload(key, {
-            body: options,
-            params: { reqId: 'CoursesList' }
-        })
-        this.dataService.send<{ data: Training[] }>(payload)
-            .subscribe(res => this.catalogCoursesStore$.next(res.data))
     }
 
     // Main generic method to get any course, try to reuse it everywhere

@@ -12,20 +12,6 @@ export class TrainingManagementService {
         
     }
 
-    public getProfiles(reqParams: TrainingMembershipSearchParams) {
-        const key = NetworkRequestKey.TrainingMembers
-        const payload = NetworkHelper.createRequestPayload(key, {
-            body: {
-                ...reqParams
-            },
-            params: { reqId: key }
-        })
-        
-        return this.dataService.send<{ data: TrainingProfile[] }>(payload).pipe(
-            map(res => res.data)
-        );
-    }
-
     public updateStudentTrainingEnrollment(
         studentsIds: string[],
 		trainingId: string,
