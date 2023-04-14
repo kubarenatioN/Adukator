@@ -79,7 +79,7 @@ export interface TopicDiscussionReply {
 }
 
 export interface DiscussionReplyMessage {
-    type?: 'task' | 'check' | 'report'
+    type: 'task' | 'check' | 'report'
     taskId?: string
     data: DiscussionMessageData
 }

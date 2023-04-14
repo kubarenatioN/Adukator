@@ -9,7 +9,7 @@
     
         <label>
             <span>Студент</span>
-            <select formControlName="profile" (change)="onProfileChanged($event)" name="student">
+            <select formControlName="profile" name="student">
                 <option *ngFor="let profile of viewData.members" [value]="profile._id">{{ profile.student.username }}</option>
             </select>
         </label>
@@ -32,11 +32,18 @@
 
             <div class="topic-task" *ngFor="let checkTask of checkTasks; let i = index">
                 <h3>Задание {{ i + 1 }}. {{ checkTask.task.taskDescr }}</h3>
-                <div>
-                    Файлы здесь
-                </div>
-                <div>
-                    {{ checkTask.thread | json }}
+                <div *ngIf="checkTask.thread; else noAnswers" class="task-answers">
+                    <app-upload-box
+                        type="download"
+                        [folder]="checkTask.folder"
+                        label="Файлы на проверку от студента"
+                    ></app-upload-box>
+                    <div class="thread-list">
+                        <div class="thread-list-item" *ngFor="let reply of checkTask.thread">
+                            <h4>{{ reply.message }}</h4>
+                            <p>{{ reply.date }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -70,4 +77,8 @@
 
 <ng-template #loader>
     <p>Please wait. Loading training data...</p>
+</ng-template>
+
+<ng-template #noAnswers>
+    <p>Ответов на задание пока что нет.</p>
 </ng-template>

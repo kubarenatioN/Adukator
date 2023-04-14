@@ -11,7 +11,7 @@
     </div>
     <input class="file-input" type="file" [id]="fileInputId" multiple (change)="onChange($event)">
 
-    <ng-container *ngIf="filesStore.size > 0; else emptyDropzone">    
+    <ng-container *ngIf="filesStore.size > 0; else emptyDropzone">
         <div class="files-container">
             <app-file-item *ngFor="let file of filesStore.values()"
                 class="file-item"
@@ -33,7 +33,7 @@
     [ngTemplateOutlet]="downloadZone"></ng-container>
 
 <ng-template #downloadZone>
-    <div class="files-container">
+    <div class="files-container download">
         <ng-container *ngIf="filesStore.size > 0; else noFiles">
             <app-file-item *ngFor="let file of filesStore.values()"
                 class="file-item" 

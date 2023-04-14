@@ -17,7 +17,7 @@ const routes: Routes = [
                 component: CourseManagementComponent
 			},
 			{
-				path: 'check/:studentId',
+				path: 'check/:profileId',
                 component: TrainingCheckComponent
 			},
 			{

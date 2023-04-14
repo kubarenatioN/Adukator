@@ -38,3 +38,17 @@
     display: block;
     margin: 10px 0;
 }
+
+.task-answers {
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid rgb(210, 56, 248);
+}
+
+.thread-list{
+    &-item {
+        padding: 5px;
+        margin: 5px;
+        border: 1px solid rgb(141, 167, 255);
+    }
+}

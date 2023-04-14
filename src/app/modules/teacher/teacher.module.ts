@@ -8,9 +8,12 @@ import { SharedModule } from '../shared/shared.module';
 import { CourseMemberComponent } from './components/course-member/course-member.component';
 import { TrainingCheckComponent } from './components/training-check/training-check.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { UploadCacheService } from 'src/app/services/upload-cache.service';
 
 @NgModule({
-	providers: [],
+	providers: [
+        UploadCacheService
+    ],
 	declarations: [
 		TeacherComponent,
 		CourseManagementComponent,

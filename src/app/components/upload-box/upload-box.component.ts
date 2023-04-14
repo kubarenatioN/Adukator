@@ -47,7 +47,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
-        const { controlId, folder } = changes
+        const { folder } = changes
 
         if (folder && folder.previousValue !== folder.currentValue) {
             this.refresh()

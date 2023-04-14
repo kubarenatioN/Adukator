@@ -5,16 +5,22 @@ import { Observable, of } from 'rxjs';
 import { filter, map, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { StudentTraining } from 'src/app/models/course.model';
+import { UploadService } from 'src/app/services/upload.service';
 import { ModuleTopic, TopicTask } from 'src/app/typings/course.types';
 import { TopicDiscussionReply, Training, TrainingProfile } from 'src/app/typings/training.types';
 import { User } from 'src/app/typings/user.types';
 import { TeacherTrainingService } from '../../services/teacher-training.service';
 
-type TopicDiscussionMap = {
-    [key: string]: {
-        task: TopicTask | null,
-        replies: TopicDiscussionReply[]
-    }
+// type TopicDiscussionMap = {
+//     [key: string]: {
+//         task: TopicTask | null,
+//         replies: TopicDiscussionReply[],
+//     }
+// }
+
+type ViewData = {
+    training: StudentTraining,
+    members: TrainingProfile<string, User>[]
 }
 
 @Component({
@@ -31,20 +37,24 @@ export class TrainingCheckComponent
 
     public checkForm!: FormGroup;
 
-    public viewData$!: Observable<{
-        training: StudentTraining,
-        members: TrainingProfile<string, User>[]
-    }>;
+    public viewData$!: Observable<ViewData>;
 
     public checkTasks$!: Observable<{
         task: TopicTask
-        thread: TopicDiscussionReply[]
+        thread: {
+            type: string,
+            message: string,
+            date: string,
+            sender: string
+        }[] | null,
+        folder: string,
     }[]>;
-    public topicDiscussionMap$!: Observable<TopicDiscussionMap | null>;
+    // public topicDiscussionMap$!: Observable<TopicDiscussionMap | null>;
 
 	constructor(
         private teacherTraining: TeacherTrainingService,
         private activatedRoute: ActivatedRoute,
+        private uploadService: UploadService,
         private fb: FormBuilder,
     ) {
 		super();
@@ -53,35 +63,14 @@ export class TrainingCheckComponent
 	public ngOnInit(): void {
         this.activatedRoute.params.subscribe(params => {
             const trainingId = params['id']
-            this.pickedProfileId = params['studentId']
+            this.pickedProfileId = params['profileId']
             this.viewData$ = this.setupViewData(trainingId)    
         })
 
         this.checkForm = this.fb.group({
-            profile: this.pickedProfileId,
+            profile: '',
             topic: '',
         })
-        
-        this.checkForm.valueChanges.subscribe(model => {
-            const { profile, topic } = model
-            
-        })
-
-        // this.checkTasks$ = this.checkForm.valueChanges.pipe(
-        //     withLatestFrom(this.viewData$),
-        //     map(([model, viewData]) => {
-        //         console.log(model);
-        //         const { profile, topic: topicId } = model
-        //         if (profile && topicId) {
-        //             const trainingTopic = viewData.training.topics.find(topic => topic.id === topicId) ?? null
-        //             if (trainingTopic === null) {
-        //                 return []
-        //             }
-        //             return trainingTopic.practice?.tasks ?? []
-        //         }
-        //         return null
-        //     })
-        // )
 
         this.checkTasks$ = this.checkForm.valueChanges.pipe(
             switchMap(model => {
@@ -90,32 +79,30 @@ export class TrainingCheckComponent
                 if (profile && topic) {
                     return this.loadStudentTopicAnswers(profile, topic)
                 }
-                return of({ discussion: null })
+                return of(null)
             }),
+            filter(Boolean),
             withLatestFrom(this.viewData$),
             map(
                 ([{ discussion }, { training }]: [
                     { discussion: TopicDiscussionReply[] | null }, 
-                    { training: StudentTraining }
+                    ViewData
                 ]) => {
 
-                const { topic: topicId } = this.checkForm.value
+                const { topic: topicId, profile: profileId } = this.checkForm.value
                 const topic = training.topics.find(topic => topic.id === topicId)
                 console.log(topic?.practice?.tasks);
                 const tasksForCheck = topic?.practice?.tasks.map(task => {
-                    return {
-                        task,
-                        thread: discussion?.filter(d => d.message.type === 'task' && d.message.taskId === task.id) ?? []
-                    }
+                    return this.prepareTaskThreadData(
+                        task, 
+                        profileId, 
+                        discussion
+                    )
                 })
                 
                 return tasksForCheck ?? []
             })
         )
-    }
-
-    public onProfileChanged(e: Event) {
-        // console.log(e);
     }
 
     private loadStudentTopicAnswers(profileId: string, topicId: string) {
@@ -159,24 +146,49 @@ export class TrainingCheckComponent
         );
     }
 
-    private createTopicDiscussionMap(replies: TopicDiscussionReply[], topics: ModuleTopic[]) {
-        return replies.reduce((map, curr) => {
-            const taskId = curr.message.taskId
-            if (taskId) {
-                if (map[taskId]) {
-                    const { replies } = map[taskId]
-                    replies.push(curr)
-                    map[taskId].replies = replies
-                } else {
-                    const topic = topics.find(topic => topic.id === curr.topicId)
-                    const task = topic?.practice?.tasks.find(task => task.id === taskId) ?? null
-                    map[taskId] = {
-                        task,
-                        replies: [curr]
-                    }
-                }
+    private prepareTaskThreadData(task: TopicTask, profileId: string, discussion: TopicDiscussionReply[] | null) {
+        if (discussion === null || discussion.length === 0) {
+            return {
+                task,
+                thread: null,
+                folder: ''
             }
-            return map
-        }, {} as TopicDiscussionMap)
+        }
+
+        const thread = discussion
+            .filter(d => d.message.type === 'task' && d.message.taskId === task.id)
+            .map(reply => ({
+                type: reply.message.type,
+                message: reply.message.data.comment ?? '',
+                date: reply.date,
+                sender: reply.sender,
+            }))
+
+        return {
+            task,
+            thread,
+            folder: this.uploadService.getFilesFolder('training', profileId, 'tasks', task.id)
+        }
     }
+
+    // private createTopicDiscussionMap(replies: TopicDiscussionReply[], topics: ModuleTopic[]) {
+    //     return replies.reduce((map, curr) => {
+    //         const taskId = curr.message.taskId
+    //         if (taskId) {
+    //             if (map[taskId]) {
+    //                 const { replies } = map[taskId]
+    //                 replies.push(curr)
+    //                 map[taskId].replies = replies
+    //             } else {
+    //                 const topic = topics.find(topic => topic.id === curr.topicId)
+    //                 const task = topic?.practice?.tasks.find(task => task.id === taskId) ?? null
+    //                 map[taskId] = {
+    //                     task,
+    //                     replies: [curr]
+    //                 }
+    //             }
+    //         }
+    //         return map
+    //     }, {} as TopicDiscussionMap)
+    // }
 }
