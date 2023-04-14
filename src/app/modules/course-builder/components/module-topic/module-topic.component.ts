@@ -25,6 +25,7 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
             practice: form.value.practice,
             test: form.value.testLink,
         }
+        this.uploadFolder = this.courseBuilderService.getUploadFolder(['topics'], this.form.value.id)
     };
 	@Input() public controlsType!: WrapperType;
     @Output() public saveTopic = new EventEmitter<FormGroup>();
@@ -78,8 +79,6 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
             .subscribe(value => {
                 // console.log('111 change topic', value);
             })
-
-        this.uploadFolder = this.courseBuilderService.getUploadFolder(['topics'], this.form.value.id)
 
         this.courseBuilderService.viewData$
         .pipe(takeUntil(this.componentLifecycle$))
