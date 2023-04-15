@@ -25,6 +25,18 @@ export interface Training {
     status: 'active' | 'archived',
 }
 
+export interface TopicDiscussionReply {
+    _id: string;
+    uuid: string;
+    topicId: string;
+    profile: string;
+	type: 'task' | 'report' | 'check';
+    taskId?: string
+    message: TrainingReplyMessage
+    sender: string;
+    date: string;
+}
+
 export interface TrainingReply {
     topicId: string;
     profile: string;
@@ -32,7 +44,6 @@ export interface TrainingReply {
     taskId?: string
     message: TrainingReplyMessage
     sender: string;
-    date?: string;
 }
 
 export type TrainingReplyMessage = TrainingTaskAnswer | TrainingReport | TrainingCheck
@@ -75,27 +86,4 @@ export interface TrainingMembershipSearchParams {
 export interface TrainingAccess { 
     hasAccess: boolean, 
     profile?: TrainingProfileLookup 
-}
-
-export interface TopicDiscussionReply {
-    _id: string
-    uuid: string
-    topicId: string
-    profile: string
-    message: DiscussionReplyMessage,
-    sender: string
-    date: string
-}
-
-export interface DiscussionReplyMessage {
-    type: 'task' | 'check' | 'report'
-    taskId?: string
-    data: DiscussionMessageData
-}
-
-export interface DiscussionMessageData {
-    id?: string,
-    files?: string[]
-    comment?: string
-
 }

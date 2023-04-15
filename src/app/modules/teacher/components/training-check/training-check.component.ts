@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { filter, map, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { filter, map, shareReplay, switchMap, withLatestFrom } from 'rxjs/operators';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { StudentTraining } from 'src/app/models/course.model';
 import { UploadService } from 'src/app/services/upload.service';
-import { ModuleTopic, TopicTask } from 'src/app/typings/course.types';
-import { TopicDiscussionReply, Training, TrainingProfile } from 'src/app/typings/training.types';
+import { TopicTask } from 'src/app/typings/course.types';
+import { TopicDiscussionReply, TrainingProfile, TrainingReply, TrainingTaskAnswer } from 'src/app/typings/training.types';
 import { User } from 'src/app/typings/user.types';
 import { TeacherTrainingService } from '../../services/teacher-training.service';
 
@@ -37,7 +37,7 @@ export class TrainingCheckComponent
         task: TopicTask
         thread: {
             type: string,
-            message: string,
+            message?: string,
             date: string,
             sender: string
         }[] | null,
@@ -147,10 +147,10 @@ export class TrainingCheckComponent
         }
 
         const thread = discussion
-            .filter(d => d.message.type === 'task' && d.message.taskId === task.id)
+            .filter(reply => reply.type === 'task' && reply.taskId === task.id)
             .map(reply => ({
-                type: reply.message.type,
-                message: reply.message.data.comment ?? '',
+                type: reply.type,
+                message: (reply.message as TrainingTaskAnswer).comment,
                 date: reply.date,
                 sender: reply.sender,
             }))

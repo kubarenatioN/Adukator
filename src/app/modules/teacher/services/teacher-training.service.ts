@@ -32,10 +32,6 @@ export class TeacherTrainingService {
 
     public loadStudentDiscussion(payload: { profileId: string, topicId: string }) {
         return this.trainingDataService.loadTopicDiscussion(payload)
-        // this.trainingDataService.loadTopicDiscussion(payload)
-        // .subscribe(discussion => {
-        //     this.topicDiscussionStore$.next(discussion)
-        // })
     }
 
 	public getStudentsProfiles(trainingId: string) {
