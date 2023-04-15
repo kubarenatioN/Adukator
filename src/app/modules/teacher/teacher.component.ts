@@ -30,6 +30,6 @@ export class TeacherComponent extends CenteredContainerDirective implements OnIn
     }
 
 	ngOnInit(): void {
-        // this.teacherCourses.getCourses()
+        this.coursesService.getTeacherCourses()
     }
 }

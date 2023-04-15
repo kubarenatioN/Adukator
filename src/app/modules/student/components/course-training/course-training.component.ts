@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { StudentTraining } from 'src/app/models/course.model';
 import { StudentTrainingService } from 'src/app/modules/student/services/student-training.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { CourseModule, ModuleTopic } from 'src/app/typings/course.types';
-import { Training, TrainingAccess, TrainingProfile, TrainingProfileFull, TrainingProfileTraining, TrainingProfileUser, TrainingReply, TrainingReplyMessage } from 'src/app/typings/training.types';
+import { TrainingAccess, TrainingProfileFull, TrainingReply, TrainingTaskAnswer } from 'src/app/typings/training.types';
 
 enum ViewType {
     Main = 'main',
@@ -94,11 +94,19 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
         )
     }
 
-    public onSendReply({ message, topicId } : {message: TrainingReplyMessage, topicId: string }) {
+    public onSendReply(reply: Pick<TrainingReply, 'message' | 'type' | 'topicId'>) {
+        const { type, message, topicId } = reply;
+        if (type === 'task') {
+            this.sendTaskReply(message as TrainingTaskAnswer, topicId)
+        }
+    }
+
+    private sendTaskReply(message: TrainingTaskAnswer, topicId: string) {
         const upload$ = this.profile$.pipe(
             switchMap(profile => {
                 return this.uploadService.moveFilesToRemote({
-                    fromFolder: `training/${profile.uuid}`,
+                    subject: 'training:task',
+                    fromFolder: `training/${profile.uuid}/${message.taskId}`,
                 })
             }),
             tap(() => console.log('Uploaded training files')),
@@ -110,6 +118,8 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
             switchMap(([_, profile, user]) => {
                 const reply: TrainingReply = {
                     topicId,
+                    type: 'task',
+                    taskId: message.taskId,
                     message,
                     profile: profile._id,
                     sender: user._id,

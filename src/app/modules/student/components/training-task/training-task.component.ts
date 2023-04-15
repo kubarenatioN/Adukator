@@ -76,7 +76,6 @@ export class TrainingTaskComponent implements OnInit, OnChanges {
                 this.uploadFilesFolder = this.uploadService.getFilesFolder(
                     'training',
                     profile.uuid, 
-                    'tasks', 
                     this.controlId
                 )
                 this.cdRef.detectChanges()
@@ -88,11 +87,12 @@ export class TrainingTaskComponent implements OnInit, OnChanges {
 	}
 
 	public onSend() {
-		const answer = this.form.value as TrainingTaskAnswer;
-		if (answer.files.length > 0) {
+		const { files, comment, id } = this.form.value;
+
+        if (files && files?.length > 0 && id) {
 			this.send.emit({
-                type: 'task',
-                data: answer,
+                files,
+                comment: comment ? comment : undefined,
                 taskId: this.task.id
             });
 			this.form.reset(this.initialValue);

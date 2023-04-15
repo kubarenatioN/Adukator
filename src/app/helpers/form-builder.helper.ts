@@ -87,7 +87,7 @@ export class FormBuilderHelper {
 
     public getTrainingTaskInitialValue(id: string): TrainingTaskAnswer {
         return {
-            id,
+            taskId: id,
             files: [],
             comment: ''
         }

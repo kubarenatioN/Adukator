@@ -28,21 +28,30 @@ export interface Training {
 export interface TrainingReply {
     topicId: string;
     profile: string;
+	type: 'task' | 'report' | 'check';
+    taskId?: string
     message: TrainingReplyMessage
     sender: string;
     date?: string;
 }
 
-export interface TrainingReplyMessage {
-	type: 'task' | 'report' | 'check';
-	data: TrainingTaskAnswer | unknown;
-	taskId?: string;
-}
+export type TrainingReplyMessage = TrainingTaskAnswer | TrainingReport | TrainingCheck
 
 export interface TrainingTaskAnswer {
-	id: string;
+	taskId: string;
 	files: string[];
 	comment?: string;
+}
+
+export interface TrainingReport {
+	report: string;
+}
+
+export interface TrainingCheck {
+	comment: string;
+    check: {
+        [taskId: string]: number
+    }
 }
 
 

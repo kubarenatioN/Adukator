@@ -40,13 +40,15 @@ export class UploadService {
         })
 	}
 
-    public moveFilesToRemote({ fromFolder, toFolder }: {
+    public moveFilesToRemote({ fromFolder, toFolder, subject }: {
+        subject: 'course:build' | 'training:task',
         fromFolder: string,
         toFolder?: string,
     }) {
         return this.http.post(`${apiUrl}/upload/remote`, {
             fromFolder,
             toFolder,
+            subject
         })
     }
 

@@ -11,12 +11,6 @@ import { TopicDiscussionReply, Training, TrainingProfile } from 'src/app/typings
 import { User } from 'src/app/typings/user.types';
 import { TeacherTrainingService } from '../../services/teacher-training.service';
 
-// type TopicDiscussionMap = {
-//     [key: string]: {
-//         task: TopicTask | null,
-//         replies: TopicDiscussionReply[],
-//     }
-// }
 
 type ViewData = {
     training: StudentTraining,
@@ -49,7 +43,6 @@ export class TrainingCheckComponent
         }[] | null,
         folder: string,
     }[]>;
-    // public topicDiscussionMap$!: Observable<TopicDiscussionMap | null>;
 
 	constructor(
         private teacherTraining: TeacherTrainingService,
@@ -165,28 +158,7 @@ export class TrainingCheckComponent
         return {
             task,
             thread,
-            folder: this.uploadService.getFilesFolder('training', profileId, 'tasks', task.id)
+            folder: this.uploadService.getFilesFolder('training', profileId, task.id)
         }
     }
-
-    // private createTopicDiscussionMap(replies: TopicDiscussionReply[], topics: ModuleTopic[]) {
-    //     return replies.reduce((map, curr) => {
-    //         const taskId = curr.message.taskId
-    //         if (taskId) {
-    //             if (map[taskId]) {
-    //                 const { replies } = map[taskId]
-    //                 replies.push(curr)
-    //                 map[taskId].replies = replies
-    //             } else {
-    //                 const topic = topics.find(topic => topic.id === curr.topicId)
-    //                 const task = topic?.practice?.tasks.find(task => task.id === taskId) ?? null
-    //                 map[taskId] = {
-    //                     task,
-    //                     replies: [curr]
-    //                 }
-    //             }
-    //         }
-    //         return map
-    //     }, {} as TopicDiscussionMap)
-    // }
 }

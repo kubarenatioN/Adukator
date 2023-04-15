@@ -21,7 +21,7 @@ import { StudentTrainingService } from 'src/app/modules/student/services/student
 import { UploadService } from 'src/app/services/upload.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { ModuleTopic } from 'src/app/typings/course.types';
-import { TrainingReplyMessage } from 'src/app/typings/training.types';
+import { TrainingReply, TrainingReplyMessage } from 'src/app/typings/training.types';
 
 @Component({
 	selector: 'app-topic-training',
@@ -37,7 +37,7 @@ export class TopicTrainingComponent
 
 	@Input() public topic!: ModuleTopic;
 
-    @Output() public sendReply = new EventEmitter()
+    @Output() public sendReply = new EventEmitter<Pick<TrainingReply, 'message' | 'type' | 'topicId'>>()
 
 	public trainingMaterialsFolder: string = '';
 
@@ -93,8 +93,9 @@ export class TopicTrainingComponent
 
 	public onSendTask(message: TrainingReplyMessage): void {
         this.sendReply.emit({
+            topicId: this.topic.id,
+            type: 'task',
             message,
-            topicId: this.topic.id
         });
 	}
 }
