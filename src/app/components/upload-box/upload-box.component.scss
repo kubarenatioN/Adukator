@@ -1,26 +1,46 @@
 :host {
     display: flex;
     flex-direction: column;
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #333;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100px;
 }
 
 .dropzone {
     flex-grow: 1;
-    min-height: 100px;
-    background-color: #eed;
     position: relative;
+}
 
-    &.fileover .dropzone-wrapper {
+.dropzone.fileover {
+    & .dropzone-wrapper {
         opacity: 1;
+    }
+
+    & .upload-inner .upload-box-footer *,
+    & .upload-inner .files-container * {
+        pointer-events: none;
+        background-color: green;
+        color: red;
     }
 }
 
 .dropzone-wrapper {
     position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: #eee;
+    background-color: rgba(122, 122, 122, 0.644);
+    color: #fff;
     z-index: 2;
     opacity: 0;
     pointer-events: none;
@@ -33,23 +53,32 @@
     opacity: 0;
 }
 
-.pick-files-btn {
-    position: absolute;
-    z-index: 1;
+.upload-inner {
+    display: flex;
+    flex-direction: column;
+    min-height: 120px;
+    background-color: rgb(233, 239, 255);
+
+    &.download {
+        background-color: rgb(248, 255, 225)
+    }
 }
 
 .files-container {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    height: calc(100% - 30px);
+    flex-grow: 1;
     overflow-y: auto;
     padding: 10px;
-    background-color: rgb(240, 240, 240);
 
-    &.download {
-        background-color: rgb(244, 255, 227);
+    &--empty {
+        display: block;
     }
+}
+
+.upload-box-footer {
+    height: 40px;
 }
 
 .file-item {

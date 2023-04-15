@@ -84,18 +84,20 @@ export class TrainingCheckComponent
             filter(Boolean),
             withLatestFrom(this.viewData$),
             map(
-                ([{ discussion }, { training }]: [
+                ([{ discussion }, { training, members }]: [
                     { discussion: TopicDiscussionReply[] | null }, 
                     ViewData
                 ]) => {
 
                 const { topic: topicId, profile: profileId } = this.checkForm.value
                 const topic = training.topics.find(topic => topic.id === topicId)
-                console.log(topic?.practice?.tasks);
-                const tasksForCheck = topic?.practice?.tasks.map(task => {
+                const tasks = topic?.practice?.tasks
+                const profileUUId = members.find(member => member._id === profileId)?.uuid ?? ''
+
+                const tasksForCheck = tasks?.map(task => {
                     return this.prepareTaskThreadData(
                         task, 
-                        profileId, 
+                        profileUUId, 
                         discussion
                     )
                 })
@@ -128,10 +130,6 @@ export class TrainingCheckComponent
                 training: new StudentTraining(training),
                 members,
             })),
-            tap(({ training }) => {
-                // this.trainingTopics = training.topics
-                // this.activeTopic = this.trainingTopics[0]
-            }),
             shareReplay(1)
         )
     }
@@ -147,7 +145,7 @@ export class TrainingCheckComponent
     }
 
     private prepareTaskThreadData(task: TopicTask, profileId: string, discussion: TopicDiscussionReply[] | null) {
-        if (discussion === null || discussion.length === 0) {
+        if (discussion === null || discussion.length === 0 || !profileId) {
             return {
                 task,
                 thread: null,

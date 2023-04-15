@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, combineLatest, filter, map, Observable, of, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { StudentTraining } from 'src/app/models/course.model';
 import { StudentTrainingService } from 'src/app/modules/student/services/student-training.service';
+import { UploadService } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { CourseModule, ModuleTopic } from 'src/app/typings/course.types';
@@ -42,7 +43,9 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 	constructor(
         private userService: UserService,
         private trainingService: StudentTrainingService,
-        private activatedRoute: ActivatedRoute) {
+        private activatedRoute: ActivatedRoute,
+        private uploadService: UploadService,
+    ) {
         super();
     }
 
@@ -92,25 +95,29 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
     }
 
     public onSendReply({ message, topicId } : {message: TrainingReplyMessage, topicId: string }) {
-        this.profile$.pipe(
-            filter(Boolean),
-            withLatestFrom(this.userService.user$),
-            switchMap(([profile, user]) => {
-                console.log(profile);
+        const upload$ = this.profile$.pipe(
+            switchMap(profile => {
+                return this.uploadService.moveFilesToRemote({
+                    fromFolder: `training/${profile.uuid}`,
+                })
+            }),
+            tap(() => console.log('Uploaded training files')),
+            shareReplay(1),
+        )
 
+        upload$.pipe(
+            withLatestFrom(this.profile$, this.userService.user$),
+            switchMap(([_, profile, user]) => {
                 const reply: TrainingReply = {
                     topicId,
                     message,
                     profile: profile._id,
                     sender: user._id,
                 }
-                console.log(reply);
 
                 return this.trainingService.sendTrainingReply(reply);
             })
-        ).subscribe(response => {
-            console.log('send', response);
-        })
+        ).subscribe(() => console.log('Training reply was uploaded!'))
     }
 
     private getViewType(moduleId?: string, topicId?: string): ViewType {

@@ -14,7 +14,7 @@ export class DndDirective {
     @HostListener('dragover', ['$event'])
     private  onDragOver(e: Event) {
         e.preventDefault();
-        e.stopPropagation();
+        // e.stopPropagation();
         this.isFileOver = true;
     }
 
@@ -32,7 +32,6 @@ export class DndDirective {
         this.isFileOver = false;
         const files = (e as InputEvent).dataTransfer?.files
         if (files && files.length > 0) {
-            console.log('111 drop', files);
             this.filesDropped.emit(files)
         }
     }

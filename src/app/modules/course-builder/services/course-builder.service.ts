@@ -63,7 +63,10 @@ export class CourseBuilderService {
         // Show upload, then redirect. Create course in background
         console.log('Course is publishing. Please wait...');
         const rootCourseId = this.metadata.masterCourseId ?? this.metadata.uuid
-        return this.uploadService.moveFilesToRemote(rootCourseId).pipe(
+        return this.uploadService.moveFilesToRemote({
+            fromFolder: `review/${rootCourseId}`,
+            toFolder: `course/${rootCourseId}`,
+        }).pipe(
             tap(upload => {
                 console.log('Uploaded files to remote', upload);
             }),

@@ -1,52 +1,66 @@
 <p *ngIf="label">{{ label }}</p>
 <p>[dev] Folder: {{ folder }}</p>
-<div 
-    *ngIf="type === 'upload'" 
-    appDnd
-    class="dropzone" 
-    (filesDropped)="onFilesDropped($event)">
+<div class="wrapper">
 
-    <div class="dropzone-wrapper">
-        Отпустите файлы здесь.
-    </div>
-    <input class="file-input" type="file" [id]="fileInputId" multiple (change)="onChange($event)">
+    <ng-container *ngIf="type === 'upload'">
 
-    <ng-container *ngIf="filesStore.size > 0; else emptyDropzone">
-        <div class="files-container">
-            <app-file-item *ngFor="let file of filesStore.values()"
-                class="file-item"
-                [controlId]="controlId"
-                [userFile]="file.userFile"
-                [file]="file.uploadFile"
-                [folder]="folder"
-                (remove)="onRemove($event)"
-                (uploaded)="onUpload($event)"
-                type="upload">
-            </app-file-item>
+        <div appDnd (filesDropped)="onFilesDropped($event)" class="dropzone">
+    
+            <input class="file-input" type="file" [id]="fileInputId" multiple (change)="onChange($event)">
+    
+            <div class="dropzone-wrapper">
+                Отпустите файлы здесь.
+            </div>
+    
+            <div class="upload-inner">
+    
+                <ng-container *ngIf="filesStore.size > 0; else emptyDropzone">
+                    <div class="files-container">
+                        <app-file-item *ngFor="let file of filesStore.values()"
+                            class="file-item"
+                            [controlId]="controlId"
+                            [userFile]="file.userFile"
+                            [file]="file.uploadFile"
+                            [folder]="folder"
+                            (remove)="onRemove($event)"
+                            (uploaded)="onUpload($event)"
+                            type="upload">
+                        </app-file-item>
+                    </div>
+                </ng-container>
+    
+            </div>
+    
         </div>
-        <label class="pick-files-btn" [for]="fileInputId">Добавить файлы</label>
+    
+        <div *ngIf="filesStore.size > 0" class="upload-box-footer">
+            <label class="pick-files-btn" [for]="fileInputId">Добавить файлы</label>
+        </div>
+    
+    </ng-container>
+
+    <ng-container *ngIf="type === 'download'">
+
+        <div class="upload-inner download">
+            <div class="files-container">
+                <ng-container *ngIf="filesStore.size > 0; else noFiles">
+                    <app-file-item *ngFor="let file of filesStore.values()"
+                        class="file-item" 
+                        [userFile]="file.userFile"
+                        (download)="onDownload($event)"
+                        type="download">
+                    </app-file-item>
+                </ng-container>
+            </div>
+        </div>
+    
     </ng-container>
 
 </div>
 
-<ng-container *ngIf="type === 'download'" 
-    [ngTemplateOutlet]="downloadZone"></ng-container>
-
-<ng-template #downloadZone>
-    <div class="files-container download">
-        <ng-container *ngIf="filesStore.size > 0; else noFiles">
-            <app-file-item *ngFor="let file of filesStore.values()"
-                class="file-item" 
-                [userFile]="file.userFile"
-                (download)="onDownload($event)"
-                type="download">
-            </app-file-item>
-        </ng-container>
-    </div>
-</ng-template>
 
 <ng-template #emptyDropzone>
-    <div class="files-container--empty">
+    <div class="files-container files-container--empty">
         <h3>Для загрузки, перетащите файлы сюда.</h3>
         <p>или</p>
         <label class="pick-files-btn" [for]="fileInputId">Выберите файлы</label>
