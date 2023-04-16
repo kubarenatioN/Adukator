@@ -73,7 +73,7 @@ export class UploadService {
                         return {
                             filename: file.filename,
                             uploadedAt: file.uploaded_at,
-                            url: file.url
+                            url: file.secure_url
                         };
                     });
                     

@@ -4,6 +4,7 @@ export interface CloudinaryFile {
     folder: string,
     filename: string,
     url: string,
+    secure_url: string,
     format: string,
     resource_type: 'image' | 'raw' | 'video',
     uploaded_at: string;
