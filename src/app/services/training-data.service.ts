@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from 'src/app/helpers/network.helper';
 import { DataService } from 'src/app/services/data.service';
-import { TopicDiscussionReply, Training, TrainingMembershipSearchParams, TrainingProfile, TrainingProfileFull, TrainingProfileLookup, TrainingReply } from 'src/app/typings/training.types';
+import { ProfileProgress, TopicDiscussionReply, Training, TrainingMembershipSearchParams, TrainingProfile, TrainingProfileFull, TrainingProfileLookup, TrainingReply } from 'src/app/typings/training.types';
 import { CoursesSelectResponse } from '../typings/response.types';
 import { User } from '../typings/user.types';
 
@@ -126,5 +126,14 @@ export class TrainingDataService {
             params: { reqId: key }
         })
         return this.dataService.send<{ discussion: TopicDiscussionReply[] | null }>(payload)
+    }
+
+    public loadProfileProgress(body: { profileId: string, topicId: string }) {
+        const key = NetworkRequestKey.TrainingProfileProgress
+        const payload = NetworkHelper.createRequestPayload(key, {
+            body,
+            params: { reqId: key }
+        })
+        return this.dataService.send<{ progress: ProfileProgress | null }>(payload)
     }
 }

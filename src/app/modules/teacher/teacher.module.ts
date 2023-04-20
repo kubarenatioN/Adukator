@@ -9,6 +9,7 @@ import { CourseMemberComponent } from './components/course-member/course-member.
 import { TrainingCheckComponent } from './components/training-check/training-check.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
+import { TrainingTaskResultComponent } from './components/training-task-result/training-task-result.component';
 
 @NgModule({
 	providers: [
@@ -19,6 +20,7 @@ import { UploadCacheService } from 'src/app/services/upload-cache.service';
 		CourseManagementComponent,
 		CourseMemberComponent,
 		TrainingCheckComponent,
+  TrainingTaskResultComponent,
 	],
 	imports: [
         CommonModule, 

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CourseFormDataMock } from '../mocks/course-form-data';
 import { CourseFormData, CourseModule, CourseTopFormGroups, ModuleFormFields, ModuleTopic, OverallFormFields, PracticeFormFields, TaskFormFields, TopicFormFields, TopicPractice, TopicTask } from '../typings/course.types';
-import { TrainingTaskAnswer } from '../typings/training.types';
+import { ProfileProgressRecord, TrainingTaskAnswer } from '../typings/training.types';
 import { generateUUID } from './courses.helper';
 
 @Injectable({
@@ -91,6 +91,14 @@ export class FormBuilderHelper {
             files: [],
             comment: ''
         }
+    }
+
+    public getTaskResultsCheckForm(taskCheck: ProfileProgressRecord | null = null) {
+        return this.fb.group({
+            mark: taskCheck?.mark ?? 0,
+            isCounted: taskCheck?.isCounted ?? false,
+            comment: taskCheck?.comment
+        })
     }
 
     private getOverallInfoForm(courseId: string) {

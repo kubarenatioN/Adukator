@@ -1,0 +1,24 @@
+<form [formGroup]="form">
+    <div class="result">
+
+        <input
+        formControlName="mark"
+        type="number" 
+        max="100" 
+        min="0" 
+        step="5" 
+        [defaultValue]="0">
+        
+        <label class="result-count">
+            <input 
+            formControlName="isCounted"
+            type="checkbox">
+            <span>Засчитано</span>
+        </label>
+
+    </div>
+    <!-- <textarea 
+    formControlName="comment"
+    class="check-comment" cols="50" rows="6" 
+    placeholder="Комментарий к оценке"></textarea> -->
+</form>

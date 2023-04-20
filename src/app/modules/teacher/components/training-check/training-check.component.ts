@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { filter, map, shareReplay, switchMap, withLatestFrom } from 'rxjs/operators';
+import { forkJoin, Observable, of } from 'rxjs';
+import { filter, map, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
+import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { StudentTraining } from 'src/app/models/course.model';
 import { UploadService } from 'src/app/services/upload.service';
 import { TopicTask } from 'src/app/typings/course.types';
-import { TopicDiscussionReply, TrainingProfile, TrainingReply, TrainingTaskAnswer } from 'src/app/typings/training.types';
+import { ProfileProgress, ProfileProgressRecord, TaskCheckThread, TopicDiscussionReply, TrainingProfile, TrainingReply, TrainingTaskAnswer } from 'src/app/typings/training.types';
 import { User } from 'src/app/typings/user.types';
 import { TeacherTrainingService } from '../../services/teacher-training.service';
 
@@ -27,62 +28,68 @@ export class TrainingCheckComponent
 	extends CenteredContainerDirective
 	implements OnInit
 {
-    private pickedProfileId?: string
-
-    public checkForm!: FormGroup;
+    private resultsForm!: FormArray<FormGroup>
+   
+    public resultsFormMap: Record<string, FormGroup> = {}
+    
+    public checkConfigForm;
 
     public viewData$!: Observable<ViewData>;
-
-    public checkTasks$!: Observable<{
-        task: TopicTask
-        thread: {
-            type: string,
-            message?: string,
-            date: string,
-            sender: string
-        }[] | null,
-        folder: string,
-    }[]>;
+    public checkTasks$!: Observable<TaskCheckThread[] | null>;
 
 	constructor(
         private teacherTraining: TeacherTrainingService,
         private activatedRoute: ActivatedRoute,
         private uploadService: UploadService,
-        private fb: FormBuilder,
+        private fbHelper: FormBuilderHelper,
     ) {
 		super();
+
+        this.checkConfigForm = this.fbHelper.fbRef.group({
+            profile: '',
+            topic: '',
+        })
 	}
 
 	public ngOnInit(): void {
         this.activatedRoute.params.subscribe(params => {
             const trainingId = params['id']
-            this.pickedProfileId = params['profileId']
             this.viewData$ = this.setupViewData(trainingId)    
         })
 
-        this.checkForm = this.fb.group({
-            profile: '',
-            topic: '',
-        })
-
-        this.checkTasks$ = this.checkForm.valueChanges.pipe(
+        this.checkTasks$ = this.checkConfigForm.valueChanges.pipe(
             switchMap(model => {
-                console.log(model);
                 const { profile, topic } = model
+
                 if (profile && topic) {
-                    return this.loadStudentTopicAnswers(profile, topic)
+                    return this.loadTopicCheckData(profile, topic)
                 }
                 return of(null)
             }),
             filter(Boolean),
             withLatestFrom(this.viewData$),
+            tap(([checkData, viewData]) => {
+                const { training } = viewData
+                const { progress } = checkData
+                this.initResultsForm(training, progress)
+            }),
             map(
-                ([{ discussion }, { training, members }]: [
-                    { discussion: TopicDiscussionReply[] | null }, 
+                ([checkData, viewData]: [
+                    { 
+                        discussion: TopicDiscussionReply[] | null,
+                        progress: ProfileProgress | null
+                    }, 
                     ViewData
                 ]) => {
 
-                const { topic: topicId, profile: profileId } = this.checkForm.value
+                const { discussion, progress } = checkData
+                if (!discussion || !progress) {
+                    return null;
+                }
+
+                const { training, members } = viewData
+
+                const { topic: topicId, profile: profileId } = this.checkConfigForm.value
                 const topic = training.topics.find(topic => topic.id === topicId)
                 const tasks = topic?.practice?.tasks
                 const profileUUId = members.find(member => member._id === profileId)?.uuid ?? ''
@@ -100,10 +107,63 @@ export class TrainingCheckComponent
         )
     }
 
-    private loadStudentTopicAnswers(profileId: string, topicId: string) {
-        return this.teacherTraining.loadStudentDiscussion({
-            profileId,
-            topicId,
+    public onSaveCheckResults() {
+        console.log(this.resultsForm.value);
+    }
+
+    public onTaskResultFormChange(taskId: string, result: ProfileProgressRecord) {
+        // result.taskId = taskId
+        // this.resultsFormMap[taskId].patchValue({
+        //     ...result
+        // })
+        // console.log(this.resultsForm);
+    }
+
+    public tasksResultsTrackBy(index: number, taskCheck: TaskCheckThread) {
+        return taskCheck.task.id
+    }
+
+    private initResultsForm(training: StudentTraining, progress: ProfileProgress | null) {
+        const { topic: topicId } = this.checkConfigForm.value ?? ''
+        const topicTasks = training.topics.find(topic => topic.id === topicId)?.practice?.tasks ?? []
+        this.resultsFormMap = {};
+        if (progress) {
+            const formArray = this.getResultsFormArray(topicTasks, progress)
+            this.resultsForm = new FormArray(formArray)
+            // this.resultsForm.valueChanges.subscribe(model => {
+            //     console.log('form', model);
+            // })
+        }
+    }
+
+    private getResultsFormArray(tasks: TopicTask[], profile: ProfileProgress) {        
+        const tasksLastResults = tasks.map(task => {
+            const lastResult = profile.records
+            .filter(record => record.taskId === task.id)
+            .sort((a, b) => {
+                return new Date(b.date).getTime() - new Date(a.date).getTime()
+            })[0]
+
+            const form = this.fbHelper.getTaskResultsCheckForm(lastResult ?? null)
+
+            this.resultsFormMap[task.id] = form
+            
+            return form
+        })
+
+        return tasksLastResults
+    }
+
+    private loadTopicCheckData(profileId: string, topicId: string) {
+        return forkJoin({
+            discussion: this.teacherTraining.loadDiscussion({
+                profileId,
+                topicId,
+            }),
+            progress: this.teacherTraining.loadProgress({
+                profileId,
+                topicId,
+            })
         })
     }
 

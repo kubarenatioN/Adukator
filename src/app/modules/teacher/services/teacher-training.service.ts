@@ -30,8 +30,16 @@ export class TeacherTrainingService {
 		this.initTeacherTrainings();
 	}
 
-    public loadStudentDiscussion(payload: { profileId: string, topicId: string }) {
-        return this.trainingDataService.loadTopicDiscussion(payload)
+    public loadDiscussion(payload: { profileId: string, topicId: string }) {
+        return this.trainingDataService.loadTopicDiscussion(payload).pipe(
+            map(res => res.discussion)
+        )
+    }
+
+    public loadProgress(payload: { profileId: string, topicId: string }) {
+        return this.trainingDataService.loadProfileProgress(payload).pipe(
+            map(res => res.progress)
+        )
     }
 
 	public getStudentsProfiles(trainingId: string) {

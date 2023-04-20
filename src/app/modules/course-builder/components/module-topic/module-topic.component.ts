@@ -84,7 +84,7 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
         .pipe(takeUntil(this.componentLifecycle$))
         .subscribe(viewData => {
             const { mode, viewPath } = viewData
-            const { type: viewType } = viewPath
+            // const { type: viewType } = viewPath
     
             this.shouldPreloadExisting = mode !== CourseFormViewMode.Create
             this.controlsType = mode === CourseFormViewMode.Review ? 'review' : 'edit'

@@ -34,7 +34,7 @@
                 </div>
             </ng-container>
 
-            <a *ngIf="isUserOwner$ | async" mat-raised-button color="accent" [routerLink]="['/app/teacher/course', training.uuid, 'manage']">Управление</a>
+            <a *ngIf="isUserOwner$ | async" mat-raised-button color="accent" [routerLink]="['/app/teacher/training', training.uuid, 'manage']">Управление</a>
         </div>
     </div>
     

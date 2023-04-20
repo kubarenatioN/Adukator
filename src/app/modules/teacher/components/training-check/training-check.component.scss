@@ -19,18 +19,21 @@
     margin-top: 10px;
 }
 
-.task-check-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+.task-item-wrapper {
     padding: 5px;
     margin: 10px 0;
+}
+
+.task-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
     max-width: 400px;
     & p {
-        white-space: nowrap;
         padding-right: 10px;
-        text-overflow: ellipsis;
-        overflow: hidden;
+        // white-space: nowrap;
+        // text-overflow: ellipsis;
+        // overflow: hidden;
     }
 }
 
@@ -51,4 +54,9 @@
         margin: 5px;
         border: 1px solid rgb(141, 167, 255);
     }
+}
+
+.task-item-checker {
+    display: flex;
+    align-items: center;
 }

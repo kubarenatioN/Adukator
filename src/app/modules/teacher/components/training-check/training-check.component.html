@@ -5,7 +5,7 @@
         <p>Выберите студента и тему курса, для того чтобы начать оценивание.</p>
     </div>
     
-    <div class="filters" [formGroup]="checkForm">
+    <div class="filters" [formGroup]="checkConfigForm">
     
         <label>
             <span>Студент</span>
@@ -25,10 +25,10 @@
     
     </div>
     
-    <p>Последняя версия выполненных заданий по теме.</p>
-    <div class="topic-answer-container">
+    <ng-container *ngIf="checkTasks$ | async as checkTasks; else noTask;">
+        <p>Последняя версия выполненных заданий по теме.</p>
 
-        <ng-container *ngIf="checkTasks$ | async as checkTasks">
+        <div class="topic-answer-container">
 
             <div class="topic-task" *ngFor="let checkTask of checkTasks; let i = index">
                 <h3>Задание {{ i + 1 }}. {{ checkTask.task.taskDescr }}</h3>
@@ -46,32 +46,29 @@
                     </div>
                 </div>
             </div>
+    
+        </div>
+            
+        <div class="check-results">
+            <p>Подведение результатов</p>
+    
+            <div *ngFor="let taskCheck of checkTasks; let i = index; trackBy: tasksResultsTrackBy" class="task-item-wrapper">
 
-        </ng-container>
-
-    </div>
+                <h3>Задание {{ i + 1 }}</h3>
+                <p class="descr">{{ taskCheck.task.taskDescr }}</p>
+                <app-training-task-result 
+                [task]="taskCheck.task"
+                [form]="resultsFormMap[taskCheck.task.id]" 
+                (resultChange)="onTaskResultFormChange(taskCheck.task.id, $event)">
+                </app-training-task-result>
+                
+            </div>
         
-    <div class="check-results">
-        <p>Подведение результатов</p>
-    
-        <div class="task-check-item">
-            <p>Задание 1. Сделать то не знаю что.</p>
-            <input type="number" max="10" min="0">
-        </div>
-        <div class="task-check-item">
-            <p>Задание 2. Пойти туда не знаю куда.</p>
-            <input type="number" max="10" min="0">
-        </div>
-        <div class="task-check-item">
-            <p>Задание 3. Найти то не знаю что.</p>
-            <input type="number" max="10" min="0">
-        </div>
-    
-        <textarea class="check-comment" name="comment" cols="50" rows="6" placeholder="Комментарий к оценке"></textarea>
-    
-        <button mat-raised-button color="accent">Сохранить</button>
-    
-    </div>    
+            <button mat-raised-button color="accent" (click)="onSaveCheckResults()">Сохранить</button>
+        
+        </div>  
+
+    </ng-container>
 
 </ng-container>
 
@@ -81,4 +78,8 @@
 
 <ng-template #noAnswers>
     <p>Ответов на задание пока что нет.</p>
+</ng-template>
+
+<ng-template #noTask>
+    <p>Конфигурация проверки не настроена.</p>
 </ng-template>

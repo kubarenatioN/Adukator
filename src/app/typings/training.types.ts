@@ -1,4 +1,4 @@
-import { Course } from "./course.types";
+import { Course, TopicTask } from "./course.types";
 import { User } from "./user.types";
 
 export type TrainingProfileFull = TrainingProfile<Training, User> 
@@ -86,4 +86,34 @@ export interface TrainingMembershipSearchParams {
 export interface TrainingAccess { 
     hasAccess: boolean, 
     profile?: TrainingProfileLookup 
+}
+
+export interface TaskCheckThread {
+    task: TopicTask
+    thread: TaskCheckThreadItem[] | null,
+    folder: string,
+}
+
+export interface TaskCheckThreadItem {
+    type: string,
+    message?: string,
+    date: string,
+    sender: string
+}
+
+export interface ProfileProgress {
+    _id?: string
+    uuid: string
+    profile: string
+    topicId: string
+    records: ProfileProgressRecord[]
+}
+
+export interface ProfileProgressRecord {
+    uuid: string
+    taskId: string
+    mark?: number
+    isCounted?: boolean
+    date: string
+    comment?: string
 }
