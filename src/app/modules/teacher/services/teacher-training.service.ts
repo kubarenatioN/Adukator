@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 import {
+    ProfileProgressRecord,
 	Training,
 	TrainingMembershipSearchParams,
 	TrainingMembershipStatus as EnrollStatus,
@@ -29,6 +30,13 @@ export class TeacherTrainingService {
 	) {
 		this.initTeacherTrainings();
 	}
+
+    public saveProfileProgress(progressId: string, records: ProfileProgressRecord[]) {
+        return this.trainingDataService.updateProgress({
+            progressId,
+            records
+        })
+    }
 
     public loadDiscussion(payload: { profileId: string, topicId: string }) {
         return this.trainingDataService.loadTopicDiscussion(payload).pipe(

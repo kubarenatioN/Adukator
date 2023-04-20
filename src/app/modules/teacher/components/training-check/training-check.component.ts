@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { forkJoin, Observable, of } from 'rxjs';
 import { filter, map, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
+import { generateUUID } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { StudentTraining } from 'src/app/models/course.model';
 import { UploadService } from 'src/app/services/upload.service';
@@ -29,6 +30,7 @@ export class TrainingCheckComponent
 	implements OnInit
 {
     private resultsForm!: FormArray<FormGroup>
+    private activeProfileProgressId?: string
    
     public resultsFormMap: Record<string, FormGroup> = {}
     
@@ -36,6 +38,10 @@ export class TrainingCheckComponent
 
     public viewData$!: Observable<ViewData>;
     public checkTasks$!: Observable<TaskCheckThread[] | null>;
+    public topicCheckData$!: Observable<{ 
+        discussion: TopicDiscussionReply[] | null,
+        progress: ProfileProgress | null
+    } | null>;
 
 	constructor(
         private teacherTraining: TeacherTrainingService,
@@ -57,7 +63,7 @@ export class TrainingCheckComponent
             this.viewData$ = this.setupViewData(trainingId)    
         })
 
-        this.checkTasks$ = this.checkConfigForm.valueChanges.pipe(
+        this.topicCheckData$ = this.checkConfigForm.valueChanges.pipe(
             switchMap(model => {
                 const { profile, topic } = model
 
@@ -66,11 +72,16 @@ export class TrainingCheckComponent
                 }
                 return of(null)
             }),
+            shareReplay(1)
+        )
+
+        this.checkTasks$ = this.topicCheckData$.pipe(
             filter(Boolean),
             withLatestFrom(this.viewData$),
             tap(([checkData, viewData]) => {
                 const { training } = viewData
                 const { progress } = checkData
+                this.activeProfileProgressId = progress?._id
                 this.initResultsForm(training, progress)
             }),
             map(
@@ -78,7 +89,7 @@ export class TrainingCheckComponent
                     { 
                         discussion: TopicDiscussionReply[] | null,
                         progress: ProfileProgress | null
-                    }, 
+                    },
                     ViewData
                 ]) => {
 
@@ -103,12 +114,35 @@ export class TrainingCheckComponent
                 })
                 
                 return tasksForCheck ?? []
-            })
+            }),
+            shareReplay(1)
         )
     }
 
     public onSaveCheckResults() {
-        console.log(this.resultsForm.value);
+        const date = new Date().toUTCString()
+
+        this.checkTasks$.pipe(
+            switchMap((tasksCheck) => {
+                const results = this.resultsForm.value
+                if (!tasksCheck || !this.activeProfileProgressId) {
+                    return of(null)
+                }
+                const resultsRecords: ProfileProgressRecord[] = tasksCheck.map((taskCheck, i) => {
+                    const task = taskCheck.task
+                    return {
+                        uuid: generateUUID(),
+                        taskId: task.id,
+                        mark: results[i].mark,
+                        isCounted: results[i].isCounted,
+                        comment: results[i].comment,
+                        date
+                    }
+                })
+
+                return this.teacherTraining.saveProfileProgress(this.activeProfileProgressId, resultsRecords)
+            })
+        ).subscribe()
     }
 
     public onTaskResultFormChange(taskId: string, result: ProfileProgressRecord) {

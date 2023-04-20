@@ -27,6 +27,7 @@ export enum NetworkRequestKey {
     TrainingReply = 'TrainingReply',
     TrainingTopicDiscussion = 'TrainingTopicDiscussion',
     TrainingProfileProgress = 'TrainingProfileProgress',
+    UpdateTrainingProfileProgress = 'UpdateTrainingProfileProgress',
 
     // REVIEW
     GetReviewCourseHistory = 'GetReviewCourseHistory',
@@ -160,6 +161,10 @@ export class NetworkHelper {
         [NetworkRequestKey.TrainingProfileProgress]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.training.progress}/`
+        },
+        [NetworkRequestKey.UpdateTrainingProfileProgress]: {
+            method: 'PATCH',
+            url: `${DATA_ENDPOINTS.api.training.progress}/add`
         },
 
         /* REVIEW */
