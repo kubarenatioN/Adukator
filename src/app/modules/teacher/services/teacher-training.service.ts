@@ -108,25 +108,3 @@ export class TeacherTrainingService {
 		return this.trainingDataService.getTrainings({ authorId, fields });
 	}
 }
-
-// private createTopicDiscussionMap(replies: TopicDiscussionReply[], topics: ModuleTopic[]) {
-//     return replies.reduce((arr, curr) => {
-//         const taskId = curr.message.taskId
-//         if (taskId) {
-//             const existedTask = arr.find(it => it.task.id === taskId)
-//             if (existedTask) {
-//                 existedTask.replies.push(curr)
-//             } else {
-//                 const topic = topics.find(topic => topic.id === curr.topicId)
-//                 const task = topic?.practice?.tasks.find(task => task.id === taskId)!
-
-//                 const taskItem = {
-//                     task,
-//                     replies: [curr]
-//                 }
-//                 arr.push(taskItem)
-//             }
-//         }
-//         return arr
-//     }, [] as TaskDiscussion[])
-// }

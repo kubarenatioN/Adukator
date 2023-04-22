@@ -3,7 +3,13 @@
         <ng-container 
             *ngSwitchCase="'SingleProfile'"
             [ngTemplateOutlet]="singleProfile"
-            [ngTemplateOutletContext]="{ profile: viewData.profile, training: viewData.profile?.training, course: viewData.profile?.training?.course, hasAccess: viewData.hasAccess }"></ng-container>
+            [ngTemplateOutletContext]="{ 
+                profile: viewData.profile, 
+                progress: viewData.topicsProgress,
+                training: viewData.training, 
+                course: viewData.profile?.training?.course, 
+                hasAccess: viewData.hasAccess 
+            }"></ng-container>
 
         <ng-container 
             *ngSwitchCase="'ProfilesList'"
@@ -11,11 +17,20 @@
     </ng-container>
 </ng-container>
 
-<ng-template #singleProfile let-profile="profile" let-hasAccess="hasAccess" let-training="training" let-course="course">
+<ng-template #singleProfile 
+    let-profile="profile" 
+    let-training="training" 
+    let-course="course"
+    let-progress="progress"
+    let-hasAccess="hasAccess"
+> 
     <ng-container *ngIf="hasAccess; else noAccess">
-        <p>Прогресс треннинга {{ course.title }}</p>
+        <h2>Прогресс треннинга {{ course.title }}</h2>
 
-        <app-progress-chart></app-progress-chart>
+        <app-topics-progress-chart 
+            [topics]="training.topics"
+            [progress]="progress">
+        </app-topics-progress-chart>
     </ng-container>
 </ng-template>
 

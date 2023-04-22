@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin, Observable, of } from 'rxjs';
-import { filter, map, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { filter, map, shareReplay, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { generateUUID } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
@@ -119,7 +119,7 @@ export class TrainingCheckComponent
         )
     }
 
-    public onSaveCheckResults() {
+    public onSaveCheckResults(e: Event) {
         const date = new Date().toUTCString()
 
         this.checkTasks$.pipe(
@@ -141,16 +141,9 @@ export class TrainingCheckComponent
                 })
 
                 return this.teacherTraining.saveProfileProgress(this.activeProfileProgressId, resultsRecords)
-            })
+            }),
+            take(1)
         ).subscribe()
-    }
-
-    public onTaskResultFormChange(taskId: string, result: ProfileProgressRecord) {
-        // result.taskId = taskId
-        // this.resultsFormMap[taskId].patchValue({
-        //     ...result
-        // })
-        // console.log(this.resultsForm);
     }
 
     public tasksResultsTrackBy(index: number, taskCheck: TaskCheckThread) {
@@ -164,9 +157,6 @@ export class TrainingCheckComponent
         if (progress) {
             const formArray = this.getResultsFormArray(topicTasks, progress)
             this.resultsForm = new FormArray(formArray)
-            // this.resultsForm.valueChanges.subscribe(model => {
-            //     console.log('form', model);
-            // })
         }
     }
 

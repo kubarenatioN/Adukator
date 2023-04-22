@@ -11,6 +11,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './interceptors/token-interceptor.service';
 import { ResponseTransformationInterceptor } from './interceptors/response-transformation-interceptor.service';
 import { CenteredContainerDirective } from './directives/centered-container.directive';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
 	declarations: [AppComponent, NavComponent, MainComponent, CenteredContainerDirective],
@@ -20,6 +21,7 @@ import { CenteredContainerDirective } from './directives/centered-container.dire
 		BrowserAnimationsModule,
 		HttpClientModule,
 		SharedModule,
+        NgChartsModule,
 	],
 	providers: [
 		{

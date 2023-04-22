@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, ReplaySubject } from 'rxjs';
-import { TrainingProfileTraining } from 'src/app/typings/training.types';
+import { StudentTraining } from 'src/app/models/course.model';
+import { ProfileProgress, TrainingProfileTraining } from 'src/app/typings/training.types';
 import { StudentProfileService } from '../../services/student-profile.service';
 import { StudentTrainingService } from '../../services/student-training.service';
 
@@ -12,8 +13,10 @@ enum ViewMode {
 
 type ViewData = {
     mode: ViewMode,
-    profile?: TrainingProfileTraining | null
+    profile?: TrainingProfileTraining | null,
+    training?: StudentTraining,
     hasAccess?: boolean
+    topicsProgress?: ProfileProgress[]
 }
 
 @Component({
@@ -39,7 +42,11 @@ export class StudentProfileComponent implements OnInit {
                 }).subscribe(profileInfo => {
                     this.viewDataStore$.next({
                         ...profileInfo,
-                        mode: ViewMode.SingleProfile
+                        training: profileInfo.profile?.training 
+                            ? new StudentTraining(profileInfo.profile.training) 
+                            : undefined,
+                        topicsProgress: profileInfo.progress,
+                        mode: ViewMode.SingleProfile,
                     })
                 })
 			} else {

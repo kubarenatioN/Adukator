@@ -15,7 +15,8 @@ import { StudentTrainingService } from './services/student-training.service';
 import { CourseTrainingGuardService } from './guards/course-training-guard.service';
 import { StudentProfileComponent } from './components/student-profile/student-profile.component';
 import { StudentProfileService } from './services/student-profile.service';
-import { ProgressChartComponent } from './charts/progress-chart/progress-chart.component';
+import { TopicsProgressChartComponent } from './charts/topics-progress-chart/topics-progress-chart.component';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
 	declarations: [
@@ -25,7 +26,7 @@ import { ProgressChartComponent } from './charts/progress-chart/progress-chart.c
 		TopicTrainingComponent,
 		TrainingTaskComponent,
         StudentProfileComponent,
-        ProgressChartComponent,
+        TopicsProgressChartComponent,
 	],
 	imports: [
 		CommonModule,
@@ -33,6 +34,7 @@ import { ProgressChartComponent } from './charts/progress-chart/progress-chart.c
 		SharedModule,
 		StudentRoutingModule,
 		ReactiveFormsModule,
+        NgChartsModule,
 	],
 	providers: [
         StudentTrainingService,
