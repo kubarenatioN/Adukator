@@ -1,7 +1,10 @@
 <app-layout class="container layout" *ngIf="viewData$ | async as viewData; else loader">
-    <div 
-    slot="main"
-    class="training-container">
+    <div>
+        <pre>
+            {{ viewData | json }}
+        </pre>
+    </div>
+    <div slot="main" class="training-container">
         <section class="content">
             
             <ng-container [ngSwitch]="viewData.viewType">

@@ -16,7 +16,7 @@ import {
 import { NetworkRequestKey } from 'src/app/helpers/network.helper';
 import { UserService } from 'src/app/services/user.service';
 import { CourseModule } from 'src/app/typings/course.types';
-import { Training, TrainingMembershipStatus, TrainingProfile } from 'src/app/typings/training.types';
+import { Training, TrainingMembershipStatus, TrainingProfile, TrainingProfileMeta } from 'src/app/typings/training.types';
 import { LearnService } from '../../services/learn.service';
 
 @Component({
@@ -34,9 +34,10 @@ export class CourseOverviewComponent {
 	public modules$: Observable<CourseModule[]>;
 
 	public canEnroll$: Observable<boolean>;
-	public isEnrolled$: Observable<boolean>;
-	public enrollStatus$: Observable<TrainingMembershipStatus | null>;
+	// public isEnrolled$: Observable<boolean>;
+	// public enrollStatus$: Observable<TrainingMembershipStatus | null>;
 	public isUserOwner$: Observable<boolean>;
+	public trainingLookup$: Observable<TrainingProfileMeta | 'NoEnroll'> | null = null
 
 	public isDisabledEnrollActions = false;
 
@@ -77,12 +78,12 @@ export class CourseOverviewComponent {
 			})
 		);
 
-		const courseEnrollmentStatus$ = combineLatest([
+        this.trainingLookup$ = combineLatest([
 			this.courseEnrollTrigger$.asObservable(),
 			this.training$,
 			this.userService.user$,
 		]).pipe(
-			switchMap(([_, training, user]) => {
+            switchMap(([_, training, user]) => {
 				if (training && user) {
 					return this.learnService.lookupTraining(
 						[user._id],
@@ -91,28 +92,30 @@ export class CourseOverviewComponent {
 				}
 				return of(null);
 			}),
-			withLatestFrom(this.userService.user$),
-			map(([lookup, user]) => {
-				if (lookup === null) {
-					return null;
-				}
-				const userEnrollmentIndex = lookup.findIndex(
-					(record) => record.student === user._id
-				);
-				if (userEnrollmentIndex !== -1) {
-					return lookup[userEnrollmentIndex].enrollment;
-				}
-				return null;
-			}),
-			shareReplay(1)
-		);
+            map(lookup => {
+                if (lookup && lookup.length > 0) {
+                    return lookup[0]
+                }
+                return 'NoEnroll';
+            }),
+            shareReplay(1)
+        )
 
-		this.enrollStatus$ = courseEnrollmentStatus$;
+		// this.enrollStatus$ = this.trainingLookup$.pipe(
+		// 	withLatestFrom(this.userService.user$),
+		// 	map(([lookup, user]) => {
+		// 		if (lookup === null) {
+		// 			return null;
+		// 		}
+		// 		return lookup.enrollment;
+		// 	}),
+		// 	shareReplay(1)
+		// );
 
-		this.isEnrolled$ = this.enrollStatus$.pipe(
-			map((status) => status !== null),
-            shareReplay(1),
-		);
+		// this.isEnrolled$ = this.enrollStatus$.pipe(
+		// 	map((status) => status !== null),
+        //     shareReplay(1),
+		// );
 	}
 
 	public enrollTraining(training: Training): void {

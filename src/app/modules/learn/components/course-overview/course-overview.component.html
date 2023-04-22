@@ -9,30 +9,40 @@
             <h1 class="title">{{ training.course.title }}</h1>
             <p class="descr">{{ training.course.description }}</p>
 
-            <button 
-            *ngIf="(canEnroll$ | async) === true && (isEnrolled$ | async) === false" 
-            mat-raised-button 
-            color="accent" 
-            [disabled]="isDisabledEnrollActions"
-            (click)="enrollTraining(training)">Записаться</button>
+            <ng-container *ngIf="trainingLookup$ | async as profile; else lookupLoader">
 
-            <ng-container *ngIf="enrollStatus$ | async as enrollStatus">
-                <div *ngIf="enrollStatus === 'pending'">
-                    <p>Заявка на рассмотрении</p>
+                <ng-container *ngIf="profile !== 'NoEnroll'">
+                
+                    <div *ngIf="profile.enrollment === 'pending'">
+                        <p>Заявка на рассмотрении</p>
+                        <button 
+                        [disabled]="isDisabledEnrollActions"
+                        mat-raised-button 
+                        (click)="cancelTrainingEnroll(training)">Отозвать</button>
+                    </div>
+                    <div *ngIf="profile.enrollment === 'approved'">
+                        <button
+                        [disabled]="isDisabledEnrollActions"
+                        mat-raised-button 
+                        color="accent" 
+                        (click)="leaveTraining(training)">Покинуть</button>
+                        <a mat-raised-button [routerLink]="['/app/student/profile', profile.uuid, 'training']">Перейти к треннингу</a>
+                        <a mat-raised-button [routerLink]="['/app/student/profile', profile.uuid]">Прогресс</a>
+                    </div>
+                </ng-container>
+
+                <ng-container *ngIf="profile === 'NoEnroll'">
                     <button 
-                    [disabled]="isDisabledEnrollActions"
-                    mat-raised-button 
-                    (click)="cancelTrainingEnroll(training)">Отозвать</button>
-                </div>
-                <div *ngIf="enrollStatus === 'approved'">
-                    <button
-                    [disabled]="isDisabledEnrollActions"
-                    mat-raised-button 
-                    color="accent" 
-                    (click)="leaveTraining(training)">Покинуть</button>
-                    <a mat-raised-button [routerLink]="['/app/student/training', training.uuid]">Перейти к треннингу</a>
-                </div>
+                        *ngIf="(canEnroll$ | async) === true" 
+                        mat-raised-button 
+                        color="accent" 
+                        [disabled]="isDisabledEnrollActions"
+                        (click)="enrollTraining(training)">Записаться</button>
+                </ng-container>
+
             </ng-container>
+            
+            
 
             <a *ngIf="isUserOwner$ | async" mat-raised-button color="accent" [routerLink]="['/app/teacher/training', training.uuid, 'manage']">Управление</a>
         </div>
@@ -117,4 +127,8 @@
 
 <ng-template #noCourse>
     No such course
+</ng-template>
+
+<ng-template #lookupLoader>
+    <p>Loading training membership info...</p>
 </ng-template>

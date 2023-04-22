@@ -71,7 +71,7 @@ export class TopicTrainingComponent
 	ngOnInit(): void {
 		combineLatest([
 			this.topicStore$.asObservable(),
-			this.trainingService.profile$,
+			this.trainingService.trainingProfile$,
 		])
 			.pipe(
 				takeUntil(this.componentLifecycle$),

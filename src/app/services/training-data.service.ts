@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from 'src/app/helpers/network.helper';
 import { DataService } from 'src/app/services/data.service';
-import { ProfileProgress, ProfileProgressRecord, TopicDiscussionReply, Training, TrainingMembershipSearchParams, TrainingProfile, TrainingProfileFull, TrainingProfileLookup, TrainingReply } from 'src/app/typings/training.types';
+import { ProfileProgress, ProfileProgressRecord, TopicDiscussionReply, Training, TrainingMembershipSearchParams, TrainingProfile, TrainingProfileFull, TrainingProfileLookup, TrainingProfileTraining, TrainingReply } from 'src/app/typings/training.types';
 import { CoursesSelectResponse } from '../typings/response.types';
 import { User } from '../typings/user.types';
 
@@ -47,14 +47,22 @@ export class TrainingDataService {
         )
     }
 
-    public getProfile(options: { trainingId: string, studentId: string }) {
-        const key = NetworkRequestKey.TrainingProgress
+    public getProfile(
+        body: { trainingId?: string, studentId?: string, uuid?: string }, 
+        options?: { include?: string[] }
+    ) {
+        const key = NetworkRequestKey.TrainingProfile
         const payload = NetworkHelper.createRequestPayload(key, {
-            body: options
+            body,
+            params: { reqId: key, include: options?.include?.join(',') ?? '' }
         })
         
-        return this.dataService.send<{ profile: TrainingProfileFull | null }>(payload).pipe(
-            map(response => response.profile)
+        return this.dataService.send<{ 
+            profile: TrainingProfileTraining | null, 
+            hasAccess: boolean,
+            progress?: ProfileProgress[]
+        }>(payload).pipe(
+            map(response => response)
         )
     }
 

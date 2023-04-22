@@ -5,6 +5,7 @@ import { TrainingDataService } from 'src/app/services/training-data.service';
 import { UserService } from 'src/app/services/user.service';
 import { TrainingProfileUser } from 'src/app/typings/training.types';
 import { CourseTrainingComponent } from './components/course-training/course-training.component';
+import { StudentProfileComponent } from './components/student-profile/student-profile.component';
 
 const profileResolver: ResolveFn<{ hasAccess: boolean, profile?: TrainingProfileUser }> = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
     const userService = inject(UserService)
@@ -17,12 +18,16 @@ const profileResolver: ResolveFn<{ hasAccess: boolean, profile?: TrainingProfile
 
 const routes: Routes = [
     {
-        path: 'training/:id',
-        pathMatch: 'full',
-        resolve: {
-            trainingAccess: profileResolver
-        },
-        component: CourseTrainingComponent,
+        path: 'profile/:id/training',
+        component: CourseTrainingComponent
+    },
+    {
+        path: 'profile/:id',
+        component: StudentProfileComponent,
+    },
+    {
+        path: 'profile',
+        component: StudentProfileComponent
     },
     {
         path: '**',

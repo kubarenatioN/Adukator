@@ -13,6 +13,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
 import { StudentTrainingService } from './services/student-training.service';
 import { CourseTrainingGuardService } from './guards/course-training-guard.service';
+import { StudentProfileComponent } from './components/student-profile/student-profile.component';
+import { StudentProfileService } from './services/student-profile.service';
+import { ProgressChartComponent } from './charts/progress-chart/progress-chart.component';
 
 @NgModule({
 	declarations: [
@@ -21,6 +24,8 @@ import { CourseTrainingGuardService } from './guards/course-training-guard.servi
 		CourseSidenavComponent,
 		TopicTrainingComponent,
 		TrainingTaskComponent,
+        StudentProfileComponent,
+        ProgressChartComponent,
 	],
 	imports: [
 		CommonModule,
@@ -31,6 +36,7 @@ import { CourseTrainingGuardService } from './guards/course-training-guard.servi
 	],
 	providers: [
         StudentTrainingService,
+        StudentProfileService,
         CourseTrainingGuardService,
         UploadCacheService,
     ],

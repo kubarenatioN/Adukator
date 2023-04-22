@@ -16,7 +16,7 @@ export enum NetworkRequestKey {
     // TRAINING
     SelectTrainings = 'SelectTrainings',
     TrainingList = 'TrainingList',
-    TrainingProgress = 'TrainingProgress',
+    TrainingProfile = 'TrainingProfile',
     CreateTrainingEnroll = 'CreateTrainingEnroll',
     UpdateTrainingEnroll = 'UpdateTrainingEnroll',
     DeleteTrainingEnroll = 'DeleteTrainingEnroll',
@@ -146,7 +146,7 @@ export class NetworkHelper {
             url: `${DATA_ENDPOINTS.api.training.membership}/lookup`,
         },
 
-        [NetworkRequestKey.TrainingProgress]: {
+        [NetworkRequestKey.TrainingProfile]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.training}/profile`
         },
@@ -160,7 +160,7 @@ export class NetworkHelper {
         },
         [NetworkRequestKey.TrainingProfileProgress]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.training.progress}/`
+            url: `${DATA_ENDPOINTS.api.training.progress}`
         },
         [NetworkRequestKey.UpdateTrainingProfileProgress]: {
             method: 'PATCH',

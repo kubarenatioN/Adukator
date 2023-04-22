@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, ReplaySubject, shareReplay, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { StudentTraining } from 'src/app/models/course.model';
 import { StudentTrainingService } from 'src/app/modules/student/services/student-training.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { CourseModule, ModuleTopic } from 'src/app/typings/course.types';
-import { TrainingAccess, TrainingProfileFull, TrainingReply, TrainingTaskAnswer } from 'src/app/typings/training.types';
+import { TrainingAccess, TrainingProfileFull, TrainingProfileTraining, TrainingReply, TrainingTaskAnswer } from 'src/app/typings/training.types';
 
 enum ViewType {
     Main = 'main',
@@ -29,13 +29,23 @@ interface ViewConfig {
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseTrainingComponent extends BaseComponent implements OnInit {
+    private profileStore$ = new ReplaySubject<{
+        profile: TrainingProfileTraining | null
+        hasAccess: boolean
+    }>()
     private viewTypeStore$ = new BehaviorSubject<ViewType>(ViewType.Main)
+    private profile$ = this.profileStore$.asObservable().pipe(
+        map(profileInfo => profileInfo.profile),
+        filter(Boolean),
+        shareReplay(1)
+    )
 
     public viewType$: Observable<string> = this.viewTypeStore$.asObservable();
     public viewData$!: Observable<ViewConfig>
 
     public viewTypes = ViewType;
-    public profile$: Observable<TrainingProfileFull> = this.trainingService.profile$;
+    public profileInfo$ = this.profileStore$.asObservable()
+
     public training$: Observable<StudentTraining> = this.profile$.pipe(
         map(profile => new StudentTraining(profile.training)),
     );
@@ -50,22 +60,17 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
     }
 
 	public ngOnInit(): void {
-        this.activatedRoute.data.pipe(
-            switchMap((resolved) => {
-                const { trainingAccess } = resolved as { trainingAccess: TrainingAccess }
-                if (trainingAccess) {
-                    const { hasAccess, profile } = trainingAccess
-                    if (hasAccess && profile != null) {
-                        this.trainingService.getProfile({ trainingId: profile.training, studentId: profile.student })
-                    }
-                }
-                return of(null)
-            }),
-        ).subscribe()
+        this.activatedRoute.params.subscribe(params => {
+            const profileId = params['id']
+            this.trainingService.getProfile(profileId).subscribe(profileInfo => {
+                this.profileStore$.next(profileInfo)
+                this.trainingService.trainingProfile = profileInfo.profile
+            })
+        })
     
         this.viewData$ = combineLatest([
             this.activatedRoute.queryParams,
-            this.training$.pipe(filter(Boolean)),
+            this.training$,
         ])
         .pipe(
             takeUntil(this.componentLifecycle$),
@@ -103,7 +108,7 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 
     private sendTaskReply(message: TrainingTaskAnswer, topicId: string) {
         const upload$ = this.profile$.pipe(
-            switchMap(profile => {
+            switchMap((profile) => {
                 return this.uploadService.moveFilesToRemote({
                     subject: 'training:task',
                     fromFolder: `training/${profile.uuid}/${message.taskId}`,

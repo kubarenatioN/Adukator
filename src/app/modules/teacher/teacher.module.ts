@@ -10,6 +10,7 @@ import { TrainingCheckComponent } from './components/training-check/training-che
 import { ReactiveFormsModule } from '@angular/forms';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
 import { TrainingTaskResultComponent } from './components/training-task-result/training-task-result.component';
+import { StudentProfileComponent } from './components/student-profile/student-profile.component';
 
 @NgModule({
 	providers: [
@@ -21,6 +22,7 @@ import { TrainingTaskResultComponent } from './components/training-task-result/t
 		CourseMemberComponent,
 		TrainingCheckComponent,
   TrainingTaskResultComponent,
+  StudentProfileComponent,
 	],
 	imports: [
         CommonModule, 

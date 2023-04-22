@@ -65,7 +65,7 @@ export class TrainingTaskComponent implements OnInit, OnChanges {
 		this.form = this.fbHelper.getTrainingTaskForm(this.task);
 		this.initialValue = this.form.value;
 
-		this.trainingService.profile$
+		this.trainingService.trainingProfile$
 			.subscribe(profile => {
                 this.taskMaterialsFolder = this.uploadService.getFilesFolder(
                     'course',
