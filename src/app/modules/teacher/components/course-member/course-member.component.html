@@ -22,7 +22,8 @@
 </div>
 
 <ng-template #approvedActions>
-	<a [routerLink]="['../check', profile.uuid]" mat-stroked-button>Прогресс</a>
+	<a [routerLink]="['../check', profile.uuid]" mat-stroked-button>Проверка</a>
+	<a [routerLink]="['../profile', profile.uuid]" mat-stroked-button>Прогресс</a>
 	<button mat-stroked-button (click)="onExpel()">Исключить</button>
 </ng-template>
 

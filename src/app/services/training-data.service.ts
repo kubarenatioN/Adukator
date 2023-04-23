@@ -3,6 +3,7 @@ import { map, Observable } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from 'src/app/helpers/network.helper';
 import { DataService } from 'src/app/services/data.service';
 import { ProfileProgress, ProfileProgressRecord, TopicDiscussionReply, Training, TrainingMembershipSearchParams, TrainingProfile, TrainingProfileFull, TrainingProfileLookup, TrainingProfileTraining, TrainingReply } from 'src/app/typings/training.types';
+import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { CoursesSelectResponse } from '../typings/response.types';
 import { User } from '../typings/user.types';
 
@@ -66,6 +67,16 @@ export class TrainingDataService {
         )
     }
 
+    public getStudentProfiles(studentId: string) {
+        const key = NetworkRequestKey.StudentProfiles
+        const payload = NetworkHelper.createRequestPayload(key, {
+            body: { studentId, fields: CoursesSelectFields.Short },
+            params: { reqId: key }
+        })
+
+        return this.dataService.send<{ profiles: TrainingProfileTraining[] | null }>(payload)
+    }
+
     public getMembers(query: TrainingMembershipSearchParams) {
         const key = NetworkRequestKey.TrainingMembers
         const payload = NetworkHelper.createRequestPayload(key, {
@@ -116,15 +127,6 @@ export class TrainingDataService {
         })
 
         return this.dataService.send<{ data: TrainingProfileLookup[] }>(payload).pipe(map(res => res.data));
-    }
-
-    public checkTrainingAccess(body: { trainingUUId: string, userId: string }) {
-        const key = NetworkRequestKey.TrainingAccess
-        const payload = NetworkHelper.createRequestPayload(key, {
-            body,
-            params: { reqId: key }
-        })
-        return this.dataService.send<{ hasAccess: boolean, profile?: TrainingProfile<string, User> }>(payload)
     }
 
     public loadTopicDiscussion(body: { profileId: string, topicId: string }) {

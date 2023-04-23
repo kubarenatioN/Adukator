@@ -1,0 +1,41 @@
+<ng-container *ngIf="viewData$ | async as viewData; else loader">
+
+    <ng-container *ngIf="viewData.hasAccess; else noAccess">
+
+        <ng-container [ngTemplateOutlet]="profileInfo" 
+        [ngTemplateOutletContext]="{ 
+            training: viewData.training, 
+            student: viewData.profile?.student,
+            progress: viewData.progress
+        }"></ng-container>
+
+    </ng-container>
+
+</ng-container>
+
+<ng-template #profileInfo let-training="training" let-student="student" let-progress="progress">
+    
+    <h2>
+        Прогресс студента
+    </h2>
+    <h3>студент: {{ student.username }}</h3>
+    <h3>тренинг: {{ training.course.title }}</h3>
+    <p>{{ training.course.description }}</p>
+
+    <div class="progress">
+        <app-topics-progress-chart [progress]="progress" [topics]="training.topics"></app-topics-progress-chart>
+    </div>
+
+    <div class="training-management">
+        
+    </div>
+
+</ng-template>
+
+<ng-template #loader>
+    <p>Loading profile data...</p>
+</ng-template>
+
+<ng-template #noAccess>
+    <p>No access to profile.</p>
+</ng-template>

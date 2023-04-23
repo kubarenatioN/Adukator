@@ -20,6 +20,8 @@ import { FormElementReviewWrapperComponent } from 'src/app/components/form-eleme
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormElementWrapperDirective } from 'src/app/directives/form-element-wrapper.directive';
 import { FileItemComponent } from 'src/app/components/upload-box/components/file-item/file-item.component';
+import { TopicsProgressChartComponent } from './charts/topics-progress-chart/topics-progress-chart.component';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
 	declarations: [
@@ -31,6 +33,7 @@ import { FileItemComponent } from 'src/app/components/upload-box/components/file
 		DndDirective,
         FormElementWrapperDirective,
         FormElementReviewWrapperComponent,
+        TopicsProgressChartComponent,
 	],
 	imports: [
 		CommonModule,
@@ -45,6 +48,7 @@ import { FileItemComponent } from 'src/app/components/upload-box/components/file
 		MatFormFieldModule,
         ReactiveFormsModule,
         MatChipsModule,
+        NgChartsModule,
 	],
 	exports: [
 		MatButtonModule,
@@ -64,6 +68,7 @@ import { FileItemComponent } from 'src/app/components/upload-box/components/file
 		DndDirective,
         FormElementWrapperDirective,
         FormElementReviewWrapperComponent,
+        TopicsProgressChartComponent,
 	],
 })
 export class SharedModule {}

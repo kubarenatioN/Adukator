@@ -118,17 +118,17 @@ export class CoursesService {
         return this.dataService.send<unknown>(payload)
     }
 
-    public getStudentCourses(userId: string) {
-        const key = NetworkRequestKey.StudentCourses
-        const payload = NetworkHelper.createRequestPayload(key, {
-            body: {
-                userId,
-                fields: CoursesSelectFields.Short
-            },
-            params: { reqId: 'StudentCourses' }
-        })
-        return this.dataService.send<{ 
-            data: Training[]
-        }>(payload);
-    }
+    // public getStudentCourses(userId: string) {
+    //     const key = NetworkRequestKey.StudentCourses
+    //     const payload = NetworkHelper.createRequestPayload(key, {
+    //         body: {
+    //             userId,
+    //             fields: CoursesSelectFields.Short
+    //         },
+    //         params: { reqId: key }
+    //     })
+    //     return this.dataService.send<{ 
+    //         data: Training[]
+    //     }>(payload);
+    // }
 }

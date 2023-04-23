@@ -31,6 +31,10 @@ export class TeacherTrainingService {
 		this.initTeacherTrainings();
 	}
 
+    public getProfile(profileId: string, options?: { include?: ('progress')[] }) {
+        return this.trainingDataService.getProfile({ uuid: profileId }, options)
+    }
+
     public saveProfileProgress(progressId: string, records: ProfileProgressRecord[]) {
         return this.trainingDataService.updateProgress({
             progressId,

@@ -4,15 +4,15 @@ import {
 	Input,
 	OnInit,
 } from '@angular/core';
-import { ChartData, ChartDataset, LogarithmicScale } from 'chart.js';
+import { ChartData, ChartDataset } from 'chart.js';
 import format from 'date-fns/format';
 import { ModuleTopic } from 'src/app/typings/course.types';
 import {
 	ProfileProgress,
-	ProfileProgressRecord,
 } from 'src/app/typings/training.types';
 
-type ChartDataType = ChartData<'line', number[], string>
+type Dataset = { x: string, y: number }
+type ChartDataType = ChartData<'line', Dataset[], string>
 
 @Component({
 	selector: 'app-topics-progress-chart',
@@ -44,7 +44,7 @@ export class TopicsProgressChartComponent implements OnInit {
         options?: unknown
     } {
         const labels = [] as string[]
-        const datasets = [] as ChartDataset<'line', number[]>[]
+        const datasets = [] as ChartDataset<'line', Dataset[]>[]
         topics.forEach(topic => {
             const topicProgress = progress.find(progress => progress.topicId === topic.id)
 
@@ -55,7 +55,12 @@ export class TopicsProgressChartComponent implements OnInit {
                 const taskRecords = topicProgress?.records.filter(record => record.taskId === task.id)
                 if (taskRecords && taskRecords.length > 0) {
                     datasets.push({
-                        data: taskRecords.map(record => record.mark ?? 0) ?? [],
+                        data: taskRecords.map(record => {
+                            return {
+                                x: format(new Date(record.date), 'dd.MM HH:mm'),
+                                y: record.mark ?? 0,
+                            }
+                        }),
                         label: `${topic.title} - задание ${i + 1}`
                     })
                 }

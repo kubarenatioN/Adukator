@@ -17,12 +17,12 @@ export enum NetworkRequestKey {
     SelectTrainings = 'SelectTrainings',
     TrainingList = 'TrainingList',
     TrainingProfile = 'TrainingProfile',
+    StudentProfiles = 'StudentProfiles',
     CreateTrainingEnroll = 'CreateTrainingEnroll',
     UpdateTrainingEnroll = 'UpdateTrainingEnroll',
     DeleteTrainingEnroll = 'DeleteTrainingEnroll',
     TrainingMembers = 'TrainingMembers',
     TrainingMembershipLookup = 'TrainingMembershipLookup',
-    TrainingAccess = 'TrainingAccess',
     
     TrainingReply = 'TrainingReply',
     TrainingTopicDiscussion = 'TrainingTopicDiscussion',
@@ -120,10 +120,10 @@ export class NetworkHelper {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.training}/list`,
         },
-        [NetworkRequestKey.TrainingAccess]: {
-            method: 'POST',
-            url: `${DATA_ENDPOINTS.api.training}/access`,
-        },
+        // [NetworkRequestKey.TrainingAccess]: {
+        //     method: 'POST',
+        //     url: `${DATA_ENDPOINTS.api.training}/access`,
+        // },
 
         [NetworkRequestKey.CreateTrainingEnroll]: {
             method: 'POST',
@@ -149,6 +149,10 @@ export class NetworkHelper {
         [NetworkRequestKey.TrainingProfile]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.training}/profile`
+        },
+        [NetworkRequestKey.StudentProfiles]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.training}/student`
         },
         [NetworkRequestKey.TrainingReply]: {
             method: 'POST',

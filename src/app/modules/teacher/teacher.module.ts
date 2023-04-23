@@ -21,8 +21,8 @@ import { StudentProfileComponent } from './components/student-profile/student-pr
 		CourseManagementComponent,
 		CourseMemberComponent,
 		TrainingCheckComponent,
-  TrainingTaskResultComponent,
-  StudentProfileComponent,
+        TrainingTaskResultComponent,
+        StudentProfileComponent,
 	],
 	imports: [
         CommonModule, 

@@ -1,1 +1,24 @@
 <h1>С возвращением, {{(user$ | async)?.username}}</h1>
+
+<div class="courses-list">
+    <h2>Мои тренинги</h2>
+    <ng-container *ngIf="profiles$ | async as profiles; else loader">
+
+        <ng-container *ngFor="let profile of profiles"
+            [ngTemplateOutlet]="trainingItem"
+            [ngTemplateOutletContext]="{ profile: profile, course: profile.training.course }">
+            
+        </ng-container>
+
+    </ng-container>
+</div>
+
+<ng-template #trainingItem let-course="course" let-profile="profile">
+    <a [routerLink]="['/app/student/profile', profile.uuid, 'training']" class="training-item">
+        <h3>{{ course.title }}</h3>
+    </a>
+</ng-template>
+
+<ng-template #loader>
+    <p>Loading...</p>
+</ng-template>
