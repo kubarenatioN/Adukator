@@ -26,6 +26,13 @@ export interface Training {
     status: 'active' | 'archived',
 }
 
+export interface TrainingData {
+    profile: TrainingProfileTraining | null
+    hasAccess: boolean,
+    progress?: ProfileProgress[],
+    personalization?: Personalization[]
+}
+
 export interface TopicDiscussionReply {
     _id: string;
     uuid: string;

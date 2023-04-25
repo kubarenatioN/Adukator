@@ -37,12 +37,21 @@
             <div class="practice-container" *ngIf="topic.practice">
                 <p>{{ topic.practice.goal }}</p>
                 <div class="practice-tasks">
+                    <h4>Задания</h4>
                     <div *ngFor="let task of topic.practice.tasks; let i = index" class="practice-task">
-                        <h4>Задание {{ i + 1 }}.</h4>
                         <app-training-task 
-                        (send)="onSendTask($event)"
-                        [task]="task"></app-training-task>
+                            (send)="onSendTask($event)"
+                            [task]="task"></app-training-task>
                     </div>
+
+                    <ng-container *ngIf="personalTasks$ | async as personalTasks">
+                        <h4>Личные задания</h4>
+                        <div *ngFor="let task of personalTasks; let i = index" class="practice-task">
+                            <app-training-task 
+                            (send)="onSendTask($event)"
+                            [task]="task"></app-training-task>
+                        </div>
+                    </ng-container>
                 </div>
             </div>
         </div>

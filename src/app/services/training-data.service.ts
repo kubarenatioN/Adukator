@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from 'src/app/helpers/network.helper';
 import { DataService } from 'src/app/services/data.service';
-import { PersonalizationAssignment, PersonalTask, ProfileProgress, ProfileProgressRecord, TopicDiscussionReply, Training, TrainingMembershipSearchParams, TrainingProfile, TrainingProfileFull, TrainingProfileLookup, TrainingProfileTraining, TrainingProfileUser, TrainingReply } from 'src/app/typings/training.types';
+import { Personalization, PersonalizationAssignment, PersonalTask, ProfileProgress, ProfileProgressRecord, TopicDiscussionReply, Training, TrainingMembershipSearchParams, TrainingProfile, TrainingProfileFull, TrainingProfileLookup, TrainingProfileTraining, TrainingProfileUser, TrainingReply } from 'src/app/typings/training.types';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { PersonalizationProfile } from '../modules/teacher/components/personalization/assign-task/assign-task.component';
 import { TopicTask } from '../typings/course.types';
@@ -63,7 +63,8 @@ export class TrainingDataService {
         return this.dataService.send<{ 
             profile: TrainingProfileTraining | null, 
             hasAccess: boolean,
-            progress?: ProfileProgress[]
+            progress?: ProfileProgress[],
+            personalization?: Personalization[],
         }>(payload).pipe(
             map(response => response)
         )

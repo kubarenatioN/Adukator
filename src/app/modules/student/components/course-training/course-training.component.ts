@@ -7,7 +7,7 @@ import { UploadService } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { CourseModule, ModuleTopic } from 'src/app/typings/course.types';
-import { TrainingAccess, TrainingProfileFull, TrainingProfileTraining, TrainingReply, TrainingTaskAnswer } from 'src/app/typings/training.types';
+import { Personalization, ProfileProgress, TrainingAccess, TrainingData, TrainingProfileFull, TrainingProfileTraining, TrainingReply, TrainingTaskAnswer } from 'src/app/typings/training.types';
 
 enum ViewType {
     Main = 'main',
@@ -29,12 +29,10 @@ interface ViewConfig {
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseTrainingComponent extends BaseComponent implements OnInit {
-    private profileStore$ = new ReplaySubject<{
-        profile: TrainingProfileTraining | null
-        hasAccess: boolean
-    }>()
+    private trainingStore$ = new ReplaySubject<TrainingData>()
     private viewTypeStore$ = new BehaviorSubject<ViewType>(ViewType.Main)
-    private profile$ = this.profileStore$.asObservable().pipe(
+    
+    private profile$ = this.trainingStore$.asObservable().pipe(
         map(profileInfo => profileInfo.profile),
         filter(Boolean),
         shareReplay(1)
@@ -44,7 +42,7 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
     public viewData$!: Observable<ViewConfig>
 
     public viewTypes = ViewType;
-    public profileInfo$ = this.profileStore$.asObservable()
+    public profileInfo$ = this.trainingStore$.asObservable()
 
     public training$: Observable<StudentTraining> = this.profile$.pipe(
         map(profile => new StudentTraining(profile.training)),
@@ -62,9 +60,11 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 	public ngOnInit(): void {
         this.activatedRoute.params.subscribe(params => {
             const profileId = params['id']
-            this.trainingService.getProfile(profileId).subscribe(profileInfo => {
-                this.profileStore$.next(profileInfo)
-                this.trainingService.trainingProfile = profileInfo.profile
+            this.trainingService.getProfile(profileId, {
+                include: ['personalization', 'progress']
+            }).subscribe(trainingData => {
+                this.trainingStore$.next(trainingData)
+                this.trainingService.trainingData = trainingData
             })
         })
     

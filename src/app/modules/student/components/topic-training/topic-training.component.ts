@@ -14,14 +14,16 @@ import {
 	combineLatest,
 	delay,
 	distinctUntilChanged,
+	filter,
 	map,
+	Observable,
 	takeUntil,
 } from 'rxjs';
 import { StudentTrainingService } from 'src/app/modules/student/services/student-training.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { ModuleTopic } from 'src/app/typings/course.types';
-import { TrainingReply, TrainingReplyMessage } from 'src/app/typings/training.types';
+import { ModuleTopic, TopicTask } from 'src/app/typings/course.types';
+import { TrainingProfileTraining, TrainingReply, TrainingReplyMessage } from 'src/app/typings/training.types';
 
 @Component({
 	selector: 'app-topic-training',
@@ -40,6 +42,16 @@ export class TopicTrainingComponent
     @Output() public sendReply = new EventEmitter<Pick<TrainingReply, 'message' | 'type' | 'topicId'>>()
 
 	public trainingMaterialsFolder: string = '';
+
+    public personalTasks$ = this.trainingService.personalization$.pipe(
+        map(personalization => {
+            let tasks: TopicTask[] | null = null 
+            if (personalization) {
+                tasks = personalization.filter(pers => pers.type === 'assignment').map(pers => pers.task!.task)
+            }
+            return tasks
+        })
+    )
 
 	public get controlId(): string {
 		return this.topic.id;
@@ -69,9 +81,10 @@ export class TopicTrainingComponent
 	}
 
 	ngOnInit(): void {
+
 		combineLatest([
 			this.topicStore$.asObservable(),
-			this.trainingService.trainingProfile$,
+			this.trainingService.profile$,
 		])
 			.pipe(
 				takeUntil(this.componentLifecycle$),
