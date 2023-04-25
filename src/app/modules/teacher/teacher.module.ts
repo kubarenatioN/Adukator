@@ -11,6 +11,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
 import { TrainingTaskResultComponent } from './components/training-task-result/training-task-result.component';
 import { StudentProfileComponent } from './components/student-profile/student-profile.component';
+import { TrainingPersonalizationComponent } from './components/training-personalization/training-personalization.component';
+import { PersonalTasksComponent } from './components/personal-tasks/personal-tasks.component';
+import { AssignTaskComponent } from './components/personalization/assign-task/assign-task.component';
+import { DismissTaskComponent } from './components/personalization/dismiss-task/dismiss-task.component';
 
 @NgModule({
 	providers: [
@@ -23,6 +27,10 @@ import { StudentProfileComponent } from './components/student-profile/student-pr
 		TrainingCheckComponent,
         TrainingTaskResultComponent,
         StudentProfileComponent,
+        TrainingPersonalizationComponent,
+        PersonalTasksComponent,
+        AssignTaskComponent,
+        DismissTaskComponent,
 	],
 	imports: [
         CommonModule, 

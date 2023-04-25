@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 import {
     ProfileProgressRecord,
 	Training,
 	TrainingMembershipSearchParams,
 	TrainingMembershipStatus as EnrollStatus,
+    TrainingProfileUser,
 } from '../../../typings/training.types';
 import { UserService } from '../../../services/user.service';
 import { TrainingDataService } from 'src/app/services/training-data.service';
@@ -35,6 +36,10 @@ export class TeacherTrainingService {
         return this.trainingDataService.getProfile({ uuid: profileId }, options)
     }
 
+    public getTrainingProfiles(trainingId: string, options?: { include?: ('personalization')[] }) {
+        return this.trainingDataService.getTrainingProfiles(trainingId, options)
+    }
+
     public saveProfileProgress(progressId: string, records: ProfileProgressRecord[]) {
         return this.trainingDataService.updateProgress({
             progressId,
@@ -54,7 +59,7 @@ export class TeacherTrainingService {
         )
     }
 
-	public getStudentsProfiles(trainingId: string) {
+	public getStudentsProfiles(trainingId: string): Observable<TrainingProfileUser[]> {
 		const size = -1;
 		return this.trainingDataService.getMembers({
 			type: 'list',
@@ -94,21 +99,16 @@ export class TeacherTrainingService {
 	}
 
 	private initTeacherTrainings() {
-		this.userService.user$
-			.pipe(
-				switchMap((user) => {
-					return this.getTrainings(
-						user.uuid,
-						CoursesSelectFields.Short
-					);
-				})
-			)
-			.subscribe((data) => {
-				this.trainingsStore$.next(data);
-			});
+		this.getTeacherTrainings(CoursesSelectFields.Short).subscribe((data) => {
+            this.trainingsStore$.next(data);
+        });
 	}
 
-	private getTrainings(authorId: string, fields?: string[]) {
-		return this.trainingDataService.getTrainings({ authorId, fields });
+	public getTeacherTrainings(fields: string[]) {
+        return this.userService.user$.pipe(
+            switchMap(user => {
+                return this.trainingDataService.getTrainings({ authorId: user.uuid, fields });
+            })
+        )
 	}
 }

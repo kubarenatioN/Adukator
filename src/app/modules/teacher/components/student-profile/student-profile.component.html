@@ -1,3 +1,22 @@
+<form class="filters" [formGroup]="filtersForm">
+    <label>
+        <p>Тренинг</p>
+        <select formControlName="training">
+            <option *ngFor="let training of trainings" [value]="training._id">
+                {{ training.course.title }}
+            </option>
+        </select>
+    </label>
+    <label>
+        <p>Студент</p>
+        <select *ngIf="profiles$ | async as profiles; else noTrainingProfiles" formControlName="student">
+            <option *ngFor="let profile of profiles" [value]="profile.uuid">
+                {{ profile.student.username }}
+            </option>
+        </select>
+    </label>
+</form>
+
 <ng-container *ngIf="viewData$ | async as viewData; else loader">
 
     <ng-container *ngIf="viewData.hasAccess; else noAccess">
@@ -6,28 +25,52 @@
         [ngTemplateOutletContext]="{ 
             training: viewData.training, 
             student: viewData.profile?.student,
-            progress: viewData.progress
+            progress: viewData.progress,
+            charts: viewData.charts
         }"></ng-container>
 
     </ng-container>
 
 </ng-container>
 
-<ng-template #profileInfo let-training="training" let-student="student" let-progress="progress">
+<ng-template #profileInfo let-training="training" let-student="student" let-progress="progress" let-charts="charts">
     
     <h2>
         Прогресс студента
     </h2>
-    <h3>студент: {{ student.username }}</h3>
-    <h3>тренинг: {{ training.course.title }}</h3>
-    <p>{{ training.course.description }}</p>
+    <p>студент: {{ student.username }}</p>
+    <p>тренинг: {{ training.course.title }}</p>
 
-    <div class="progress">
-        <app-topics-progress-chart [progress]="progress" [topics]="training.topics"></app-topics-progress-chart>
+    <div class="training-program">
+        <div 
+        *ngFor="let module of training.modules"
+        class="training-program__module">
+            <h3>{{ module.title }}</h3>
+            <!-- <div>
+                {{ module.topics | json }}
+            </div> -->
+            <div class="module-topics">
+                <div *ngFor="let topic of module.topics" class="training-program__topic">
+                    <h4>Тема: {{ topic.title }}</h4>
+                    <div class="topic-tasks" *ngIf="topic.practice.tasks as topicTasks">
+                        <p>Практика</p>
+                        <div class="topic-task common" *ngFor="let task of topicTasks">
+                            <span>{{ task.taskDescr }}</span>
+                            <span> - </span>
+                            <span>{{ getTaskMark(task.id, topic.id, progress) }} баллов</span>
+                        </div>
+                    </div>
+                    <div class="topic-test" *ngIf="topic.testLink">
+                        <h4>Тест</h4>
+                        <p>{{ topic.testLink }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="training-management">
-        
+    <div class="progress">
+        <app-topics-progress-chart [config]="charts.topics"></app-topics-progress-chart>
     </div>
 
 </ng-template>
@@ -38,4 +81,8 @@
 
 <ng-template #noAccess>
     <p>No access to profile.</p>
+</ng-template>
+
+<ng-template #noTrainingProfiles>
+    <p>на тренинге нет студентов.</p>
 </ng-template>

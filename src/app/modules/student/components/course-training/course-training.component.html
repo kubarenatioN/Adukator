@@ -5,8 +5,13 @@
         </pre>
     </div>
     <div slot="main" class="training-container">
+        
         <section class="content">
             
+            <div>
+                <a routerLink="../">К прогрессу</a>
+            </div>
+
             <ng-container [ngSwitch]="viewData.viewType">
                 
                 <ng-container *ngSwitchCase="viewTypes.Main"

@@ -5,10 +5,16 @@
     <a [routerLink]="['/app/course-builder/create']" mat-raised-button color="primary">
         Создать курс
     </a>
+    
+    <a [routerLink]="['profile']" mat-raised-button color="primary">
+        Аналитика
+    </a>
+    
+    <a [routerLink]="['personalization']" mat-raised-button color="primary">
+        Персонализация
+    </a>
 
-    <h2>Мои курсы</h2>
-
-    <h3>Тренинги</h3>
+    <h3>Мои тренинги</h3>
     <div class="courses-list">
         <ng-container *ngIf="trainings$ | async as trainings; else loader">
             <a class="course-item" 

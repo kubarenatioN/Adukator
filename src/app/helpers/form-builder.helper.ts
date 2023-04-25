@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CourseFormDataMock } from '../mocks/course-form-data';
 import { CourseFormData, CourseModule, CourseTopFormGroups, ModuleFormFields, ModuleTopic, OverallFormFields, PracticeFormFields, TaskFormFields, TopicFormFields, TopicPractice, TopicTask } from '../typings/course.types';
-import { ProfileProgressRecord, TrainingTaskAnswer } from '../typings/training.types';
+import { Personalization, ProfileProgressRecord, TrainingProfile, TrainingProfilePersonalizations, TrainingProfileUser, TrainingTaskAnswer } from '../typings/training.types';
 import { generateUUID } from './courses.helper';
 
 @Injectable({
@@ -145,5 +145,30 @@ export class FormBuilderHelper {
             commentsObj[key] = comments[key] ?? null
         });
         return this.fb.group(commentsObj);
+    }
+
+    public createAssignTaskForm() {
+        return this.fb.group({
+            training: '',
+            topic: '',
+            personalizations: this.fb.array<FormGroup>([]),
+            task: ''
+        })
+    }
+
+    public createDismissTaskForm() {
+        return this.fb.group({
+            training: '',
+            profiles: [new Array<string>()],
+            tasks: [new Array<string>()]
+        })
+    }
+
+    public createOpenTaskForm() {
+        return this.fb.group({
+            training: '',
+            profile: '',
+            task: ''
+        })
     }
 }

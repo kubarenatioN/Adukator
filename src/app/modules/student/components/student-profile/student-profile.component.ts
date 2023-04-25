@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ChartConfiguration } from 'chart.js';
 import { Observable, ReplaySubject } from 'rxjs';
+import { createTopicsProgressConfig } from 'src/app/helpers/charts.config';
 import { StudentTraining } from 'src/app/models/course.model';
 import { ProfileProgress, TrainingProfileTraining } from 'src/app/typings/training.types';
 import { StudentProfileService } from '../../services/student-profile.service';
@@ -16,7 +18,10 @@ type ViewData = {
     profile?: TrainingProfileTraining | null,
     training?: StudentTraining,
     hasAccess?: boolean
-    topicsProgress?: ProfileProgress[]
+    topicsProgress?: ProfileProgress[],
+    charts: {
+        topics?: ChartConfiguration<'line', any, string>
+    }
 }
 
 @Component({
@@ -40,18 +45,25 @@ export class StudentProfileComponent implements OnInit {
                 this.trainingService.getProfile(profileId, {
                     include: ['progress']
                 }).subscribe(profileInfo => {
+                    const training = profileInfo.profile?.training 
+                        ? new StudentTraining(profileInfo.profile.training) 
+                        : undefined
+                    const progress = profileInfo.progress
+
                     this.viewDataStore$.next({
                         ...profileInfo,
-                        training: profileInfo.profile?.training 
-                            ? new StudentTraining(profileInfo.profile.training) 
-                            : undefined,
-                        topicsProgress: profileInfo.progress,
+                        training,
+                        topicsProgress: progress,
                         mode: ViewMode.SingleProfile,
+                        charts: {
+                            topics: training && progress ? createTopicsProgressConfig(training.topics, progress) : undefined
+                        }
                     })
                 })
 			} else {
                 this.viewDataStore$.next({
-                    mode: ViewMode.ProfilesList
+                    mode: ViewMode.ProfilesList,
+                    charts: {}
                 })
             }
 		});

@@ -1,0 +1,56 @@
+<a routerLink="../">Назад</a>
+
+<h2>Создание задания</h2>
+<form class="container" [formGroup]="form">
+
+    <label>
+        <p>Выберите тренинг</p>
+        <select formControlName="training">
+            <option *ngFor="let training of trainings$ | async" [value]="training.uuid">
+                {{ training.course.title }}
+            </option>
+        </select>
+    </label>
+
+    <label>
+        <p>Выберите тему</p>
+        <select formControlName="topic" *ngIf="topics$ | async as topics">
+            <option *ngFor="let topic of topics" [value]="topic.id">
+                {{ topic.title }}
+            </option>
+        </select>
+    </label>
+
+    <div class="task-form" *ngIf="shouldShowTaskForm">
+        <h3>Данные о задании</h3>
+
+        <label>Условие</label>
+        <input formControlName="taskDescr" />
+    
+        <p>Ресурсы</p>
+        <app-upload-box
+            class="upload-box" 
+            type="upload"
+            [folder]="uploadFolder"
+            controlId="controlId"
+            serveFrom="local"
+            (uploadFilesChanged)="onUploadFilesChanged($event)"></app-upload-box>
+
+        
+        <button (click)="createTask()">Создать</button>
+    </div>
+
+</form>
+
+<h2>Мои задания</h2>
+<div class="tasks">
+    
+    <div *ngFor="let taskItem of tasks$ | async" class="task-item">
+        <p>Условие: {{ taskItem.task.taskDescr }}</p>
+        <p>Файлы: {{ taskItem.task.materials }}</p>
+        <a [routerLink]="['/app/teacher/training', taskItem.training.uuid, 'manage']">
+            Тренинг {{ taskItem.training.course.title }}
+        </a>
+    </div>
+
+</div>

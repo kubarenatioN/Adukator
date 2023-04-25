@@ -1,16 +1,24 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ChartConfiguration } from 'chart.js';
+import { Observable, of, ReplaySubject } from 'rxjs';
+import { delay, distinctUntilChanged, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
+import { createTopicsProgressConfig } from 'src/app/helpers/charts.config';
+import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { StudentTraining } from 'src/app/models/course.model';
-import { ProfileProgress, TrainingProfileTraining } from 'src/app/typings/training.types';
+import { BaseComponent } from 'src/app/shared/base.component';
+import { ProfileProgress, ProfileProgressRecord, Training, TrainingProfileTraining, TrainingProfileUser } from 'src/app/typings/training.types';
 import { TeacherTrainingService } from '../../services/teacher-training.service';
 
 type ViewData = {
     profile: TrainingProfileTraining | null
     progress?: ProfileProgress[],
     hasAccess: boolean,
-    training: StudentTraining | null
+    training: StudentTraining | null,
+    charts: {
+        [key: string]: any
+    }
 }
 
 @Component({
@@ -19,31 +27,110 @@ type ViewData = {
 	styleUrls: ['./student-profile.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StudentProfileComponent implements OnInit {    
+export class StudentProfileComponent extends CenteredContainerDirective implements OnInit {    
+    private activeProfileStore$ = new ReplaySubject<string>(1)
+    private profilesStore$ = new ReplaySubject<TrainingProfileUser[] | null>(1)
+    
     public viewData$!: Observable<ViewData | null>
 
-	constructor(private activatedRoute: ActivatedRoute, private teacherTrainingService: TeacherTrainingService) {
+    public filtersForm;
+    public trainings: Training[] = []
+    public profiles$ = this.profilesStore$.asObservable()
 
+    private trainingControl;
+    private studentControl;
+
+	constructor(private fbHelper: FormBuilderHelper, private teacherTrainingService: TeacherTrainingService, private cd: ChangeDetectorRef) {
+        super()
+
+        this.filtersForm = this.fbHelper.fbRef.group({
+            training: '',
+            student: ''
+        })
+        this.trainingControl = this.filtersForm.controls.training
+        this.studentControl = this.filtersForm.controls.student
     }
 
 	ngOnInit(): void {
-		this.viewData$ = this.activatedRoute.paramMap.pipe(
-            switchMap(params => {
-                const profileId = params.get('profileId');
-                console.log('student profile page', profileId);
-                if (profileId) {
-                    return this.teacherTrainingService.getProfile(profileId, {
-                        include: ['progress']
-                    })
-                }
-                return of(null)
+        // this.studentControl.disable()
+
+        this.trainingControl.valueChanges.pipe(
+            takeUntil(this.componentLifecycle$),
+            tap(() => {
+                this.studentControl.disable()
             }),
-            map(profileInfo => {
-                return profileInfo ? {
-                    ...profileInfo,
-                    training: profileInfo.profile?.training ? new StudentTraining(profileInfo.profile.training) : null
-                } : null
+            switchMap(training => {
+                return this.loadTrainingProfiles(training)
+            }),
+        ).subscribe(profiles => {
+            if (profiles && profiles.length > 0) {
+                this.profilesStore$.next(profiles)
+                this.studentControl.setValue(profiles[0].uuid)
+            } else {
+                this.profilesStore$.next(null)
+            }
+            this.studentControl.enable()
+        })
+
+        this.teacherTrainingService.trainings$
+            .pipe(take(1))
+            .subscribe(trainings => {
+                this.trainings = trainings
+                this.filtersForm.patchValue({
+                    training: trainings[0]._id
+                })
+                this.cd.detectChanges()
+            })
+
+        this.studentControl.valueChanges.pipe(
+            takeUntil(this.componentLifecycle$)
+        ).subscribe(profileId => {
+            if (profileId) {
+                this.activeProfileStore$.next(profileId)
+            }
+        })
+
+        this.viewData$ = this.activeProfileStore$.asObservable().pipe(
+            takeUntil(this.componentLifecycle$),
+            distinctUntilChanged(),
+            switchMap(profileId => {
+                return this.loadProfileProgress(profileId)
+            }),
+            map(res => {
+                const training = res.profile ? new StudentTraining(res.profile.training) : null
+                return {
+                    profile: res.profile,
+                    hasAccess: res.hasAccess,
+                    progress: res.progress,
+                    training,
+                    charts: {
+                        topics: training && res.progress ? createTopicsProgressConfig(training.topics, res.progress) : null
+                    }
+                }
             })
         )
+
+        this.viewData$.subscribe(res => {
+            // console.log(res);
+        })
 	}
+
+    public getTaskMark(taskId: string, topicId: string, progress: ProfileProgress[]) {
+        const topicProgress = progress.find(p => p.topicId === topicId)!
+        const marks = topicProgress.records.filter(record => record.taskId === taskId).map(record => record.mark ?? 0)
+        return marks.length > 0 ? Math.max(...marks) : 0
+    }
+
+    private loadTrainingProfiles(trainingId: string | null) {
+        if (trainingId) {
+            return this.teacherTrainingService.getTrainingProfiles(trainingId).pipe(
+                map(res => res.profiles && res.profiles.length > 0 ? res.profiles : null)
+            )
+        }
+        return of(null)
+    }
+
+    private loadProfileProgress(profileId: string) {
+        return this.teacherTrainingService.getProfile(profileId, { include: ['progress'] })
+    }
 }

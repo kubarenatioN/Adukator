@@ -41,7 +41,7 @@ export class UploadService {
 	}
 
     public moveFilesToRemote({ fromFolder, toFolder, subject }: {
-        subject: 'course:build' | 'training:task',
+        subject: 'course:build' | 'training:task' | 'personalization:task',
         fromFolder: string,
         toFolder?: string,
     }) {

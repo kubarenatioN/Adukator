@@ -4,6 +4,7 @@ import { User } from "./user.types";
 export type TrainingProfileFull = TrainingProfile<Training, User> 
 export type TrainingProfileMeta = TrainingProfile<string, string> 
 export type TrainingProfileUser = TrainingProfile<string, User> 
+export type TrainingProfilePersonalizations = TrainingProfileUser & { personalizations: Personalization[] } 
 export type TrainingProfileTraining = TrainingProfile<Training, string> 
 
 export interface TrainingProfile<T, U> {
@@ -116,4 +117,32 @@ export interface ProfileProgressRecord {
     isCounted?: boolean
     date: string
     comment?: string
+}
+
+export interface PersonalTask {
+    _id: string,
+    uuid: string,
+    training: Training,
+    topicId: string,
+    task: TopicTask,
+    authorId: string,
+    type: 'common' | 'personal',
+}
+
+export interface Personalization {
+    _id: string,
+    uuid: string,
+    type: 'assignment' | 'dismiss' | 'open',
+    profile: string,
+    task?: PersonalTask,
+    dismiss?: string[],
+    open?: string[],
+}
+
+export interface PersonalizationAssignment {
+    uuid: string,
+    profile: string,
+    task: string,
+    taskPersonalization: string | undefined,
+    isAssigned: boolean
 }

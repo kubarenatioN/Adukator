@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from 'src/app/helpers/network.helper';
 import { DataService } from 'src/app/services/data.service';
-import { ProfileProgress, ProfileProgressRecord, TopicDiscussionReply, Training, TrainingMembershipSearchParams, TrainingProfile, TrainingProfileFull, TrainingProfileLookup, TrainingProfileTraining, TrainingReply } from 'src/app/typings/training.types';
+import { PersonalizationAssignment, PersonalTask, ProfileProgress, ProfileProgressRecord, TopicDiscussionReply, Training, TrainingMembershipSearchParams, TrainingProfile, TrainingProfileFull, TrainingProfileLookup, TrainingProfileTraining, TrainingProfileUser, TrainingReply } from 'src/app/typings/training.types';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
+import { PersonalizationProfile } from '../modules/teacher/components/personalization/assign-task/assign-task.component';
+import { TopicTask } from '../typings/course.types';
 import { CoursesSelectResponse } from '../typings/response.types';
 import { User } from '../typings/user.types';
 
@@ -77,6 +79,16 @@ export class TrainingDataService {
         return this.dataService.send<{ profiles: TrainingProfileTraining[] | null }>(payload)
     }
 
+    public getTrainingProfiles(trainingId: string, options?: { include?: string[] }) {
+        const key = NetworkRequestKey.TrainingProfiles
+        const payload = NetworkHelper.createRequestPayload(key, {
+            body: { trainingId, fields: CoursesSelectFields.Short },
+            params: { reqId: key, ...options }
+        })
+
+        return this.dataService.send<{ profiles: TrainingProfileUser[] | null }>(payload)
+    }
+
     public getMembers(query: TrainingMembershipSearchParams) {
         const key = NetworkRequestKey.TrainingMembers
         const payload = NetworkHelper.createRequestPayload(key, {
@@ -84,7 +96,7 @@ export class TrainingDataService {
             params: { reqId: key }
         })
         
-        return this.dataService.send<{ data: TrainingProfile<string, User>[] }>(payload).pipe(
+        return this.dataService.send<{ data: TrainingProfileUser[] }>(payload).pipe(
             map(res => res.data)
         );
     }
@@ -154,5 +166,34 @@ export class TrainingDataService {
             params: { reqId: key }
         })
         return this.dataService.send<{ added?: ProfileProgress }>(payload)
+    }
+
+    public createTask(training: string, topicId: string, authorId: string, task: TopicTask) {
+        const key = NetworkRequestKey.CreateTask
+        const payload = NetworkHelper.createRequestPayload(key, {
+            body: { trainingId: training, topicId, authorId, task },
+            params: { reqId: key }
+        })
+
+        return this.dataService.send(payload)
+    }
+
+    public getPersonalTasks(params: { authorId?: string, topicId?: string, trainingId?: string }) {
+        const key = NetworkRequestKey.GetPersonalTasks
+        const payload = NetworkHelper.createRequestPayload(key, {
+            params: { reqId: key, ...params }
+        })
+
+        return this.dataService.send<{ tasks: PersonalTask[] }>(payload)
+    }
+
+    public assignPersonalTasks(body: { assign: PersonalizationAssignment[], unassign: PersonalizationAssignment[] }) {
+        const key = NetworkRequestKey.PersonalizationAssignment
+        const payload = NetworkHelper.createRequestPayload(key, {
+            body,
+            params: { reqId: key }
+        })
+
+        return this.dataService.send(payload)
     }
 }

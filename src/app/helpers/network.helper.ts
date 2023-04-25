@@ -11,13 +11,15 @@ export enum NetworkRequestKey {
     // GENERAL
     GetCourses = 'GetCourses',
     ListCourses = 'ListCourses',
-    StudentCourses = 'StudentCourses',
+    // StudentCourses = 'StudentCourses',
     
     // TRAINING
     SelectTrainings = 'SelectTrainings',
     TrainingList = 'TrainingList',
     TrainingProfile = 'TrainingProfile',
     StudentProfiles = 'StudentProfiles',
+    // TrainingStudents = 'TrainingStudents',
+    TrainingProfiles = 'TrainingProfiles',
     CreateTrainingEnroll = 'CreateTrainingEnroll',
     UpdateTrainingEnroll = 'UpdateTrainingEnroll',
     DeleteTrainingEnroll = 'DeleteTrainingEnroll',
@@ -28,6 +30,11 @@ export enum NetworkRequestKey {
     TrainingTopicDiscussion = 'TrainingTopicDiscussion',
     TrainingProfileProgress = 'TrainingProfileProgress',
     UpdateTrainingProfileProgress = 'UpdateTrainingProfileProgress',
+
+    // Personalization
+    CreateTask = 'CreateTask',
+    GetPersonalTasks = 'GetPersonalTasks',
+    PersonalizationAssignment = 'PersonalizationAssignment',
 
     // REVIEW
     GetReviewCourseHistory = 'GetReviewCourseHistory',
@@ -106,10 +113,10 @@ export class NetworkHelper {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses}/list`,
         },
-        [NetworkRequestKey.StudentCourses]: {
-            method: 'POST',
-            url: `${DATA_ENDPOINTS.api.courses}/student`,
-        },
+        // [NetworkRequestKey.StudentCourses]: {
+        //     method: 'POST',
+        //     url: `${DATA_ENDPOINTS.api.courses}/student`,
+        // },
 
         /* TRAINING */
         [NetworkRequestKey.SelectTrainings]: {
@@ -150,6 +157,10 @@ export class NetworkHelper {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.training}/profile`
         },
+        [NetworkRequestKey.TrainingProfiles]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.training}/profiles`
+        },
         [NetworkRequestKey.StudentProfiles]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.training}/student`
@@ -189,6 +200,19 @@ export class NetworkHelper {
         [NetworkRequestKey.CreateCourseVersion]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses.review}/create`,
+        },
+
+        [NetworkRequestKey.CreateTask]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.personalization.task}`,
+        },
+        [NetworkRequestKey.GetPersonalTasks]: {
+            method: 'GET',
+            url: `${DATA_ENDPOINTS.api.personalization.task}`,
+        },
+        [NetworkRequestKey.PersonalizationAssignment]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.personalization}/assign`,
         },
     }
 

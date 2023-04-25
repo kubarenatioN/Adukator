@@ -1,0 +1,22 @@
+.filters {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.topic-task{
+    position: relative;
+    padding: 10px 10px 10px 20px;   
+
+    &.common::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 10px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background-color: rgb(255, 242, 55);
+        border: 1px solid #333;
+    }
+}

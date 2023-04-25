@@ -22,6 +22,10 @@ export const DATA_ENDPOINTS = {
             progress: `${apiUrl}/api/training/progress`,
             toString: () => `${apiUrl}/api/training`
         },
+        personalization: {
+            task: `${apiUrl}/api/personalization/task`,
+            toString: () => `${apiUrl}/api/personalization`
+        }
     },
     admin: {
         courses: `${apiUrl}/admin/courses`

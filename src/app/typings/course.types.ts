@@ -43,7 +43,7 @@ export interface TopicTask {
     taskDescr: string;
     materials?: string[],
     comment?: string
-    comments: Record<string, string>;
+    comments?: Record<string, string>;
 }
 
 export interface TopicPractice {

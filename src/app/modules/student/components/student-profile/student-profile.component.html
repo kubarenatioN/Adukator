@@ -1,3 +1,5 @@
+<a routerLink="training">К тренингу</a>
+
 <ng-container *ngIf="viewData$ | async as viewData">
     <ng-container [ngSwitch]="viewData.mode">
         <ng-container 
@@ -8,7 +10,8 @@
                 progress: viewData.topicsProgress,
                 training: viewData.training, 
                 course: viewData.profile?.training?.course, 
-                hasAccess: viewData.hasAccess 
+                hasAccess: viewData.hasAccess, 
+                charts: viewData.charts
             }"></ng-container>
 
         <ng-container 
@@ -21,15 +24,14 @@
     let-profile="profile" 
     let-training="training" 
     let-course="course"
+    let-charts="charts"
     let-progress="progress"
     let-hasAccess="hasAccess"
 > 
     <ng-container *ngIf="hasAccess; else noAccess">
-        <h2>Прогресс треннинга {{ course.title }}</h2>
+        <h2>Прогресс тренинга {{ course.title }}</h2>
 
-        <app-topics-progress-chart 
-            [topics]="training.topics"
-            [progress]="progress">
+        <app-topics-progress-chart [config]="charts.topics">
         </app-topics-progress-chart>
     </ng-container>
 </ng-template>
