@@ -1,4 +1,4 @@
-<a routerLink="../">Назад</a>
+<app-back-btn>Назад</app-back-btn>
 
 <h2>Создание задания</h2>
 <form class="container" [formGroup]="form">
@@ -12,9 +12,9 @@
         </select>
     </label>
 
-    <label>
+    <label *ngIf="topics$ | async as topics">
         <p>Выберите тему</p>
-        <select formControlName="topic" *ngIf="topics$ | async as topics">
+        <select formControlName="topic">
             <option *ngFor="let topic of topics" [value]="topic.id">
                 {{ topic.title }}
             </option>

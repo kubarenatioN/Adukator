@@ -4,6 +4,7 @@ import { CourseManagementComponent } from './components/course-management/course
 import { PersonalTasksComponent } from './components/personal-tasks/personal-tasks.component';
 import { AssignTaskComponent } from './components/personalization/assign-task/assign-task.component';
 import { DismissTaskComponent } from './components/personalization/dismiss-task/dismiss-task.component';
+import { OpenTaskComponent } from './components/personalization/open-task/open-task.component';
 import { StudentProfileComponent } from './components/student-profile/student-profile.component';
 import { TrainingCheckComponent } from './components/training-check/training-check.component';
 import { TrainingPersonalizationComponent } from './components/training-personalization/training-personalization.component';
@@ -51,8 +52,8 @@ const routes: Routes = [
                         component: AssignTaskComponent,
                     },
                     {
-                        path: 'dismiss',
-                        component: DismissTaskComponent,
+                        path: 'open',
+                        component: OpenTaskComponent,
                     },
                 ]
             }

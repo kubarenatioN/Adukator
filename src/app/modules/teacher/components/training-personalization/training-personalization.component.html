@@ -1,12 +1,14 @@
+<app-back-btn>Назад</app-back-btn>
+
 <div class="menu">
-    <a routerLink="assign">
-        Добавление задания
+    <a routerLink="assign" [skipLocationChange]="true">
+        Назначение задания
     </a>
     <!-- <a routerLink="dismiss">
         Снятие задания
     </a> -->
-    <a routerLink="open">
-        Разблокировать задание
+    <a routerLink="open" [skipLocationChange]="true">
+        Продлить задание
     </a>
     <a routerLink="tasks" mat-raised-button color="primary">
         Задания

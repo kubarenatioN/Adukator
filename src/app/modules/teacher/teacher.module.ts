@@ -15,6 +15,7 @@ import { TrainingPersonalizationComponent } from './components/training-personal
 import { PersonalTasksComponent } from './components/personal-tasks/personal-tasks.component';
 import { AssignTaskComponent } from './components/personalization/assign-task/assign-task.component';
 import { DismissTaskComponent } from './components/personalization/dismiss-task/dismiss-task.component';
+import { OpenTaskComponent } from './components/personalization/open-task/open-task.component';
 
 @NgModule({
 	providers: [
@@ -31,6 +32,7 @@ import { DismissTaskComponent } from './components/personalization/dismiss-task/
         PersonalTasksComponent,
         AssignTaskComponent,
         DismissTaskComponent,
+        OpenTaskComponent,
 	],
 	imports: [
         CommonModule, 

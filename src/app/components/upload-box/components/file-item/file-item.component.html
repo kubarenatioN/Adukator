@@ -17,7 +17,9 @@
 </ng-template>
 
 <ng-template #download>
-    <div class="file-item" (click)="onDownload()">
-        {{userFile.filename}}
+    <div class="file-item download" (click)="onDownload()">
+        <span>
+            {{userFile.filename}}
+        </span>
     </div>
 </ng-template>
