@@ -15,15 +15,24 @@ import { User } from '../typings/user.types';
 export class TrainingDataService {
 	constructor(private dataService: DataService) {}
 	
-    public getTrainings(options?: {
+    public getTrainings(options: {
         trainingsIds?: string[],
         authorId?: string,
-        fields?: string[]
+        fields?: string[],
+        query?: { include?: string[] }
     }) {
         const key = NetworkRequestKey.SelectTrainings
+        const { query } = options
+        const paramsObj: { [key: string]: string | string[] | number | number[] } = {
+            reqId: key
+        }
+        if (query?.include) {
+            paramsObj['include'] = query.include
+        }
+
         const payload = NetworkHelper.createRequestPayload(key, {
             body: options,
-            params: { reqId: key }
+            params: paramsObj
         })
 
         return this.dataService.send<{ data: Training[] }>(payload).pipe(
@@ -68,6 +77,23 @@ export class TrainingDataService {
         }>(payload).pipe(
             map(response => response)
         )
+    }
+
+    public getPersonalization(profileId: string, type?: 'assignment' | 'open') {
+        const key = NetworkRequestKey.Personalization
+        const paramsObj: Record<string, string> = {
+            reqId: key
+        }
+        if (type) {
+            paramsObj['type'] = type
+        }
+        
+        const payload = NetworkHelper.createRequestPayload(key, {
+            params: paramsObj,
+            urlId: profileId,
+        })
+
+        return this.dataService.send<{ personalization: Personalization[] }>(payload)
     }
 
     public getStudentProfiles(studentId: string) {

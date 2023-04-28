@@ -23,6 +23,9 @@ export const DATA_ENDPOINTS = {
             toString: () => `${apiUrl}/api/training`
         },
         personalization: {
+            teacher: {
+                task: `${apiUrl}/api/personalization/teacher/task`,
+            },
             task: `${apiUrl}/api/personalization/task`,
             toString: () => `${apiUrl}/api/personalization`
         }

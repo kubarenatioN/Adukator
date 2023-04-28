@@ -32,7 +32,7 @@ export class TeacherTrainingService {
 		this.initTeacherTrainings();
 	}
 
-    public getProfile(profileId: string, options?: { include?: ('progress')[] }) {
+    public getProfile(profileId: string, options?: { include?: ('progress' | 'personalization')[] }) {
         return this.trainingDataService.getProfile({ uuid: profileId }, options)
     }
 
@@ -93,7 +93,7 @@ export class TeacherTrainingService {
 		return this.trainingDataService
 			.getTrainings({
 				trainingsIds: [trainingId],
-				fields: CoursesSelectFields.Full,
+				fields: CoursesSelectFields.Full
 			})
 			.pipe(map((trainings) => trainings[0]));
 	}

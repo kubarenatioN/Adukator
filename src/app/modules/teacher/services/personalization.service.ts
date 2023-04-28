@@ -1,31 +1,27 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
-import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
 import { TrainingDataService } from 'src/app/services/training-data.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
 import { TopicTask } from 'src/app/typings/course.types';
-import { PersonalizationAssignment, PersonalTask, Training } from 'src/app/typings/training.types';
-import { PersonalizationProfile } from '../components/personalization/assign-task/assign-task.component';
-import { TeacherTrainingService } from './teacher-training.service';
+import { PersonalizationAssignment, Training } from 'src/app/typings/training.types';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class PersonalizationService {
-    public personalTasks$: Observable<PersonalTask[]>
-	
-    constructor(private userService: UserService, private teacherService: TeacherTrainingService, private trainingDataService: TrainingDataService, private uploadService: UploadService) {
-        this.personalTasks$ = this.getTasks()
+    constructor(private userService: UserService, private trainingDataService: TrainingDataService, private uploadService: UploadService) {
+
+    }
+
+    public getProfilePersonalization(profileId: string, type?: 'assignment' | 'open') {
+        return this.trainingDataService.getPersonalization(profileId, type).pipe(
+            map(res => res.personalization)
+        )
     }
 
     public applyTasksAssignment(payload: { assign: PersonalizationAssignment[], unassign: PersonalizationAssignment[] }) {
         return this.trainingDataService.assignPersonalTasks(payload)
-    }
-
-    public getTrainings(fields: string[]) {
-        return this.teacherService.getTeacherTrainings(fields)
     }
 
     public createTask(training: Training, topicId: string, task: TopicTask) {
@@ -43,13 +39,21 @@ export class PersonalizationService {
         )
     }
 
-    private getTasks() {
+    public getTeacherTasks() {
         return this.userService.user$.pipe(
             switchMap(user => {
                 return this.trainingDataService.getPersonalTasks({
                     authorId: user._id
                 })
             }),
+            map(res => {
+                return res.tasks  
+            })
+        )
+    }
+
+    public getTasks(options: { authorId?: string, topicId?: string, trainingId?: string }) {
+        return this.trainingDataService.getPersonalTasks(options).pipe(
             map(res => {
                 return res.tasks  
             })

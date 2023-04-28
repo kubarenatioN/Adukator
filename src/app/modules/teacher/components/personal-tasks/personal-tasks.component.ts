@@ -6,7 +6,7 @@ import { generateUUID } from 'src/app/helpers/courses.helper';
 import { StudentTraining } from 'src/app/models/course.model';
 import { UploadService } from 'src/app/services/upload.service';
 import { ModuleTopic, TopicTask } from 'src/app/typings/course.types';
-import { Training } from 'src/app/typings/training.types';
+import { PersonalTask, Training } from 'src/app/typings/training.types';
 import { PersonalizationService } from '../../services/personalization.service';
 import { TeacherTrainingService } from '../../services/teacher-training.service';
 
@@ -21,7 +21,7 @@ export class PersonalTasksComponent implements OnInit {
     
 	public trainings$: Observable<Training[]>
     public topics$!: Observable<ModuleTopic[] | null>
-    public tasks$ = this.personalizationService.personalTasks$;
+    public tasks$!: Observable<PersonalTask[]>
     
 	public form;
     public shouldShowTaskForm = false;
@@ -41,10 +41,12 @@ export class PersonalTasksComponent implements OnInit {
 			materials: [[] as string[]],
 		});
 
-        this.trainings$ = this.personalizationService.getTrainings(CoursesSelectFields.Modules).pipe(shareReplay(1))
+        this.trainings$ = this.teacherService.getTeacherTrainings(CoursesSelectFields.Modules).pipe(shareReplay(1))
 	}
 
 	ngOnInit(): void {
+        this.tasks$ = this.personalizationService.getTeacherTasks()
+
         this.topics$ = this.form.controls.training.valueChanges.pipe(
             withLatestFrom(this.trainings$),
             map(([trainingId, trainings])=> {

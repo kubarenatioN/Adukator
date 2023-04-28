@@ -8,8 +8,9 @@ import { createTopicsProgressConfig } from 'src/app/helpers/charts.config';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { StudentTraining } from 'src/app/models/course.model';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { ProfileProgress, ProfileProgressRecord, Training, TrainingProfileTraining, TrainingProfileUser } from 'src/app/typings/training.types';
+import { Personalization, ProfileProgress, ProfileProgressRecord, Training, TrainingProfileTraining, TrainingProfileUser } from 'src/app/typings/training.types';
 import { TeacherTrainingService } from '../../services/teacher-training.service';
+import { TopicTask } from 'src/app/typings/course.types';
 
 type ViewData = {
     profile: TrainingProfileTraining | null
@@ -98,13 +99,14 @@ export class StudentProfileComponent extends CenteredContainerDirective implemen
             }),
             map(res => {
                 const training = res.profile ? new StudentTraining(res.profile.training) : null
+                const personalTasks = res?.personalization?.filter(pers => pers.type === 'assignment').map(pers => pers.task!)
                 return {
                     profile: res.profile,
                     hasAccess: res.hasAccess,
                     progress: res.progress,
                     training,
                     charts: {
-                        topics: training && res.progress ? createTopicsProgressConfig(training.topics, res.progress) : null
+                        topics: training && res.progress ? createTopicsProgressConfig(training.topics, res.progress, personalTasks) : null
                     }
                 }
             })

@@ -42,6 +42,7 @@ export interface TopicTask {
     id: string;
     taskDescr: string;
     materials?: string[],
+    type?: 'personal'
     comment?: string
     comments?: Record<string, string>;
 }

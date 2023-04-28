@@ -35,6 +35,7 @@ export enum NetworkRequestKey {
     CreateTask = 'CreateTask',
     GetPersonalTasks = 'GetPersonalTasks',
     PersonalizationAssignment = 'PersonalizationAssignment',
+    Personalization = 'Personalization',
 
     // REVIEW
     GetReviewCourseHistory = 'GetReviewCourseHistory',
@@ -204,15 +205,19 @@ export class NetworkHelper {
 
         [NetworkRequestKey.CreateTask]: {
             method: 'POST',
-            url: `${DATA_ENDPOINTS.api.personalization.task}`,
+            url: `${DATA_ENDPOINTS.api.personalization.teacher.task}`,
         },
         [NetworkRequestKey.GetPersonalTasks]: {
             method: 'GET',
-            url: `${DATA_ENDPOINTS.api.personalization.task}`,
+            url: `${DATA_ENDPOINTS.api.personalization.teacher.task}`,
         },
         [NetworkRequestKey.PersonalizationAssignment]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.personalization}/assign`,
+        },
+        [NetworkRequestKey.Personalization]: {
+            method: 'GET',
+            url: `${DATA_ENDPOINTS.api.personalization}`,
         },
     }
 

@@ -10,6 +10,7 @@ import { ModuleTopic, TopicTask } from 'src/app/typings/course.types';
 import { PersonalTask, TrainingProfilePersonalizations, TrainingProfileUser } from 'src/app/typings/training.types';
 import { PersonalizationService } from '../../../services/personalization.service';
 import { TeacherTrainingService } from '../../../services/teacher-training.service';
+import { UserService } from 'src/app/services/user.service';
 
 export type PersonalizationProfile = { profile: TrainingProfilePersonalizations, hasAssignedTask: boolean }
 
@@ -24,7 +25,7 @@ export class AssignTaskComponent implements OnInit {
     private tasks: PersonalTask[] = []
     private refreshProfiles$ = new BehaviorSubject<void>(undefined)
     
-	public trainings$ = this.personalizationService.getTrainings(CoursesSelectFields.Modules).pipe(shareReplay(1))
+	public trainings$ = this.teacherService.getTeacherTrainings(CoursesSelectFields.Modules).pipe(shareReplay(1))
     public topics$!: Observable<ModuleTopic[] | null>
     public tasks$!: Observable<PersonalTask[] | null>
 	public personalizations$!: Observable<PersonalizationProfile[]>;
@@ -35,6 +36,7 @@ export class AssignTaskComponent implements OnInit {
 	constructor(
         private teacherService: TeacherTrainingService, 
         private personalizationService: PersonalizationService,
+        private userService: UserService,
         private fbHelper: FormBuilderHelper,
     ) {
         this.form = this.fbHelper.createAssignTaskForm()
@@ -46,6 +48,8 @@ export class AssignTaskComponent implements OnInit {
     }
 
 	ngOnInit(): void {
+        const personalTasks$ = this.personalizationService.getTeacherTasks()
+
         this.topics$ = this.form.controls.training.valueChanges.pipe(
             withLatestFrom(this.trainings$),
             map(([trainingId, trainings]) => {
@@ -76,7 +80,7 @@ export class AssignTaskComponent implements OnInit {
 
         this.tasks$ = combineLatest([
             this.form.valueChanges,
-            this.personalizationService.personalTasks$,
+            personalTasks$,
         ]).pipe(
             map(([model, tasks]) => {
                 const personalTasks = tasks.filter(task => task.training._id === model.training && task.topicId === model.topic)

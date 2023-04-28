@@ -4,9 +4,10 @@ import { ChartConfiguration } from 'chart.js';
 import { Observable, ReplaySubject } from 'rxjs';
 import { createTopicsProgressConfig } from 'src/app/helpers/charts.config';
 import { StudentTraining } from 'src/app/models/course.model';
-import { ProfileProgress, TrainingProfileTraining } from 'src/app/typings/training.types';
+import { Personalization, ProfileProgress, TrainingProfileTraining } from 'src/app/typings/training.types';
 import { StudentProfileService } from '../../services/student-profile.service';
 import { StudentTrainingService } from '../../services/student-training.service';
+import { TopicTask } from 'src/app/typings/course.types';
 
 enum ViewMode {
 	SingleProfile = 'SingleProfile',
@@ -16,7 +17,7 @@ enum ViewMode {
 type ViewData = {
     mode: ViewMode,
     profile?: TrainingProfileTraining | null,
-    training?: StudentTraining,
+    training: StudentTraining | null,
     hasAccess?: boolean
     topicsProgress?: ProfileProgress[],
     charts: {
@@ -43,12 +44,13 @@ export class StudentProfileComponent implements OnInit {
 			console.log('student profile page', profileId);
 			if (profileId) {
                 this.trainingService.getProfile(profileId, {
-                    include: ['progress']
+                    include: ['progress', 'personalization']
                 }).subscribe(profileInfo => {
                     const training = profileInfo.profile?.training 
                         ? new StudentTraining(profileInfo.profile.training) 
-                        : undefined
+                        : null
                     const progress = profileInfo.progress
+                    const personalTasks = profileInfo.personalization?.filter(pers => pers.type === 'assignment').map(pers => pers.task!)
 
                     this.viewDataStore$.next({
                         ...profileInfo,
@@ -56,13 +58,14 @@ export class StudentProfileComponent implements OnInit {
                         topicsProgress: progress,
                         mode: ViewMode.SingleProfile,
                         charts: {
-                            topics: training && progress ? createTopicsProgressConfig(training.topics, progress) : undefined
+                            topics: training && progress ? createTopicsProgressConfig(training.topics, progress, personalTasks) : undefined
                         }
                     })
                 })
 			} else {
                 this.viewDataStore$.next({
                     mode: ViewMode.ProfilesList,
+                    training: null,
                     charts: {}
                 })
             }

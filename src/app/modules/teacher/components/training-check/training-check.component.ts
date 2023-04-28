@@ -1,22 +1,29 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { forkJoin, Observable, of } from 'rxjs';
-import { filter, map, shareReplay, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, forkJoin, Observable, of } from 'rxjs';
+import { filter, finalize, map, shareReplay, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { generateUUID } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { StudentTraining } from 'src/app/models/course.model';
 import { UploadService } from 'src/app/services/upload.service';
 import { TopicTask } from 'src/app/typings/course.types';
-import { ProfileProgress, ProfileProgressRecord, TaskCheckThread, TopicDiscussionReply, TrainingProfile, TrainingReply, TrainingTaskAnswer } from 'src/app/typings/training.types';
+import { Personalization, ProfileProgress, ProfileProgressRecord, TaskCheckThread, TopicDiscussionReply, TrainingProfile, TrainingReply, TrainingTaskAnswer } from 'src/app/typings/training.types';
 import { User } from 'src/app/typings/user.types';
 import { TeacherTrainingService } from '../../services/teacher-training.service';
+import { PersonalizationService } from '../../services/personalization.service';
 
 
 type ViewData = {
     training: StudentTraining,
     members: TrainingProfile<string, User>[]
+}
+
+type TopicCheckData = {
+    discussion: TopicDiscussionReply[] | null,
+    progress: ProfileProgress | null,
+    personalization: Personalization[]
 }
 
 @Component({
@@ -29,6 +36,7 @@ export class TrainingCheckComponent
 	extends CenteredContainerDirective
 	implements OnInit
 {
+    private loadingAnswersStore$ = new BehaviorSubject<boolean>(true);
     private resultsForm!: FormArray<FormGroup>
     private activeProfileProgressId?: string
    
@@ -38,13 +46,13 @@ export class TrainingCheckComponent
 
     public viewData$!: Observable<ViewData>;
     public checkTasks$!: Observable<TaskCheckThread[] | null>;
-    public topicCheckData$!: Observable<{ 
-        discussion: TopicDiscussionReply[] | null,
-        progress: ProfileProgress | null
-    } | null>;
+    public personalization$!: Observable<Personalization[] | null>;
+    public topicCheckData$!: Observable<TopicCheckData | null>;
+    public isLoadingAnswers$ = this.loadingAnswersStore$.asObservable()
 
 	constructor(
         private teacherTraining: TeacherTrainingService,
+        private personalizationService: PersonalizationService,
         private activatedRoute: ActivatedRoute,
         private uploadService: UploadService,
         private fbHelper: FormBuilderHelper,
@@ -64,6 +72,13 @@ export class TrainingCheckComponent
         })
 
         this.topicCheckData$ = this.checkConfigForm.valueChanges.pipe(
+            tap(() => {
+                this.loadingAnswersStore$.next(true);                
+            }),
+            filter(model => {
+                const { profile, topic } = model
+                return !!profile && !!topic
+            }),
             switchMap(model => {
                 const { profile, topic } = model
 
@@ -75,6 +90,16 @@ export class TrainingCheckComponent
             shareReplay(1)
         )
 
+        this.personalization$ = combineLatest([
+            this.checkConfigForm.controls.topic.valueChanges,
+            this.topicCheckData$,
+        ])
+        .pipe(
+            map(([topic, data]) => {
+                return data?.personalization.filter(pers => pers.task?.topicId === topic) ?? null
+            }),
+        )
+
         this.checkTasks$ = this.topicCheckData$.pipe(
             filter(Boolean),
             withLatestFrom(this.viewData$),
@@ -82,16 +107,10 @@ export class TrainingCheckComponent
                 const { training } = viewData
                 const { progress } = checkData
                 this.activeProfileProgressId = progress?._id
-                this.initResultsForm(training, progress)
+                this.initResultsForm(training, checkData)
             }),
             map(
-                ([checkData, viewData]: [
-                    { 
-                        discussion: TopicDiscussionReply[] | null,
-                        progress: ProfileProgress | null
-                    },
-                    ViewData
-                ]) => {
+                ([checkData, viewData]) => {
 
                 const { discussion, progress } = checkData
                 if (!discussion || !progress) {
@@ -102,10 +121,11 @@ export class TrainingCheckComponent
 
                 const { topic: topicId, profile: profileId } = this.checkConfigForm.value
                 const topic = training.topics.find(topic => topic.id === topicId)
-                const tasks = topic?.practice?.tasks
+                const tasks = topic?.practice?.tasks ?? []
+                const personalTasks = checkData.personalization.filter(pers => pers.type === 'assignment').map(pers => pers.task!.task)
                 const profileUUId = members.find(member => member._id === profileId)?.uuid ?? ''
 
-                const tasksForCheck = tasks?.map(task => {
+                const tasksForCheck = [...tasks, ...personalTasks].map(task => {
                     return this.prepareTaskThreadData(
                         task, 
                         profileUUId, 
@@ -113,7 +133,10 @@ export class TrainingCheckComponent
                     )
                 })
                 
-                return tasksForCheck ?? []
+                return tasksForCheck ?? null
+            }),
+            tap(() => {
+                this.loadingAnswersStore$.next(false)
             }),
             shareReplay(1)
         )
@@ -150,12 +173,14 @@ export class TrainingCheckComponent
         return taskCheck.task.id
     }
 
-    private initResultsForm(training: StudentTraining, progress: ProfileProgress | null) {
+    private initResultsForm(training: StudentTraining, checkData: TopicCheckData) {
+        const { progress, personalization } = checkData
         const { topic: topicId } = this.checkConfigForm.value ?? ''
         const topicTasks = training.topics.find(topic => topic.id === topicId)?.practice?.tasks ?? []
+        const personalTasks = personalization.filter(pers => pers.type === 'assignment').map(pers => pers.task?.task!)
         this.resultsFormMap = {};
         if (progress) {
-            const formArray = this.getResultsFormArray(topicTasks, progress)
+            const formArray = this.getResultsFormArray([...topicTasks, ...personalTasks], progress)
             this.resultsForm = new FormArray(formArray)
         }
     }
@@ -187,7 +212,8 @@ export class TrainingCheckComponent
             progress: this.teacherTraining.loadProgress({
                 profileId,
                 topicId,
-            })
+            }),
+            personalization: this.personalizationService.getProfilePersonalization(profileId, 'assignment')
         })
     }
 
