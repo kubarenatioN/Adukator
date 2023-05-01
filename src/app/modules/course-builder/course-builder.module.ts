@@ -16,27 +16,32 @@ import { ChipsControlComponent } from './controls/chips-control/chips-control.co
 import { CourseBuilderService } from './services/course-builder.service';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
 
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
+
 @NgModule({
 	providers: [
-        CourseBuilderService,
-        UploadCacheService,
-    ],
+		CourseBuilderService,
+		UploadCacheService,
+	],
 	declarations: [
 		CourseBuilderComponent,
-        CourseFormComponent,
+		CourseFormComponent,
 		CreateCourseComponent,
 		CourseModuleComponent,
 		ModuleTopicComponent,
 		TopicTaskComponent,
-        CourseNavComponent,
-        ChipsControlComponent,
+		CourseNavComponent,
+		ChipsControlComponent,
 	],
 	imports: [
 		CommonModule,
 		CourseBuilderRoutingModule,
 		SharedModule,
+
+		MatAutocompleteModule,
+		
 		ReactiveFormsModule,
-        LayoutComponent,
+		LayoutComponent,
 	],
 })
 export class CourseBuilderModule {}

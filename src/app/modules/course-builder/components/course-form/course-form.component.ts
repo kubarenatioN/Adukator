@@ -7,7 +7,7 @@ import {
 	Output,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { BehaviorSubject, Observable, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, debounceTime, of, switchMap, takeUntil, tap } from 'rxjs';
 import {
     EmptyCourseFormData,
 	isEmptyCourseFormData,
@@ -27,6 +27,7 @@ import {
     WrapperType,
 } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
+import { ChipItem } from '../../controls/chips-control/chips-control.component';
 
 @Component({
 	selector: 'app-course-form',
@@ -36,6 +37,7 @@ import { CourseBuilderService } from '../../services/course-builder.service';
 })
 export class CourseFormComponent extends BaseComponent implements OnInit {
     public categories$ = this.configService.loadCourseCategories();
+    public competencies$!: Observable<ChipItem[]>
 
 	public courseForm;
 	public activeFormGroup!: FormGroup;
@@ -106,6 +108,18 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
                     this.activeFormGroup = this.getFormGroup(viewPath)
                 })
             )
+        
+        this.competencies$ = this.overallInfoSubform.controls.category.valueChanges
+        .pipe(
+            debounceTime(200),
+            switchMap(category => {
+                return of([
+                    { id: '1', label: 'SQL' },
+                    { id: '2', label: 'Базы данных' },
+                    { id: '3', label: 'Oracle' },
+                ])
+            })
+        )
 	}
 
     public addModule() {

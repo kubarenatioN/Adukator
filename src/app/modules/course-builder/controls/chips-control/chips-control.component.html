@@ -1,15 +1,29 @@
 <mat-form-field class="example-chip-list" appearance="fill">
-    <mat-label>{{ title }}</mat-label>
-    <mat-chip-list #chipList>
-    <mat-chip *ngFor="let c of items" 
-    (removed)="remove(c)">
-        {{c}}
-        <button matChipRemove>Х</button>
-    </mat-chip>
-        <input placeholder="..."
-            [matChipInputFor]="chipList"
-            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-            [matChipInputAddOnBlur]="true"
-            (matChipInputTokenEnd)="add($event)">
-    </mat-chip-list>
+	<mat-label>{{ title }}</mat-label>
+	<mat-chip-list #chipList>
+		<mat-chip *ngFor="let c of pickedItems" (removed)="remove(c.id)">
+			{{ c.label }}
+			<button matChipRemove>Х</button>
+		</mat-chip>
+		<input
+			#input
+            [formControl]="query"
+			[matChipInputFor]="chipList"
+			[matAutocomplete]="auto"
+			[matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+			[matChipInputAddOnBlur]="true"
+			(matChipInputTokenEnd)="add($event)"
+		/>
+	</mat-chip-list>
+	<mat-autocomplete
+		#auto="matAutocomplete"
+		(optionSelected)="selected($event)"
+	>
+		<mat-option
+			*ngFor="let item of filteredItems$ | async"
+			[value]="item.id"
+		>
+			{{ item.label }}
+		</mat-option>
+	</mat-autocomplete>
 </mat-form-field>

@@ -78,19 +78,21 @@
         
         <div class="property">
             <app-chips-control
-            [form]="overallInfoSubform"
-            control="requiredCompetencies"
-            title="Необходимые компетенции"
-            class="categories-container"
+                [form]="overallInfoSubform"
+                [items]="competencies$ | async"
+                control="requiredCompetencies"
+                title="Необходимые компетенции"
+                class="categories-container"
             ></app-chips-control>
         </div> 
 
         <div class="property">
             <app-chips-control
-            [form]="overallInfoSubform"
-            control="acquiredCompetencies"
-            title="Получаемые компетенции"
-            class="categories-container"
+                [form]="overallInfoSubform"
+                [items]="competencies$ | async"
+                control="acquiredCompetencies"
+                title="Получаемые компетенции"
+                class="categories-container"
             ></app-chips-control>
         </div> 
 
