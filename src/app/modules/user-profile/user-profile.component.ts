@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { StudentCoursesService } from 'src/app/services/student-courses.service';
 import { UserService } from 'src/app/services/user.service';
-import { User } from 'src/app/typings/user.types';
+import { User, UserTrainingProfile } from 'src/app/typings/user.types';
 
 @Component({
 	selector: 'app-user-profile',
@@ -14,6 +14,7 @@ import { User } from 'src/app/typings/user.types';
 })
 export class UserProfileComponent extends CenteredContainerDirective {    
     public user$: Observable<User | null>;
+    public userTrainingProfile$: Observable<UserTrainingProfile>;
     
     private userAsStudentCourses$ = this.studentCoursesService.courses$
 
@@ -23,7 +24,7 @@ export class UserProfileComponent extends CenteredContainerDirective {
 	constructor(private userService: UserService, private router: Router, private studentCoursesService: StudentCoursesService) {
         super();
         this.user$ = this.userService.user$
-        
+        this.userTrainingProfile$ = this.userService.trainingProfile$
     }
 
     public logOut(): void {

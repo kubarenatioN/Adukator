@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, filter, map, Observable, of, ReplaySubject, Subject, switchMap } from 'rxjs';
+import { BehaviorSubject, filter, map, Observable, of, ReplaySubject, shareReplay, Subject, switchMap } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { Course } from '../typings/course.types';
 import { DataResponse } from '../typings/response.types';
-import { User } from '../typings/user.types';
+import { User, UserTrainingProfile } from '../typings/user.types';
 import { AuthService } from './auth.service';
 import { DataService } from './data.service';
+import { DATA_ENDPOINTS } from '../constants/network.constants';
 
 @Injectable({
 	providedIn: 'root',
@@ -14,6 +15,7 @@ export class UserService {
 	private userStore$ = new BehaviorSubject<User | null>(null);
 
 	public user$: Observable<User>;
+    public trainingProfile$: Observable<UserTrainingProfile>
 
     public get hasUser$(): Observable<boolean> {
         return this.userStore$.pipe(map(user => user !== null))
@@ -36,6 +38,13 @@ export class UserService {
 	constructor(private dataService: DataService, private authService: AuthService) {
 		this.user$ = this.userStore$.asObservable().pipe(filter(Boolean));
         this.isAdmin$ = this.user$.pipe(map(user => user !== null && user.role === 'admin'));
+        this.trainingProfile$ = this.user$.pipe(
+            switchMap(user => {
+                return this.dataService.http.get<{ profile: UserTrainingProfile }>(`${DATA_ENDPOINTS.root}/user/training/${user._id}`)
+            }),
+            map(res => res.profile),
+            shareReplay(1)
+        )
 	}
 
     public initUser() {

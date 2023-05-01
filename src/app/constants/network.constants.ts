@@ -1,6 +1,7 @@
 import { apiUrl } from "./urls";
 
 export const DATA_ENDPOINTS = {
+    root: apiUrl,
 	auth: {
         login: {
             jwt: `${apiUrl}/auth/login/jwt`,

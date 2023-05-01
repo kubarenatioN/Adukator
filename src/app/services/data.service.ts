@@ -17,9 +17,9 @@ export interface DataRequestPayload {
 export class DataService {
 	constructor(private httpClient: HttpClient) {}
 
-    // public get http() {
-    //     return this.httpClient
-    // }
+    public get http() {
+        return this.httpClient
+    }
 
 	public send<T>(payload: DataRequestPayload): Observable<T> {
 		const { method, url, headers, body, params, context } = payload;

@@ -6,6 +6,17 @@
             <h1>{{user.username}}</h1>
         </div>
         <h3>Ранг: {{user.role}}</h3>
+        <div *ngIf="userTrainingProfile$ | async as userTrainingProfile">
+            
+            <div class="competencies">
+                <h4>Компетенции</h4>
+                <ul *ngIf="userTrainingProfile.competencies.length > 0; else noItems">
+                    <li *ngFor="let comp of userTrainingProfile.competencies">
+                        {{ comp }}
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <ng-container [ngSwitch]="user.role">
@@ -28,7 +39,7 @@
 
         <div *ngIf="studentApprovedCourses$ | async as trainings; else loader">
             <h3>Зачислен</h3>
-            <ng-container *ngIf="trainings.length > 0; else noCourses">
+            <ng-container *ngIf="trainings.length > 0; else noItems">
                 <div class="courses-list">
                     <ng-container *ngFor="let training of trainings"
                     [ngTemplateOutlet]="approvedCourse"
@@ -39,7 +50,7 @@
 
         <div *ngIf="studentPendingCourses$ | async as trainings; else loader">
             <h3>В ожидании</h3>
-            <ng-container *ngIf="trainings.length > 0; else noCourses">
+            <ng-container *ngIf="trainings.length > 0; else noItems">
                 <div class="courses-list">
                     <ng-container *ngFor="let training of trainings"
                     [ngTemplateOutlet]="pendingCourse"
@@ -91,6 +102,6 @@
     Loading...
 </ng-template>
 
-<ng-template #noCourses>
+<ng-template #noItems>
     Здесь пусто ;(
 </ng-template>
