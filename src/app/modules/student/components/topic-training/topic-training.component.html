@@ -58,8 +58,19 @@
 
         <div *ngIf="topic.testLink" class="section">
             <h2>Ссылка на тест</h2>
+            <div>
+                <p>
+                    Ваш уникальный ID тренинга: 
+                </p>
+                <span (click)="copyProfileIdToClipboard(profileIdTextElem)" 
+                    class="copy-text training-test-id" 
+                    #profileIdTextElem>
+                    {{ profileId + '#' + topic.id }}
+                </span>
+                <button (click)="copyProfileIdToClipboard(profileIdTextElem)">Копировать</button>
+            </div>
             <p>
-                <a target="_blank" [href]="topic.testLink">{{ topic.testLink }}</a>
+                <a target="_blank" [href]="topic.testLink">Перейти</a>
             </p>
         </div>
 

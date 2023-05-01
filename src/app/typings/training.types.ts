@@ -115,6 +115,7 @@ export interface ProfileProgress {
     profile: string
     topicId: string
     records: ProfileProgressRecord[]
+    quiz: ProfileQuizRecord[]
 }
 
 export interface ProfileProgressRecord {
@@ -124,6 +125,12 @@ export interface ProfileProgressRecord {
     isCounted?: boolean
     date: string
     comment?: string
+}
+
+export interface ProfileQuizRecord {
+    uuid: string
+    mark: number
+    date: string
 }
 
 export interface PersonalTask {

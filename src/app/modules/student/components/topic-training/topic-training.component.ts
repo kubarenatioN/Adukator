@@ -12,18 +12,16 @@ import {
 import {
 	BehaviorSubject,
 	combineLatest,
-	delay,
 	distinctUntilChanged,
-	filter,
 	map,
-	Observable,
 	takeUntil,
+	tap,
 } from 'rxjs';
 import { StudentTrainingService } from 'src/app/modules/student/services/student-training.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { ModuleTopic, TopicTask } from 'src/app/typings/course.types';
-import { TrainingProfileTraining, TrainingReply, TrainingReplyMessage } from 'src/app/typings/training.types';
+import { TrainingReply, TrainingReplyMessage } from 'src/app/typings/training.types';
 
 @Component({
 	selector: 'app-topic-training',
@@ -39,19 +37,20 @@ export class TopicTrainingComponent
 
 	@Input() public topic!: ModuleTopic;
 
-    @Output() public sendReply = new EventEmitter<Pick<TrainingReply, 'message' | 'type' | 'topicId'>>()
+	@Output() public sendReply = new EventEmitter<Pick<TrainingReply, 'message' | 'type' | 'topicId'>>()
 
 	public trainingMaterialsFolder: string = '';
+	public profileId: string | null = null
 
-    public personalTasks$ = this.trainingService.personalization$.pipe(
-        map(personalization => {
-            let tasks: TopicTask[] | null = null 
-            if (personalization) {
-                tasks = personalization.filter(pers => pers.type === 'assignment').map(pers => pers.task!.task)
-            }
-            return tasks
-        })
-    )
+	public personalTasks$ = this.trainingService.personalization$.pipe(
+			map(personalization => {
+					let tasks: TopicTask[] | null = null 
+					if (personalization) {
+							tasks = personalization.filter(pers => pers.type === 'assignment').map(pers => pers.task!.task)
+					}
+					return tasks
+			})
+	)
 
 	public get controlId(): string {
 		return this.topic.id;
@@ -68,7 +67,7 @@ export class TopicTrainingComponent
 	constructor(
 		private trainingService: StudentTrainingService,
 		private uploadService: UploadService,
-        private cdRef: ChangeDetectorRef
+		private cdRef: ChangeDetectorRef
 	) {
 		super();
 	}
@@ -88,10 +87,13 @@ export class TopicTrainingComponent
 		])
 			.pipe(
 				takeUntil(this.componentLifecycle$),
+				tap(([_, profile]) => {
+					this.profileId = profile.uuid
+				}),
 				map(([topic, profile]) => {
 					return this.uploadService.getFilesFolder(
 						'course',
-                        profile.training.course.uuid,
+            profile.training.course.uuid,
 						'topics',
 						topic.id
 					);
@@ -110,5 +112,10 @@ export class TopicTrainingComponent
             type: 'task',
             message,
         });
+	}
+
+	public copyProfileIdToClipboard(textElem: HTMLElement) {
+		const text = textElem.innerText
+		navigator.clipboard.writeText(text)
 	}
 }
