@@ -16,7 +16,8 @@ import { ChipsControlComponent } from './controls/chips-control/chips-control.co
 import { CourseBuilderService } from './services/course-builder.service';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
 
-import { MatAutocompleteModule } from '@angular/material/autocomplete'
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ReviewCourseComponent } from './components/review-course/review-course.component'
 
 @NgModule({
 	providers: [
@@ -32,6 +33,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete'
 		TopicTaskComponent,
 		CourseNavComponent,
 		ChipsControlComponent,
+  	ReviewCourseComponent,
 	],
 	imports: [
 		CommonModule,
