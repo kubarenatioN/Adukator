@@ -87,8 +87,8 @@ export interface CourseFormOverallInfo {
     category: string;
     categoryLabel?: string;
     comments: Record<string, CourseReviewControlComment[] | null>;
-    acquiredCompetencies: ChipItem[],
-    requiredCompetencies: ChipItem[],
+    acquiredCompetencies: string[],
+    requiredCompetencies: string[],
 }
  
 interface CourseCore {
@@ -128,12 +128,17 @@ export interface CourseReview extends CourseCore {
     createdAt?: string;
     status?: CourseReviewStatus;
     competencies: {
-        acquired: ChipItem[],
-        required: ChipItem[],
+        acquired: string[],
+        required: string[],
     },
     comments: {
         [key: string]: CourseReviewControlComment[] | null
     }
+}
+
+export interface CourseCompetency {
+    id: string,
+    label: string
 }
 
 export interface TeacherCourses {

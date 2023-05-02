@@ -40,17 +40,14 @@ export class LearnService {
 
     public getTraining(trainingId: string) {
         return this.trainingDataService.getTrainings({
-            trainingsIds: [trainingId]
+            trainingsIds: [trainingId],
+            fields: CoursesSelectFields.Full
         })
     }
 
     public lookupTraining(studentsIds: string[], trainingId: string) {
         return this.trainingDataService.lookupEnrollment(studentsIds, trainingId)
     }
-
-    // public getTrainingProfile(uuid: string) {
-    //     return this.trainingDataService.getProfile({ uuid })
-    // }
 
     public changeProfileEnrollment(
 		studentsIds: string[],

@@ -6,7 +6,9 @@ export interface User {
 	email: string;
 	username: string;
 	photo?: string;
-	role?: 'teacher' | 'student' | 'admin'
+	role?: 'teacher' | 'student' | 'admin',
+	permission: 'teacher' | 'student',
+	trainingProfile: UserTrainingProfile
 }
 
 export interface LoginResponse {

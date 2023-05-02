@@ -106,8 +106,8 @@ export const convertCourseFormDataToCourse = (
 		description,
 		category,
         competencies: {
-            acquired: acquiredCompetencies.map(comp => comp.label),
-            required: requiredCompetencies.map(comp => comp.label),
+            acquired: acquiredCompetencies,
+            required: requiredCompetencies,
         },
 		modules,
 		authorId,

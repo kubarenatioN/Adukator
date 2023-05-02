@@ -9,40 +9,49 @@
             <h1 class="title">{{ training.course.title }}</h1>
             <p class="descr">{{ training.course.description }}</p>
 
-            <ng-container *ngIf="trainingLookup$ | async as profile; else lookupLoader">
-
-                <ng-container *ngIf="profile !== 'NoEnroll'">
-                
-                    <div *ngIf="profile.enrollment === 'pending'">
-                        <p>Заявка на рассмотрении</p>
-                        <button 
-                        [disabled]="isDisabledEnrollActions"
-                        mat-raised-button 
-                        (click)="cancelTrainingEnroll(training)">Отозвать</button>
-                    </div>
-                    <div *ngIf="profile.enrollment === 'approved'">
-                        <button
-                        [disabled]="isDisabledEnrollActions"
-                        mat-raised-button 
-                        color="accent" 
-                        (click)="leaveTraining(training)">Покинуть</button>
-                        <a mat-raised-button [routerLink]="['/app/student/profile', profile.uuid, 'training']">Перейти к треннингу</a>
-                        <a mat-raised-button [routerLink]="['/app/student/profile', profile.uuid]">Прогресс</a>
-                    </div>
+            <div class="enrollment-panel">
+                <ng-container *ngIf="trainingLookup$ | async as profile; else lookupLoader">
+    
+                    <ng-container *ngIf="profile !== 'NoEnroll'">
+                    
+                        <div *ngIf="profile.enrollment === 'pending'">
+                            <p>Заявка на рассмотрении</p>
+                            <button 
+                            [disabled]="isDisabledEnrollActions"
+                            mat-raised-button 
+                            (click)="cancelTrainingEnroll(training)">Отозвать</button>
+                        </div>
+                        <div *ngIf="profile.enrollment === 'approved'">
+                            <button
+                            [disabled]="isDisabledEnrollActions"
+                            mat-raised-button 
+                            color="accent" 
+                            (click)="leaveTraining(training)">Покинуть</button>
+                            <a mat-raised-button [routerLink]="['/app/student/profile', profile.uuid, 'training']">Перейти к треннингу</a>
+                            <a mat-raised-button [routerLink]="['/app/student/profile', profile.uuid]">Прогресс</a>
+                        </div>
+                    </ng-container>
+    
+                    <ng-container *ngIf="profile === 'NoEnroll'">
+                        <div class="enroll-btn-wrapper">
+                            <button 
+                                *ngIf="(canEnroll$ | async) === true" 
+                                mat-raised-button 
+                                color="accent" 
+                                [disabled]="isDisabledEnrollActions"
+                                (click)="enrollTraining(training)">Записаться</button>
+                            
+                            <ng-container *ngIf="competenciesDiff$ | async as compDiff">
+                                <p *ngIf="compDiff.length > 0">
+                                    <span>Не хватает компетенций: </span>
+                                    <span>{{ compDiff }}</span>
+                                </p>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+    
                 </ng-container>
-
-                <ng-container *ngIf="profile === 'NoEnroll'">
-                    <button 
-                        *ngIf="(canEnroll$ | async) === true" 
-                        mat-raised-button 
-                        color="accent" 
-                        [disabled]="isDisabledEnrollActions"
-                        (click)="enrollTraining(training)">Записаться</button>
-                </ng-container>
-
-            </ng-container>
-            
-            
+            </div>
 
             <a *ngIf="isUserOwner$ | async" mat-raised-button color="accent" [routerLink]="['/app/teacher/training', training.uuid, 'manage']">Управление</a>
         </div>
@@ -55,7 +64,7 @@
                 <h3>Для зачисления на курс вам необходимо владеть следующими компетенциями</h3>
                 <ul class="competencies-list">
                     <li *ngFor="let comp of training.course.competencies.required">
-                        {{ comp }}
+                        {{ getCompLabel(comp) }}
                     </li>
                 </ul>
             </div>
@@ -64,7 +73,7 @@
                 <h3>После успешного прохождения курса, вы получите следующие компетенции</h3>
                 <ul class="competencies-list">
                     <li *ngFor="let comp of training.course.competencies.acquired">
-                        {{ comp }}
+                        {{ getCompLabel(comp) }}
                     </li>
                 </ul>
             </div>
@@ -110,7 +119,7 @@
 
                 <div class="topics-list">
                     <div *ngFor="let topic of module.topics" class="topic-item">
-                        <h3>{{topic.title}}</h3>
+                        <h4>{{topic.title}}</h4>
                         <p>{{topic.description}}</p>
                     </div>
                 </div>
