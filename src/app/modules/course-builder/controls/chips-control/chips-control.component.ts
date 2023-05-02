@@ -23,6 +23,11 @@ export class ChipsControlComponent implements OnInit {
 		this._items = value;
 		this.pickedItems = []
 	};
+	@Input() public set picked(value: ChipItem[] | null | undefined) {
+		if (value) {
+			this.pickedItems = value;
+		}
+	};
 	@Input() public addOnBlur = true;
 	readonly separatorKeysCodes = [ENTER] as const;
 	public filteredItems$!: Observable<ChipItem[]>
@@ -41,13 +46,13 @@ export class ChipsControlComponent implements OnInit {
 		)
 	}
 
-	public add(event: MatChipInputEvent): void {
+	public add(event: MatChipInputEvent): void {		
 		const label = event.value.trim();
 		const value = this._items
 			?.filter(it => this.pickedItems.findIndex(picked => picked.id === it.id) === -1)
 			.find(it => it.label === label);
 		if (value) {
-			this.pickedItems = [...this.pickedItems, value];
+			this.pickedItems.push(value);
 			this.form.patchValue({
 				[this.control]: this.pickedItems,
 			});
@@ -56,15 +61,21 @@ export class ChipsControlComponent implements OnInit {
 		this.query.setValue(null)
 	}
 
-	public remove(id: string): void {
+	public remove(id: string): void {		
 		this.pickedItems = this.pickedItems.filter((item) => item.id !== id);
+		this.form.patchValue({
+			[this.control]: this.pickedItems,
+		});
 	}
 
 	public selected(event: MatAutocompleteSelectedEvent): void {
 		const id = event.option.value;
 		const item = this._items?.find(it => it.id === id)
-		if (item) {
+		if (item && !this.pickedItems.includes(item)) {
 			this.pickedItems.push(item);
+			this.form.patchValue({
+				[this.control]: this.pickedItems,
+			});
 		}
 		
 		this.input.nativeElement.value = '';

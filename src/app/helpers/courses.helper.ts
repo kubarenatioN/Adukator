@@ -22,7 +22,7 @@ export const parseModules = (modulesString: string): CourseModule[] => {
 	return modules;
 };
 
-export const convertCourseToCourseFormData = (
+export const convertCourseReviewToCourseFormData = (
 	course: CourseReview
 ): CourseFormData => {
 	const {
@@ -34,7 +34,7 @@ export const convertCourseToCourseFormData = (
 		description,
 		category,
 		categoryLabel,
-        competencies,
+		competencies,
 		comments,
 		modules,
 		status,
@@ -54,9 +54,9 @@ export const convertCourseToCourseFormData = (
 			description,
 			category,
 			categoryLabel,
-            acquiredCompetencies: competencies.acquired,
-            requiredCompetencies: competencies.acquired,
-            comments,
+			acquiredCompetencies: competencies.acquired,
+			requiredCompetencies: competencies.required,
+			comments,
 		},
 		modules,
 		metadata,
@@ -84,8 +84,8 @@ export const convertCourseFormDataToCourseReview = (
 		description,
 		category,
         competencies: {
-            acquired: acquiredCompetencies,
-            required: requiredCompetencies,
+					acquired: acquiredCompetencies,
+					required: requiredCompetencies,
         },
 		comments,
 		modules,
@@ -106,8 +106,8 @@ export const convertCourseFormDataToCourse = (
 		description,
 		category,
         competencies: {
-            acquired: acquiredCompetencies,
-            required: requiredCompetencies,
+            acquired: acquiredCompetencies.map(comp => comp.label),
+            required: requiredCompetencies.map(comp => comp.label),
         },
 		modules,
 		authorId,
@@ -121,12 +121,12 @@ export const convertCourseToCourseTraining = (
 		course;
 	return {
 		_id,
-        uuid,
+		uuid,
 		title,
 		description,
 		category,
 		advantages,
-        competencies,
+		competencies,
 		modules,
 		authorId,
 	};

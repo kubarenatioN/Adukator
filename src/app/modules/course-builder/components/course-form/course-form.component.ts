@@ -12,7 +12,7 @@ import {
     EmptyCourseFormData,
 	isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
-import { convertCourseToCourseFormData } from 'src/app/helpers/courses.helper';
+import { convertCourseReviewToCourseFormData } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { getTopicMinDate, getTopicMaxDate } from 'src/app/helpers/forms.helper';
 import { ConfigService } from 'src/app/services/config.service';
@@ -61,7 +61,7 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
             return;
         }
         if (!isEmptyCourseFormData(data)) {
-            const formData = convertCourseToCourseFormData(data);
+            const formData = convertCourseReviewToCourseFormData(data);
             this.setCourseModel(formData);
         }
         

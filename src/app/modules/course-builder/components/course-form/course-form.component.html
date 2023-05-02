@@ -80,6 +80,7 @@
             <app-chips-control
                 [form]="overallInfoSubform"
                 [items]="competencies$ | async"
+                [picked]="overallInfoSubform.value.requiredCompetencies"
                 control="requiredCompetencies"
                 title="Необходимые компетенции"
                 class="categories-container"
@@ -90,6 +91,7 @@
             <app-chips-control
                 [form]="overallInfoSubform"
                 [items]="competencies$ | async"
+                [picked]="overallInfoSubform.value.acquiredCompetencies"
                 control="acquiredCompetencies"
                 title="Получаемые компетенции"
                 class="categories-container"

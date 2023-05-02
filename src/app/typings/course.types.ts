@@ -1,6 +1,5 @@
-import { FormGroup } from "@angular/forms";
 import { CourseReviewControlComment } from "./course-review.types";
-import { User } from "./user.types";
+import { ChipItem } from "../modules/course-builder/controls/chips-control/chips-control.component";
 
 export enum CourseTopFormGroups {
     OverallInfo = 'overallInfo',
@@ -88,8 +87,8 @@ export interface CourseFormOverallInfo {
     category: string;
     categoryLabel?: string;
     comments: Record<string, CourseReviewControlComment[] | null>;
-    acquiredCompetencies: string[],
-    requiredCompetencies: string[],
+    acquiredCompetencies: ChipItem[],
+    requiredCompetencies: ChipItem[],
 }
  
 interface CourseCore {
@@ -98,10 +97,6 @@ interface CourseCore {
 	category: string;
     advantages?: string;
     authorId: string;
-    competencies: {
-        acquired: string[],
-        required: string[],
-    },
 	categoryLabel?: string;
 }
 
@@ -110,6 +105,10 @@ export interface Course extends CourseCore {
     _id: string;
     uuid: string;
     modules: CourseModule[];
+    competencies: {
+        acquired: string[],
+        required: string[],
+    },
 }
 
 export interface CourseHierarchyComponent {
@@ -128,6 +127,10 @@ export interface CourseReview extends CourseCore {
     masterId: string | null;
     createdAt?: string;
     status?: CourseReviewStatus;
+    competencies: {
+        acquired: ChipItem[],
+        required: ChipItem[],
+    },
     comments: {
         [key: string]: CourseReviewControlComment[] | null
     }

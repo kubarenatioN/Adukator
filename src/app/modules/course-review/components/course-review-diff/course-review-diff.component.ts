@@ -7,10 +7,9 @@ import {
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { map, Observable } from 'rxjs';
 import { breakObjectReference } from 'src/app/helpers/common.helpers';
-import { convertCourseToCourseFormData } from 'src/app/helpers/courses.helper';
 import { formatDate } from 'src/app/helpers/date-fns.helper';
 import { UserService } from 'src/app/services/user.service';
-import { Course, CourseFormData, CourseReview, CourseReviewStatus, CourseReviewStatusMap } from 'src/app/typings/course.types';
+import { CourseFormData, CourseReview, CourseReviewStatus, CourseReviewStatusMap } from 'src/app/typings/course.types';
 
 interface VersionOption { id: string; date: string, checked?: boolean }
 type VersionSelect = VersionOption[] 
