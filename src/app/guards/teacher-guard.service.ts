@@ -14,9 +14,9 @@ export class TeacherGuardService implements CanActivate {
     }
 
     private isTeacher(): Observable<boolean | UrlTree> {
-        return this.userService.role$.pipe(
-            map(role => {
-                if (role === 'teacher') {
+        return this.userService.user$.pipe(
+            map(user => {
+                if (user.permission === 'teacher') {
                     return true;
                 }
                 return this.router.parseUrl('/app');

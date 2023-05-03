@@ -207,3 +207,18 @@ export interface CourseBuilderViewData {
 }
 
 export type WrapperType = 'edit' | 'review';
+
+export interface CourseBundle {
+    _id: string,
+    uuid: string,
+    title: string,
+    description: string,
+    courses: Course[]
+}
+
+export interface CourseBundleCreatePayload { 
+    title: string, 
+    description: string, 
+    courses: string[],
+    authorId: string,
+}

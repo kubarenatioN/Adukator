@@ -12,27 +12,20 @@ import { DATA_ENDPOINTS } from '../constants/network.constants';
 	providedIn: 'root',
 })
 export class UserService {
-	private userStore$ = new BehaviorSubject<User | null>(null);
+    private _user: User | null = null
+	private userStore$ = new ReplaySubject<User | null>(1);
 
 	public user$: Observable<User>;
     public trainingProfile$: Observable<UserTrainingProfile>
 
-    public get hasUser$(): Observable<boolean> {
-        return this.userStore$.pipe(map(user => user !== null))
-    }
-
     public get userId(): string | null {
-        return this.userStore$.value?.uuid ?? null
+        return this._user?.uuid ?? null
     }
 
     public isAdmin$: Observable<boolean>;
 
     public get token() : string | null {
         return this.getUserToken()
-    }
-
-    public get role$() {
-        return this.user$.pipe(map(user => user?.role ?? ''))
     }
 
 	constructor(private dataService: DataService, private authService: AuthService) {

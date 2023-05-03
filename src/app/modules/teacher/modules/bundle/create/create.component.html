@@ -1,0 +1,40 @@
+<app-back-btn>Назад</app-back-btn>
+
+<h2>Создание пакета курсов</h2>
+<p>Выберите несколько курсов и объедините их в один пакет.</p>
+<p>Пакеты курсов позволяют выстроить комплексный процесс обучения в выбранной области знаний.</p>
+
+<form class="builder" [formGroup]="bundleForm">
+
+  <div class="main-info">
+    <input 
+    formControlName="title"
+    type="text" placeholder="Название пакета">
+    <textarea 
+    formControlName="description"
+    cols="30" rows="5" placeholder="Описание пакета"></textarea>
+  </div>
+
+  <app-layout>
+
+    <div slot="sidebar" class="techaer-courses-list">
+      <h3>Ваши опубликованные курсы</h3>
+      <div *ngFor="let course of teacherCourses" class="course-card">
+        <p>{{ course.title }}</p>
+        <button (click)="addToBundle(course)">Добавить</button>
+      </div>
+    </div>
+    
+    <div slot="main" class="bundle-list">
+      <h3>Курсы пакета</h3>
+      <div *ngFor="let course of bundleForm.value.courses" class="course-card">
+        <p>{{ course.title }}</p>
+        <button (click)="removeCourseFromBundle(course)">Убрать</button>
+      </div>
+
+      <button *ngIf="bundleCourses.length > 1" (click)="createBundle()">Создать пакет</button>
+    </div>
+
+  </app-layout>
+
+</form>

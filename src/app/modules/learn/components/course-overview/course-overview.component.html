@@ -9,7 +9,7 @@
             <h1 class="title">{{ training.course.title }}</h1>
             <p class="descr">{{ training.course.description }}</p>
 
-            <div class="enrollment-panel">
+            <div *ngIf="(isUserOwner$ | async) !== true" class="enrollment-panel">
                 <ng-container *ngIf="trainingLookup$ | async as profile; else lookupLoader">
     
                     <ng-container *ngIf="profile !== 'NoEnroll'">

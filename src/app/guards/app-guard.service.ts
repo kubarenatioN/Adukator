@@ -17,8 +17,8 @@ export class AppGuardService implements CanActivate {
 	}
 
     private hasUser() {
-        return this.userService.hasUser$.pipe(map((hasUser) => {
-            return hasUser ? true : this.router.parseUrl('/auth/login')
-        }));
+			return this.userService.user$.pipe(
+				map(user => user ? true : this.router.parseUrl('/auth/login'))
+			);
     }
 }

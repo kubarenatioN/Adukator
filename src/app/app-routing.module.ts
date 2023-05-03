@@ -30,10 +30,6 @@ const routes: Routes = [
 				path: '',
 				pathMatch: 'full',
 				redirectTo: 'dashboard',
-				// loadChildren: () =>
-				// 	import('./modules/dashboard/dashboard.module').then(
-				// 		(m) => m.DashboardModule
-				// 	),
 			},
 			{
 				path: 'dashboard',

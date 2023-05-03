@@ -9,9 +9,11 @@ export enum NetworkRequestKey {
     GetUserById = 'GetUserById',
     
     // GENERAL
-    GetCourses = 'GetCourses',
+    SelectCourses = 'SelectCourses',
     ListCourses = 'ListCourses',
-    // StudentCourses = 'StudentCourses',
+    // bundle
+    CreateCoursesBundle = 'CreateCoursesBundle',
+    GetCoursesBundles = 'GetCoursesBundles',
     
     // TRAINING
     SelectTrainings = 'SelectTrainings',
@@ -106,7 +108,7 @@ export class NetworkHelper {
         },
         
         // Main Courses
-        [NetworkRequestKey.GetCourses]: {
+        [NetworkRequestKey.SelectCourses]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses}/select`,
         },
@@ -114,10 +116,14 @@ export class NetworkHelper {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.courses}/list`,
         },
-        // [NetworkRequestKey.StudentCourses]: {
-        //     method: 'POST',
-        //     url: `${DATA_ENDPOINTS.api.courses}/student`,
-        // },
+        [NetworkRequestKey.CreateCoursesBundle]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.courses}/bundle`,
+        },
+        [NetworkRequestKey.GetCoursesBundles]: {
+            method: 'GET',
+            url: `${DATA_ENDPOINTS.api.courses}/bundle`,
+        },
 
         /* TRAINING */
         [NetworkRequestKey.SelectTrainings]: {

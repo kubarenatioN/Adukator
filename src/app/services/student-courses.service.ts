@@ -11,15 +11,7 @@ import { UserService } from './user.service';
 export class StudentCoursesService {
 	public courses$!: Observable<Training[]>;
 
-	constructor(private userService: UserService, private coursesService: CoursesService) {
-        // this.courses$ = this.getCourses()
+	constructor() {
+        
     }
-
-	// private getCourses(): Observable<Training[]> {
-    //     return this.userService.user$.pipe(
-    //         switchMap(user => this.coursesService.getStudentCourses(user.uuid)),
-    //         map(response => response.data),
-    //         shareReplay(1),
-    //     )
-    // }
 }

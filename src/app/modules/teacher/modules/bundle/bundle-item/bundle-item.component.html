@@ -1,0 +1,22 @@
+<app-back-btn>Назад</app-back-btn>
+
+<ng-container *ngIf="bundle$ | async as bundle; else loader">
+  <h1>Пакет курсов "{{ bundle.title }}"</h1>
+  <p>{{ bundle.description }}</p>
+
+  <div class="courses-list">
+    <div *ngFor="let course of bundle.courses" class="course-item">
+      <span>Курс {{ course.title }}</span>
+      <span>Длительность: {{ '5 недель' }}</span>
+      <button (click)="startCourse(course)">Старт</button>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #loader>
+  <p>Loading...</p>
+</ng-template>
+
+<ng-template #noData>
+  <p>No data</p>
+</ng-template>

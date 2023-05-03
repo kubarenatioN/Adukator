@@ -1,0 +1,13 @@
+<a routerLink="create">Создать</a>
+
+<h2>Мои пакеты курсов</h2>
+<ng-container *ngIf="bundles$ | async as bundles; else loader">
+  <div class="bundles-list" *ngIf="bundles.length > 0; else noItems">
+    <a *ngFor="let bundle of bundles$ | async" class="bundle-item" [routerLink]="[bundle.uuid]">
+      <h4>{{ bundle.title }}</h4>
+    </a>
+  </div>
+</ng-container>
+
+<ng-template #noItems>Пусто ;(</ng-template>
+<ng-template #loader>Loading</ng-template>

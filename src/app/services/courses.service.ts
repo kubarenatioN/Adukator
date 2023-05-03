@@ -31,7 +31,7 @@ export class CoursesService {
         this.userService.user$.pipe(
             switchMap(user => {
                 const options = {
-                    requestKey: NetworkRequestKey.GetCourses,
+                    requestKey: NetworkRequestKey.SelectCourses,
                     authorId: user.uuid,
                     fields: CoursesSelectFields.Short,
                 }
@@ -61,7 +61,7 @@ export class CoursesService {
         return this.userService.user$.pipe(
             switchMap(user => {
                 return this.getCourses<{ data: CourseReview[] }>({
-                    requestKey: NetworkRequestKey.GetCourses,
+                    requestKey: NetworkRequestKey.SelectCourses,
                     reqId: 'CourseReviewVersion',
                     type: 'review',
                     coursesIds: [courseId],
@@ -82,7 +82,7 @@ export class CoursesService {
         authorId?: string,
         fields?: string[],
     }) {
-        const payload = NetworkHelper.createRequestPayload(requestKey ?? NetworkRequestKey.GetCourses, {
+        const payload = NetworkHelper.createRequestPayload(requestKey ?? NetworkRequestKey.SelectCourses, {
             body: {
                 type,
                 coursesIds,
