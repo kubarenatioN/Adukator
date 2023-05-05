@@ -1,7 +1,19 @@
+.menu {
+    display: flex;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid #ccc;
+}
+
 .courses-list {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 20px;    
+    gap: 20px;   
+    
+    &.published {
+        display: flex;
+        flex-wrap: wrap;
+    }
 }
 
 .course-item {
@@ -15,5 +27,13 @@
     min-height: 100px;
     padding: 10px;
     border-radius: 10px;
-    background-color: #e8e8f8;
+    background-color: #f5f5ff;
+
+    &.published {
+        max-width: 100%;
+        min-height: 80px;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 10px 20px;
+    }
 }

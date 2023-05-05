@@ -11,6 +11,7 @@ import {
 import { UserService } from '../../../services/user.service';
 import { TrainingDataService } from 'src/app/services/training-data.service';
 import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
+import { CoursesService } from 'src/app/services/courses.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -25,9 +26,20 @@ export class TeacherTrainingService {
 
     public topicDiscussion$ = this.topicDiscussionStore$.asObservable()
 
+		private courses$ = this.userService.user$.pipe(
+			switchMap(user => {
+				return this.coursesService.getTeacherCourses(user.uuid)
+			}),
+			shareReplay(1),
+		)
+
+		public published$ = this.courses$.pipe(map(courses => courses.published.data))
+		public review$ = this.courses$.pipe(map(courses => courses.review.data))
+
 	constructor(
 		private userService: UserService,
-		private trainingDataService: TrainingDataService
+		private trainingDataService: TrainingDataService,
+		private coursesService: CoursesService,
 	) {
 		this.initTeacherTrainings();
 	}

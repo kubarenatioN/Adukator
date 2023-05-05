@@ -17,19 +17,22 @@ export class TeacherComponent extends CenteredContainerDirective implements OnIn
     public publishedCourses$: Observable<Course[]>
     public reviewCourses$: Observable<CourseReview[]>
 
-	constructor(private teacherCourses: TeacherTrainingService, private coursesService: CoursesService) {
+	constructor(private teacherCourses: TeacherTrainingService) {
         super();
 
         this.trainings$ = this.teacherCourses.trainings$;
 
-        // TODO: Move these streams from 'courses-service' to smth like 'user-courses-service'
-        this.publishedCourses$ = this.coursesService.published$;
-        this.reviewCourses$ = this.coursesService.review$.pipe(
+        this.publishedCourses$ = this.teacherCourses.published$;
+        this.reviewCourses$ = this.teacherCourses.review$.pipe(
             map(courses => courses.filter(c => c.masterId === null))
         );
     }
 
 	ngOnInit(): void {
-        this.coursesService.getTeacherCourses()
+
+    }
+
+    public startCourse(course: Course) {
+        console.log('start course...');
     }
 }

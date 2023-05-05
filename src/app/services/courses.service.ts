@@ -27,33 +27,23 @@ export class CoursesService {
         
     }
 
-    public getTeacherCourses() {
-        this.userService.user$.pipe(
-            switchMap(user => {
-                const options = {
-                    requestKey: NetworkRequestKey.SelectCourses,
-                    authorId: user.uuid,
-                    fields: CoursesSelectFields.Short,
-                }
-                return forkJoin({
-                    published: this.getCourses<{ data: Course[] }>({
-                        ...options,
-                        reqId: 'SelectTeacherPublishedCourses',
-                        type: 'published',
-                    }),
-                    review: this.getCourses<{ data: CourseReview[] }>({
-                        ...options,
-                        reqId: 'SelectTeacherReviewCourses',
-                        type: 'review',
-                    }),
-                })
+    public getTeacherCourses(userUUID: string) {
+        const options = {
+            requestKey: NetworkRequestKey.SelectCourses,
+            authorId: userUUID,
+            fields: CoursesSelectFields.Short,
+        }
+        return forkJoin({
+            published: this.getCourses<{ data: Course[] }>({
+                ...options,
+                reqId: 'SelectTeacherPublishedCourses',
+                type: 'published',
             }),
-        ).subscribe(response => {
-            const { published, review } = response
-            this.coursesStore$.next({
-                published: published.data,
-                review: review.data,
-            });
+            review: this.getCourses<{ data: CourseReview[] }>({
+                ...options,
+                reqId: 'SelectTeacherReviewCourses',
+                type: 'review',
+            }),
         })
     }
 
