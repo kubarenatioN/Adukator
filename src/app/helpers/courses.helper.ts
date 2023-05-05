@@ -118,25 +118,6 @@ export const convertCourseFormDataToCourse = (
 	};
 };
 
-export const convertCourseToCourseTraining = (
-	course: Course
-): Course => {
-	const { _id, uuid, title, description, category, competencies, advantages, modules, authorId, topics } =
-		course;
-	return {
-		_id,
-		uuid,
-		title,
-		description,
-		category,
-		advantages,
-		competencies,
-		modules,
-		topics,
-		authorId,
-	};
-};
-
 export const generateUUID = (): string => {
     return nanoid()
 };
@@ -151,4 +132,22 @@ export const constructCourseTree = (form: FormGroup) => {
 	})
 
 	return tree;
+}
+
+export const removeComments = <T>(course: Record<string, any>): T => {
+	const stack = [course];
+  while (stack?.length > 0) {
+    const currentObj = stack.pop()!;
+    Object.keys(currentObj).forEach(key => {
+      if (typeof currentObj[key] === 'object' && currentObj[key] !== null) {
+				if (key === 'comments') {
+					delete currentObj[key]
+				} else {
+					stack.push(currentObj[key]);
+				}
+      }
+    });
+  }
+
+	return course as T
 }

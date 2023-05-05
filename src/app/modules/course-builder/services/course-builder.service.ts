@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { of, ReplaySubject, shareReplay, switchMap, tap } from 'rxjs';
 import { getEmptyCourseFormData, isEmptyCourseFormData } from 'src/app/constants/common.constants';
-import { convertCourseFormDataToCourse, convertCourseFormDataToCourseReview, generateUUID } from 'src/app/helpers/courses.helper';
+import { convertCourseFormDataToCourse, convertCourseFormDataToCourseReview, generateUUID, removeComments } from 'src/app/helpers/courses.helper';
 import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UploadPathSegment, UploadService } from 'src/app/services/upload.service';
@@ -57,7 +57,8 @@ export class CourseBuilderService {
             return of();
         }
         formData = this.restoreCourseMetadata(formData, this.courseMetadata)
-        const courseData = convertCourseFormDataToCourse(formData)
+        let courseData = convertCourseFormDataToCourse(formData)
+        courseData = removeComments(courseData)
         const masterId = formData.metadata.masterCourseId || formData.metadata.uuid
 
         // Show upload, then redirect. Create course in background
