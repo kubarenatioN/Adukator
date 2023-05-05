@@ -6,7 +6,7 @@ import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UploadPathSegment, UploadService } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
-import { CourseBuilderViewData, CourseBuilderViewType, CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseReview, CourseReviewStatus } from 'src/app/typings/course.types';
+import { CourseBuilderViewData, CourseBuilderViewType, CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseReview, CourseReviewStatus, ModuleTopic } from 'src/app/typings/course.types';
 import { User } from 'src/app/typings/user.types';
 
 @Injectable()

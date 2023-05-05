@@ -22,7 +22,9 @@
         <p> {{ topic.theory }} </p>
     </div>
     
-    <ng-container *ngIf="isActual || isPast">
+    <!-- Uncomment -->
+    <!-- <ng-container *ngIf="isActual || isPast"> -->
+    <ng-container>
 
         <div *ngIf="topic.materials && topic.materials.length > 0" class="section">
             <h2>Материалы к теме</h2>

@@ -1,17 +1,17 @@
-<ng-container *ngIf="course">
+<ng-container *ngIf="training">
     <nav class="nav">
         <ul class="nav-list">
             <li>
                 <a routerLink="./">Главная</a>
             </li>
-            <ul class="modules-list" *ngFor="let module of course.modules, let i = index">
+            <ul class="modules-list" *ngFor="let node of training.contentTree, let i = index">
                 <li>
-                    {{module.title}}
+                    {{node.module.title}}
                 </li>
                 <ul class="topics-list">
                     <li 
                     [class.actual]="topic.isActual"
-                    class="topic-item" *ngFor="let topic of course.topics, let j = index">
+                    class="topic-item" *ngFor="let topic of node.topics, let j = index">
                         <a [routerLink]="[]" [queryParams]="{ topic: topic.id }">{{topic.title}}</a>
                     </li> 
                 </ul>
