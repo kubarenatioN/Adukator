@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CourseFormDataMock } from '../mocks/course-form-data';
-import { CourseFormData, CourseModule, CourseTopFormGroups, ModuleFormFields, ModuleTopic, OverallFormFields, PracticeFormFields, TaskFormFields, TopicFormFields, TopicPractice, TopicTask } from '../typings/course.types';
+import { CourseFormData, CourseFormModule, CourseModule, CourseTopFormGroups, ModuleFormFields, ModuleTopic, OverallFormFields, PracticeFormFields, TaskFormFields, TopicFormFields, TopicPractice, TopicTask } from '../typings/course.types';
 import { Personalization, ProfileProgressRecord, TrainingProfile, TrainingProfilePersonalizations, TrainingProfileUser, TrainingTaskAnswer } from '../typings/training.types';
 import { generateUUID } from './courses.helper';
 
@@ -32,29 +32,35 @@ export class FormBuilderHelper {
         modelRef.setControl('modules', modulesArray);
     }
 
-	public getModuleForm(module: CourseModule | null = null) {
+	public getModuleForm(module: CourseFormModule | null = null) {
+        const id = module ? module.id : generateUUID()
 		return this.fb.group({
-            id: module ? module.id : generateUUID(),
+            id,
 			[ModuleFormFields.Title]: module ? module.title : 'Новый модуль',
 			[ModuleFormFields.Descr]: module ? module.description : 'Описание модуля...',
-			topics: module ? this.getTopicsFormArray(module.topics) : this.fb.array([
-				this.getTopicForm()
+			topics: module ? this.getTopicsFormArray(module) : this.fb.array([
+				this.getTopicForm(id)
 			]),
             comments: this.getFormGroupComments(ModuleFormFields, module?.comments ?? {})
 		});
 	}
 
-    public getTopicForm(topic: ModuleTopic | null = null) {
+    public getTopicForm(parentModuleId: string | null, topic: ModuleTopic | null = null) {
+        if (!parentModuleId) {
+            throw new Error('No topic parent module id provided.')
+        }
         return this.fb.group({
             id: topic ? topic.id : generateUUID(),
+            moduleId: parentModuleId,
             [TopicFormFields.Title]: topic ? topic.title : 'Новая тема',
             [TopicFormFields.Descr]: topic ? topic.description : '',
             [TopicFormFields.Materials]: topic ? [topic.materials] : [[]],
             [TopicFormFields.Theory]: topic ? topic.theory : null,
             practice: topic?.practice ? this.getTopicPracticeForm(topic.practice) : null,
             [TopicFormFields.TestLink]: topic ? topic.testLink : null,
-            startDate: topic ? topic.startDate : null,
-            endDate: topic ? topic.endDate : null,
+            [TopicFormFields.Duration]: topic ? topic.duration : null,
+            days: null,
+            weeks: null,
             comments: this.getFormGroupComments(TopicFormFields, topic?.comments ?? {})
         });
     }
@@ -113,7 +119,7 @@ export class FormBuilderHelper {
         })
     }
 
-    private getCourseModulesFormArray(modules: CourseModule[] | null = null) {
+    private getCourseModulesFormArray(modules: CourseFormModule[] | null = null) {
         if (modules === null || modules.length === 0) {
             const primaryModuleForm = this.getModuleForm()
             return this.fb.array([primaryModuleForm]);
@@ -125,9 +131,9 @@ export class FormBuilderHelper {
 		return this.fb.array(modulesArr);
     }
 
-    private getTopicsFormArray(topics: ModuleTopic[]) {
-        return this.fb.array(topics.map((topic) => {
-			return this.getTopicForm(topic)
+    private getTopicsFormArray(module: CourseFormModule) {
+        return this.fb.array(module.topics.map((topic) => {
+			return this.getTopicForm(module.id, topic)
 		}));
 	}
 

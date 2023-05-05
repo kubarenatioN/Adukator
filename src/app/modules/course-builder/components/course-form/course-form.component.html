@@ -109,31 +109,19 @@
             <div class="topics">
                 <h4>Темы модуля</h4>
                 <div 
-                *ngFor="let topicForm of moduleForm.controls.topics.controls" 
-                class="topic-item">
+                    *ngFor="let topicForm of moduleForm.controls.topics.controls" 
+                    class="topic-item" [formGroup]="topicForm">
                     <div class="topic-info">
                         {{ topicForm.value.title }}
                     </div>
-                    <div class="topic-dates">
-                        <mat-form-field appearance="fill">
-                            <mat-label>Длительность темы</mat-label>
-                            <mat-date-range-input  
-                            [formGroup]="topicForm" 
-                            [min]="getDateInputMin(topicForm)"
-                            [max]="getDateInputMax(topicForm)"
-                            [rangePicker]="picker">
-                            <input 
-                              matStartDate 
-                              formControlName="startDate" 
-                              placeholder="Начало">
-                            <input 
-                              matEndDate 
-                              formControlName="endDate" 
-                              placeholder="Окончание">
-                            </mat-date-range-input>
-                            <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                            <mat-date-range-picker #picker></mat-date-range-picker>
+                    <div class="topic-duration">
+                        <mat-form-field class="input" appearance="fill">
+                            <mat-label>Недель</mat-label>
+                            <input formControlName="weeks" matInput type="number" min="1" max="100">
+                        </mat-form-field>
+                        <mat-form-field class="input" appearance="fill">
+                            <mat-label>Дней</mat-label>
+                            <input formControlName="days" matInput type="number" min="1" max="100">
                         </mat-form-field>
                     </div>
                 </div>
@@ -171,32 +159,6 @@
     <app-module-topic 
         [form]="activeFormGroup"
         [controlsType]="controlsType"></app-module-topic>
-</ng-template>
-
-<ng-template #dates let-form="form">
-    <app-form-element-review-wrapper
-        type="edit"
-        [form]="form"
-        control="dates">
-        <mat-form-field appearance="fill" [formGroup]="form">
-            <mat-label>Длительность курса</mat-label>
-            <mat-date-range-input [rangePicker]="picker">
-                <input
-                    matStartDate
-                    placeholder="Начало"
-                    formControlName="startDate"
-                />
-                <input
-                    matEndDate
-                    placeholder="Окончание"
-                    formControlName="endDate"
-                />
-            </mat-date-range-input>
-            <mat-hint>MM.DD.YYYY – MM.DD.YYYY</mat-hint>
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-date-range-picker #picker></mat-date-range-picker>
-        </mat-form-field>
-    </app-form-element-review-wrapper>
 </ng-template>
 
 <ng-template #actionButtons>

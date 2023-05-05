@@ -14,7 +14,7 @@ import {
 } from 'src/app/constants/common.constants';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { UserService } from 'src/app/services/user.service';
-import { CourseBuilderViewData, CourseBuilderViewType, CourseFormData, CourseFormMetadata, CourseFormViewMode, CourseModule, CourseReview } from 'src/app/typings/course.types';
+import { CourseBuilderViewData, CourseBuilderViewType, CourseFormData, CourseFormMetadata, CourseFormModule, CourseFormViewMode, CourseModule, CourseReview } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
 
 @Component({
@@ -24,11 +24,11 @@ import { CourseBuilderService } from '../../services/course-builder.service';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateCourseComponent extends CenteredContainerDirective implements OnInit, OnDestroy {
-	private modulesStore$ = new ReplaySubject<CourseModule[]>(1);
+	private modulesStore$ = new ReplaySubject<CourseFormModule[]>(1);
 
     public formMode: CourseFormViewMode = CourseFormViewMode.Create;
 
-	public modules$: Observable<CourseModule[]>;
+	public modules$: Observable<CourseFormModule[]>;
     public formData$!: Observable<CourseReview | EmptyCourseFormData | null>;
     public viewData$!: Observable<CourseBuilderViewData>;
 

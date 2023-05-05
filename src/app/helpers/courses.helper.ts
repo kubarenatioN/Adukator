@@ -1,9 +1,12 @@
+import { FormGroup } from '@angular/forms';
 import {
 	Course,
 	CourseFormData,
 	CourseFormMetadata,
+	CourseFormModule,
 	CourseModule,
 	CourseReview,
+	ModuleTopic,
 } from '../typings/course.types';
 import { nanoid } from 'nanoid';
 
@@ -110,6 +113,7 @@ export const convertCourseFormDataToCourse = (
             required: requiredCompetencies,
         },
 		modules,
+		topics: modules.reduce((topics, module) => [...topics, ...module.topics], [] as ModuleTopic[]),
 		authorId,
 	};
 };
@@ -117,7 +121,7 @@ export const convertCourseFormDataToCourse = (
 export const convertCourseToCourseTraining = (
 	course: Course
 ): Course => {
-	const { _id, uuid, title, description, category, competencies, advantages, modules, authorId } =
+	const { _id, uuid, title, description, category, competencies, advantages, modules, authorId, topics } =
 		course;
 	return {
 		_id,
@@ -128,6 +132,7 @@ export const convertCourseToCourseTraining = (
 		advantages,
 		competencies,
 		modules,
+		topics,
 		authorId,
 	};
 };
@@ -135,3 +140,15 @@ export const convertCourseToCourseTraining = (
 export const generateUUID = (): string => {
     return nanoid()
 };
+
+export const constructCourseTree = (form: FormGroup) => {
+	const modules = form.get('modules')?.value as CourseFormModule[]
+	const topics = form.get('topics')?.value as ModuleTopic[]
+	const tree = modules.map(module => {
+			const moduleTopics = topics.filter(topic => topic.moduleId === module.id)
+			module.topics = moduleTopics
+			return module
+	})
+
+	return tree;
+}

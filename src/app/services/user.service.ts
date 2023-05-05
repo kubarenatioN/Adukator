@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, filter, map, Observable, of, ReplaySubject, shareReplay, Subject, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, filter, map, Observable, of, ReplaySubject, shareReplay, Subject, switchMap, tap, throwError } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { Course } from '../typings/course.types';
 import { DataResponse } from '../typings/response.types';
@@ -16,6 +16,7 @@ export class UserService {
 	private userStore$ = new ReplaySubject<User | null>(1);
 
 	public user$: Observable<User>;
+	public userToken$: Observable<User | null>;
     public trainingProfile$: Observable<UserTrainingProfile>
 
     public get userId(): string | null {
@@ -30,6 +31,7 @@ export class UserService {
 
 	constructor(private dataService: DataService, private authService: AuthService) {
 		this.user$ = this.userStore$.asObservable().pipe(filter(Boolean));
+		this.userToken$ = this.userStore$.asObservable();
         this.isAdmin$ = this.user$.pipe(map(user => user !== null && user.role === 'admin'));
         this.trainingProfile$ = this.user$.pipe(
             switchMap(user => {
@@ -47,10 +49,15 @@ export class UserService {
 	}
 
     public login(user: { email: string; password: string }) {
-        this.authService.login(user)
-        .subscribe(({ token, user }) => {
-            this.setUser(user, token);
-        });
+        return this.authService.login(user).pipe(
+            catchError(err => {
+                this.setUser(null, '')
+                return throwError(err)
+            }),
+            tap(({ token, user }) => {
+                this.setUser(user, token);
+            })
+        )
     }
 
 	public setUser(user: User | null, token?: string) {

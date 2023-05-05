@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	Input,
+	OnInit,
+} from '@angular/core';
 import { Course } from 'src/app/typings/course.types';
 
 @Component({
@@ -8,11 +13,9 @@ import { Course } from 'src/app/typings/course.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseSidenavComponent implements OnInit {
-    @Input() public course!: Course
-    
+	@Input() public course!: Course;
+
 	constructor() {}
 
-	ngOnInit(): void {
-        
-    }
+	ngOnInit(): void {}
 }

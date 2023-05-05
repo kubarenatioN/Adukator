@@ -11,7 +11,7 @@
                 <ul class="topics-list">
                     <li 
                     [class.actual]="topic.isActual"
-                    class="topic-item" *ngFor="let topic of module.topics, let j = index">
+                    class="topic-item" *ngFor="let topic of course.topics, let j = index">
                         <a [routerLink]="[]" [queryParams]="{ topic: topic.id }">{{topic.title}}</a>
                     </li> 
                 </ul>

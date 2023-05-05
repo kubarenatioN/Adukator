@@ -53,10 +53,10 @@ export class CourseModuleComponent extends BaseComponent implements OnInit {
             });
 	}
 
-    public addTopic(): void {
-        const newTopic = this.fbHelper.getTopicForm();
-        this.topics.push(newTopic);
-    }
+    // public addTopic(): void {
+    //     const newTopic = this.fbHelper.getTopicForm();
+    //     this.topics.push(newTopic);
+    // }
 
 	public onRemoveTopic(index: number) {
         if (index === 0) {

@@ -22,6 +22,7 @@ import { CourseCompetency, CourseModule } from 'src/app/typings/course.types';
 import { Training, TrainingMembershipStatus, TrainingProfile, TrainingProfileMeta } from 'src/app/typings/training.types';
 import { LearnService } from '../../services/learn.service';
 import { ConfigService } from 'src/app/services/config.service';
+import { StudentTraining } from 'src/app/models/course.model';
 
 @Component({
 	selector: 'app-course-overview',
@@ -34,9 +35,9 @@ export class CourseOverviewComponent {
 	private courseEnrollTrigger$ = new BehaviorSubject<void>(undefined);
 	private competenciesConfig$: Observable<CourseCompetency[]>
 
-	public training$: Observable<Training | null>;
+	public training$: Observable<StudentTraining | null>;
 
-	public modules$: Observable<CourseModule[]>;
+	// public modules$: Observable<CourseModule[]>;
 
 	public competenciesDiff$: Observable<string[]>;
 	public canEnroll$: Observable<boolean>;
@@ -66,12 +67,8 @@ export class CourseOverviewComponent {
 				}
 				return of(null);
 			}),
-			map((res) => (res ? res[0] : null)),
+			map((res) => (res ? new StudentTraining(res[0]) : null)),
 			shareReplay(1)
-		);
-
-		this.modules$ = this.training$.pipe(
-			map((training) => (training ? training.course.modules : []))
 		);
 
 		this.isUserOwner$ = this.training$.pipe(

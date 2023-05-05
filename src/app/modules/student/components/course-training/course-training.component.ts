@@ -89,7 +89,7 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
                     return {
                         viewType,
                         training,
-                        module: training.getTopicModule(topicId),
+                        module: training.getTopicModule(topic),
                         topic: topic,
                     }
                 }

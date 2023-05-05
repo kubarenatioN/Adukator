@@ -5,7 +5,7 @@ import {
 	OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { CourseModule } from 'src/app/typings/course.types';
+import { CourseFormModule, CourseModule } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-course-nav',
@@ -14,7 +14,7 @@ import { CourseModule } from 'src/app/typings/course.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseNavComponent implements OnInit {
-	@Input() public items: CourseModule[] = [];
+	@Input() public items: CourseFormModule[] = [];
 	constructor(private router: Router) {}
 
 	ngOnInit(): void {}

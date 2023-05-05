@@ -19,14 +19,14 @@
                             <button 
                             [disabled]="isDisabledEnrollActions"
                             mat-raised-button 
-                            (click)="cancelTrainingEnroll(training)">Отозвать</button>
+                            (click)="cancelTrainingEnroll(training.training)">Отозвать</button>
                         </div>
                         <div *ngIf="profile.enrollment === 'approved'">
                             <button
                             [disabled]="isDisabledEnrollActions"
                             mat-raised-button 
                             color="accent" 
-                            (click)="leaveTraining(training)">Покинуть</button>
+                            (click)="leaveTraining(training.training)">Покинуть</button>
                             <a mat-raised-button [routerLink]="['/app/student/profile', profile.uuid, 'training']">Перейти к треннингу</a>
                             <a mat-raised-button [routerLink]="['/app/student/profile', profile.uuid]">Прогресс</a>
                         </div>
@@ -39,7 +39,7 @@
                                 mat-raised-button 
                                 color="accent" 
                                 [disabled]="isDisabledEnrollActions"
-                                (click)="enrollTraining(training)">Записаться</button>
+                                (click)="enrollTraining(training.training)">Записаться</button>
                             
                             <ng-container *ngIf="competenciesDiff$ | async as compDiff">
                                 <p *ngIf="compDiff.length > 0">
@@ -53,7 +53,7 @@
                 </ng-container>
             </div>
 
-            <a *ngIf="isUserOwner$ | async" mat-raised-button color="accent" [routerLink]="['/app/teacher/training', training.uuid, 'manage']">Управление</a>
+            <a *ngIf="isUserOwner$ | async" mat-raised-button color="accent" [routerLink]="['/app/teacher/training', training.training.uuid, 'manage']">Управление</a>
         </div>
     </div>
     
@@ -113,12 +113,12 @@
         <div class="course-content">
             <h2>Содержание курса</h2>
 
-            <div *ngFor="let module of modules$ | async" class="module-item">
-                <h3>{{module.title}}</h3>
-                <p>{{module.description}}</p>
+            <div *ngFor="let node of training.contentTree" class="module-item">
+                <h3>{{node.module.title}}</h3>
+                <p>{{node.module.description}}</p>
 
                 <div class="topics-list">
-                    <div *ngFor="let topic of module.topics" class="topic-item">
+                    <div *ngFor="let topic of node.topics" class="topic-item">
                         <h4>{{topic.title}}</h4>
                         <p>{{topic.description}}</p>
                     </div>

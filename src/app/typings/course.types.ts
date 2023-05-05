@@ -4,6 +4,7 @@ import { ChipItem } from "../modules/course-builder/controls/chips-control/chips
 export enum CourseTopFormGroups {
     OverallInfo = 'overallInfo',
     Modules = 'modules',
+    Topics = 'topics',
 }
 
 export enum OverallFormFields {
@@ -25,6 +26,7 @@ export enum TopicFormFields {
     Materials = 'materials',
     Theory = 'theory',
     TestLink = 'testLink',
+    Duration = 'duration', //days
 }
 
 export enum PracticeFormFields {
@@ -54,30 +56,36 @@ export interface TopicPractice {
 // TODO: check fields optionality
 export interface ModuleTopic {
     id: string;
+    moduleId: string;
     title: string;
     description: string;
     materials: string[];
     theory?: string;
     practice?: TopicPractice,
-    testLink: string;
+    testLink?: string;
     results?: {
         test: string;
         report: boolean;
         offline: boolean;
     };
-    startDate: string;
-    endDate: string;
+    duration: number; // in days
     comments: Record<string, string>; // move this review-related field in separate interface
     isActual?: boolean;
     isPast?: boolean;
+}
+
+export interface CourseFormModule {
+    id: string;
+	title: string;
+	description: string;
+    topics: ModuleTopic[];
+    comments: Record<string, string>;
 }
 
 export interface CourseModule {
     id: string;
 	title: string;
 	description: string;
-    topics: ModuleTopic[];
-    comments: Record<string, string>;
 }
 
 export interface CourseFormOverallInfo {
@@ -104,11 +112,12 @@ interface CourseCore {
 export interface Course extends CourseCore {
     _id: string;
     uuid: string;
-    modules: CourseModule[];
     competencies: {
         acquired: string[],
         required: string[],
     },
+    modules: CourseModule[];
+    topics: ModuleTopic[]
 }
 
 export interface CourseHierarchyComponent {
@@ -123,7 +132,6 @@ export interface CourseHierarchyComponent {
 export interface CourseReview extends CourseCore {
     _id?: string;
     uuid: string;
-    modules: CourseModule[];
     masterId: string | null;
     createdAt?: string;
     status?: CourseReviewStatus;
@@ -131,14 +139,41 @@ export interface CourseReview extends CourseCore {
         acquired: string[],
         required: string[],
     },
+    modules: CourseFormModule[];
     comments: {
         [key: string]: CourseReviewControlComment[] | null
     }
 }
 
+// use type like this to separate review comments from actual course data
+export interface CourseReviewComments {
+    overallComments: {
+        [key: string]: CourseReviewControlComment[] | null
+    },
+    modules: {
+        id: string
+        comments: {
+            [key: string]: CourseReviewControlComment[] | null
+        }
+    }[],
+    topics: {
+        id: string
+        comments: {
+            [key: string]: CourseReviewControlComment[] | null
+        },
+    }[],
+    tasks?: {
+        id: string
+        comments: {
+            [key: string]: CourseReviewControlComment[] | null
+        }
+    }[]
+}
+
 export interface CourseCompetency {
     id: string,
-    label: string
+    label: string,
+    category?: string,
 }
 
 export interface TeacherCourses {
@@ -161,7 +196,7 @@ export interface CourseOverallInfo {
 // data for course form on review
 export interface CourseFormData {
     overallInfo: CourseFormOverallInfo,
-	modules: CourseModule[];
+	modules: CourseFormModule[];
     createdAt?: string;
     metadata: CourseFormMetadata
 }

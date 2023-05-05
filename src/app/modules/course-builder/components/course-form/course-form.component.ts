@@ -6,13 +6,13 @@ import {
 	OnInit,
 	Output,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { BehaviorSubject, Observable, debounceTime, of, switchMap, takeUntil, tap } from 'rxjs';
+import { FormArray, FormGroup } from '@angular/forms';
+import { BehaviorSubject, Observable, combineLatest, debounceTime, map, of, switchMap, takeUntil, tap } from 'rxjs';
 import {
     EmptyCourseFormData,
 	isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
-import { convertCourseReviewToCourseFormData } from 'src/app/helpers/courses.helper';
+import { constructCourseTree, convertCourseReviewToCourseFormData } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { getTopicMinDate, getTopicMaxDate } from 'src/app/helpers/forms.helper';
 import { ConfigService } from 'src/app/services/config.service';
@@ -22,6 +22,7 @@ import {
     CourseBuilderViewPath,
     CourseBuilderViewType,
 	CourseFormData,
+	CourseFormModule,
 	CourseFormViewMode,
 	CourseReview,
     WrapperType,
@@ -96,7 +97,6 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
             .pipe(
                 takeUntil(this.componentLifecycle$),
                 tap(viewData => {
-                    
                     const { metadata, mode, viewPath } = viewData;
                     this.formMode = mode;
                     if (mode === CourseFormViewMode.Review) {
@@ -109,15 +109,13 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
                 })
             )
         
-        this.competencies$ = this.overallInfoSubform.controls.category.valueChanges
+        this.competencies$ = combineLatest([
+            this.overallInfoSubform.controls.category.valueChanges.pipe(debounceTime(200)),
+            this.configService.loadCourseCompetencies(),
+        ])
         .pipe(
-            debounceTime(200),
-            switchMap(category => {
-                return of([
-                    { id: '1', label: 'SQL' },
-                    { id: '2', label: 'Базы данных' },
-                    { id: '3', label: 'Oracle' },
-                ])
+            map(([category, competencies]) => {
+                return competencies.filter(comp => !comp.category ? true : comp.category === category)  
             })
         )
 	}
@@ -129,11 +127,14 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
     }
 
     public addTopic(moduleForm: typeof this.modulesFormArray.controls[0]) {
-        const emptyTopicForm = this.fbHelper.getTopicForm();
+        if (!moduleForm.value.id) {
+            throw new Error('No topic parent module id provided.')
+        }
+        const emptyTopicForm = this.fbHelper.getTopicForm(moduleForm.value.id);
         const topicsArray = moduleForm.controls.topics;
         topicsArray.push(emptyTopicForm)
         moduleForm.controls.topics = topicsArray;
-        console.log(topicsArray, this.modulesFormArray.value);
+        // console.log(topicsArray, this.modulesFormArray.value);
     }
 
 	public removeModule(id: string): void {
