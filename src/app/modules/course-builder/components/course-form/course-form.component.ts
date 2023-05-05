@@ -6,13 +6,13 @@ import {
 	OnInit,
 	Output,
 } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
-import { BehaviorSubject, Observable, combineLatest, debounceTime, map, of, switchMap, takeUntil, tap } from 'rxjs';
+import { FormGroup } from '@angular/forms';
+import { BehaviorSubject, Observable, combineLatest, debounceTime, map, takeUntil, tap } from 'rxjs';
 import {
     EmptyCourseFormData,
 	isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
-import { constructCourseTree, convertCourseReviewToCourseFormData } from 'src/app/helpers/courses.helper';
+import { convertCourseReviewToCourseFormData } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { getTopicMinDate, getTopicMaxDate } from 'src/app/helpers/forms.helper';
 import { ConfigService } from 'src/app/services/config.service';
@@ -22,9 +22,9 @@ import {
     CourseBuilderViewPath,
     CourseBuilderViewType,
 	CourseFormData,
-	CourseFormModule,
 	CourseFormViewMode,
 	CourseReview,
+    ModuleTopic,
     WrapperType,
 } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
@@ -123,7 +123,6 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
     public addModule() {
         const emptyModuleForm = this.fbHelper.getModuleForm();
         this.courseForm.controls.modules.push(emptyModuleForm);
-        console.log(this.modulesFormArray.value);
     }
 
     public addTopic(moduleForm: typeof this.modulesFormArray.controls[0]) {

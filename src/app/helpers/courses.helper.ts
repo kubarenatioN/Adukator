@@ -69,7 +69,8 @@ export const convertCourseReviewToCourseFormData = (
 export const convertCourseFormDataToCourseReview = (
 	formData: CourseFormData
 ): CourseReview => {
-	const { overallInfo, modules, metadata } = formData;
+	const { overallInfo, metadata } = formData;
+	let { modules } = formData
 	const { title, description, category, comments, acquiredCompetencies, requiredCompetencies } = overallInfo;
 	const {
 		_id,
@@ -78,6 +79,17 @@ export const convertCourseFormDataToCourseReview = (
 		authorId,
 		status,
 	} = metadata;
+
+	// patch form data before sending to backend
+	modules = modules.map(module => {
+		module.topics = module.topics.map(topic => {
+			topic.duration = Number(topic.days ?? 0) + Number(topic.weeks ?? 0) * 7
+			return topic
+		})
+
+		return module;
+	})
+
 	return {
         _id,
 		uuid,

@@ -69,6 +69,8 @@ export interface ModuleTopic {
         offline: boolean;
     };
     duration: number; // in days
+    days?: number,
+    weeks?: number,
     comments: Record<string, string>; // move this review-related field in separate interface
     isActual?: boolean;
     isPast?: boolean;

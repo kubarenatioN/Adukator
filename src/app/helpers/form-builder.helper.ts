@@ -59,8 +59,8 @@ export class FormBuilderHelper {
             practice: topic?.practice ? this.getTopicPracticeForm(topic.practice) : null,
             [TopicFormFields.TestLink]: topic ? topic.testLink : null,
             [TopicFormFields.Duration]: topic ? topic.duration : null,
-            days: null,
-            weeks: null,
+            days: topic ? topic.days : null,
+            weeks: topic ? topic.weeks : null,
             comments: this.getFormGroupComments(TopicFormFields, topic?.comments ?? {})
         });
     }
