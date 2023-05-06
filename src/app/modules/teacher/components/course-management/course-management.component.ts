@@ -128,7 +128,9 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
         ).subscribe()
     }
 
-    public completeTraining() {
-        console.log('complete me');
+    public completeTraining(uuid: string) {
+        this.teacherTrainingService.completeTraining(uuid).subscribe(res => {
+            
+        })
     }
 }

@@ -50,7 +50,7 @@
 
     <button [disabled]="false" 
     mat-stroked-button color="warn"
-    (click)="completeTraining()">Завершить тренинг</button>
+    (click)="completeTraining(training.uuid)">Завершить тренинг</button>
 </ng-container>
 
 <ng-template #loader>

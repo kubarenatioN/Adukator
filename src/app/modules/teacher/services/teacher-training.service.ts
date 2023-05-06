@@ -51,6 +51,10 @@ export class TeacherTrainingService {
 		return this.trainingDataService.startTraining(payload)
 	}
 
+	public completeTraining(uuid: string) {
+		return this.trainingDataService.completeTraining(uuid)
+	}
+
     public getProfile(profileId: string, options?: { include?: ('progress' | 'personalization')[] }) {
         return this.trainingDataService.getProfile({ uuid: profileId }, options)
     }

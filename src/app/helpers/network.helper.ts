@@ -166,7 +166,7 @@ export class NetworkHelper {
             url: `${DATA_ENDPOINTS.api.training}/start`,
         },
         [NetworkRequestKey.TrainingComplete]: {
-            method: 'POST',
+            method: 'PATCH',
             url: `${DATA_ENDPOINTS.api.training}/complete`,
         },
 
