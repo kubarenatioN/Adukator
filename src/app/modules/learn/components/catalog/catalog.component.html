@@ -12,7 +12,7 @@
 			[routerLink]="['../course', 'overview', training.uuid]"
 			*ngFor="let training of list$ | async"
 		>
-			<h3>{{ training.course.title }}</h3>
+			<h3>{{ training.title }}</h3>
 			<p class="catalog-item__views">Status: {{ training.status }}</p>
 			<div class="catalog-item__footer">
 				<span class="catalog-item__views">Views: 2.3k</span>

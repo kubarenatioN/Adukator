@@ -44,6 +44,13 @@ export class TeacherTrainingService {
 		this.initTeacherTrainings();
 	}
 
+	public startTraining(payload: {
+		uuid: string,
+		date: string,
+	}) {
+		return this.trainingDataService.startTraining(payload)
+	}
+
     public getProfile(profileId: string, options?: { include?: ('progress' | 'personalization')[] }) {
         return this.trainingDataService.getProfile({ uuid: profileId }, options)
     }
@@ -113,8 +120,19 @@ export class TeacherTrainingService {
 	private initTeacherTrainings() {
 		this.getTeacherTrainings(CoursesSelectFields.Short).subscribe((data) => {
             this.trainingsStore$.next(data);
-        });
+			});
 	}
+
+	public refreshTeacherTrainings(fields: string[] = CoursesSelectFields.Short) {
+		return this.userService.user$.pipe(
+			switchMap(user => {
+					return this.trainingDataService.getTrainings({ authorId: user.uuid, fields });
+			})
+		)
+		.subscribe(data => {
+			this.trainingsStore$.next(data);
+		})
+	} 
 
 	public getTeacherTrainings(fields: string[]) {
         return this.userService.user$.pipe(

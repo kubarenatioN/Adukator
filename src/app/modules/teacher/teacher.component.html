@@ -27,7 +27,7 @@
             *ngFor="let training of trainings"
             [routerLink]="['/app/teacher/training', training.uuid, 'manage']">
                 <span>Треннинг</span>
-                <h4>{{training.course.title}}</h4>
+                <h4>{{training.title}}</h4>
                 <p>Статус: {{ training.status }}</p>
             </a>
         </ng-container>
@@ -35,14 +35,14 @@
 
     <h3>Мои курсы</h3>
     <div class="courses-list published">
-        <ng-container *ngIf="publishedCourses$ | async as publishedCourses; else loader">
+        <ng-container *ngIf="publishedCourses; else loader">
             <div class="course-item published" 
             *ngFor="let course of publishedCourses">
                 <h4>{{course.title}}</h4>
 
                 <div class="left">
                     <a *ngIf="course.training" [routerLink]="['/app/learn/course/overview', course.training.uuid]">К тренингу</a>
-                    <button (click)="startCourse(course)" [disabled]="course.training">Начать</button>
+                    <button (click)="startCourse(course, $event)" [disabled]="course.training">Начать</button>
                 </div>
             </div>
         </ng-container>

@@ -20,6 +20,7 @@ export type TrainingProfileLookup = TrainingProfileMeta
 export interface Training {
     _id: string,
     uuid: string,
+    title: string,
     course: Course,
     courseId: string,
     startAt: string,

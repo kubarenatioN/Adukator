@@ -1,0 +1,13 @@
+<form [formGroup]="form" class="container">
+  <h3>Вы собираетесь начать учебный курс.</h3>
+  <p>Выберите дату старта тренинга</p>
+  
+  <mat-form-field appearance="fill">
+    <input [min]="now" matInput [matDatepicker]="picker" formControlName="date">
+    <mat-hint>MM/DD/YYYY</mat-hint>
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <button (click)="onSubmit($event)">Все верно, начать тренинг</button>
+</form>

@@ -32,6 +32,8 @@ export enum NetworkRequestKey {
     TrainingTopicDiscussion = 'TrainingTopicDiscussion',
     TrainingProfileProgress = 'TrainingProfileProgress',
     UpdateTrainingProfileProgress = 'UpdateTrainingProfileProgress',
+    TrainingStart = 'TrainingStart',
+    TrainingComplete = 'TrainingComplete',
 
     // Personalization
     CreateTask = 'CreateTask',
@@ -158,6 +160,14 @@ export class NetworkHelper {
         [NetworkRequestKey.TrainingMembershipLookup]: {
             method: 'POST',
             url: `${DATA_ENDPOINTS.api.training.membership}/lookup`,
+        },
+        [NetworkRequestKey.TrainingStart]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.training}/start`,
+        },
+        [NetworkRequestKey.TrainingComplete]: {
+            method: 'POST',
+            url: `${DATA_ENDPOINTS.api.training}/complete`,
         },
 
         [NetworkRequestKey.TrainingProfile]: {

@@ -223,4 +223,26 @@ export class TrainingDataService {
 
         return this.dataService.send(payload)
     }
+
+    public startTraining(body: {
+		uuid: string,
+		date: string,
+	}) {
+        const key = NetworkRequestKey.TrainingStart
+        const payload = NetworkHelper.createRequestPayload(key, {
+            body: { startAt: body.date },
+            urlId: body.uuid,
+        })
+
+        return this.dataService.send<{ training: Training }>(payload)
+    }
+
+    public completeTraining(trainingId: string) {
+        const key = NetworkRequestKey.TrainingComplete
+        const payload = NetworkHelper.createRequestPayload(key, {
+            urlId: trainingId,
+        })
+
+        return this.dataService.send(payload)
+    }
 }

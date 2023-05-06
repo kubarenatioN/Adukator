@@ -16,6 +16,8 @@ import { PersonalTasksComponent } from './components/personal-tasks/personal-tas
 import { AssignTaskComponent } from './components/personalization/assign-task/assign-task.component';
 import { DismissTaskComponent } from './components/personalization/dismiss-task/dismiss-task.component';
 import { OpenTaskComponent } from './components/personalization/open-task/open-task.component';
+import { StartTrainingSubmitComponent } from './modals/start-training-submit/start-training-submit.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
 	providers: [
@@ -33,11 +35,13 @@ import { OpenTaskComponent } from './components/personalization/open-task/open-t
         AssignTaskComponent,
         DismissTaskComponent,
         OpenTaskComponent,
+        StartTrainingSubmitComponent,
 	],
 	imports: [
         CommonModule, 
         TeacherRoutingModule, 
         ReactiveFormsModule,
+        MatDialogModule,
         SharedModule
     ],
 })
