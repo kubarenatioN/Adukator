@@ -127,4 +127,8 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
             EnrollStatus.Rejected
         ).subscribe()
     }
+
+    public completeTraining() {
+        console.log('complete me');
+    }
 }

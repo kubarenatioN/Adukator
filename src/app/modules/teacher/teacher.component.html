@@ -37,12 +37,14 @@
     <div class="courses-list published">
         <ng-container *ngIf="publishedCourses$ | async as publishedCourses; else loader">
             <div class="course-item published" 
-            *ngFor="let course of publishedCourses"
-            [routerLink]="['/app/learn/course/overview', course.uuid]">
+            *ngFor="let course of publishedCourses">
                 <h4>{{course.title}}</h4>
 
-                <button (click)="startCourse(course)" [disabled]="true">Начать</button>
-        </div>
+                <div class="left">
+                    <a *ngIf="course.training" [routerLink]="['/app/learn/course/overview', course.training.uuid]">К тренингу</a>
+                    <button (click)="startCourse(course)" [disabled]="course.training">Начать</button>
+                </div>
+            </div>
         </ng-container>
     </div>
     

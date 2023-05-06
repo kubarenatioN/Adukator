@@ -47,6 +47,10 @@
             </ng-container>
         </div>
     </div>
+
+    <button [disabled]="false" 
+    mat-stroked-button color="warn"
+    (click)="completeTraining()">Завершить тренинг</button>
 </ng-container>
 
 <ng-template #loader>

@@ -38,6 +38,7 @@ export class CoursesService {
                 ...options,
                 reqId: 'SelectTeacherPublishedCourses',
                 type: 'published',
+                include: 'training'
             }),
             review: this.getCourses<{ data: CourseReview[] }>({
                 ...options,
@@ -64,20 +65,22 @@ export class CoursesService {
     }
 
     // Main generic method to get any course, try to reuse it everywhere
-    public getCourses<T>({ requestKey, type, coursesIds, authorId, fields, reqId }: {
+    public getCourses<T>({ requestKey, type, coursesIds, authorId, fields, reqId, include }: {
         requestKey?: string,
         type: 'training' | 'review' | 'published',
         reqId: string,
         coursesIds?: string[],
         authorId?: string,
         fields?: string[],
+        include?: string,
     }) {
         const payload = NetworkHelper.createRequestPayload(requestKey ?? NetworkRequestKey.SelectCourses, {
             body: {
                 type,
                 coursesIds,
                 authorId,
-                fields: fields ?? []
+                fields: fields ?? [],
+                include
             },
             params: { reqId }
         })

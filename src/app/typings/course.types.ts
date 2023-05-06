@@ -1,5 +1,6 @@
 import { CourseReviewControlComment } from "./course-review.types";
 import { ChipItem } from "../modules/course-builder/controls/chips-control/chips-control.component";
+import { Training } from "./training.types";
 
 export enum CourseTopFormGroups {
     OverallInfo = 'overallInfo',
@@ -120,6 +121,7 @@ export interface Course extends CourseCore {
     },
     modules: CourseModule[];
     topics: ModuleTopic[]
+    training?: Training
 }
 
 export interface CourseHierarchyComponent {
