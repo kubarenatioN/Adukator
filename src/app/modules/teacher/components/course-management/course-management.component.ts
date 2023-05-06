@@ -130,7 +130,7 @@ export class CourseManagementComponent extends CenteredContainerDirective implem
 
     public completeTraining(uuid: string) {
         this.teacherTrainingService.completeTraining(uuid).subscribe(res => {
-            
+            this.teacherTrainingService.refreshTeacherTrainings()
         })
     }
 }
