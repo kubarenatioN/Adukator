@@ -21,7 +21,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
     @Input() public controlId!: string;
     @Input() public label?: string;
     @Input() public preloadExisting: boolean = false;
-    @Input() public needCache: boolean = true;
+    @Input() public useCache: boolean = true;
     @Input() public serveFrom: 'cloud' | 'local' = 'cloud';
     
     @Input() public clearObs$?: EventEmitter<void>;
@@ -98,7 +98,9 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     public onUpload(file: UserFile) {
-        this.cacheService.addFileToCache(this.cacheKey, file)
+        if (this.useCache) {
+            this.cacheService.addFileToCache(this.cacheKey, file)
+        }
     }
 
     public refreshFiles(): void {
@@ -114,7 +116,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
         this.clearBox()
 
         const cachedFiles = this.restoreFilesFromCache(this.cacheKey)
-        if (this.needCache && cachedFiles.length > 0) {
+        if (this.useCache && cachedFiles.length > 0) {
             cachedFiles.forEach(file => this.filesStore.set(file.filename, {
                 userFile: file
             }))

@@ -35,6 +35,7 @@
                     <h3>Задание {{ i + 1 }}. {{ checkTask.task.taskDescr }}</h3>
                     <div *ngIf="checkTask.thread; else noAnswers" class="task-answers">
                         <app-upload-box
+                            class="student-files-box"
                             type="download"
                             [folder]="checkTask.folder"
                             label="Файлы на проверку от студента">

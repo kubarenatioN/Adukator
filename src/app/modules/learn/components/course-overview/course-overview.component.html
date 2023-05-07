@@ -83,22 +83,19 @@
     
             <div class="info-item">
                 <div>
-                    <span>Начало</span>
-                    <span>TBD</span>
+                    <p>Старт тренинга: </p>
+                    <span>{{ training.training.startAt | date : 'dd.MM.yyyy' }}</span>
                 </div>
+
                 <div>
-                    <span>Окончание</span>
-                    <span>TBD</span>
-                </div>
-                <div>
-                    <span>Длительность</span>
-                    <span>8 weeks</span>
+                    <p>Длительность</p>
+                    <span>{{ getTrainingDuration(training.course) }}</span>
                 </div>
             </div>
     
             <div class="info-item">
                 <span>Категория</span>
-                <p>{{training.course.categoryLabel}}</p>
+                <p>{{training.course.category}}</p>
             </div>
     
             <div class="info-item">

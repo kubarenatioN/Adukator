@@ -12,14 +12,12 @@ import {
 	withLatestFrom,
 	combineLatest,
 	shareReplay,
-	take,
 	tap,
-	filter,
 } from 'rxjs';
 import { NetworkRequestKey } from 'src/app/helpers/network.helper';
 import { UserService } from 'src/app/services/user.service';
-import { CourseCompetency, CourseModule } from 'src/app/typings/course.types';
-import { Training, TrainingMembershipStatus, TrainingProfile, TrainingProfileMeta } from 'src/app/typings/training.types';
+import { Course, CourseCompetency } from 'src/app/typings/course.types';
+import { Training, TrainingProfileMeta } from 'src/app/typings/training.types';
 import { LearnService } from '../../services/learn.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { StudentTraining } from 'src/app/models/course.model';
@@ -148,6 +146,14 @@ export class CourseOverviewComponent {
 
 	public getCompLabel(id: string) {
 		return this.competenciesConfig?.find(comp => comp.id === id)?.label ?? ''
+	}
+
+	public getTrainingDuration(course: Course) {
+		const days = course.topics.reduce((days, topic) => {
+			return days + topic.duration
+		}, 0)
+
+		return `Недель: ${Math.floor(days / 7)}`
 	}
 
 	private makeCourseEnrollAction(trainingId: string, key: string): void {

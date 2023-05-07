@@ -1,4 +1,4 @@
-<p>{{ task.taskDescr }}</p>
+<p>Условие: {{ task.taskDescr }}</p>
 
 <div>
     <app-upload-box 
@@ -11,15 +11,17 @@
 <form [formGroup]="form">
 
     <app-upload-box 
+        class="upload-box"
         #uploadBox
         [label]="uploadLabel" 
         [folder]="uploadFilesFolder"
         [controlId]="controlId"
+        [useCache]="false"
         type="upload"
         [clearObs$]="clearUploadBox$"
         (uploadFilesChanged)="onUpload($event)"></app-upload-box>
 
     <textarea formControlName="comment" cols="50" rows="6" placeholder="Комментарий"></textarea>
-
+    <br>
     <button (click)="onSend()">Отправить</button>
 </form>

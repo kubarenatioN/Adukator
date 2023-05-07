@@ -1,3 +1,7 @@
+.section {
+    padding: 20px 0;
+}
+
 .content {
     &.blocked {
         pointer-events: none;
@@ -25,4 +29,8 @@
     border: 1px solid #ccc;
     border-radius: 10px;
     background-color: #ddd;
+}
+
+.practice-task {
+    padding: 10px;
 }

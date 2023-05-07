@@ -12,10 +12,7 @@
     <span>{{ 'course start date + topic duration days' }}</span>
 </p>
 
-<div class="content" [class.blocked]="!isActual">
-    <p>
-        <!-- {{ topic | json }} -->
-    </p>
+<div class="content" [class.blocked]="false">
 
     <div *ngIf="topic.theory" class="section">
         <h2>Теория</h2>
