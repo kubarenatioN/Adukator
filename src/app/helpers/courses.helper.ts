@@ -114,6 +114,16 @@ export const convertCourseFormDataToCourse = (
 	const { overallInfo, modules, metadata } = formData;
 	const { title, description, category, acquiredCompetencies, requiredCompetencies } = overallInfo;
 	const { uuid, authorId, _id } = metadata;
+
+	const formattedModules = modules.map(module => {
+		return {
+			id: module.id,
+			title: module.title,
+			description: module.description
+		}
+	})
+	const plainTopics = modules.reduce((topics, module) => [...topics, ...module.topics], [] as ModuleTopic[])
+
 	return {
 		_id: _id ?? '',
 		uuid,
@@ -124,8 +134,8 @@ export const convertCourseFormDataToCourse = (
             acquired: acquiredCompetencies,
             required: requiredCompetencies,
         },
-		modules,
-		topics: modules.reduce((topics, module) => [...topics, ...module.topics], [] as ModuleTopic[]),
+		modules: formattedModules,
+		topics: plainTopics,
 		authorId,
 	};
 };

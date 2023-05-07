@@ -20,8 +20,6 @@ export class CoursesService {
         review: []
     });
 
-    public published$ = this.coursesStore$.asObservable().pipe(map(store => store.published), shareReplay(1));
-    public review$ = this.coursesStore$.asObservable().pipe(map(store => store.review), shareReplay(1));
 
 	constructor(private dataService: DataService, private userService: UserService) {
         

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { of, ReplaySubject, shareReplay, switchMap, tap } from 'rxjs';
+import { of, ReplaySubject, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { getEmptyCourseFormData, isEmptyCourseFormData } from 'src/app/constants/common.constants';
 import { convertCourseFormDataToCourse, convertCourseFormDataToCourseReview, generateUUID, removeComments } from 'src/app/helpers/courses.helper';
 import { AdminCoursesService } from 'src/app/services/admin-courses.service';
@@ -53,17 +53,19 @@ export class CourseBuilderService {
 
     public publishCourse(formData: CourseFormData) {
         if (!this.courseMetadata) {
-            console.warn('Metadata required to pubslish course.');
-            return of();
+            return throwError(() => new Error('Metadata required to pubslish course.'))
         }
         formData = this.restoreCourseMetadata(formData, this.courseMetadata)
         let courseData = convertCourseFormDataToCourse(formData)
         courseData = removeComments(courseData)
         const masterId = formData.metadata.masterCourseId || formData.metadata.uuid
 
-        // Show upload, then redirect. Create course in background
-        console.log('Course is publishing just started. Please wait...');
+        // regenerate new UUID for course after publishing current one
+        this.courseId = generateUUID();
+
+        console.log('Course publishing has just started. Please wait...');
         const rootCourseId = this.metadata.masterCourseId ?? this.metadata.uuid
+        
         return this.uploadService.moveFilesToRemote({
             fromFolder: `review/${rootCourseId}`,
             toFolder: `course/${rootCourseId}`,
@@ -84,8 +86,7 @@ export class CourseBuilderService {
 
     public createCourseReviewVersion({ formData, isMaster }: { formData: CourseFormData, isMaster: boolean }) {
         if (!this.courseMetadata) {
-            console.log('No metadata provided for new course version.');
-            return of(null)
+            return throwError(() => new Error('No metadata provided for new course version.'))
         }
         
         this.restoreCourseMetadata(formData, this.courseMetadata);
@@ -98,8 +99,7 @@ export class CourseBuilderService {
     public saveCourseReview(comments: { overallComments: unknown; modules: unknown }) {
         const id = this.courseMetadata?._id;
         if (!id) {
-            console.error('No _id provided to save review');
-            return of(null);
+            return throwError(() => new Error('No _id provided to save review'))
         }
         return this.adminCoursesService.saveCourseReview(id, comments)
     }
@@ -108,7 +108,7 @@ export class CourseBuilderService {
         return of(null).pipe(
             switchMap(() => {
                 if (mode === CourseFormViewMode.Create) {
-                    this.courseMetadata = this.getMasterCourseMetadata(this.courseId, author.uuid)
+                    this.courseMetadata = this.getMasterCourseMetadata(courseId, author.uuid)
                     return of(getEmptyCourseFormData(courseId));
                 }
 

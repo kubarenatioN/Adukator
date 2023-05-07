@@ -7,12 +7,12 @@ import {
 	Output,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { BehaviorSubject, Observable, combineLatest, debounceTime, map, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, debounceTime, generate, map, takeUntil, tap } from 'rxjs';
 import {
     EmptyCourseFormData,
 	isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
-import { convertCourseReviewToCourseFormData } from 'src/app/helpers/courses.helper';
+import { convertCourseReviewToCourseFormData, generateUUID } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { getTopicMinDate, getTopicMaxDate } from 'src/app/helpers/forms.helper';
 import { ConfigService } from 'src/app/services/config.service';
@@ -40,7 +40,7 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
     public categories$ = this.configService.loadCourseCategories();
     public competencies$!: Observable<ChipItem[]>
 
-	public courseForm;
+	public courseForm!: ReturnType<typeof this.fbHelper.getNewCourseFormModel>;
 	public activeFormGroup!: FormGroup;
     public get overallInfoSubform() {
         return this.courseForm.controls.overallInfo;
@@ -61,6 +61,7 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
         if (data === null) {
             return;
         }
+
         if (!isEmptyCourseFormData(data)) {
             const formData = convertCourseReviewToCourseFormData(data);
             this.setCourseModel(formData);
@@ -83,11 +84,12 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
         private courseBuilderService: CourseBuilderService,
     ) {
         super()
-        const courseId = this.courseBuilderService.courseId
-		this.courseForm = this.fbHelper.getNewCourseFormModel(courseId);
 	}
 
 	public ngOnInit(): void {
+        const courseId = this.courseBuilderService.courseId
+        this.courseForm = this.fbHelper.getNewCourseFormModel(courseId);
+
 		this.courseForm.valueChanges.subscribe((res) => {
 			// console.log('111 main course form', res);
             this.formChanged.emit(this.courseForm);

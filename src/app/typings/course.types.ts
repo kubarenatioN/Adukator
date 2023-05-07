@@ -45,7 +45,6 @@ export interface TopicTask {
     taskDescr: string;
     materials?: string[],
     type?: 'personal'
-    comment?: string
     comments?: Record<string, string>;
 }
 
@@ -103,46 +102,35 @@ export interface CourseFormOverallInfo {
 }
  
 interface CourseCore {
+    uuid: string;
     title: string;
 	description: string;
 	category: string;
     advantages?: string;
     authorId: string;
 	categoryLabel?: string;
+    competencies: {
+        acquired: string[],
+        required: string[],
+    },
 }
 
 // publicly accessed course, used for overview & training
 export interface Course extends CourseCore {
     _id: string;
-    uuid: string;
-    competencies: {
-        acquired: string[],
-        required: string[],
-    },
     modules: CourseModule[];
     topics: ModuleTopic[]
-    training?: Training
-}
-
-export interface CourseHierarchyComponent {
-    courseUUID: string;
-    module: number;
-    topic?: number;
-    task?: number;
+    training?: Training,
+    score?: number
 }
 
 
 // 'on review' course raw data
 export interface CourseReview extends CourseCore {
     _id?: string;
-    uuid: string;
     masterId: string | null;
     createdAt?: string;
     status?: CourseReviewStatus;
-    competencies: {
-        acquired: string[],
-        required: string[],
-    },
     modules: CourseFormModule[];
     comments: {
         [key: string]: CourseReviewControlComment[] | null

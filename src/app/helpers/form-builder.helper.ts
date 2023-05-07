@@ -76,9 +76,8 @@ export class FormBuilderHelper {
     public getTopicTaskForm(task: TopicTask | null = null) {
         return this.fb.group({
             id: task ? task.id : generateUUID(),
-            [TaskFormFields.TaskDescr]: task ? task.taskDescr : 'Создать 5 классов с демонстрацией принципов ООП',
+            [TaskFormFields.TaskDescr]: task ? task.taskDescr : '',
             [TaskFormFields.Materials]: task ? [task.materials] : [[]],
-            [TaskFormFields.Comment]: task ? task.comment : 'Очень важный комментарий от студента Васи Васильевича',
             comments: this.getFormGroupComments(TaskFormFields, task?.comments ?? {}),
         })
     }

@@ -10,7 +10,7 @@ import { FormArray, FormGroup } from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { CourseHierarchyComponent, WrapperType } from 'src/app/typings/course.types';
+import { WrapperType } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-course-module',
