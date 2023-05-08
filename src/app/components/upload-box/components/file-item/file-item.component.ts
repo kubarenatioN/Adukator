@@ -8,6 +8,7 @@ import {
 	OnInit,
     Output,
 } from '@angular/core';
+import { getCurrentTime } from 'src/app/helpers/date-fns.helper';
 import { UploadService } from 'src/app/services/upload.service';
 import { UserFile } from 'src/app/typings/files.types';
 
@@ -19,6 +20,7 @@ import { UserFile } from 'src/app/typings/files.types';
 })
 export class FileItemComponent implements OnInit {
     private shouldCancelUpload = true;
+    private timestamp!: string
     
     public progress: string = this.formatProgress(1);
     
@@ -30,13 +32,14 @@ export class FileItemComponent implements OnInit {
 
     @Output() download = new EventEmitter<UserFile>()
     @Output() uploaded = new EventEmitter<UserFile>()
-    @Output() remove = new EventEmitter<UserFile>()
+    @Output() remove = new EventEmitter<{ file: UserFile, timestamp: string }>()
     
 	constructor(private uploadService: UploadService, private cd: ChangeDetectorRef) {}
 
 	ngOnInit(): void {
+        this.timestamp = getCurrentTime()
         if (this.type === 'upload' && this.file && this.folder) {
-            this.uploadService.uploadFile(this.folder, this.file, 'folder-to-be-removed')
+            this.uploadService.uploadFile(this.folder, this.file, this.timestamp)
                 .subscribe(e => this.handleUploadEvent(e))
         }
     }
@@ -46,7 +49,7 @@ export class FileItemComponent implements OnInit {
     }
 
     public onRemove() {
-        this.remove.emit(this.userFile);
+        this.remove.emit({ file: this.userFile, timestamp: this.timestamp});
     }
 
     private handleUploadEvent(e: HttpEvent<{ file: UserFile }>) {

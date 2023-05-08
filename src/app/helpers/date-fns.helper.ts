@@ -27,6 +27,13 @@ export const getDurationInMilliseconds = (from: number | Date | string, to: numb
     return differenceInMilliseconds(to, from);
 }
 
+export const getCurrentTime = () => {
+    const date = new Date()
+    date.setMilliseconds(0)
+    date.setSeconds(0)
+    return format(date, 'dd.MM.yy:HH:mm')
+}
+
 export const getTodayTime = (): Date => {
     // return addDays(new Date(), 20) // DEBUG ONLY!!!
     return new Date()

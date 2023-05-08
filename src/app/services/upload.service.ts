@@ -4,6 +4,7 @@ import { BehaviorSubject, from, map, Observable } from 'rxjs';
 import { apiUrl } from '../constants/urls';
 import { UserFile } from '../typings/files.types';
 import { CloudinaryFilesResponse, CourseFilesResponse } from '../typings/response.types';
+import { getCurrentTime } from '../helpers/date-fns.helper';
 
 export type UploadPathSegment = 'tasks' | 'topics' | 'training' 
 
@@ -13,11 +14,11 @@ export type UploadPathSegment = 'tasks' | 'topics' | 'training'
 export class UploadService {    
 	constructor(private http: HttpClient) {}
 
-	public uploadFile(tempFolder: string, file: File, remoteFolder: string) {
+	public uploadFile(tempFolder: string, file: File, timestamp: string) {
 		const formData = new FormData();
 		formData.append('tempFolder', tempFolder);
+		formData.append('timestamp', timestamp);
 		formData.append('file', file);
-		formData.append('folder', remoteFolder);
         
 		return this.http.post<{ filename: string, file: UserFile }>(`${apiUrl}/upload`, formData, {
             reportProgress: true,
@@ -33,10 +34,11 @@ export class UploadService {
         return this.getFilesFromLocal(folder)
 	}
 
-	public removeTempFile(filename: string, folder: string) {
+	public removeTempFile(filename: string, folder: string, timestamp: string) {
 		return this.http.post(`${apiUrl}/upload/temp/delete`, {
             filename,
-            folder
+            folder,
+            timestamp,
         })
 	}
 

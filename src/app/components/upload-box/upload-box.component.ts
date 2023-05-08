@@ -83,10 +83,11 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
         this.uploadFilesChanged.emit([...this.filesStore.values()].map(({ userFile }) => userFile.filename))
     }
 
-    public onRemove(file: UserFile) {
+    public onRemove(data: {file: UserFile, timestamp: string}) {
+        const { file, timestamp } = data;
         this.filesStore.delete(file.filename)
         if (this.folder) {
-            this.uploadService.removeTempFile(file.filename, this.folder).subscribe()
+            this.uploadService.removeTempFile(file.filename, this.folder, timestamp).subscribe()
             this.cacheService.removeFileFromCache(this.cacheKey, file)
         }
     }
