@@ -4,7 +4,7 @@ import { TrainingDataService } from 'src/app/services/training-data.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
 import { TopicTask } from 'src/app/typings/course.types';
-import { PersonalizationAssignment, Training } from 'src/app/typings/training.types';
+import { PersonalizationAssignment, PersonalizationOpening, Training } from 'src/app/typings/training.types';
 
 @Injectable({
 	providedIn: 'root',
@@ -22,6 +22,10 @@ export class PersonalizationService {
 
     public applyTasksAssignment(payload: { assign: PersonalizationAssignment[], unassign: PersonalizationAssignment[] }) {
         return this.trainingDataService.assignPersonalTasks(payload)
+    }
+
+    public applyTasksOpening(payload: { open: PersonalizationOpening[], close: PersonalizationOpening[] }) {
+        return this.trainingDataService.openTasks(payload)
     }
 
     public createTask(training: Training, topicId: string, task: TopicTask) {

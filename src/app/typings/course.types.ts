@@ -44,7 +44,8 @@ export interface TopicTask {
     id: string;
     taskDescr: string;
     materials?: string[],
-    type?: 'personal'
+    type?: 'personal',
+    isOpened?: boolean,
     comments?: Record<string, string>;
 }
 

@@ -19,8 +19,8 @@
         </label>
         
         <label class="filters-task">
-            <ng-container *ngIf="tasks$ | async as tasks; else noTasks">
-                <select formControlName="task" *ngIf="tasks.length > 0; else noTasks">
+            <ng-container *ngIf="tasks$ | async as tasks">
+                <select formControlName="task" *ngIf="tasks !== 'NoTasks'; else noTasks">
                     <option [value]=""></option>
                     <option *ngFor="let taskInfo of tasks" [value]="taskInfo.uuid">
                         {{ taskInfo.task.taskDescr }}
@@ -44,5 +44,5 @@
 <button (click)="onAssign()" [disabled]="!canAssign">Назначить</button>
 
 <ng-template #noTasks>
-    <p>В теме нет практических заданий</p>
+    <p>По выбранной теме не создано персональных практических заданий.</p>
 </ng-template>

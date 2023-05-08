@@ -27,7 +27,7 @@ export class AssignTaskComponent implements OnInit {
     
 	public trainings$ = this.teacherService.getTeacherTrainings(CoursesSelectFields.Modules).pipe(shareReplay(1))
     public topics$!: Observable<ModuleTopic[] | null>
-    public tasks$!: Observable<PersonalTask[] | null>
+    public tasks$!: Observable<PersonalTask[] | null | 'NoTasks'>
 	public personalizations$!: Observable<PersonalizationProfile[]>;
 
     public form;
@@ -83,9 +83,13 @@ export class AssignTaskComponent implements OnInit {
             personalTasks$,
         ]).pipe(
             map(([model, tasks]) => {
-                const personalTasks = tasks.filter(task => task.training._id === model.training && task.topicId === model.topic)
-                this.tasks = personalTasks
-                return personalTasks.length > 0 ? personalTasks : null
+                const { training, topic } = model
+                if (training && topic) {
+                    const personalTasks = tasks.filter(task => task.training._id === model.training && task.topicId === model.topic)
+                    this.tasks = personalTasks
+                    return personalTasks.length > 0 ? personalTasks : 'NoTasks'
+                }
+                return null
             })
         )
 

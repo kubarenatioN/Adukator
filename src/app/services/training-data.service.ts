@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from 'src/app/helpers/network.helper';
 import { DataService } from 'src/app/services/data.service';
-import { Personalization, PersonalizationAssignment, PersonalTask, ProfileProgress, ProfileProgressRecord, TopicDiscussionReply, Training, TrainingMembershipSearchParams, TrainingProfile, TrainingProfileFull, TrainingProfileLookup, TrainingProfileTraining, TrainingProfileUser, TrainingReply } from 'src/app/typings/training.types';
+import { Personalization, PersonalizationAssignment, PersonalizationOpening, PersonalTask, ProfileProgress, ProfileProgressRecord, TopicDiscussionReply, Training, TrainingMembershipSearchParams, TrainingProfile, TrainingProfileFull, TrainingProfileLookup, TrainingProfileTraining, TrainingProfileUser, TrainingReply } from 'src/app/typings/training.types';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { PersonalizationProfile } from '../modules/teacher/components/personalization/assign-task/assign-task.component';
 import { TopicTask } from '../typings/course.types';
@@ -80,7 +80,7 @@ export class TrainingDataService {
     }
 
     public getPersonalization(profileId: string, type?: 'assignment' | 'open') {
-        const key = NetworkRequestKey.Personalization
+        const key = NetworkRequestKey.GetPersonalization
         const paramsObj: Record<string, string> = {
             reqId: key
         }
@@ -215,10 +215,20 @@ export class TrainingDataService {
     }
 
     public assignPersonalTasks(body: { assign: PersonalizationAssignment[], unassign: PersonalizationAssignment[] }) {
-        const key = NetworkRequestKey.PersonalizationAssignment
+        const key = NetworkRequestKey.Personalization
         const payload = NetworkHelper.createRequestPayload(key, {
             body,
-            params: { reqId: key }
+            params: { reqId: key, type: 'assignment' }
+        })
+
+        return this.dataService.send(payload)
+    }
+
+    public openTasks(body: { open: PersonalizationOpening[], close: PersonalizationOpening[] }) {
+        const key = NetworkRequestKey.Personalization
+        const payload = NetworkHelper.createRequestPayload(key, {
+            body,
+            params: { reqId: key, type: 'opening' }
         })
 
         return this.dataService.send(payload)

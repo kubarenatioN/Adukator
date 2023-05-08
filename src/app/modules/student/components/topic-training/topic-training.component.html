@@ -42,7 +42,9 @@
                 <p>{{ topic.practice.goal }}</p>
                 <div class="practice-tasks">
                     <h4>Задания</h4>
-                    <div *ngFor="let task of topic.practice.tasks; let i = index" class="practice-task">
+                    <div *ngFor="let task of topic.practice.tasks; let i = index" 
+                    [class.blocked]="isPast && task.isOpened !== true"
+                    class="practice-task">
                         <app-training-task 
                             (send)="onSendTask($event)"
                             [task]="task"></app-training-task>

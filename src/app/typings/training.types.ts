@@ -148,11 +148,11 @@ export interface PersonalTask {
 export interface Personalization {
     _id: string,
     uuid: string,
-    type: 'assignment' | 'dismiss' | 'open',
+    type: 'assignment' | 'dismiss' | 'opening',
     profile: string,
     task?: PersonalTask,
     dismiss?: string[],
-    open?: string[],
+    opening?: string,
 }
 
 export interface PersonalizationAssignment {
@@ -161,4 +161,11 @@ export interface PersonalizationAssignment {
     task: string,
     taskPersonalization: string | undefined,
     isAssigned: boolean
+}
+
+export interface PersonalizationOpening {
+    uuid: string,
+    profile: string,
+    task: string,
+    hasOpening: boolean
 }
