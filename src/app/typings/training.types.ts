@@ -12,7 +12,8 @@ export interface TrainingProfile<T, U> {
     uuid: string;
     training: T
     student: U,
-    enrollment: TrainingMembershipStatus
+    enrollment: TrainingMembershipStatus,
+    status: 'active' | 'completed'
 }
 
 export type TrainingProfileLookup = TrainingProfileMeta

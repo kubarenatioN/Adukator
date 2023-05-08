@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ReplaySubject, switchMap } from 'rxjs';
+import { ReplaySubject, map, switchMap } from 'rxjs';
 import { TrainingDataService } from 'src/app/services/training-data.service';
 import { UserService } from 'src/app/services/user.service';
 import { TrainingProfileTraining } from 'src/app/typings/training.types';
@@ -18,9 +18,12 @@ export class TrainingService {
         this.userService.user$.pipe(
             switchMap(user => {
                 return this.trainingDataService.getStudentProfiles(user._id)
+            }),
+            map(res => {
+                return res.profiles?.filter(profile => profile.status !== 'completed') ?? []
             })
-        ).subscribe(res => {
-            this.studentProfilesStore$.next(res.profiles ?? [])
+        ).subscribe(data => {
+            this.studentProfilesStore$.next(data)
         })
 	}
 }
