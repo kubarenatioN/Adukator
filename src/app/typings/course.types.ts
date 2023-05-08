@@ -70,6 +70,7 @@ export interface ModuleTopic {
         offline: boolean;
     };
     duration: number; // in days
+    startAt: string,
     days?: number,
     weeks?: number,
     comments: Record<string, string>; // move this review-related field in separate interface

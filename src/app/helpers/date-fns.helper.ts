@@ -28,8 +28,8 @@ export const getDurationInMilliseconds = (from: number | Date | string, to: numb
 }
 
 export const getTodayTime = (): Date => {
-    return addDays(new Date(), 20) // DEBUG ONLY!!!
-    // return new Date()
+    // return addDays(new Date(), 20) // DEBUG ONLY!!!
+    return new Date()
 }
 
 export const getNextYearTime = (): Date => {

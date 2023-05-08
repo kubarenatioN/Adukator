@@ -1,13 +1,10 @@
 .section {
     padding: 20px 0;
-}
 
-.content {
     &.blocked {
         pointer-events: none;
         position: relative;
-        height: 600px;
-        overflow: hidden;
+        user-select: none;
     }
     &.blocked::after {
         content: '';
@@ -15,10 +12,13 @@
         width: 100%;
         top: 0px;
         bottom: 0;
-        background: linear-gradient(0deg, rgba(255, 255, 255, 1), 70%, transparent);
+        background: rgba(255, 255, 255, 0.8);
         z-index: 3;
+        pointer-events: none;
     }
+}
 
+.content {
     &.archived {
         pointer-events: none;
         position: relative;
@@ -48,4 +48,15 @@
 
 .practice-task {
     padding: 10px;
+}
+
+.topic-status {
+
+    &.past {
+        color: #ff672b;
+    }
+
+    &.actual {
+        color: #42c600;
+    }
 }

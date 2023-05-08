@@ -34,6 +34,7 @@ export class TrainingTaskComponent implements OnInit, OnChanges {
 		| undefined;
 
 	@Input() public task!: TopicTask;
+	@Input() public isActual!: boolean
 
 	@Output() public send = new EventEmitter<TrainingReplyMessage>();
 

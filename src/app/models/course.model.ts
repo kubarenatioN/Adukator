@@ -1,6 +1,7 @@
-import { isActualTopic, isPastTopic } from "../modules/student/helpers/course-training.helper";
+import { addDays } from "date-fns/esm";
+import { formatTopicsDeadlines } from "../modules/student/helpers/course-training.helper";
 import { Course, CourseModule, ModuleTopic } from "../typings/course.types";
-import { Training } from "../typings/training.types";
+import { Personalization, Training } from "../typings/training.types";
 
 export class StudentTraining {
     private _training: Training
@@ -46,13 +47,17 @@ export class StudentTraining {
         return this._training.status
     }
     
-    constructor(training: Training) {
+    constructor(training: Training, options?: { personalization?: Personalization[] }) {
         this._training = training;
         this._course = this.prepareCourse(training.course)
+        if (options?.personalization) {
+            this.applyPersonalization(options.personalization)
+        }
     }
 
     private prepareCourse(course: Course) {
         this._topics = course.topics.slice();
+        this._topics = formatTopicsDeadlines(this.topics, this.training)
 
         const contentTree = course.modules.map(module => {
             return {
@@ -62,21 +67,27 @@ export class StudentTraining {
             }
         })
 
-        this.topics.forEach(topic => {
-            topic.isPast = isPastTopic(topic);
-        })
-        for (let i = this.topics.length - 1; i >= 0; i--) {
-            const topic = this.topics[i]
-            topic.isActual = isActualTopic(topic);
-            if (topic.isActual) {
-                break;
-            }            
-        }
-
         return {
             course,
             contentTree,
         } 
+    }
+
+    private applyPersonalization(personalization: Personalization[]) {
+        const openings = personalization.filter(pers => pers.type === 'opening')
+        this._topics = this._topics.map(topic => {
+            const tasks = topic.practice?.tasks
+            tasks?.forEach((task, i, arr) => {
+                if (openings.findIndex(opening => opening.opening === task.id) > -1) {
+                    arr[i].isOpened = true
+                }
+            })
+
+            return {
+                ...topic,
+                tasks
+            }
+        })
     }
 
     public getModule(moduleId: string) {

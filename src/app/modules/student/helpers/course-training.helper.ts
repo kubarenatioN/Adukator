@@ -1,18 +1,19 @@
+import { add, addDays } from "date-fns/esm";
 import { getTodayTime } from "src/app/helpers/date-fns.helper";
 import { ModuleTopic } from "src/app/typings/course.types";
+import { Training } from "src/app/typings/training.types";
 
-export const isActualTopic = (topic: ModuleTopic): boolean => {
-    // const now = getTodayTime()
-    // const isActual = now > new Date(topic.startDate)
-    
-    // return isActual
-    return false
-}
+export const formatTopicsDeadlines = (topics: ModuleTopic[], training: Training) => {
+    const now = getTodayTime()
+    let daysFromStart = 0
+    const trainingStart = new Date(training.startAt)
+    topics.forEach(topic => {
+        topic.startAt = addDays(trainingStart, daysFromStart).toUTCString()
+        const topicStartDate = new Date(topic.startAt)
+        topic.isActual = now > topicStartDate && now < addDays(topicStartDate, topic.duration)
+        topic.isPast = now > addDays(topicStartDate, topic.duration)
+        daysFromStart += topic.duration
+    })
 
-export const isPastTopic = (topic: ModuleTopic): boolean => {
-    // const now = getTodayTime()
-    // const isPast = now > new Date(topic.endDate)
-    
-    // return isPast
-    return false
+    return topics
 }

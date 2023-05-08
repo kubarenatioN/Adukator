@@ -44,8 +44,11 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
     public viewTypes = ViewType;
     public profileInfo$ = this.trainingStore$.asObservable()
 
-    public training$: Observable<StudentTraining> = this.profile$.pipe(
-        map(profile => new StudentTraining(profile.training)),
+    public training$: Observable<StudentTraining> = this.profileInfo$.pipe(
+        filter(profileInfo => profileInfo.profile != null),
+        map(profileInfo => new StudentTraining(profileInfo.profile!.training, {
+            personalization: profileInfo.personalization
+        })),
     );
     
 	constructor(

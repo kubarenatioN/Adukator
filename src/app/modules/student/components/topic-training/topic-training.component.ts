@@ -9,6 +9,7 @@ import {
 	Output,
 	SimpleChanges,
 } from '@angular/core';
+import { addDays } from 'date-fns/esm';
 import {
 	BehaviorSubject,
 	combineLatest,
@@ -68,6 +69,10 @@ export class TopicTrainingComponent
 
 	public get status() {
 		return this.training.status
+	}
+
+	public get deadline() {
+		return addDays(new Date(this.topic.startAt), this.topic.duration) 
 	}
 
 	constructor(

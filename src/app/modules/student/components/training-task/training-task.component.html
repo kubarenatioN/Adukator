@@ -1,4 +1,6 @@
-<p>Условие: {{ task.taskDescr }}</p>
+<p *ngIf="!isActual && task.isOpened !== true">Задание недоступно для отправки.</p>
+<p *ngIf="!isActual && task.isOpened === true">Задание было разблокировано.</p>
+<h3>{{ task.taskDescr }}</h3>
 
 <div>
     <app-upload-box 
@@ -8,7 +10,7 @@
     type="download"></app-upload-box>
 </div>
 
-<form [formGroup]="form">
+<form [formGroup]="form" *ngIf="isActual || task.isOpened">
 
     <app-upload-box 
         class="upload-box"
