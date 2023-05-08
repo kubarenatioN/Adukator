@@ -37,13 +37,13 @@ export class TopicTrainingComponent
 {
 	private topicStore$ = new BehaviorSubject<ModuleTopic>({} as ModuleTopic);
 
+	@Input() public profileId!: string;
 	@Input() public topic!: ModuleTopic;
 	@Input() public training!: StudentTraining;
 
 	@Output() public sendReply = new EventEmitter<Pick<TrainingReply, 'message' | 'type' | 'topicId'>>()
 
 	public trainingMaterialsFolder: string = '';
-	public profileId: string | null = null
 
 	public personalTasks$ = this.trainingService.personalization$.pipe(
 			map(personalization => {
@@ -98,9 +98,6 @@ export class TopicTrainingComponent
 		])
 			.pipe(
 				takeUntil(this.componentLifecycle$),
-				tap(([_, profile]) => {
-					this.profileId = profile.uuid
-				}),
 				map(([topic, profile]) => {
 					return this.uploadService.getFilesFolder(
 						'course',
@@ -128,5 +125,11 @@ export class TopicTrainingComponent
 	public copyProfileIdToClipboard(textElem: HTMLElement) {
 		const text = textElem.innerText
 		navigator.clipboard.writeText(text)
+	}
+
+	public tasksTrackBy = (index: number, task: TopicTask): string => {		
+		const id = `${this.profileId}-${this.topic.id}-${task.id}`
+		
+		return id
 	}
 }

@@ -49,6 +49,7 @@
             [type]="uploadType"
             serveFrom="local"
             [preloadExisting]="shouldPreloadExisting"
+            [autoRemoveOnDestroy]="false"
             (uploadFilesChanged)="onUploadFilesChanged($event)">
         </app-upload-box>
     </div>

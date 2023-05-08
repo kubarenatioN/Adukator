@@ -41,7 +41,7 @@
                 <p>{{ topic.practice.goal }}</p>
                 <div class="practice-tasks">
                     <h4>Задания</h4>
-                    <div *ngFor="let task of topic.practice.tasks; let i = index" 
+                    <div *ngFor="let task of topic.practice.tasks; let i = index; trackBy:tasksTrackBy"
                     [class.blocked]="isPast && task.isOpened !== true"
                     class="practice-task">
                         <app-training-task 
@@ -52,7 +52,8 @@
 
                     <ng-container *ngIf="personalTasks$ | async as personalTasks">
                         <h4>Индивидуальные задания</h4>
-                        <div *ngFor="let task of personalTasks; let i = index" class="practice-task">
+                        <div *ngFor="let task of personalTasks; let i = index; trackBy:tasksTrackBy"
+                        class="practice-task">
                             <app-training-task 
                             (send)="onSendTask($event)"
                             [isActual]="true"

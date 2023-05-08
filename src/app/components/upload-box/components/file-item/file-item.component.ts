@@ -5,6 +5,7 @@ import {
 	Component,
 	EventEmitter,
 	Input,
+	OnDestroy,
 	OnInit,
     Output,
 } from '@angular/core';
@@ -18,12 +19,13 @@ import { UserFile } from 'src/app/typings/files.types';
 	styleUrls: ['./file-item.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FileItemComponent implements OnInit {
-    private shouldCancelUpload = true;
+export class FileItemComponent implements OnInit, OnDestroy {
+    private manualRemove = false;
     private timestamp!: string
     
     public progress: string = this.formatProgress(1);
     
+    @Input() public autoRemoveOnDestroy = true;
 	@Input() folder!: string;
 	@Input() userFile!: UserFile;
 	@Input() file?: File;
@@ -44,11 +46,18 @@ export class FileItemComponent implements OnInit {
         }
     }
 
+    public ngOnDestroy(): void {
+        if (this.autoRemoveOnDestroy && this.type === 'upload' && !this.manualRemove) {
+            this.onRemove()
+        }
+    }
+
     public onDownload() {
         this.download.emit(this.userFile)
     }
 
     public onRemove() {
+        this.manualRemove = true
         this.remove.emit({ file: this.userFile, timestamp: this.timestamp});
     }
 

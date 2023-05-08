@@ -23,6 +23,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
     @Input() public preloadExisting: boolean = false;
     @Input() public useCache: boolean = true;
     @Input() public serveFrom: 'cloud' | 'local' = 'cloud';
+    @Input() public autoRemoveOnDestroy = true;
     
     @Input() public clearObs$?: EventEmitter<void>;
 
@@ -55,7 +56,9 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
     }
 
 	public ngOnInit(): void {
-        this.clearObs$?.subscribe(() => this.clearBox())
+        this.clearObs$?.subscribe(() => {
+            this.clearBox()
+        })
     }
 
     public onChange(e: Event) {

@@ -25,7 +25,8 @@
                     [ngTemplateOutlet]="topicView"
                     [ngTemplateOutletContext]="{ 
                         topic: viewData.topic,
-                        training: viewData.training
+                        training: viewData.training,
+                        profileId: viewData.profileId
                     }"
                 ></ng-container>
 
@@ -58,11 +59,12 @@
     <h1>{{ module.title }}</h1>
 </ng-template>
 
-<ng-template #topicView let-topic="topic" let-training="training">
+<ng-template #topicView let-topic="topic" let-training="training" let-profileId="profileId">
     <app-topic-training 
     *ngIf="topic"
     (sendReply)="onSendReply($event)"
     [topic]="topic"
+    [profileId]="profileId"
     [training]="training"></app-topic-training>
 </ng-template>
 

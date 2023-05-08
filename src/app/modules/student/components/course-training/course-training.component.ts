@@ -19,7 +19,8 @@ interface ViewConfig {
     viewType: ViewType,
     training: StudentTraining,
     module?: CourseModule,
-    topic?: ModuleTopic
+    topic?: ModuleTopic,
+    profileId: string,
 }
 
 @Component({
@@ -29,6 +30,7 @@ interface ViewConfig {
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseTrainingComponent extends BaseComponent implements OnInit {
+    private profileId = ''
     private trainingStore$ = new ReplaySubject<TrainingData>()
     private viewTypeStore$ = new BehaviorSubject<ViewType>(ViewType.Main)
     
@@ -61,14 +63,20 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
     }
 
 	public ngOnInit(): void {
-        this.activatedRoute.params.subscribe(params => {
-            const profileId = params['id']
-            this.trainingService.getProfile(profileId, {
-                include: ['personalization', 'progress']
-            }).subscribe(trainingData => {
-                this.trainingStore$.next(trainingData)
-                this.trainingService.trainingData = trainingData
+        this.profileId = this.activatedRoute.snapshot.paramMap.get('id') ?? ''
+        
+        this.activatedRoute.params.pipe(
+            switchMap(params => {
+                const profileId = params['id']
+                
+                return this.trainingService.getProfile(profileId, {
+                    include: ['personalization', 'progress']
+                })
             })
+        )
+        .subscribe(trainingData => {
+            this.trainingStore$.next(trainingData)
+            this.trainingService.trainingData = trainingData
         })
     
         this.viewData$ = combineLatest([
@@ -85,6 +93,7 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
                         viewType,
                         training,
                         module: training.getModule(moduleId),
+                        profileId: this.profileId,
                     }
                 }
                 if (viewType === this.viewTypes.Topic && topicId) {
@@ -94,10 +103,15 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
                         training,
                         module: training.getTopicModule(topic),
                         topic: topic,
+                        profileId: this.profileId,
                     }
                 }
 
-                return { viewType, training }
+                return { 
+                    viewType,
+                    training, 
+                    profileId: this.profileId,
+                }
             })
         )
     }

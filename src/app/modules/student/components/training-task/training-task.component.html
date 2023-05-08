@@ -21,6 +21,7 @@
         [useCache]="false"
         type="upload"
         [clearObs$]="clearUploadBox$"
+        [autoRemoveOnDestroy]="true"
         (uploadFilesChanged)="onUpload($event)"></app-upload-box>
 
     <textarea formControlName="comment" cols="50" rows="6" placeholder="Комментарий"></textarea>
