@@ -12,7 +12,12 @@
     <span>{{ 'course start date + topic duration days' }}</span>
 </p>
 
-<div class="content" [class.blocked]="false">
+<p>
+    <span>Статус: </span>
+    <span>{{ status }}</span>
+</p>
+
+<div class="content" [class.blocked]="false" [class.archived]="status === 'archived'">
 
     <div *ngIf="topic.theory" class="section">
         <h2>Теория</h2>

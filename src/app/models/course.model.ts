@@ -41,6 +41,10 @@ export class StudentTraining {
     public get topics() {
         return this._topics;
     }
+
+    public get status() {
+        return this._training.status
+    }
     
     constructor(training: Training) {
         this._training = training;

@@ -6,13 +6,28 @@
     &.blocked {
         pointer-events: none;
         position: relative;
+        height: 600px;
+        overflow: hidden;
     }
-
     &.blocked::after {
         content: '';
         position: absolute;
         width: 100%;
-        top: 10px;
+        top: 0px;
+        bottom: 0;
+        background: linear-gradient(0deg, rgba(255, 255, 255, 1), 70%, transparent);
+        z-index: 3;
+    }
+
+    &.archived {
+        pointer-events: none;
+        position: relative;
+    }
+    &.archived::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        top: 0;
         bottom: 0;
         background: linear-gradient(0deg, rgba(255, 255, 255, 0.8), calc(100% - 20px), transparent);
         z-index: 3;

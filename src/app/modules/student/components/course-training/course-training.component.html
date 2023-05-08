@@ -1,11 +1,5 @@
 <app-layout class="container layout" *ngIf="viewData$ | async as viewData; else loader">
-    <div>
-        <pre>
-            {{ viewData | json }}
-        </pre>
-    </div>
     <div slot="main" class="training-container">
-        
         <section class="content">
             
             <div>
@@ -16,7 +10,9 @@
                 
                 <ng-container *ngSwitchCase="viewTypes.Main"
                     [ngTemplateOutlet]="mainView"
-                    [ngTemplateOutletContext]="{ course: viewData.training.course }"
+                    [ngTemplateOutletContext]="{ 
+                        training: viewData.training
+                    }"
                 ></ng-container>
 
                 <ng-container 
@@ -27,7 +23,10 @@
                 <ng-container 
                     *ngSwitchCase="viewTypes.Topic"
                     [ngTemplateOutlet]="topicView"
-                    [ngTemplateOutletContext]="{ topic: viewData.topic }"
+                    [ngTemplateOutletContext]="{ 
+                        topic: viewData.topic,
+                        training: viewData.training
+                    }"
                 ></ng-container>
 
             </ng-container>
@@ -41,21 +40,30 @@
 
 </app-layout>
 
-<ng-template #mainView let-course="course">
-    <h1>Тренинг по курсу {{course.title}}</h1>
-    <p>{{course.description}}</p>
-    <p>Категория: {{course.categoryLabel}}</p>
+<ng-template #mainView let-training="training">
+    <span>Статус: {{ training.status }}</span>
+    <h1>Тренинг по курсу {{training.course.title}}</h1>
+    <p>{{training.course.description}}</p>
+    <p>Категория: {{training.course.category}}</p>
+
+    <h2>Программа</h2>
+    <div class="modules-list">
+        <div *ngFor="let node of training.contentTree" class="module-item">
+            <h3>{{ node.module.title }}</h3>
+        </div>
+    </div>
 </ng-template>
 
 <ng-template #moduleView let-module="module">
     <h1>{{ module.title }}</h1>
 </ng-template>
 
-<ng-template #topicView let-topic="topic">
+<ng-template #topicView let-topic="topic" let-training="training">
     <app-topic-training 
     *ngIf="topic"
     (sendReply)="onSendReply($event)"
-    [topic]="topic"></app-topic-training>
+    [topic]="topic"
+    [training]="training"></app-topic-training>
 </ng-template>
 
 <ng-template #loader>

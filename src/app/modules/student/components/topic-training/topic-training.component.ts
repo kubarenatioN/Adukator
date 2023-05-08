@@ -17,6 +17,7 @@ import {
 	takeUntil,
 	tap,
 } from 'rxjs';
+import { StudentTraining } from 'src/app/models/course.model';
 import { StudentTrainingService } from 'src/app/modules/student/services/student-training.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { BaseComponent } from 'src/app/shared/base.component';
@@ -36,6 +37,7 @@ export class TopicTrainingComponent
 	private topicStore$ = new BehaviorSubject<ModuleTopic>({} as ModuleTopic);
 
 	@Input() public topic!: ModuleTopic;
+	@Input() public training!: StudentTraining;
 
 	@Output() public sendReply = new EventEmitter<Pick<TrainingReply, 'message' | 'type' | 'topicId'>>()
 
@@ -62,6 +64,10 @@ export class TopicTrainingComponent
 
 	public get isPast() {
 		return this.topic.isPast;
+	}
+
+	public get status() {
+		return this.training.status
 	}
 
 	constructor(
