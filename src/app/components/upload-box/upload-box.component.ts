@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { from, map, Observable, Subscription } from 'rxjs';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
@@ -29,6 +29,9 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
 
     @Output()
     public uploadFilesChanged = new EventEmitter<string[]>();
+
+    @ViewChild('fileInput')
+    public fileInputRef!: ElementRef<HTMLInputElement>
     
     public get fileInputId(): string {
         return `fileInput-${this.folder}`;
@@ -57,6 +60,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
 
 	public ngOnInit(): void {
         this.clearObs$?.subscribe(() => {
+            this.cacheService.clearCache(this.controlId)
             this.clearBox()
         })
     }
@@ -165,6 +169,9 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     public clearBox() {
+        if (this.fileInputRef) {
+            this.fileInputRef.nativeElement.value = ''
+        }
         this.filesStore.clear();
         this.cd.markForCheck()
     }

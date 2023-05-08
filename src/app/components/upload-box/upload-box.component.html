@@ -6,7 +6,7 @@
 
         <div appDnd (filesDropped)="onFilesDropped($event)" class="dropzone">
     
-            <input class="file-input" type="file" [id]="fileInputId" multiple (change)="onChange($event)">
+            <input #fileInput class="file-input" type="file" [id]="fileInputId" multiple (change)="onChange($event)">
     
             <div class="dropzone-wrapper">
                 Отпустите файлы здесь.
@@ -23,6 +23,7 @@
                             [autoRemoveOnDestroy]="autoRemoveOnDestroy"
                             [file]="file.uploadFile"
                             [folder]="folder"
+                            [clearObs$]="clearObs$"
                             (remove)="onRemove($event)"
                             (uploaded)="onUpload($event)"
                             type="upload">

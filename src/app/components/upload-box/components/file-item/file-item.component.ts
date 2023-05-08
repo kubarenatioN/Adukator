@@ -20,6 +20,7 @@ import { UserFile } from 'src/app/typings/files.types';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileItemComponent implements OnInit, OnDestroy {
+    private submitted = false;
     private manualRemove = false;
     private timestamp!: string
     
@@ -31,6 +32,7 @@ export class FileItemComponent implements OnInit, OnDestroy {
 	@Input() file?: File;
 	@Input() type!: 'upload' | 'download';
     @Input() controlId!: string;
+    @Input() clearObs$?: EventEmitter<void>;
 
     @Output() download = new EventEmitter<UserFile>()
     @Output() uploaded = new EventEmitter<UserFile>()
@@ -44,10 +46,12 @@ export class FileItemComponent implements OnInit, OnDestroy {
             this.uploadService.uploadFile(this.folder, this.file, this.timestamp)
                 .subscribe(e => this.handleUploadEvent(e))
         }
+
+        this.clearObs$?.subscribe(() => this.submitted = true)
     }
 
     public ngOnDestroy(): void {
-        if (this.autoRemoveOnDestroy && this.type === 'upload' && !this.manualRemove) {
+        if (this.autoRemoveOnDestroy && this.type === 'upload' && !this.manualRemove && !this.submitted) {
             this.onRemove()
         }
     }

@@ -31,4 +31,8 @@ export class UploadCacheService {
 		files = files.filter((f) => f.filename !== file.filename);
 		this.materialsCache.set(controlId, files);
 	}
+
+	public clearCache(controlId: string) {
+		this.materialsCache.delete(controlId)
+	}
 }
