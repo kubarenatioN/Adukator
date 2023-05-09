@@ -21,5 +21,5 @@ export interface UserTrainingProfile {
 	_id: string;
 	uuid: string;
 	competencies: string[];
-	finishedTrainings: Training[];
+	trainingHistory: string[] | Training[];
 }

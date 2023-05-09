@@ -91,15 +91,6 @@ export class UserService {
 		this.clearUser();
 	}
 
-	public isCourseOwner(course: Course): Observable<boolean> {
-		return this.user$.pipe(
-			map(
-				(user) =>
-					user?.role === 'teacher' && user?.uuid === course.authorId
-			)
-		);
-	}
-
 	public getUserById(userId: number): Observable<User | null> {
 		const payload = NetworkHelper.createRequestPayload(
 			NetworkRequestKey.GetUserById,

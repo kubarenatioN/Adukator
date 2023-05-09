@@ -1,4 +1,4 @@
-<ng-container *ngIf="training$ | async as training; else loader">
+<ng-container *ngIf="viewData$ | async as viewData; else loader">
 	<div
 		class="course-banner-wrapper"
 		style="
@@ -9,16 +9,16 @@
 	</div>
 	<div class="course-banner-content">
 		<div class="info">
-			<h1 class="title">{{ training.course.title }}</h1>
-			<p class="descr">{{ training.course.description }}</p>
+			<h1 class="title">{{ viewData.course.title }}</h1>
+			<p class="descr">{{ viewData.course.description }}</p>
 
 			<div
-				*ngIf="(isUserOwner$ | async) !== true"
+				*ngIf="viewData.isUserOwner !== true"
 				class="enrollment-panel"
 			>
 				<ng-container
 					*ngIf="
-						trainingLookup$ | async as profile;
+						viewData.trainingLookup as profile;
 						else lookupLoader
 					"
 				>
@@ -29,7 +29,7 @@
 								[disabled]="isDisabledEnrollActions"
 								mat-raised-button
 								(click)="
-									cancelTrainingEnroll(training.training)
+									cancelTrainingEnroll(viewData.training.training)
 								"
 							>
 								Отозвать
@@ -37,10 +37,11 @@
 						</div>
 						<div *ngIf="profile.enrollment === 'approved'">
 							<button
+								*ngIf="viewData.training.status === 'active'"
 								[disabled]="isDisabledEnrollActions"
 								mat-raised-button
 								color="accent"
-								(click)="leaveTraining(training.training)"
+								(click)="leaveTraining(viewData.training.training)"
 							>
 								Покинуть
 							</button>
@@ -67,17 +68,17 @@
 					<ng-container *ngIf="profile === 'NoEnroll'">
 						<div class="enroll-btn-wrapper">
 							<button
-								*ngIf="(canEnroll$ | async) === true"
+								*ngIf="viewData.canEnroll === true"
 								mat-raised-button
 								color="accent"
 								[disabled]="isDisabledEnrollActions"
-								(click)="enrollTraining(training.training)"
+								(click)="enrollTraining(viewData.training.training)"
 							>
 								Записаться
 							</button>
 
 							<ng-container
-								*ngIf="competenciesDiff$ | async as compDiff"
+								*ngIf="viewData.competenciesDiff as compDiff"
 							>
 								<p *ngIf="compDiff.length > 0">
 									<span>Не хватает компетенций: </span>
@@ -90,12 +91,12 @@
 			</div>
 
 			<a
-				*ngIf="isUserOwner$ | async"
+				*ngIf="viewData.isUserOwner"
 				mat-raised-button
 				color="accent"
 				[routerLink]="[
 					'/app/teacher/training',
-					training.training.uuid,
+					viewData.training.training.uuid,
 					'manage'
 				]"
 				>Управление</a
@@ -113,7 +114,7 @@
 				<ul class="competencies-list">
 					<li
 						*ngFor="
-							let comp of training.course.competencies.required
+							let comp of viewData.course.competencies.required
 						"
 					>
 						{{ getCompLabel(comp) }}
@@ -129,7 +130,7 @@
 				<ul class="competencies-list">
 					<li
 						*ngFor="
-							let comp of training.course.competencies.acquired
+							let comp of viewData.course.competencies.acquired
 						"
 					>
 						{{ getCompLabel(comp) }}
@@ -143,25 +144,25 @@
 				<div>
 					<p>Старт тренинга:</p>
 					<span>{{
-						training.training.startAt | date : 'dd.MM.yyyy'
+						viewData.training.training.startAt | date : 'dd.MM.yyyy'
 					}}</span>
 				</div>
 
 				<div>
 					<p>Длительность</p>
-					<span>{{ getTrainingDuration(training.course) }}</span>
+					<span>{{ getTrainingDuration(viewData.course) }}</span>
 				</div>
 			</div>
 
 			<div class="info-item">
 				<span>Категория</span>
-				<p>{{ training.course.category }}</p>
+				<p>{{ viewData.course.category }}</p>
 			</div>
 
 			<div class="info-item">
 				<span>Автор</span>
 				<p>
-					<a [routerLink]="['/app/user', training.course.authorId]"
+					<a [routerLink]="['/app/user', viewData.course.authorId]"
 						>Профиль</a
 					>
 				</p>
@@ -171,7 +172,7 @@
 		<div class="course-content">
 			<h2>Содержание курса</h2>
 
-			<div *ngFor="let node of training.contentTree" class="module-item">
+			<div *ngFor="let node of viewData.training.contentTree" class="module-item">
 				<h3>{{ node.module.title }}</h3>
 				<p>{{ node.module.description }}</p>
 
@@ -183,10 +184,27 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="reviews">
+			<div class="reviews-form" *ngIf="viewData.canAddReview">
+				<h2>Вы завершили данный тренинг. Оставьте свой отзыв о курсе!</h2>
+				<form>
+					<textarea cols="30" rows="10"></textarea>
+				</form>
+			</div>
+
+			<div class="reviews-list">
+				<div
+
+				class="review-item">
+
+				</div>
+			</div>
+		</div>
 	</div>
 </ng-container>
 
-<ng-template #loader> Loading course... </ng-template>
+<ng-template #loader> Loading training... </ng-template>
 
 <ng-template #noCourse> No such course </ng-template>
 

@@ -176,7 +176,6 @@ export class TrainingDataService {
 			body: {
 				studentsIds,
 				trainingId,
-				status,
 			},
 			params: { reqId: key },
 		});

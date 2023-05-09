@@ -129,7 +129,7 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 			this.overallInfoSubform.controls.category.valueChanges.pipe(
 				debounceTime(200)
 			),
-			this.configService.loadCourseCompetencies(),
+			this.configService.competencies$,
 		]).pipe(
 			map(([category, competencies]) => {
 				return competencies.filter((comp) =>

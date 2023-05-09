@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
 	BehaviorSubject,
@@ -22,24 +22,29 @@ import { LearnService } from '../../services/learn.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { StudentTraining } from 'src/app/models/course.model';
 
+type ViewData = {
+	course: Course
+	training: StudentTraining
+	competenciesDiff: string[]
+	trainingLookup: TrainingProfileMeta | null | 'NoEnroll'
+	isUserOwner: boolean
+	canEnroll: boolean
+	canAddReview: boolean
+	competenciesConfig: CourseCompetency[]
+}
+
 @Component({
 	selector: 'app-course-overview',
 	templateUrl: './course-overview.component.html',
 	styleUrls: ['./course-overview.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CourseOverviewComponent {
+export class CourseOverviewComponent implements OnInit {
 	private enrollmentSub?: Subscription;
 	private courseEnrollTrigger$ = new BehaviorSubject<void>(undefined);
-	private competenciesConfig$: Observable<CourseCompetency[]>;
 
-	public training$: Observable<StudentTraining | null>;
+	public viewData$!: Observable<ViewData | null>
 
-	// public modules$: Observable<CourseModule[]>;
-
-	public competenciesDiff$: Observable<string[]>;
-	public canEnroll$: Observable<boolean>;
-	public isUserOwner$: Observable<boolean>;
 	public trainingLookup$: Observable<
 		TrainingProfileMeta | 'NoEnroll'
 	> | null = null;
@@ -52,10 +57,10 @@ export class CourseOverviewComponent {
 		private userService: UserService,
 		private learnService: LearnService,
 		private configService: ConfigService
-	) {
-		this.competenciesConfig$ = this.configService.loadCourseCompetencies();
+	) { }
 
-		this.training$ = this.competenciesConfig$.pipe(
+	public ngOnInit(): void {
+		const training$ = this.configService.competencies$.pipe(
 			switchMap((config) => {
 				this.competenciesConfig = config;
 				return this.activatedRoute.paramMap;
@@ -71,17 +76,11 @@ export class CourseOverviewComponent {
 			shareReplay(1)
 		);
 
-		this.isUserOwner$ = this.training$.pipe(
-			switchMap((training) => {
-				if (training) {
-					return this.userService.isCourseOwner(training.course);
-				}
-				return of(false);
-			})
-		);
-
-		this.competenciesDiff$ = this.competenciesConfig$.pipe(
-			withLatestFrom(this.userService.user$, this.training$),
+		const competenciesDiff$ = combineLatest([
+			this.configService.competencies$,
+			this.userService.user$, 
+			training$,			
+		]).pipe(		
 			map(([competencies, user, training]) => {
 				const userComps = user.trainingProfile.competencies;
 				const diff =
@@ -106,16 +105,9 @@ export class CourseOverviewComponent {
 			})
 		);
 
-		this.canEnroll$ = this.userService.user$.pipe(
-			withLatestFrom(this.isUserOwner$),
-			map(([user, isOwner]) => {
-				return user?.role !== 'admin' && !isOwner;
-			})
-		);
-
-		this.trainingLookup$ = combineLatest([
+		const trainingLookup$ = combineLatest([
 			this.courseEnrollTrigger$.asObservable(),
-			this.training$,
+			training$,
 			this.userService.user$,
 		]).pipe(
 			switchMap(([_, training, user]) => {
@@ -135,6 +127,40 @@ export class CourseOverviewComponent {
 			}),
 			shareReplay(1)
 		);
+
+		this.viewData$ = combineLatest([
+			training$,
+			competenciesDiff$,
+			trainingLookup$,
+			this.configService.competencies$,
+			this.userService.user$,
+		]).pipe(
+			map(([
+				training,
+				compDiff,
+				trainingLookup,
+				competenciesConfig,
+				user,
+			]) => {
+				if (!training) {
+					return null
+				}
+				
+				const isOwner = user.permission === 'teacher' && user.uuid === training.course.authorId
+				const canAddReview = (user.trainingProfile.trainingHistory as string[]).includes(training._id) && !isOwner
+
+				return {
+					course: training.course,
+					training,
+					competenciesDiff: compDiff,
+					trainingLookup,
+					isUserOwner: isOwner,
+					canEnroll: user.role !== 'admin' && !isOwner,
+					canAddReview,
+					competenciesConfig,
+				}
+			})
+		)
 	}
 
 	public enrollTraining(training: Training): void {
@@ -147,7 +173,7 @@ export class CourseOverviewComponent {
 	public cancelTrainingEnroll(training: Training): void {
 		this.makeCourseEnrollAction(
 			training._id,
-			NetworkRequestKey.UpdateTrainingEnroll
+			NetworkRequestKey.DeleteTrainingEnroll
 		);
 	}
 
