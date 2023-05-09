@@ -10,12 +10,15 @@ import { Course, CourseReview } from 'src/app/typings/course.types';
 	styleUrls: ['./admin.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdminComponent extends CenteredContainerDirective implements OnInit {
-    public reviewCoursesList$!: Observable<CourseReview[]>
+export class AdminComponent
+	extends CenteredContainerDirective
+	implements OnInit
+{
+	public reviewCoursesList$!: Observable<CourseReview[]>;
 
 	constructor(private adminService: AdminService) {
-        super()
-    }
+		super();
+	}
 
 	ngOnInit(): void {
 		this.reviewCoursesList$ = this.adminService.reviewCoursesList$;

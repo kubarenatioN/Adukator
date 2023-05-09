@@ -38,22 +38,19 @@ export class LoginComponent extends BaseComponent implements OnInit {
 		});
 	}
 
-	public ngOnInit(): void {
-
-	}
+	public ngOnInit(): void {}
 
 	public onSubmit(): void {
 		const { value, valid } = this.form;
 		if (valid) {
 			this.isSubmitDisabled = true;
-			this.userService.login(value)
-			.subscribe(
-				user => {
-                    if (user !== null) {
-                        this.router.navigate(['app']);
-                    }
+			this.userService.login(value).subscribe(
+				(user) => {
+					if (user !== null) {
+						this.router.navigate(['app']);
+					}
 				},
-				err => {
+				(err) => {
 					console.error('Login Error', err);
 					setTimeout(() => {
 						this.isSubmitDisabled = false;

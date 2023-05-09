@@ -1,39 +1,62 @@
 <div class="toolbar">
-    <div class="versions-select">
-        <ng-container *ngIf="hasMoreThanOneVersion; else oneVersionSelect">
-            <span>Сравнение версий:</span>
-            <mat-form-field appearance="standard">
-                <mat-select [(value)]="selectedOptions[0]" (selectionChange)="onVersionChange(0, $event.value)">
-                    <mat-option *ngFor="let version of versionOptions[0]; let i = index" [value]="version.id">
-                        {{version.date}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="standard">
-                <mat-select [(value)]="selectedOptions[1]" (selectionChange)="onVersionChange(1, $event.value)">
-                    <mat-option *ngFor="let version of versionOptions[1]" [value]="version.id">
-                        {{version.date}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <button mat-raised-button color="primary" (click)="applyDefaultVersions()">Сбросить</button>
-        </ng-container>
-        <ng-template #oneVersionSelect>
-            <p>Версия от {{versionOptions[1][0].date}}</p>
-        </ng-template>
-    </div>
-	
+	<div class="versions-select">
+		<ng-container *ngIf="hasMoreThanOneVersion; else oneVersionSelect">
+			<span>Сравнение версий:</span>
+			<mat-form-field appearance="standard">
+				<mat-select
+					[(value)]="selectedOptions[0]"
+					(selectionChange)="onVersionChange(0, $event.value)"
+				>
+					<mat-option
+						*ngFor="let version of versionOptions[0]; let i = index"
+						[value]="version.id"
+					>
+						{{ version.date }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+			<mat-form-field appearance="standard">
+				<mat-select
+					[(value)]="selectedOptions[1]"
+					(selectionChange)="onVersionChange(1, $event.value)"
+				>
+					<mat-option
+						*ngFor="let version of versionOptions[1]"
+						[value]="version.id"
+					>
+						{{ version.date }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+			<button
+				mat-raised-button
+				color="primary"
+				(click)="applyDefaultVersions()"
+			>
+				Сбросить
+			</button>
+		</ng-container>
+		<ng-template #oneVersionSelect>
+			<p>Версия от {{ versionOptions[1][0].date }}</p>
+		</ng-template>
+	</div>
 </div>
 
 <div class="course-content">
 	<div class="property">
 		<span>Статус</span>
-        <ng-container>
-            <ng-container [ngTemplateOutlet]="versionStatus" [ngTemplateOutletContext]="{ course: versionsPair[0] }"></ng-container>
-        </ng-container>
-        <ng-container>
-            <ng-container [ngTemplateOutlet]="versionStatus" [ngTemplateOutletContext]="{ course: versionsPair[1] }"></ng-container>
-        </ng-container>
+		<ng-container>
+			<ng-container
+				[ngTemplateOutlet]="versionStatus"
+				[ngTemplateOutletContext]="{ course: versionsPair[0] }"
+			></ng-container>
+		</ng-container>
+		<ng-container>
+			<ng-container
+				[ngTemplateOutlet]="versionStatus"
+				[ngTemplateOutletContext]="{ course: versionsPair[1] }"
+			></ng-container>
+		</ng-container>
 	</div>
 	<div class="property">
 		<span>Название</span>
@@ -48,51 +71,69 @@
 	<div class="property">
 		<span>Модули</span>
 
-        <div>
-            <span>{{ versionsPair[0].modules | json }}</span>
-        </div>
-        <div>
-            <span>{{ versionsPair[1].modules | json }}</span>
-        </div>
+		<div>
+			<span>{{ versionsPair[0].modules | json }}</span>
+		</div>
+		<div>
+			<span>{{ versionsPair[1].modules | json }}</span>
+		</div>
 	</div>
 </div>
 
 <ng-template #versionStatus let-course="course">
-    <ng-container [ngSwitch]="course.metadata.status">
-        <p>
-            <ng-container *ngSwitchCase="courseReviewStatuses.Reviewed">
-                <span>
-                    {{statusesMap[courseReviewStatuses.Reviewed]}}
-                </span>
-            </ng-container>
-            <ng-container *ngSwitchCase="courseReviewStatuses.ReadyForReview">
-                <span>
-                    {{statusesMap[courseReviewStatuses.ReadyForReview]}}
-                </span>
-                <a 
-                    *ngIf="canShowCourseVersionActionButton(courseReviewStatuses.ReadyForReview, course) | async"
-                    [routerLink]="['/app/course-builder', course.metadata.uuid, 'review']"
-                    mat-stroked-button
-                    color="primary">
-                    Проверить
-                </a>
-            </ng-container>
-            <ng-container *ngSwitchCase="courseReviewStatuses.ReadyForUpdate">
-                <span>
-                    {{statusesMap[courseReviewStatuses.ReadyForUpdate]}}
-                </span>
-                <a 
-                    *ngIf="canShowCourseVersionActionButton(courseReviewStatuses.ReadyForUpdate, course) | async"
-                    [routerLink]="['/app/course-builder', course.metadata.uuid, 'edit']" 
-                    mat-stroked-button
-                    color="primary">
-                    Исправить
-                </a>
-            </ng-container>
-        </p>
-    </ng-container>
+	<ng-container [ngSwitch]="course.metadata.status">
+		<p>
+			<ng-container *ngSwitchCase="courseReviewStatuses.Reviewed">
+				<span>
+					{{ statusesMap[courseReviewStatuses.Reviewed] }}
+				</span>
+			</ng-container>
+			<ng-container *ngSwitchCase="courseReviewStatuses.ReadyForReview">
+				<span>
+					{{ statusesMap[courseReviewStatuses.ReadyForReview] }}
+				</span>
+				<a
+					*ngIf="
+						canShowCourseVersionActionButton(
+							courseReviewStatuses.ReadyForReview,
+							course
+						) | async
+					"
+					[routerLink]="[
+						'/app/course-builder',
+						course.metadata.uuid,
+						'review'
+					]"
+					mat-stroked-button
+					color="primary"
+				>
+					Проверить
+				</a>
+			</ng-container>
+			<ng-container *ngSwitchCase="courseReviewStatuses.ReadyForUpdate">
+				<span>
+					{{ statusesMap[courseReviewStatuses.ReadyForUpdate] }}
+				</span>
+				<a
+					*ngIf="
+						canShowCourseVersionActionButton(
+							courseReviewStatuses.ReadyForUpdate,
+							course
+						) | async
+					"
+					[routerLink]="[
+						'/app/course-builder',
+						course.metadata.uuid,
+						'edit'
+					]"
+					mat-stroked-button
+					color="primary"
+				>
+					Исправить
+				</a>
+			</ng-container>
+		</p>
+	</ng-container>
 </ng-template>
 
-<ng-template #courseModules let-modules="modules">
-
-</ng-template>
+<ng-template #courseModules let-modules="modules"> </ng-template>

@@ -1,28 +1,36 @@
 <ng-container *ngIf="training">
-    <nav class="nav">
-        <ul class="nav-list">
-            <li>
-                <a routerLink="./">Главная</a>
-            </li>
-            <ul class="modules-list" *ngFor="let node of training.contentTree, let i = index">
-                <li>
-                    {{node.module.title}}
-                </li>
-                <ul class="topics-list">
-                    <li 
-                    [class.actual]="topic.isActual"
-                    class="topic-item" *ngFor="let topic of node.topics, let j = index">
-                        <a [routerLink]="[]" [queryParams]="{ topic: topic.id }">
-                            <span>
-                                {{topic.title}}
-                            </span>
-                            <span>
-                                ({{ topic.startAt | date : 'dd.MM.yy' }})
-                            </span>
-                        </a>
-                    </li> 
-                </ul>
-            </ul>
-        </ul>
-    </nav>
+	<nav class="nav">
+		<ul class="nav-list">
+			<li>
+				<a routerLink="./">Главная</a>
+			</li>
+			<ul
+				class="modules-list"
+				*ngFor="let node of training.contentTree; let i = index"
+			>
+				<li>
+					{{ node.module.title }}
+				</li>
+				<ul class="topics-list">
+					<li
+						[class.actual]="topic.isActual"
+						class="topic-item"
+						*ngFor="let topic of node.topics; let j = index"
+					>
+						<a
+							[routerLink]="[]"
+							[queryParams]="{ topic: topic.id }"
+						>
+							<span>
+								{{ topic.title }}
+							</span>
+							<span>
+								({{ topic.startAt | date : 'dd.MM.yy' }})
+							</span>
+						</a>
+					</li>
+				</ul>
+			</ul>
+		</ul>
+	</nav>
 </ng-container>

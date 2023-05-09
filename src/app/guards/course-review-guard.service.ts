@@ -14,34 +14,39 @@ import { TeacherTrainingService } from '../modules/teacher/services/teacher-trai
 	providedIn: 'root',
 })
 export class CourseReviewGuardService implements CanActivate {
-	constructor(private userService: UserService, private teacherCourses: TeacherTrainingService, private router: Router) {}
+	constructor(
+		private userService: UserService,
+		private teacherCourses: TeacherTrainingService,
+		private router: Router
+	) {}
 
-	canActivate(
-		route: ActivatedRouteSnapshot,
-		state: RouterStateSnapshot
-	) {
-        const courseId = String(route.paramMap.get('id'))        
+	canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+		const courseId = String(route.paramMap.get('id'));
 
-        return this.userService.isAdmin$.pipe(
-            switchMap(isAdmin => {
-                if (isAdmin) {
-                    return of(true)
-                }
-                return this.isTeacherAuthor(courseId)
-            }),
-            map(isTeacherAuthor => {
-                return isTeacherAuthor ? true : this.router.parseUrl('/app/learn')
-            })
-        )
-    }
+		return this.userService.isAdmin$.pipe(
+			switchMap((isAdmin) => {
+				if (isAdmin) {
+					return of(true);
+				}
+				return this.isTeacherAuthor(courseId);
+			}),
+			map((isTeacherAuthor) => {
+				return isTeacherAuthor
+					? true
+					: this.router.parseUrl('/app/learn');
+			})
+		);
+	}
 
-    private isTeacherAuthor(courseId: string) {
-        return this.teacherCourses.review$.pipe(
-            withLatestFrom(this.userService.user$),
-            map(([reviewCourses, user]) => {
-                const courseForReview = reviewCourses.find(course => course.uuid === courseId)
-                return courseForReview?.authorId === user?.uuid
-            })
-        )
-    }
+	private isTeacherAuthor(courseId: string) {
+		return this.teacherCourses.review$.pipe(
+			withLatestFrom(this.userService.user$),
+			map(([reviewCourses, user]) => {
+				const courseForReview = reviewCourses.find(
+					(course) => course.uuid === courseId
+				);
+				return courseForReview?.authorId === user?.uuid;
+			})
+		);
+	}
 }

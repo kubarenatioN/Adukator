@@ -24,21 +24,21 @@ import { NgChartsModule } from 'ng2-charts';
 		CourseSidenavComponent,
 		TopicTrainingComponent,
 		TrainingTaskComponent,
-        StudentProfileComponent	
-    ],
+		StudentProfileComponent,
+	],
 	imports: [
 		CommonModule,
 		LayoutComponent,
 		SharedModule,
 		StudentRoutingModule,
 		ReactiveFormsModule,
-        NgChartsModule,
-    ],
+		NgChartsModule,
+	],
 	providers: [
-        StudentTrainingService,
-        StudentProfileService,
-        // CourseTrainingGuardService,
-        UploadCacheService,
-    ],
+		StudentTrainingService,
+		StudentProfileService,
+		// CourseTrainingGuardService,
+		UploadCacheService,
+	],
 })
 export class StudentModule {}

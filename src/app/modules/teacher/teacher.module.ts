@@ -20,29 +20,27 @@ import { StartTrainingSubmitComponent } from './modals/start-training-submit/sta
 import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
-	providers: [
-        UploadCacheService
-    ],
+	providers: [UploadCacheService],
 	declarations: [
 		TeacherComponent,
 		CourseManagementComponent,
 		CourseMemberComponent,
 		TrainingCheckComponent,
-        TrainingTaskResultComponent,
-        StudentProfileComponent,
-        TrainingPersonalizationComponent,
-        PersonalTasksComponent,
-        AssignTaskComponent,
-        DismissTaskComponent,
-        OpenTaskComponent,
-        StartTrainingSubmitComponent,
+		TrainingTaskResultComponent,
+		StudentProfileComponent,
+		TrainingPersonalizationComponent,
+		PersonalTasksComponent,
+		AssignTaskComponent,
+		DismissTaskComponent,
+		OpenTaskComponent,
+		StartTrainingSubmitComponent,
 	],
 	imports: [
-        CommonModule, 
-        TeacherRoutingModule, 
-        ReactiveFormsModule,
-        MatDialogModule,
-        SharedModule
-    ],
+		CommonModule,
+		TeacherRoutingModule,
+		ReactiveFormsModule,
+		MatDialogModule,
+		SharedModule,
+	],
 })
 export class TeacherModule {}

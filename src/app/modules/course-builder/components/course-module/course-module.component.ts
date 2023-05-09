@@ -18,7 +18,7 @@ import { WrapperType } from 'src/app/typings/course.types';
 	styleUrls: ['./course-module.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CourseModuleComponent extends BaseComponent implements OnInit {    
+export class CourseModuleComponent extends BaseComponent implements OnInit {
 	@Input() public form!: FormGroup;
 	@Input() public controlsType!: WrapperType;
 
@@ -39,29 +39,27 @@ export class CourseModuleComponent extends BaseComponent implements OnInit {
 		return '';
 	}
 
-	constructor(
-        private fbHelper: FormBuilderHelper,
-	) {
-        super();
-    }
+	constructor(private fbHelper: FormBuilderHelper) {
+		super();
+	}
 
 	public ngOnInit(): void {
 		this.form.valueChanges
-            .pipe(takeUntil(this.componentLifecycle$))
-            .subscribe((res) => {
-                // console.log('111 module form changed', res);
-            });
+			.pipe(takeUntil(this.componentLifecycle$))
+			.subscribe((res) => {
+				// console.log('111 module form changed', res);
+			});
 	}
 
-    // public addTopic(): void {
-    //     const newTopic = this.fbHelper.getTopicForm();
-    //     this.topics.push(newTopic);
-    // }
+	// public addTopic(): void {
+	//     const newTopic = this.fbHelper.getTopicForm();
+	//     this.topics.push(newTopic);
+	// }
 
 	public onRemoveTopic(index: number) {
-        if (index === 0) {
-            return;
-        }
+		if (index === 0) {
+			return;
+		}
 		this.topics.removeAt(index);
 	}
 }

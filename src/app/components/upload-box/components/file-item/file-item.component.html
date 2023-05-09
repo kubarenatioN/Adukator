@@ -1,25 +1,27 @@
 <ng-container [ngSwitch]="type">
-    <ng-container 
-    *ngSwitchCase="'upload'"
-    [ngTemplateOutlet]="upload"></ng-container>
-    
-    <ng-container 
-    *ngSwitchCase="'download'"
-    [ngTemplateOutlet]="download"></ng-container>
+	<ng-container
+		*ngSwitchCase="'upload'"
+		[ngTemplateOutlet]="upload"
+	></ng-container>
+
+	<ng-container
+		*ngSwitchCase="'download'"
+		[ngTemplateOutlet]="download"
+	></ng-container>
 </ng-container>
 
 <ng-template #upload>
-    <div class="file-item upload">
-        {{userFile.filename}}
-        <div class="progress-bar" [style.width]="progress"></div>
-        <button (click)="onRemove()">Удалить</button>
-    </div>
+	<div class="file-item upload">
+		{{ userFile.filename }}
+		<div class="progress-bar" [style.width]="progress"></div>
+		<button (click)="onRemove()">Удалить</button>
+	</div>
 </ng-template>
 
 <ng-template #download>
-    <div class="file-item download" (click)="onDownload()">
-        <span>
-            {{userFile.filename}}
-        </span>
-    </div>
+	<div class="file-item download" (click)="onDownload()">
+		<span>
+			{{ userFile.filename }}
+		</span>
+	</div>
 </ng-template>

@@ -1,27 +1,25 @@
 <nav class="sidenav" *ngIf="items && items.length > 0; else noItems">
-    <ul class="sidenav-list">
-        <li><a (click)="navigate({ })">Главная</a></li>
-        <ul class="sidenav-modules-list">
-            <ul *ngFor="let module of items; let i = index">
-                <li>
-                    <span (click)="navigate({ module: module.id })">
-                        Модуль {{ i + 1 }}. {{ module.title }}
-                    </span>
-                </li>
-                <ul class="sidenav-module-topics-list">
-                    <li *ngFor="let topic of module.topics; let j = index">
-                        <span (click)="navigate({ topic: topic.id })">
-                            Тема {{ j + 1 }}. {{ topic.title }}
-                        </span>
-                    </li>
-                </ul>
-            </ul>
-        </ul>
-    </ul>
+	<ul class="sidenav-list">
+		<li><a (click)="navigate({})">Главная</a></li>
+		<ul class="sidenav-modules-list">
+			<ul *ngFor="let module of items; let i = index">
+				<li>
+					<span (click)="navigate({ module: module.id })">
+						Модуль {{ i + 1 }}. {{ module.title }}
+					</span>
+				</li>
+				<ul class="sidenav-module-topics-list">
+					<li *ngFor="let topic of module.topics; let j = index">
+						<span (click)="navigate({ topic: topic.id })">
+							Тема {{ j + 1 }}. {{ topic.title }}
+						</span>
+					</li>
+				</ul>
+			</ul>
+		</ul>
+	</ul>
 </nav>
 
 <ng-template #noItems>
-    <p>
-        No nav items.
-    </p>
+	<p>No nav items.</p>
 </ng-template>

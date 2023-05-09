@@ -1,35 +1,48 @@
 <header class="header">
-    <!-- TODO: Replace by real logo in future + change styles -->
-    <div class="logo">
-        {{ appName }}
-    </div>
-    <div class="header-content">
-
-    </div>
-    <div class="profile">
-        <ng-container *ngIf="user$ | async as user">
-            <a [routerLink]="['/app/user', user.uuid]" class="user-info">
-                <span class="user-name">
-                    {{user.username}}
-                </span>
-                <img class="user-photo" crossorigin="anonymous" referrerpolicy="no-referrer" [src]="user.photo ?? ''" alt="User avatar photo">
-            </a>
-            <ng-container *ngIf="isAdmin$ | async">
-                <a mat-raised-button color="accent" [routerLink]="['admin']" class="profile-btn">
-                    Админ панель
-                </a>
-            </ng-container>
-            <ng-container *ngIf="user.role === 'teacher'">
-                <a mat-stroked-button color="primary" [routerLink]="['/app/teacher']">
-                    Панель преподавателя
-                </a>
-            </ng-container>
-        </ng-container>
-    </div>
+	<!-- TODO: Replace by real logo in future + change styles -->
+	<div class="logo">
+		{{ appName }}
+	</div>
+	<div class="header-content"></div>
+	<div class="profile">
+		<ng-container *ngIf="user$ | async as user">
+			<a [routerLink]="['/app/user', user.uuid]" class="user-info">
+				<span class="user-name">
+					{{ user.username }}
+				</span>
+				<img
+					class="user-photo"
+					crossorigin="anonymous"
+					referrerpolicy="no-referrer"
+					[src]="user.photo ?? ''"
+					alt="User avatar photo"
+				/>
+			</a>
+			<ng-container *ngIf="isAdmin$ | async">
+				<a
+					mat-raised-button
+					color="accent"
+					[routerLink]="['admin']"
+					class="profile-btn"
+				>
+					Админ панель
+				</a>
+			</ng-container>
+			<ng-container *ngIf="user.role === 'teacher'">
+				<a
+					mat-stroked-button
+					color="primary"
+					[routerLink]="['/app/teacher']"
+				>
+					Панель преподавателя
+				</a>
+			</ng-container>
+		</ng-container>
+	</div>
 </header>
 <main class="main">
-    <app-nav class="nav"></app-nav>
-    <div class="content">
-        <router-outlet></router-outlet>
-    </div>
+	<app-nav class="nav"></app-nav>
+	<div class="content">
+		<router-outlet></router-outlet>
+	</div>
 </main>

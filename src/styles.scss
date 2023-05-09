@@ -1,7 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 
-*, *::before, *::after {
-    box-sizing: border-box;
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
 }
 
 html,
@@ -10,15 +12,20 @@ body {
 }
 body {
 	margin: 0;
-    font-size: 14px;
+	font-size: 14px;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    margin: 0.5em 0;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0.5em 0;
 }
 
 p {
-    margin: 0;
+	margin: 0;
 }
 
 body,
@@ -28,27 +35,27 @@ input.mat-input-element {
 }
 
 ul {
-    margin: 0;
-    padding: 0;
+	margin: 0;
+	padding: 0;
 }
 
 h1.title {
-    font-weight: 700;
+	font-weight: 700;
 }
 
 h3.title {
-    font-weight: 700;
+	font-weight: 700;
 }
 
 .create-topic-panel mat-dialog-container {
-    width: 700px;
-    height: 800px;
+	width: 700px;
+	height: 800px;
 }
 
 .container {
-    display: block;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 10px;
+	display: block;
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 10px;
 }

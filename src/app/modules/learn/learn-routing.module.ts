@@ -5,7 +5,7 @@ import { CourseOverviewComponent } from './components/course-overview/course-ove
 import { BundleOverviewComponent } from './components/bundle-overview/bundle-overview.component';
 
 const routes: Routes = [
-    {
+	{
 		path: 'catalog',
 		component: CatalogComponent,
 	},

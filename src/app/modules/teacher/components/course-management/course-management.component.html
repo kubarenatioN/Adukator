@@ -1,62 +1,72 @@
 <app-back-btn>Назад</app-back-btn>
 <ng-container *ngIf="training$ | async as training; else loader">
-    <h2>Управление курсом "{{training.course.title}}"</h2>
+	<h2>Управление курсом "{{ training.course.title }}"</h2>
 
-    <a mat-raised-button color="primary" [routerLink]="['../check']">Перейти к проверке</a>
+	<a mat-raised-button color="primary" [routerLink]="['../check']"
+		>Перейти к проверке</a
+	>
 
-    <div class="course-students">
-        <h3>Студенты</h3>
+	<div class="course-students">
+		<h3>Студенты</h3>
 
-        <div class="pending-students students-list">
-            <h4>Ожидают зачисления</h4>
-            <input type="text" placeholder="Поиск...">
-            <button>Обновить</button>
-            <ng-container *ngIf="pendingStudents$ | async as pendingMembers; else loader">
-                
-                <ng-container *ngIf="pendingMembers.length > 0; else emptyList">
-                    <app-course-member 
-                        class="student-item"    
-                        *ngFor="let profile of pendingMembers"
-                        [profile]="profile"
-                        status="pending"
-                        (enroll)="onApproveEnroll($event)"   
-                    >                
-                    </app-course-member>
-                </ng-container>
-                
-            </ng-container>
-        </div>
+		<div class="pending-students students-list">
+			<h4>Ожидают зачисления</h4>
+			<input type="text" placeholder="Поиск..." />
+			<button>Обновить</button>
+			<ng-container
+				*ngIf="pendingStudents$ | async as pendingMembers; else loader"
+			>
+				<ng-container *ngIf="pendingMembers.length > 0; else emptyList">
+					<app-course-member
+						class="student-item"
+						*ngFor="let profile of pendingMembers"
+						[profile]="profile"
+						status="pending"
+						(enroll)="onApproveEnroll($event)"
+					>
+					</app-course-member>
+				</ng-container>
+			</ng-container>
+		</div>
 
-        <div class="approved-students students-list">
-            <h4>Зачисленные на курс</h4>
-            <input type="text" placeholder="Поиск...">
-            <button>Обновить</button>
-            <ng-container *ngIf="approvedStudents$ | async as approvedMembers; else loader">
-                
-                <ng-container *ngIf="approvedMembers.length > 0; else emptyList">
-                    <app-course-member 
-                        class="student-item"    
-                        *ngFor="let profile of approvedMembers"
-                        [profile]="profile"
-                        status="approved"
-                        (expel)="onExpel($event)"
-                    >                
-                    </app-course-member>
-                </ng-container>
-                
-            </ng-container>
-        </div>
-    </div>
+		<div class="approved-students students-list">
+			<h4>Зачисленные на курс</h4>
+			<input type="text" placeholder="Поиск..." />
+			<button>Обновить</button>
+			<ng-container
+				*ngIf="
+					approvedStudents$ | async as approvedMembers;
+					else loader
+				"
+			>
+				<ng-container
+					*ngIf="approvedMembers.length > 0; else emptyList"
+				>
+					<app-course-member
+						class="student-item"
+						*ngFor="let profile of approvedMembers"
+						[profile]="profile"
+						status="approved"
+						(expel)="onExpel($event)"
+					>
+					</app-course-member>
+				</ng-container>
+			</ng-container>
+		</div>
+	</div>
 
-    <button [disabled]="false" 
-    mat-stroked-button color="warn"
-    (click)="completeTraining(training.uuid)">Завершить тренинг</button>
+	<button
+		[disabled]="false"
+		mat-stroked-button
+		color="warn"
+		(click)="completeTraining(training.uuid)"
+	>
+		Завершить тренинг
+	</button>
 </ng-container>
 
-<ng-template #loader>
-    Loading...
-</ng-template>
+<ng-template #loader> Loading... </ng-template>
 
 <ng-template #emptyList>
-    <p>Пусто.</p>
+	<p>Пусто.</p>
 </ng-template>

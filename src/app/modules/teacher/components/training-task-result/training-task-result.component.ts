@@ -4,7 +4,7 @@ import {
 	EventEmitter,
 	Input,
 	OnInit,
-    Output,
+	Output,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { getTodayTime } from 'src/app/helpers/date-fns.helper';
@@ -18,24 +18,24 @@ import { ProfileProgressRecord } from 'src/app/typings/training.types';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrainingTaskResultComponent implements OnInit {
-    @Input()
-    public task!: TopicTask
-    
+	@Input()
+	public task!: TopicTask;
+
 	@Input()
 	public form!: FormGroup<{
-        mark: FormControl<number>,
-        isCounted: FormControl<boolean>
-    }>;
+		mark: FormControl<number>;
+		isCounted: FormControl<boolean>;
+	}>;
 
-    @Output()
-    public resultChange = new EventEmitter<ProfileProgressRecord>()
+	@Output()
+	public resultChange = new EventEmitter<ProfileProgressRecord>();
 
 	constructor() {}
 
 	ngOnInit(): void {
-        // console.log(this.form);
-        this.form.valueChanges.subscribe(model => {
-            // console.log(model);
-        })
-    }
+		// console.log(this.form);
+		this.form.valueChanges.subscribe((model) => {
+			// console.log(model);
+		});
+	}
 }

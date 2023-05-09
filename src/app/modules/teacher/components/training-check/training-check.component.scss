@@ -1,66 +1,66 @@
 .header {
-    padding: 10px 0;
-    border-bottom: 1px solid #ccc;
+	padding: 10px 0;
+	border-bottom: 1px solid #ccc;
 }
 
 .filters {
-    display: flex;
-    padding: 20px 0;
+	display: flex;
+	padding: 20px 0;
 }
 
 .topic-answer-container {
-    padding: 10px;
-    border: 1px solid #333;
-    min-height: 300px;
+	padding: 10px;
+	border: 1px solid #333;
+	min-height: 300px;
 }
 
 .check-results {
-    padding: 20px;
-    margin-top: 10px;
+	padding: 20px;
+	margin-top: 10px;
 }
 
 .task-item-wrapper {
-    padding: 5px;
-    margin: 10px 0;
+	padding: 5px;
+	margin: 10px 0;
 }
 
 .task-item {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    max-width: 400px;
-    & p {
-        padding-right: 10px;
-        // white-space: nowrap;
-        // text-overflow: ellipsis;
-        // overflow: hidden;
-    }
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	max-width: 400px;
+	& p {
+		padding-right: 10px;
+		// white-space: nowrap;
+		// text-overflow: ellipsis;
+		// overflow: hidden;
+	}
 }
 
 .check-comment {
-    display: block;
-    margin: 10px 0;
+	display: block;
+	margin: 10px 0;
 }
 
 .task-answers {
-    margin: 10px;
-    padding: 10px;
-    border: 1px solid rgb(210, 56, 248);
+	margin: 10px;
+	padding: 10px;
+	border: 1px solid rgb(210, 56, 248);
 }
 
-.thread-list{
-    &-item {
-        padding: 5px;
-        margin: 5px;
-        border: 1px solid rgb(141, 167, 255);
-    }
+.thread-list {
+	&-item {
+		padding: 5px;
+		margin: 5px;
+		border: 1px solid rgb(141, 167, 255);
+	}
 }
 
 .task-item-checker {
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .student-files-box {
-    height: 200px;
+	height: 200px;
 }

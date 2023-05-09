@@ -1,214 +1,278 @@
-
-<form class="course-form" *ngIf="viewData$ | async as viewData" [formGroup]="courseForm">
-    
-    <ng-container [ngSwitch]="viewData.viewPath.type">
-        <ng-container 
-            *ngSwitchCase="'main'"
-            [ngTemplateOutlet]="courseMainInfo"
-            [ngTemplateOutletContext]="{ viewData }">
-        </ng-container>
-        <ng-container 
-            *ngSwitchCase="'module'"
-            [ngTemplateOutlet]="courseModule">
-        </ng-container>
-        <ng-container 
-            *ngSwitchCase="'topic'"
-            [ngTemplateOutlet]="courseTopic"
-            [ngTemplateOutletContext]="{ viewData }">
-        </ng-container>
-    </ng-container>
-    
+<form
+	class="course-form"
+	*ngIf="viewData$ | async as viewData"
+	[formGroup]="courseForm"
+>
+	<ng-container [ngSwitch]="viewData.viewPath.type">
+		<ng-container
+			*ngSwitchCase="'main'"
+			[ngTemplateOutlet]="courseMainInfo"
+			[ngTemplateOutletContext]="{ viewData }"
+		>
+		</ng-container>
+		<ng-container
+			*ngSwitchCase="'module'"
+			[ngTemplateOutlet]="courseModule"
+		>
+		</ng-container>
+		<ng-container
+			*ngSwitchCase="'topic'"
+			[ngTemplateOutlet]="courseTopic"
+			[ngTemplateOutletContext]="{ viewData }"
+		>
+		</ng-container>
+	</ng-container>
 </form>
 
 <ng-template #courseMainInfo>
+	<ng-container [ngSwitch]="formMode">
+		<ng-container
+			*ngSwitchCase="viewModes.Create"
+			[ngTemplateOutlet]="createHeader"
+		></ng-container>
+		<ng-container
+			*ngSwitchCase="viewModes.Update"
+			[ngTemplateOutlet]="updateHeader"
+		></ng-container>
+		<ng-container
+			*ngSwitchCase="viewModes.Edit"
+			[ngTemplateOutlet]="editHeader"
+		></ng-container>
+		<ng-container
+			*ngSwitchCase="viewModes.Review"
+			[ngTemplateOutlet]="reviewHeader"
+		></ng-container>
+	</ng-container>
 
-    <ng-container [ngSwitch]="formMode">
+	<div [formGroup]="overallInfoSubform">
+		<div class="property">
+			<mat-form-field
+				*appFormElWrapper="
+					overallInfoSubform;
+					control: 'title';
+					type: controlsType
+				"
+				appearance="fill"
+			>
+				<mat-label>Название курса</mat-label>
+				<input matInput formControlName="title" />
+			</mat-form-field>
+		</div>
 
-        <ng-container 
-            *ngSwitchCase="viewModes.Create" 
-            [ngTemplateOutlet]="createHeader"
-        ></ng-container>
-        <ng-container 
-            *ngSwitchCase="viewModes.Update" 
-            [ngTemplateOutlet]="updateHeader"
-        ></ng-container>
-        <ng-container 
-            *ngSwitchCase="viewModes.Edit" 
-            [ngTemplateOutlet]="editHeader"
-        ></ng-container>
-        <ng-container 
-            *ngSwitchCase="viewModes.Review" 
-            [ngTemplateOutlet]="reviewHeader"
-        ></ng-container>
+		<div class="property">
+			<mat-form-field
+				*appFormElWrapper="
+					overallInfoSubform;
+					control: 'description';
+					type: controlsType
+				"
+				appearance="fill"
+			>
+				<mat-label>Описание курса</mat-label>
+				<input matInput formControlName="description" />
+			</mat-form-field>
+		</div>
 
-    </ng-container>
+		<div class="property">
+			<mat-form-field
+				*appFormElWrapper="
+					overallInfoSubform;
+					control: 'category';
+					type: controlsType
+				"
+				class="categories-container"
+				appearance="fill"
+			>
+				<mat-label>Категория</mat-label>
+				<mat-select formControlName="category">
+					<mat-option
+						*ngFor="let category of categories$ | async"
+						[value]="category.key"
+					>
+						{{ category.name }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+		</div>
 
-    <div [formGroup]="overallInfoSubform">
-        <div class="property">
-            <mat-form-field 
-            *appFormElWrapper="overallInfoSubform; control: 'title'; type: controlsType"
-            appearance="fill">
-                <mat-label>Название курса</mat-label>
-                <input matInput formControlName="title" />
-            </mat-form-field>
-        </div>
-        
-        <div class="property">
-            <mat-form-field 
-            *appFormElWrapper="overallInfoSubform; control: 'description'; type: controlsType"
-            appearance="fill">
-                <mat-label>Описание курса</mat-label>
-                <input matInput formControlName="description" />
-            </mat-form-field>
-        </div>
-        
-        <div class="property">
-            <mat-form-field 
-            *appFormElWrapper="overallInfoSubform; control: 'category'; type: controlsType"
-            class="categories-container"
-            appearance="fill">
-                <mat-label>Категория</mat-label>
-                <mat-select formControlName="category">
-                    <mat-option *ngFor="let category of categories$ | async" [value]="category.key">
-                        {{category.name}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-        
-        <div class="property">
-            <app-chips-control
-                [form]="overallInfoSubform"
-                [items]="competencies$ | async"
-                [picked]="overallInfoSubform.value.requiredCompetencies"
-                control="requiredCompetencies"
-                title="Необходимые компетенции"
-                class="categories-container"
-            ></app-chips-control>
-        </div> 
+		<div class="property">
+			<app-chips-control
+				[form]="overallInfoSubform"
+				[items]="competencies$ | async"
+				[picked]="overallInfoSubform.value.requiredCompetencies"
+				control="requiredCompetencies"
+				title="Необходимые компетенции"
+				class="categories-container"
+			></app-chips-control>
+		</div>
 
-        <div class="property">
-            <app-chips-control
-                [form]="overallInfoSubform"
-                [items]="competencies$ | async"
-                [picked]="overallInfoSubform.value.acquiredCompetencies"
-                control="acquiredCompetencies"
-                title="Получаемые компетенции"
-                class="categories-container"
-            ></app-chips-control>
-        </div> 
+		<div class="property">
+			<app-chips-control
+				[form]="overallInfoSubform"
+				[items]="competencies$ | async"
+				[picked]="overallInfoSubform.value.acquiredCompetencies"
+				control="acquiredCompetencies"
+				title="Получаемые компетенции"
+				class="categories-container"
+			></app-chips-control>
+		</div>
+	</div>
 
-    </div>
+	<div class="modules">
+		<h3>Модули курса</h3>
+		<div
+			*ngFor="let moduleForm of modulesFormArray.controls; let i = index"
+			class="module-item"
+		>
+			<p>{{ i + 1 }}.{{ moduleForm.value.title }}</p>
+			<div class="topics">
+				<h4>Темы модуля</h4>
+				<div
+					*ngFor="
+						let topicForm of moduleForm.controls.topics.controls
+					"
+					class="topic-item"
+					[formGroup]="topicForm"
+				>
+					<div class="topic-info">
+						{{ topicForm.value.title }}
+					</div>
+					<div class="topic-duration">
+						<mat-form-field class="input" appearance="fill">
+							<mat-label>Недель</mat-label>
+							<input
+								formControlName="weeks"
+								matInput
+								type="number"
+								min="1"
+								max="20"
+							/>
+						</mat-form-field>
+						<mat-form-field class="input" appearance="fill">
+							<mat-label>Дней</mat-label>
+							<input
+								formControlName="days"
+								matInput
+								type="number"
+								min="1"
+								max="100"
+							/>
+						</mat-form-field>
+					</div>
+				</div>
+				<button *ngIf="canEditForm" (click)="addTopic(moduleForm)">
+					Добавить тему
+				</button>
+			</div>
+		</div>
+		<button *ngIf="canEditForm" (click)="addModule()">
+			Добавить модуль
+		</button>
+	</div>
 
-    <div class="modules">
-        <h3>Модули курса</h3>
-        <div 
-        *ngFor="let moduleForm of modulesFormArray.controls; let i = index"
-        class="module-item">
-            <p>{{ i + 1 }}.{{ moduleForm.value.title }}</p>
-            <div class="topics">
-                <h4>Темы модуля</h4>
-                <div 
-                    *ngFor="let topicForm of moduleForm.controls.topics.controls" 
-                    class="topic-item" [formGroup]="topicForm">
-                    <div class="topic-info">
-                        {{ topicForm.value.title }}
-                    </div>
-                    <div class="topic-duration">
-                        <mat-form-field class="input" appearance="fill">
-                            <mat-label>Недель</mat-label>
-                            <input formControlName="weeks" matInput type="number" min="1" max="20">
-                        </mat-form-field>
-                        <mat-form-field class="input" appearance="fill">
-                            <mat-label>Дней</mat-label>
-                            <input formControlName="days" matInput type="number" min="1" max="100">
-                        </mat-form-field>
-                    </div>
-                </div>
-                <button *ngIf="canEditForm" (click)="addTopic(moduleForm)">Добавить тему</button>
-            </div>
-        </div>
-        <button *ngIf="canEditForm" (click)="addModule()">Добавить модуль</button>
-
-    </div>
-
-    <div class="form-footer">
-        <ng-container 
-        [ngTemplateOutlet]="actionButtons" 
-        [ngTemplateOutletContext]="{ formMode }"></ng-container>
-    </div>
+	<div class="form-footer">
+		<ng-container
+			[ngTemplateOutlet]="actionButtons"
+			[ngTemplateOutletContext]="{ formMode }"
+		></ng-container>
+	</div>
 </ng-template>
 
 <ng-template #courseModule>
-    <h3>Модуль {{ activeFormGroup.value.title }}</h3>
-    <app-course-module 
-        [form]="activeFormGroup" 
-        [controlsType]="controlsType"></app-course-module>
+	<h3>Модуль {{ activeFormGroup.value.title }}</h3>
+	<app-course-module
+		[form]="activeFormGroup"
+		[controlsType]="controlsType"
+	></app-course-module>
 
-    <div class="topics">
-        <h3>Темы модуля</h3>
-        <div *ngFor="let topic of activeFormGroup.value.topics; let j = index">
-            Тема {{ j + 1 }}. {{ topic.title }}.
-        </div>
-        <button *ngIf="canEditForm" (click)="addTopic(activeFormGroup)">Добавить тему</button>
-    </div>
+	<div class="topics">
+		<h3>Темы модуля</h3>
+		<div *ngFor="let topic of activeFormGroup.value.topics; let j = index">
+			Тема {{ j + 1 }}. {{ topic.title }}.
+		</div>
+		<button *ngIf="canEditForm" (click)="addTopic(activeFormGroup)">
+			Добавить тему
+		</button>
+	</div>
 </ng-template>
 
 <ng-template #courseTopic let-viewData="viewData">
-    <h3>Тема {{ activeFormGroup.value.title }}</h3>
-    <app-module-topic 
-        [form]="activeFormGroup"
-        [controlsType]="controlsType"></app-module-topic>
+	<h3>Тема {{ activeFormGroup.value.title }}</h3>
+	<app-module-topic
+		[form]="activeFormGroup"
+		[controlsType]="controlsType"
+	></app-module-topic>
 </ng-template>
 
 <ng-template #actionButtons>
-    <ng-container [ngSwitch]="formMode">
-        <ng-template 
-            *ngSwitchCase="viewModes.Create" 
-            [ngTemplateOutlet]="createCourseActionButtons"
-        ></ng-template>
-        <ng-template 
-            *ngSwitchCase="viewModes.Edit" 
-            [ngTemplateOutlet]="editCourseActionButtons"
-        ></ng-template>
-        <ng-template 
-            *ngSwitchCase="viewModes.Review" 
-            [ngTemplateOutlet]="reviewCourseActionButtons"
-        ></ng-template>
-    </ng-container>
+	<ng-container [ngSwitch]="formMode">
+		<ng-template
+			*ngSwitchCase="viewModes.Create"
+			[ngTemplateOutlet]="createCourseActionButtons"
+		></ng-template>
+		<ng-template
+			*ngSwitchCase="viewModes.Edit"
+			[ngTemplateOutlet]="editCourseActionButtons"
+		></ng-template>
+		<ng-template
+			*ngSwitchCase="viewModes.Review"
+			[ngTemplateOutlet]="reviewCourseActionButtons"
+		></ng-template>
+	</ng-container>
 </ng-template>
 
 <ng-template #createCourseActionButtons>
-    <button mat-raised-button color="primary" (click)="onSubmit(viewModes.Create)">Создать</button>
+	<button
+		mat-raised-button
+		color="primary"
+		(click)="onSubmit(viewModes.Create)"
+	>
+		Создать
+	</button>
 </ng-template>
 
 <ng-template #editCourseActionButtons>
-    <button mat-raised-button color="primary" (click)="onSubmit(viewModes.Edit)">Сохранить изменения</button>
+	<button
+		mat-raised-button
+		color="primary"
+		(click)="onSubmit(viewModes.Edit)"
+	>
+		Сохранить изменения
+	</button>
 </ng-template>
 
 <ng-template #reviewCourseActionButtons>
-    <button mat-raised-button color="primary" (click)="onSubmit(viewModes.Review)">Отправить на исправление</button>
-    <button mat-raised-button color="primary" (click)="onSubmit('publish')">Опубликовать</button>
+	<button
+		mat-raised-button
+		color="primary"
+		(click)="onSubmit(viewModes.Review)"
+	>
+		Отправить на исправление
+	</button>
+	<button mat-raised-button color="primary" (click)="onSubmit('publish')">
+		Опубликовать
+	</button>
 </ng-template>
 
 <ng-template #createHeader>
-    <h1 class="title">Создание курса</h1>
-    <p>Пожалуйста, заполните данные о курсе в форму ниже.</p>
+	<h1 class="title">Создание курса</h1>
+	<p>Пожалуйста, заполните данные о курсе в форму ниже.</p>
 </ng-template>
 
 <ng-template #updateHeader>
-    <h1 class="title">Редактирование курса</h1>
-    <p>Внесите необходимые правки в текущую версию курса.</p>
+	<h1 class="title">Редактирование курса</h1>
+	<p>Внесите необходимые правки в текущую версию курса.</p>
 </ng-template>
 
 <ng-template #editHeader>
-    <h1 class="title">Исправление курса</h1>
-    <p>Обновите содержание курса в соответствии с советами редакции.</p>
+	<h1 class="title">Исправление курса</h1>
+	<p>Обновите содержание курса в соответствии с советами редакции.</p>
 </ng-template>
 
 <ng-template #reviewHeader>
-    <h1 class="title">Проверка курса</h1>
-    <p>
-        Проверьте содержание курса на соответствие <a href="#">политики о содержимом</a>
-    </p>
+	<h1 class="title">Проверка курса</h1>
+	<p>
+		Проверьте содержание курса на соответствие
+		<a href="#">политики о содержимом</a>
+	</p>
 </ng-template>

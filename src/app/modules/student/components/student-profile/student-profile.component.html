@@ -1,47 +1,51 @@
 <a routerLink="training">К тренингу</a>
 
 <ng-container *ngIf="viewData$ | async as viewData">
-    <ng-container [ngSwitch]="viewData.mode">
-        <ng-container 
-            *ngSwitchCase="'SingleProfile'"
-            [ngTemplateOutlet]="singleProfile"
-            [ngTemplateOutletContext]="{ 
-                profile: viewData.profile, 
-                progress: viewData.topicsProgress,
-                training: viewData.training, 
-                course: viewData.profile?.training?.course, 
-                hasAccess: viewData.hasAccess, 
-                charts: viewData.charts
-            }"></ng-container>
+	<ng-container [ngSwitch]="viewData.mode">
+		<ng-container
+			*ngSwitchCase="'SingleProfile'"
+			[ngTemplateOutlet]="singleProfile"
+			[ngTemplateOutletContext]="{
+				profile: viewData.profile,
+				progress: viewData.topicsProgress,
+				training: viewData.training,
+				course: viewData.profile?.training?.course,
+				hasAccess: viewData.hasAccess,
+				charts: viewData.charts
+			}"
+		></ng-container>
 
-        <ng-container 
-            *ngSwitchCase="'ProfilesList'"
-            [ngTemplateOutlet]="profilesList"></ng-container>
-    </ng-container>
+		<ng-container
+			*ngSwitchCase="'ProfilesList'"
+			[ngTemplateOutlet]="profilesList"
+		></ng-container>
+	</ng-container>
 </ng-container>
 
-<ng-template #singleProfile 
-    let-profile="profile" 
-    let-training="training" 
-    let-course="course"
-    let-charts="charts"
-    let-progress="progress"
-    let-hasAccess="hasAccess"
-> 
-    <ng-container *ngIf="hasAccess; else noAccess">
-        <h2>Прогресс тренинга {{ course.title }}</h2>
+<ng-template
+	#singleProfile
+	let-profile="profile"
+	let-training="training"
+	let-course="course"
+	let-charts="charts"
+	let-progress="progress"
+	let-hasAccess="hasAccess"
+>
+	<ng-container *ngIf="hasAccess; else noAccess">
+		<h2>Прогресс тренинга {{ course.title }}</h2>
 
-        <app-topics-progress-chart 
-        class="chart progress-chart"
-        [config]="charts.topics">
-        </app-topics-progress-chart>
-    </ng-container>
+		<app-topics-progress-chart
+			class="chart progress-chart"
+			[config]="charts.topics"
+		>
+		</app-topics-progress-chart>
+	</ng-container>
 </ng-template>
 
 <ng-template #profilesList>
-    <p>Общий прогресс {{'Trainings...'}}</p>
+	<p>Общий прогресс {{ 'Trainings...' }}</p>
 </ng-template>
 
 <ng-template #noAccess>
-    <p>Нет доступа к выбранному прогрессу</p>
+	<p>Нет доступа к выбранному прогрессу</p>
 </ng-template>

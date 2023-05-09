@@ -1,94 +1,93 @@
 form {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	flex-grow: 1;
 }
 
 mat-form-field {
-    max-width: 370px;
-    width: 100%;
+	max-width: 370px;
+	width: 100%;
 }
 
 .modules {
-    width: 100%;
-    padding-left: 40px;
-    margin-top: 60px;
+	width: 100%;
+	padding-left: 40px;
+	margin-top: 60px;
 }
 
 .module-item {
-    padding: 10px;
-    border: 1px solid #ccc;
+	padding: 10px;
+	border: 1px solid #ccc;
 }
 
 .topic-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    border: 1px solid #ccc;
-    margin: 10px;
+	display: flex;
+	justify-content: space-between;
+	padding: 10px;
+	border: 1px solid #ccc;
+	margin: 10px;
 }
 
 .topic-duration {
-    display: flex;
+	display: flex;
 
-    & .input {
-        width: 100px;
-    }
+	& .input {
+		width: 100px;
+	}
 }
 
 .footer {
-    width: 100%;
-    margin-top: 20px;
-    text-align: right;
+	width: 100%;
+	margin-top: 20px;
+	text-align: right;
 
-    & button {
-        margin-left: 10px;
-    }
+	& button {
+		margin-left: 10px;
+	}
 }
 
 .categories-container {
-    width: 100%;
+	width: 100%;
 
-    & mat-form-field {
-        max-width: 240px;
-        margin-bottom: -1.3em;
-    }
+	& mat-form-field {
+		max-width: 240px;
+		margin-bottom: -1.3em;
+	}
 
-    & mat-checkbox {
-        padding-left: 20px;
-    }
+	& mat-checkbox {
+		padding-left: 20px;
+	}
 }
 
 .category-row {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    width: 100%;
-    margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	width: 100%;
+	margin-bottom: 20px;
 }
 
-
 .property {
-    // display: flex;
-    align-items: baseline;
-    padding: 8px 0;
+	// display: flex;
+	align-items: baseline;
+	padding: 8px 0;
 }
 
 p {
-    margin: 0;
+	margin: 0;
 }
 
 .form-footer {
-    display: flex;
-    gap: 10px;
-    padding: 10px 0;
+	display: flex;
+	gap: 10px;
+	padding: 10px 0;
 }
 
 .topic-review-materials {
-    height: 120px;
+	height: 120px;
 }
 
 app-chips-control {
-    display: block;
+	display: block;
 }

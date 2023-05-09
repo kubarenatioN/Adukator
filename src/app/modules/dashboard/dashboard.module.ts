@@ -5,17 +5,9 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
 import { TrainingService } from './services/training.service';
 
-
 @NgModule({
-  declarations: [
-    DashboardComponent
-  ],
-  imports: [
-    CommonModule,
-    DashboardRoutingModule,
-  ],
-  providers: [
-    TrainingService,
-  ]
+	declarations: [DashboardComponent],
+	imports: [CommonModule, DashboardRoutingModule],
+	providers: [TrainingService],
 })
-export class DashboardModule { }
+export class DashboardModule {}

@@ -1,30 +1,38 @@
-<p *ngIf="!isActual && task.isOpened !== true">Задание недоступно для отправки.</p>
+<p *ngIf="!isActual && task.isOpened !== true">
+	Задание недоступно для отправки.
+</p>
 <p *ngIf="!isActual && task.isOpened === true">Задание было разблокировано.</p>
 <h3>{{ task.taskDescr }}</h3>
 
 <div>
-    <app-upload-box 
-    [label]="'Материалы к заданию'" 
-    [folder]="taskMaterialsFolder"
-    [controlId]="controlId"
-    type="download"></app-upload-box>
+	<app-upload-box
+		[label]="'Материалы к заданию'"
+		[folder]="taskMaterialsFolder"
+		[controlId]="controlId"
+		type="download"
+	></app-upload-box>
 </div>
 
 <form [formGroup]="form" *ngIf="isActual || task.isOpened">
+	<app-upload-box
+		class="upload-box"
+		#uploadBox
+		[label]="uploadLabel"
+		[folder]="uploadFilesFolder"
+		[controlId]="controlId"
+		[useCache]="false"
+		type="upload"
+		[clearObs$]="clearUploadBox$"
+		[autoRemoveOnDestroy]="true"
+		(uploadFilesChanged)="onUpload($event)"
+	></app-upload-box>
 
-    <app-upload-box 
-        class="upload-box"
-        #uploadBox
-        [label]="uploadLabel" 
-        [folder]="uploadFilesFolder"
-        [controlId]="controlId"
-        [useCache]="false"
-        type="upload"
-        [clearObs$]="clearUploadBox$"
-        [autoRemoveOnDestroy]="true"
-        (uploadFilesChanged)="onUpload($event)"></app-upload-box>
-
-    <textarea formControlName="comment" cols="50" rows="6" placeholder="Комментарий"></textarea>
-    <br>
-    <button (click)="onSend()">Отправить</button>
+	<textarea
+		formControlName="comment"
+		cols="50"
+		rows="6"
+		placeholder="Комментарий"
+	></textarea>
+	<br />
+	<button (click)="onSend()">Отправить</button>
 </form>

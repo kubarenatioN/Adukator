@@ -14,14 +14,19 @@ import { CenteredContainerDirective } from './directives/centered-container.dire
 import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
-	declarations: [AppComponent, NavComponent, MainComponent, CenteredContainerDirective],
+	declarations: [
+		AppComponent,
+		NavComponent,
+		MainComponent,
+		CenteredContainerDirective,
+	],
 	imports: [
 		BrowserModule,
 		AppRoutingModule,
 		BrowserAnimationsModule,
 		HttpClientModule,
 		SharedModule,
-        NgChartsModule,
+		NgChartsModule,
 	],
 	providers: [
 		{

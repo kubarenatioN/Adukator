@@ -1,48 +1,66 @@
 <form [formGroup]="form">
+	<div class="filters">
+		<label class="filters-training">
+			<select formControlName="training">
+				<option
+					*ngFor="let training of trainings$ | async"
+					[value]="training._id"
+				>
+					{{ training.course.title }}
+				</option>
+			</select>
+		</label>
 
-    <div class="filters">
-        <label class="filters-training">
-            <select formControlName="training">
-                <option *ngFor="let training of trainings$ | async" [value]="training._id">
-                    {{ training.course.title }}
-                </option>
-            </select>
-        </label>
-        
-        <label class="filters-topic">
-            <select formControlName="topic" *ngIf="topics$ | async as topics">
-                <option [value]=""></option>
-                <option *ngFor="let topic of topics" [value]="topic.id">
-                    {{ topic.title }}
-                </option>
-            </select>
-        </label>
-        
-        <label class="filters-task">
-            <ng-container *ngIf="tasks$ | async as tasks">
-                <select formControlName="task" *ngIf="tasks !== 'NoTasks'; else noTasks">
-                    <option [value]=""></option>
-                    <option *ngFor="let taskInfo of tasks" [value]="taskInfo.uuid">
-                        {{ taskInfo.task.taskDescr }}
-                    </option>
-                </select>
-            </ng-container>
-        </label>
-    </div>
+		<label class="filters-topic">
+			<select formControlName="topic" *ngIf="topics$ | async as topics">
+				<option [value]=""></option>
+				<option *ngFor="let topic of topics" [value]="topic.id">
+					{{ topic.title }}
+				</option>
+			</select>
+		</label>
 
-    <ng-container *ngIf="personalizations$ | async as personalizations">
-        <div class="filters-personalizations" formArrayName="personalizations" *ngIf="personalizations.length > 0">
-            <label class="profile-label" *ngFor="let pers of form.controls.personalizations.controls; let i = index" [formGroupName]="i">
-                <input formControlName="hasAssignedTask" type="checkbox">
-                <span>{{ pers.value.profile.student.username }}</span>
-            </label>
-        </div>
-    </ng-container>
+		<label class="filters-task">
+			<ng-container *ngIf="tasks$ | async as tasks">
+				<select
+					formControlName="task"
+					*ngIf="tasks !== 'NoTasks'; else noTasks"
+				>
+					<option [value]=""></option>
+					<option
+						*ngFor="let taskInfo of tasks"
+						[value]="taskInfo.uuid"
+					>
+						{{ taskInfo.task.taskDescr }}
+					</option>
+				</select>
+			</ng-container>
+		</label>
+	</div>
 
+	<ng-container *ngIf="personalizations$ | async as personalizations">
+		<div
+			class="filters-personalizations"
+			formArrayName="personalizations"
+			*ngIf="personalizations.length > 0"
+		>
+			<label
+				class="profile-label"
+				*ngFor="
+					let pers of form.controls.personalizations.controls;
+					let i = index
+				"
+				[formGroupName]="i"
+			>
+				<input formControlName="hasAssignedTask" type="checkbox" />
+				<span>{{ pers.value.profile.student.username }}</span>
+			</label>
+		</div>
+	</ng-container>
 </form>
 
 <button (click)="onAssign()" [disabled]="!canAssign">Назначить</button>
 
 <ng-template #noTasks>
-    <p>По выбранной теме не создано персональных практических заданий.</p>
+	<p>По выбранной теме не создано персональных практических заданий.</p>
 </ng-template>

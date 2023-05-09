@@ -17,97 +17,111 @@ import { TeacherTrainingService } from '../../services/teacher-training.service'
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalTasksComponent implements OnInit {
-    private activeTraining?: Training
-    
-	public trainings$: Observable<Training[]>
-    public topics$!: Observable<ModuleTopic[] | null>
-    public tasks$!: Observable<PersonalTask[]>
-    
-	public form;
-    public shouldShowTaskForm = false;
+	private activeTraining?: Training;
 
-    public uploadFolder: string = ''
-    
-	constructor(private fb: FormBuilder, 
-        private uploadService: UploadService,
-        private teacherService: TeacherTrainingService, 
-        private personalizationService: PersonalizationService
-    ) {
+	public trainings$: Observable<Training[]>;
+	public topics$!: Observable<ModuleTopic[] | null>;
+	public tasks$!: Observable<PersonalTask[]>;
+
+	public form;
+	public shouldShowTaskForm = false;
+
+	public uploadFolder: string = '';
+
+	constructor(
+		private fb: FormBuilder,
+		private uploadService: UploadService,
+		private teacherService: TeacherTrainingService,
+		private personalizationService: PersonalizationService
+	) {
 		this.form = this.fb.group({
-            uuid: generateUUID(),
+			uuid: generateUUID(),
 			training: '',
 			topic: '',
 			taskDescr: '',
 			materials: [[] as string[]],
 		});
 
-        this.trainings$ = this.teacherService.getTeacherTrainings(CoursesSelectFields.Modules).pipe(shareReplay(1))
+		this.trainings$ = this.teacherService
+			.getTeacherTrainings(CoursesSelectFields.Modules)
+			.pipe(shareReplay(1));
 	}
 
 	ngOnInit(): void {
-        this.tasks$ = this.personalizationService.getTeacherTasks()
+		this.tasks$ = this.personalizationService.getTeacherTasks();
 
-        this.topics$ = this.form.controls.training.valueChanges.pipe(
-            withLatestFrom(this.trainings$),
-            map(([trainingId, trainings])=> {
-                const training: Training | undefined = trainings.find(training => training.uuid === trainingId)
-                this.activeTraining = training
-                const courseTraining: StudentTraining | null = training ? new StudentTraining(training) : null
-                return courseTraining ? courseTraining.topics : null
-            }),
-            tap(topics => {
-                if (topics && topics.length > 0) {
-                    this.form.patchValue({
-                        topic: topics[0].id
-                    })  
-                }
-                const { training, uuid } = this.form.value
-                this.uploadFolder = this.uploadService.getFilesFolder('personalization', training ?? '', uuid ?? '')    
-            })
-        )
+		this.topics$ = this.form.controls.training.valueChanges.pipe(
+			withLatestFrom(this.trainings$),
+			map(([trainingId, trainings]) => {
+				const training: Training | undefined = trainings.find(
+					(training) => training.uuid === trainingId
+				);
+				this.activeTraining = training;
+				const courseTraining: StudentTraining | null = training
+					? new StudentTraining(training)
+					: null;
+				return courseTraining ? courseTraining.topics : null;
+			}),
+			tap((topics) => {
+				if (topics && topics.length > 0) {
+					this.form.patchValue({
+						topic: topics[0].id,
+					});
+				}
+				const { training, uuid } = this.form.value;
+				this.uploadFolder = this.uploadService.getFilesFolder(
+					'personalization',
+					training ?? '',
+					uuid ?? ''
+				);
+			})
+		);
 
-        this.form.controls.topic.valueChanges.subscribe(topicId => {
-            this.form.patchValue({
-                taskDescr: '',
-                materials: []
-            })
-        })
+		this.form.controls.topic.valueChanges.subscribe((topicId) => {
+			this.form.patchValue({
+				taskDescr: '',
+				materials: [],
+			});
+		});
 
-        this.form.valueChanges.subscribe(model => {
-            this.shouldShowTaskForm = model.training != null && model.topic != null
-        })
-    }
+		this.form.valueChanges.subscribe((model) => {
+			this.shouldShowTaskForm =
+				model.training != null && model.topic != null;
+		});
+	}
 
-    public onUploadFilesChanged(files: string[]) {
-        this.form.patchValue({
-            materials: files
-        })
-    }
+	public onUploadFilesChanged(files: string[]) {
+		this.form.patchValue({
+			materials: files,
+		});
+	}
 
-    public createTask() {
-        const { materials, taskDescr, uuid, topic } = this.form.value
-        if (!materials || materials.length === 0) {
-            console.warn('No files attached to task.');
-            return;
-        }
-        if (!taskDescr) {
-            console.warn('No task description was provided.');
-            return;
-        }
+	public createTask() {
+		const { materials, taskDescr, uuid, topic } = this.form.value;
+		if (!materials || materials.length === 0) {
+			console.warn('No files attached to task.');
+			return;
+		}
+		if (!taskDescr) {
+			console.warn('No task description was provided.');
+			return;
+		}
 
-        if (!uuid || !topic || !this.activeTraining) {
-            console.warn('Not enough data to create task.');
-            return 
-        }
+		if (!uuid || !topic || !this.activeTraining) {
+			console.warn('Not enough data to create task.');
+			return;
+		}
 
-        const task: TopicTask = {
-            id: uuid,
-            taskDescr,
-            materials,
-        }
+		const task: TopicTask = {
+			id: uuid,
+			taskDescr,
+			materials,
+		};
 
-        this.personalizationService.createTask(this.activeTraining, topic, task).subscribe(res => {
-            console.log(res);
-        })
-    }
+		this.personalizationService
+			.createTask(this.activeTraining, topic, task)
+			.subscribe((res) => {
+				console.log(res);
+			});
+	}
 }

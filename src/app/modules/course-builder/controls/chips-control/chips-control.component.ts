@@ -1,5 +1,12 @@
 import { ENTER } from '@angular/cdk/keycodes';
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	Input,
+	OnInit,
+	ViewChild,
+} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
@@ -14,43 +21,47 @@ export type ChipItem = { id: string; label: string };
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChipsControlComponent implements OnInit {
-	private _items: ChipItem[] | null = null
-	
+	private _items: ChipItem[] | null = null;
+
 	@Input() public form!: FormGroup;
 	@Input() public control!: string;
 	@Input() public title!: string;
 	@Input() public set items(value: ChipItem[] | null) {
 		this._items = value;
-		this.pickedItems = []
-	};
+		this.pickedItems = [];
+	}
 	@Input() public set picked(value: ChipItem[] | null | undefined) {
 		if (value) {
 			this.pickedItems = value;
 		}
-	};
+	}
 	@Input() public addOnBlur = true;
 	readonly separatorKeysCodes = [ENTER] as const;
-	public filteredItems$!: Observable<ChipItem[]>
+	public filteredItems$!: Observable<ChipItem[]>;
 	public pickedItems: ChipItem[] = [];
-	public query = new FormControl<string | null>(null)
+	public query = new FormControl<string | null>(null);
 
 	@ViewChild('input')
 	public input!: ElementRef<HTMLInputElement>;
 
 	public ngOnInit(): void {
-		this.filteredItems$ = this.query.valueChanges
-		.pipe(
+		this.filteredItems$ = this.query.valueChanges.pipe(
 			startWith(''),
 			debounceTime(300),
-			map(query => query ? this.filterItems(query) : (this.items ?? []))
-		)
+			map((query) => (query ? this.filterItems(query) : this.items ?? []))
+		);
 	}
 
-	public add(event: MatChipInputEvent): void {		
+	public add(event: MatChipInputEvent): void {
 		const label = event.value.trim();
 		const value = this._items
-			?.filter(it => this.pickedItems.findIndex(picked => picked.id === it.id) === -1)
-			.find(it => it.label === label);
+			?.filter(
+				(it) =>
+					this.pickedItems.findIndex(
+						(picked) => picked.id === it.id
+					) === -1
+			)
+			.find((it) => it.label === label);
 		if (value) {
 			this.pickedItems.push(value);
 			this.form.patchValue({
@@ -58,10 +69,10 @@ export class ChipsControlComponent implements OnInit {
 			});
 		}
 		event.chipInput!.clear();
-		this.query.setValue(null)
+		this.query.setValue(null);
 	}
 
-	public remove(id: string): void {		
+	public remove(id: string): void {
 		this.pickedItems = this.pickedItems.filter((item) => item.id !== id);
 		this.form.patchValue({
 			[this.control]: this.pickedItems,
@@ -70,26 +81,29 @@ export class ChipsControlComponent implements OnInit {
 
 	public selected(event: MatAutocompleteSelectedEvent): void {
 		const id = event.option.value;
-		const item = this._items?.find(it => it.id === id)
+		const item = this._items?.find((it) => it.id === id);
 		if (item && !this.pickedItems.includes(item)) {
 			this.pickedItems.push(item);
 			this.form.patchValue({
 				[this.control]: this.pickedItems,
 			});
 		}
-		
+
 		this.input.nativeElement.value = '';
 		this.query.setValue(null);
 	}
 
 	private filterItems(query: string) {
-		query = query.toLowerCase()
-		return this._items 
-			? this._items.filter(it => {
-				const isPicked = this.pickedItems.findIndex(picked => picked.id === it.id) > -1
-				const isInQuery = it.label.toLowerCase().includes(query)
-				return !isPicked && isInQuery
-			})
-			: []
+		query = query.toLowerCase();
+		return this._items
+			? this._items.filter((it) => {
+					const isPicked =
+						this.pickedItems.findIndex(
+							(picked) => picked.id === it.id
+						) > -1;
+					const isInQuery = it.label.toLowerCase().includes(query);
+					return !isPicked && isInQuery;
+			  })
+			: [];
 	}
 }

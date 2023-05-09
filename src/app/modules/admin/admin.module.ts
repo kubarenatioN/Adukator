@@ -7,17 +7,13 @@ import { SharedModule } from '../shared/shared.module';
 import { AdminCoursesReviewComponent } from './components/admin-courses-review/admin-courses-review.component';
 import { ReactiveFormsModule } from '@angular/forms';
 
-
 @NgModule({
-  declarations: [
-    AdminComponent,
-    AdminCoursesReviewComponent,
-  ],
-  imports: [
-    CommonModule,
-    SharedModule,
-    AdminRoutingModule,
-    ReactiveFormsModule,
-  ]
+	declarations: [AdminComponent, AdminCoursesReviewComponent],
+	imports: [
+		CommonModule,
+		SharedModule,
+		AdminRoutingModule,
+		ReactiveFormsModule,
+	],
 })
-export class AdminModule { }
+export class AdminModule {}

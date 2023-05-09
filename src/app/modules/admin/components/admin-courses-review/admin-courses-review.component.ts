@@ -15,14 +15,15 @@ import { Course, CourseReview } from 'src/app/typings/course.types';
 	styleUrls: ['./admin-courses-review.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdminCoursesReviewComponent extends BaseComponent implements OnInit {
+export class AdminCoursesReviewComponent
+	extends BaseComponent
+	implements OnInit
+{
 	@Input() public courses: CourseReview[] = [];
 
 	constructor(private adminService: AdminService) {
-        super()
-    }
+		super();
+	}
 
-	ngOnInit(): void {
-        
-    }
+	ngOnInit(): void {}
 }

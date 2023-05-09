@@ -11,14 +11,12 @@ import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { BundleOverviewComponent } from './components/bundle-overview/bundle-overview.component';
 
 @NgModule({
-    providers: [
-        FormBuilderHelper,
-    ],
+	providers: [FormBuilderHelper],
 	declarations: [
 		LearnComponent,
 		CatalogComponent,
 		CourseOverviewComponent,
-  	BundleOverviewComponent,
+		BundleOverviewComponent,
 	],
 	imports: [
 		CommonModule,

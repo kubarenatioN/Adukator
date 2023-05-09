@@ -11,7 +11,5 @@ import { UserService } from './user.service';
 export class StudentCoursesService {
 	public courses$!: Observable<Training[]>;
 
-	constructor() {
-        
-    }
+	constructor() {}
 }

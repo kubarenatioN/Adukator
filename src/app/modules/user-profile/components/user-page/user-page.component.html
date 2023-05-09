@@ -1,15 +1,16 @@
 <ng-container *ngIf="user$ | async as user; else loader">
-
-    <div class="profile-banner">
-        <div class="row">
-            <img crossorigin="anonymous" referrerpolicy="no-referrer" [src]="user.photo" alt="User Avatar">
-            <h1>{{user.username}}</h1>
-        </div>
-        <h3>Ранг: {{user.role}}</h3>
-    </div>
-
+	<div class="profile-banner">
+		<div class="row">
+			<img
+				crossorigin="anonymous"
+				referrerpolicy="no-referrer"
+				[src]="user.photo"
+				alt="User Avatar"
+			/>
+			<h1>{{ user.username }}</h1>
+		</div>
+		<h3>Ранг: {{ user.role }}</h3>
+	</div>
 </ng-container>
 
-<ng-template #loader>
-    Loading...
-</ng-template>
+<ng-template #loader> Loading... </ng-template>

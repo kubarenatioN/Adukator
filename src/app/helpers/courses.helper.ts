@@ -70,38 +70,40 @@ export const convertCourseFormDataToCourseReview = (
 	formData: CourseFormData
 ): CourseReview => {
 	const { overallInfo, metadata } = formData;
-	let { modules } = formData
-	const { title, description, category, comments, acquiredCompetencies, requiredCompetencies } = overallInfo;
+	let { modules } = formData;
 	const {
-		_id,
-		uuid,
-		masterCourseId: masterId,
-		authorId,
-		status,
-	} = metadata;
+		title,
+		description,
+		category,
+		comments,
+		acquiredCompetencies,
+		requiredCompetencies,
+	} = overallInfo;
+	const { _id, uuid, masterCourseId: masterId, authorId, status } = metadata;
 
 	// patch form data before sending to backend
-	modules = modules.map(module => {
-		module.topics = module.topics.map(topic => {
-			topic.duration = Number(topic.days ?? 0) + Number(topic.weeks ?? 0) * 7
-			return topic
-		})
+	modules = modules.map((module) => {
+		module.topics = module.topics.map((topic) => {
+			topic.duration =
+				Number(topic.days ?? 0) + Number(topic.weeks ?? 0) * 7;
+			return topic;
+		});
 
 		return module;
-	})
+	});
 
 	return {
-        _id,
+		_id,
 		uuid,
 		masterId,
 		authorId,
 		title,
 		description,
 		category,
-        competencies: {
-					acquired: acquiredCompetencies,
-					required: requiredCompetencies,
-        },
+		competencies: {
+			acquired: acquiredCompetencies,
+			required: requiredCompetencies,
+		},
 		comments,
 		modules,
 		status,
@@ -112,17 +114,26 @@ export const convertCourseFormDataToCourse = (
 	formData: CourseFormData
 ): Course => {
 	const { overallInfo, modules, metadata } = formData;
-	const { title, description, category, acquiredCompetencies, requiredCompetencies } = overallInfo;
+	const {
+		title,
+		description,
+		category,
+		acquiredCompetencies,
+		requiredCompetencies,
+	} = overallInfo;
 	const { uuid, authorId, _id } = metadata;
 
-	const formattedModules = modules.map(module => {
+	const formattedModules = modules.map((module) => {
 		return {
 			id: module.id,
 			title: module.title,
-			description: module.description
-		}
-	})
-	const plainTopics = modules.reduce((topics, module) => [...topics, ...module.topics], [] as ModuleTopic[])
+			description: module.description,
+		};
+	});
+	const plainTopics = modules.reduce(
+		(topics, module) => [...topics, ...module.topics],
+		[] as ModuleTopic[]
+	);
 
 	return {
 		_id: _id ?? '',
@@ -130,10 +141,10 @@ export const convertCourseFormDataToCourse = (
 		title,
 		description,
 		category,
-        competencies: {
-            acquired: acquiredCompetencies,
-            required: requiredCompetencies,
-        },
+		competencies: {
+			acquired: acquiredCompetencies,
+			required: requiredCompetencies,
+		},
 		modules: formattedModules,
 		topics: plainTopics,
 		authorId,
@@ -141,35 +152,40 @@ export const convertCourseFormDataToCourse = (
 };
 
 export const generateUUID = (): string => {
-    return nanoid()
+	return nanoid();
 };
 
 export const constructCourseTree = (form: FormGroup) => {
-	const modules = form.get('modules')?.value as CourseFormModule[]
-	const topics = form.get('topics')?.value as ModuleTopic[]
-	const tree = modules.map(module => {
-			const moduleTopics = topics.filter(topic => topic.moduleId === module.id)
-			module.topics = moduleTopics
-			return module
-	})
+	const modules = form.get('modules')?.value as CourseFormModule[];
+	const topics = form.get('topics')?.value as ModuleTopic[];
+	const tree = modules.map((module) => {
+		const moduleTopics = topics.filter(
+			(topic) => topic.moduleId === module.id
+		);
+		module.topics = moduleTopics;
+		return module;
+	});
 
 	return tree;
-}
+};
 
 export const removeComments = <T>(course: Record<string, any>): T => {
 	const stack = [course];
-  while (stack?.length > 0) {
-    const currentObj = stack.pop()!;
-    Object.keys(currentObj).forEach(key => {
-      if (typeof currentObj[key] === 'object' && currentObj[key] !== null) {
+	while (stack?.length > 0) {
+		const currentObj = stack.pop()!;
+		Object.keys(currentObj).forEach((key) => {
+			if (
+				typeof currentObj[key] === 'object' &&
+				currentObj[key] !== null
+			) {
 				if (key === 'comments') {
-					delete currentObj[key]
+					delete currentObj[key];
 				} else {
 					stack.push(currentObj[key]);
 				}
-      }
-    });
-  }
+			}
+		});
+	}
 
-	return course as T
-}
+	return course as T;
+};

@@ -1,9 +1,9 @@
 <h1>Админ панель</h1>
 
 <ng-container *ngIf="reviewCoursesList$ | async as reviewCourses; else loader">
-    <app-admin-courses-review [courses]="reviewCourses"></app-admin-courses-review>
+	<app-admin-courses-review
+		[courses]="reviewCourses"
+	></app-admin-courses-review>
 </ng-container>
 
-<ng-template #loader>
-    Loading...
-</ng-template>
+<ng-template #loader> Loading... </ng-template>

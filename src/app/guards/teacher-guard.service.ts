@@ -9,18 +9,22 @@ import { UserService } from '../services/user.service';
 export class TeacherGuardService implements CanActivate {
 	constructor(private userService: UserService, private router: Router) {}
 
-    public canActivate(): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-        return this.isTeacher();
-    }
+	public canActivate():
+		| boolean
+		| UrlTree
+		| Observable<boolean | UrlTree>
+		| Promise<boolean | UrlTree> {
+		return this.isTeacher();
+	}
 
-    private isTeacher(): Observable<boolean | UrlTree> {
-        return this.userService.user$.pipe(
-            map(user => {
-                if (user.permission === 'teacher') {
-                    return true;
-                }
-                return this.router.parseUrl('/app');
-            })
-        )
-    }
+	private isTeacher(): Observable<boolean | UrlTree> {
+		return this.userService.user$.pipe(
+			map((user) => {
+				if (user.permission === 'teacher') {
+					return true;
+				}
+				return this.router.parseUrl('/app');
+			})
+		);
+	}
 }

@@ -18,15 +18,15 @@ export class TokenInterceptor implements HttpInterceptor {
 		req: HttpRequest<any>,
 		next: HttpHandler
 	): Observable<HttpEvent<any>> {
-        const token = this.userService.token;
-        if (token) {
-            const clone = req.clone({
-                setHeaders: {
-                    [NetworkHelper.authorizationHeader]: token,
-                }
-            });
-            return next.handle(clone);
-        }
-        return next.handle(req);
+		const token = this.userService.token;
+		if (token) {
+			const clone = req.clone({
+				setHeaders: {
+					[NetworkHelper.authorizationHeader]: token,
+				},
+			});
+			return next.handle(clone);
+		}
+		return next.handle(req);
 	}
 }

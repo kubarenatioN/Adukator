@@ -1,31 +1,31 @@
 .layout {
-    min-height: 100vh;
-    flex-direction: row-reverse;
-    align-items: flex-start;
+	min-height: 100vh;
+	flex-direction: row-reverse;
+	align-items: flex-start;
 }
 
 .training-container {
-    width: 100%;
-    display: flex;
-    align-items: flex-start;
-    height: 100%;
-    overflow-y: auto;
+	width: 100%;
+	display: flex;
+	align-items: flex-start;
+	height: 100%;
+	overflow-y: auto;
 }
 
 .content {
-    flex-grow: 1;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 0 20px;
+	flex-grow: 1;
+	max-width: 1000px;
+	margin: 0 auto;
+	padding: 0 20px;
 }
 
 .sidebar {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 60px;
-    min-width: 280px;
-    width: 280px;
-    padding: 10px;
-    min-height: 400px;
-    background-color: #e4e4f8;
+	position: -webkit-sticky;
+	position: sticky;
+	top: 60px;
+	min-width: 280px;
+	width: 280px;
+	padding: 10px;
+	min-height: 400px;
+	background-color: #e4e4f8;
 }

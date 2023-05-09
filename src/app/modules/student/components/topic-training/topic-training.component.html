@@ -1,89 +1,114 @@
 <p *ngIf="status === 'archived'">Тренинг в архиве</p>
-<h1>Тема {{topic.title}}</h1>
+<h1>Тема {{ topic.title }}</h1>
 
 <h3 class="topic-status actual" *ngIf="isActual">Тема в стадии изучения</h3>
-<h3 class="topic-status past" *ngIf="!isActual && isPast">Тема была пройдена</h3>
-<h3 class="topic-status future" *ngIf="!isActual && !isPast">Предстоящая тема</h3>
+<h3 class="topic-status past" *ngIf="!isActual && isPast">
+	Тема была пройдена
+</h3>
+<h3 class="topic-status future" *ngIf="!isActual && !isPast">
+	Предстоящая тема
+</h3>
 
 <span>Описание</span>
 <p>{{ topic.description }}</p>
 
 <p>
-    <span>Дедлайн: </span>
-    <span>{{ deadline | date : 'dd.MM.yy' }}</span>
+	<span>Дедлайн: </span>
+	<span>{{ deadline | date : 'dd.MM.yy' }}</span>
 </p>
 
-<div class="content" [class.blocked]="false" [class.archived]="status === 'archived'">
+<div
+	class="content"
+	[class.blocked]="false"
+	[class.archived]="status === 'archived'"
+>
+	<div *ngIf="topic.theory" class="theory-section section">
+		<h2>Теория</h2>
+		<p>{{ topic.theory }}</p>
+	</div>
 
-    <div *ngIf="topic.theory" 
-    class="theory-section section">
-        <h2>Теория</h2>
-        <p> {{ topic.theory }} </p>
-    </div>
-    
-    <!-- Uncomment -->
-    <!-- <ng-container *ngIf="isActual || isPast"> -->
-    <ng-container>
+	<!-- Uncomment -->
+	<!-- <ng-container *ngIf="isActual || isPast"> -->
+	<ng-container>
+		<div
+			*ngIf="topic.materials && topic.materials.length > 0"
+			class="materials-section section"
+		>
+			<h2>Материалы к теме</h2>
+			<app-upload-box
+				type="download"
+				[folder]="trainingMaterialsFolder"
+				[controlId]="controlId"
+			></app-upload-box>
+		</div>
 
-        <div *ngIf="topic.materials && topic.materials.length > 0" 
-            class="materials-section section">
-            <h2>Материалы к теме</h2>
-            <app-upload-box 
-                type="download" 
-                [folder]="trainingMaterialsFolder"
-                [controlId]="controlId"></app-upload-box>
-        </div>
+		<div *ngIf="topic.practice" class="practice-section section">
+			<h2>Практика</h2>
+			<div class="practice-container" *ngIf="topic.practice">
+				<p>{{ topic.practice.goal }}</p>
+				<div class="practice-tasks">
+					<h4>Задания</h4>
+					<div
+						*ngFor="
+							let task of topic.practice.tasks;
+							let i = index;
+							trackBy: tasksTrackBy
+						"
+						[class.blocked]="isPast && task.isOpened !== true"
+						class="practice-task"
+					>
+						<app-training-task
+							(send)="onSendTask($event)"
+							[isActual]="!!isActual"
+							[task]="task"
+						></app-training-task>
+					</div>
 
-        <div *ngIf="topic.practice"
-        class="practice-section section">
-            <h2>Практика</h2>
-            <div class="practice-container" *ngIf="topic.practice">
-                <p>{{ topic.practice.goal }}</p>
-                <div class="practice-tasks">
-                    <h4>Задания</h4>
-                    <div *ngFor="let task of topic.practice.tasks; let i = index; trackBy:tasksTrackBy"
-                    [class.blocked]="isPast && task.isOpened !== true"
-                    class="practice-task">
-                        <app-training-task 
-                            (send)="onSendTask($event)"
-                            [isActual]="!!isActual"
-                            [task]="task"></app-training-task>
-                    </div>
+					<ng-container
+						*ngIf="personalTasks$ | async as personalTasks"
+					>
+						<h4>Индивидуальные задания</h4>
+						<div
+							*ngFor="
+								let task of personalTasks;
+								let i = index;
+								trackBy: tasksTrackBy
+							"
+							class="practice-task"
+						>
+							<app-training-task
+								(send)="onSendTask($event)"
+								[isActual]="true"
+								[task]="task"
+							></app-training-task>
+						</div>
+					</ng-container>
+				</div>
+			</div>
+		</div>
 
-                    <ng-container *ngIf="personalTasks$ | async as personalTasks">
-                        <h4>Индивидуальные задания</h4>
-                        <div *ngFor="let task of personalTasks; let i = index; trackBy:tasksTrackBy"
-                        class="practice-task">
-                            <app-training-task 
-                            (send)="onSendTask($event)"
-                            [isActual]="true"
-                            [task]="task"></app-training-task>
-                        </div>
-                    </ng-container>
-                </div>
-            </div>
-        </div>
-
-        <div *ngIf="topic.testLink" 
-        [class.blocked]="isPast"
-        class="test-section section">
-            <h2>Ссылка на тест</h2>
-            <div>
-                <p>
-                    Ваш уникальный ID тренинга: 
-                </p>
-                <span (click)="copyProfileIdToClipboard(profileIdTextElem)" 
-                    class="copy-text training-test-id" 
-                    #profileIdTextElem>
-                    {{ profileId + '#' + topic.id }}
-                </span>
-                <button (click)="copyProfileIdToClipboard(profileIdTextElem)">Копировать</button>
-            </div>
-            <p>
-                <a target="_blank" [href]="topic.testLink">Перейти</a>
-            </p>
-        </div>
-
-    </ng-container>
-
+		<div
+			*ngIf="topic.testLink"
+			[class.blocked]="isPast"
+			class="test-section section"
+		>
+			<h2>Ссылка на тест</h2>
+			<div>
+				<p>Ваш уникальный ID тренинга:</p>
+				<span
+					(click)="copyProfileIdToClipboard(profileIdTextElem)"
+					class="copy-text training-test-id"
+					#profileIdTextElem
+				>
+					{{ profileId + '#' + topic.id }}
+				</span>
+				<button (click)="copyProfileIdToClipboard(profileIdTextElem)">
+					Копировать
+				</button>
+			</div>
+			<p>
+				<a target="_blank" [href]="topic.testLink">Перейти</a>
+			</p>
+		</div>
+	</ng-container>
 </div>

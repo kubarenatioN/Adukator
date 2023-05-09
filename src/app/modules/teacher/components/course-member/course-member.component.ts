@@ -3,9 +3,12 @@ import {
 	Component,
 	EventEmitter,
 	Input,
-    Output,
+	Output,
 } from '@angular/core';
-import { TrainingProfile, TrainingProfileUser } from 'src/app/typings/training.types';
+import {
+	TrainingProfile,
+	TrainingProfileUser,
+} from 'src/app/typings/training.types';
 import { User } from 'src/app/typings/user.types';
 
 @Component({
@@ -18,21 +21,21 @@ export class CourseMemberComponent {
 	@Input() public profile!: TrainingProfileUser;
 	@Input() public status!: string;
 
-    @Output() public enroll = new EventEmitter();
-    @Output() public expel = new EventEmitter();
-    @Output() public reject = new EventEmitter();
+	@Output() public enroll = new EventEmitter();
+	@Output() public expel = new EventEmitter();
+	@Output() public reject = new EventEmitter();
 
 	constructor() {}
 
-    public onEnroll() {
-        this.enroll.emit(this.profile);
-    }
+	public onEnroll() {
+		this.enroll.emit(this.profile);
+	}
 
-    public onExpel() {
-        this.expel.emit(this.profile);
-    }
+	public onExpel() {
+		this.expel.emit(this.profile);
+	}
 
-    public onReject() {
-        this.reject.emit(this.profile);
-    }
+	public onReject() {
+		this.reject.emit(this.profile);
+	}
 }

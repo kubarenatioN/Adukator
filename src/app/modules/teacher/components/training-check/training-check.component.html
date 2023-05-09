@@ -1,94 +1,121 @@
 <ng-container *ngIf="viewData$ | async as viewData; else loader">
+	<div class="header">
+		<h2>Оценивание</h2>
+		<p>Выберите студента и тему курса, для того чтобы начать оценивание.</p>
+	</div>
 
-    <div class="header">
-        <h2>Оценивание</h2>
-        <p>Выберите студента и тему курса, для того чтобы начать оценивание.</p>
-    </div>
-    
-    <div class="filters" [formGroup]="checkConfigForm">
-    
-        <label>
-            <span>Студент</span>
-            <select formControlName="profile" name="student">
-                <option *ngFor="let profile of viewData.members" [value]="profile._id">{{ profile.student.username }}</option>
-            </select>
-        </label>
-    
-        <label>
-            <span>Тема</span>
-            <select formControlName="topic" name="topic">
-                <option *ngFor="let topic of viewData.training.topics" [value]="topic.id">
-                    {{ topic.title }}
-                </option>
-            </select>
-        </label>
-    
-    </div>
-    
-    <ng-container *ngIf="checkTasks$ | async as checkTasks; else noTask;">
-        <ng-container *ngIf="(isLoadingAnswers$ | async) !== true; else answersLoader">
+	<div class="filters" [formGroup]="checkConfigForm">
+		<label>
+			<span>Студент</span>
+			<select formControlName="profile" name="student">
+				<option
+					*ngFor="let profile of viewData.members"
+					[value]="profile._id"
+				>
+					{{ profile.student.username }}
+				</option>
+			</select>
+		</label>
 
-            <p>Последняя версия выполненных заданий по теме.</p>
+		<label>
+			<span>Тема</span>
+			<select formControlName="topic" name="topic">
+				<option
+					*ngFor="let topic of viewData.training.topics"
+					[value]="topic.id"
+				>
+					{{ topic.title }}
+				</option>
+			</select>
+		</label>
+	</div>
 
-            <div class="topic-answer-container">
-                <div class="topic-task" *ngFor="let checkTask of checkTasks; let i = index">
-                    <h3>Задание {{ i + 1 }}. {{ checkTask.task.taskDescr }}</h3>
-                    <div *ngIf="checkTask.thread; else noAnswers" class="task-answers">
-                        <app-grouping-upload-box
-                            class="student-files-box"
-                            [folder]="checkTask.folder"
-                            label="Файлы на проверку от студента">
-                        ></app-grouping-upload-box>
-                        <!-- <app-upload-box
+	<ng-container *ngIf="checkTasks$ | async as checkTasks; else noTask">
+		<ng-container
+			*ngIf="(isLoadingAnswers$ | async) !== true; else answersLoader"
+		>
+			<p>Последняя версия выполненных заданий по теме.</p>
+
+			<div class="topic-answer-container">
+				<div
+					class="topic-task"
+					*ngFor="let checkTask of checkTasks; let i = index"
+				>
+					<h3>Задание {{ i + 1 }}. {{ checkTask.task.taskDescr }}</h3>
+					<div
+						*ngIf="checkTask.thread; else noAnswers"
+						class="task-answers"
+					>
+						<app-grouping-upload-box
+							class="student-files-box"
+							[folder]="checkTask.folder"
+							label="Файлы на проверку от студента"
+						>
+							></app-grouping-upload-box
+						>
+						<!-- <app-upload-box
                             class="student-files-box"
                             type="download"
                             [folder]="checkTask.folder"
                             label="Файлы на проверку от студента">
                         </app-upload-box> -->
-                        <div class="thread-list">
-                            <div class="thread-list-item" *ngFor="let reply of checkTask.thread">
-                                <h4>{{ reply.message }}</h4>
-                                <p>{{ reply.date }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-                
-            <div class="check-results">
-                <p>Подведение результатов</p>
-        
-                <div *ngFor="let taskCheck of checkTasks; let i = index; trackBy: tasksResultsTrackBy" class="task-item-wrapper">
+						<div class="thread-list">
+							<div
+								class="thread-list-item"
+								*ngFor="let reply of checkTask.thread"
+							>
+								<h4>{{ reply.message }}</h4>
+								<p>{{ reply.date }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-                    <h3>Задание {{ i + 1 }}</h3>
-                    <p class="descr">{{ taskCheck.task.taskDescr }}</p>
-                    <app-training-task-result 
-                    [task]="taskCheck.task"
-                    [form]="resultsFormMap[taskCheck.task.id]" >
-                    </app-training-task-result>
-                    
-                </div>
-            
-                <button mat-raised-button color="accent" (click)="onSaveCheckResults($event)">Сохранить</button>
-            </div>
+			<div class="check-results">
+				<p>Подведение результатов</p>
 
-        </ng-container>
-    </ng-container>
+				<div
+					*ngFor="
+						let taskCheck of checkTasks;
+						let i = index;
+						trackBy: tasksResultsTrackBy
+					"
+					class="task-item-wrapper"
+				>
+					<h3>Задание {{ i + 1 }}</h3>
+					<p class="descr">{{ taskCheck.task.taskDescr }}</p>
+					<app-training-task-result
+						[task]="taskCheck.task"
+						[form]="resultsFormMap[taskCheck.task.id]"
+					>
+					</app-training-task-result>
+				</div>
 
+				<button
+					mat-raised-button
+					color="accent"
+					(click)="onSaveCheckResults($event)"
+				>
+					Сохранить
+				</button>
+			</div>
+		</ng-container>
+	</ng-container>
 </ng-container>
 
 <ng-template #loader>
-    <p>Please wait. Loading training data...</p>
+	<p>Please wait. Loading training data...</p>
 </ng-template>
 
 <ng-template #noAnswers>
-    <p>Ответов на задание пока что нет.</p>
+	<p>Ответов на задание пока что нет.</p>
 </ng-template>
 
 <ng-template #noTask>
-    <p>Конфигурация проверки не настроена.</p>
+	<p>Конфигурация проверки не настроена.</p>
 </ng-template>
 
 <ng-template #answersLoader>
-    <p>Загружаем профиль студента.</p>
+	<p>Загружаем профиль студента.</p>
 </ng-template>

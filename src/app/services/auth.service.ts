@@ -10,26 +10,26 @@ import { UserService } from './user.service';
 	providedIn: 'root',
 })
 export class AuthService {
-	constructor(
-		private dataService: DataService,
-	) {}
+	constructor(private dataService: DataService) {}
 
 	public login(user: { email: string; password: string }) {
 		const payload: DataRequestPayload = NetworkHelper.createRequestPayload(
 			NetworkRequestKey.LoginUser,
 			{ body: user }
 		);
-		return this.dataService.send<LoginResponse>(payload)
+		return this.dataService.send<LoginResponse>(payload);
 	}
 
 	public register() {
-        // TODO: implement
-    }
+		// TODO: implement
+	}
 
 	public getUserByToken(): Observable<User | null> {
 		const payload = NetworkHelper.createRequestPayload(
 			NetworkRequestKey.GetUserByToken
 		);
-		return this.dataService.send<{ user: User | null; message: string }>(payload).pipe(map(res => res.user))
+		return this.dataService
+			.send<{ user: User | null; message: string }>(payload)
+			.pipe(map((res) => res.user));
 	}
 }

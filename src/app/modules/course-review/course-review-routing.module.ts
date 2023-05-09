@@ -4,21 +4,21 @@ import { CourseReviewGuardService } from 'src/app/guards/course-review-guard.ser
 import { CourseReviewComponent } from './course-review.component';
 
 const routes: Routes = [
-    {
+	{
 		path: 'review/:id',
-        canActivate: [CourseReviewGuardService],
+		canActivate: [CourseReviewGuardService],
 		component: CourseReviewComponent,
 	},
 	{
 		path: '',
-        pathMatch: 'full',
-        redirectTo: '**'
+		pathMatch: 'full',
+		redirectTo: '**',
 	},
-    {
-        path: '**',
-        pathMatch: 'full',
-        redirectTo: '/app'
-    }
+	{
+		path: '**',
+		pathMatch: 'full',
+		redirectTo: '/app',
+	},
 ];
 
 @NgModule({

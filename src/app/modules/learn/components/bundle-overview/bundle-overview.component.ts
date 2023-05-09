@@ -6,36 +6,34 @@ import { CoursesService } from 'src/app/services/courses.service';
 import { CourseBundle } from 'src/app/typings/course.types';
 
 @Component({
-  selector: 'app-bundle-overview',
-  templateUrl: './bundle-overview.component.html',
-  styleUrls: ['./bundle-overview.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: 'app-bundle-overview',
+	templateUrl: './bundle-overview.component.html',
+	styleUrls: ['./bundle-overview.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BundleOverviewComponent implements OnInit {
-  public bundle$!: Observable<CourseBundle | null>
+	public bundle$!: Observable<CourseBundle | null>;
 
-  constructor(
-    private coursesService: CoursesService,
-    private activatedRoute: ActivatedRoute,
-  ) { }
+	constructor(
+		private coursesService: CoursesService,
+		private activatedRoute: ActivatedRoute
+	) {}
 
-  ngOnInit(): void {
-    this.bundle$ = this.activatedRoute.paramMap
-      .pipe(
-        switchMap(params => {
-          const id = params.get('id')
-          if (id) {
-            return this.coursesService.getCourseBundles({
-              uuids: id,
-              courseFields: CoursesSelectFields.Full.join(',')
-            })
-          }
-          return of(null)
-        }),
-        map(res => {
-          return res ? res[0] : null
-        })
-      )
-  }
-
+	ngOnInit(): void {
+		this.bundle$ = this.activatedRoute.paramMap.pipe(
+			switchMap((params) => {
+				const id = params.get('id');
+				if (id) {
+					return this.coursesService.getCourseBundles({
+						uuids: id,
+						courseFields: CoursesSelectFields.Full.join(','),
+					});
+				}
+				return of(null);
+			}),
+			map((res) => {
+				return res ? res[0] : null;
+			})
+		);
+	}
 }

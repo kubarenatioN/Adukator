@@ -1,11 +1,7 @@
-
 <ng-container *ngIf="config.data.datasets.length > 0; else noRecords">
-    <canvas baseChart
-        [data]="config.data"
-        type="line">
-    </canvas>
+	<canvas baseChart [data]="config.data" type="line"> </canvas>
 </ng-container>
 
 <ng-template #noRecords>
-    <p>Нет данных</p>
+	<p>Нет данных</p>
 </ng-template>

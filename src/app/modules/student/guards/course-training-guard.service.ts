@@ -14,7 +14,7 @@ export class CourseTrainingGuardService implements CanActivate {
 	private redirect;
 	constructor(
 		private trainingDataService: TrainingDataService,
-        private userService: UserService,
+		private userService: UserService,
 		router: Router
 	) {
 		this.redirect = router.parseUrl('/app/learn/catalog');
@@ -28,14 +28,17 @@ export class CourseTrainingGuardService implements CanActivate {
 		if (!trainingId) {
 			return this.redirect;
 		}
-        return this.userService.user$.pipe(
-            switchMap(user => {
-                return this.trainingDataService.checkTrainingAccess({ trainingUUId: trainingId, userId: user._id })
-            }),
-            map(res => {
-                console.log('profile:', res);
-                return res.hasAccess
-            })
-        )
+		return this.userService.user$.pipe(
+			switchMap((user) => {
+				return this.trainingDataService.checkTrainingAccess({
+					trainingUUId: trainingId,
+					userId: user._id,
+				});
+			}),
+			map((res) => {
+				console.log('profile:', res);
+				return res.hasAccess;
+			})
+		);
 	}
 }

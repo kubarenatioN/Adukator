@@ -17,13 +17,10 @@ import { CourseBuilderService } from './services/course-builder.service';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { ReviewCourseComponent } from './components/review-course/review-course.component'
+import { ReviewCourseComponent } from './components/review-course/review-course.component';
 
 @NgModule({
-	providers: [
-		CourseBuilderService,
-		UploadCacheService,
-	],
+	providers: [CourseBuilderService, UploadCacheService],
 	declarations: [
 		CourseBuilderComponent,
 		CourseFormComponent,
@@ -33,7 +30,7 @@ import { ReviewCourseComponent } from './components/review-course/review-course.
 		TopicTaskComponent,
 		CourseNavComponent,
 		ChipsControlComponent,
-  	ReviewCourseComponent,
+		ReviewCourseComponent,
 	],
 	imports: [
 		CommonModule,
@@ -41,7 +38,7 @@ import { ReviewCourseComponent } from './components/review-course/review-course.
 		SharedModule,
 
 		MatAutocompleteModule,
-		
+
 		ReactiveFormsModule,
 		LayoutComponent,
 	],

@@ -1,62 +1,66 @@
 .section {
-    padding: 20px 0;
+	padding: 20px 0;
 
-    &.blocked {
-        pointer-events: none;
-        position: relative;
-        user-select: none;
-    }
-    &.blocked::after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        top: 0px;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.8);
-        z-index: 3;
-        pointer-events: none;
-    }
+	&.blocked {
+		pointer-events: none;
+		position: relative;
+		user-select: none;
+	}
+	&.blocked::after {
+		content: '';
+		position: absolute;
+		width: 100%;
+		top: 0px;
+		bottom: 0;
+		background: rgba(255, 255, 255, 0.8);
+		z-index: 3;
+		pointer-events: none;
+	}
 }
 
 .content {
-    &.archived {
-        pointer-events: none;
-        position: relative;
-    }
-    &.archived::after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        top: 0;
-        bottom: 0;
-        background: linear-gradient(0deg, rgba(255, 255, 255, 0.8), calc(100% - 20px), transparent);
-        z-index: 3;
-    }
+	&.archived {
+		pointer-events: none;
+		position: relative;
+	}
+	&.archived::after {
+		content: '';
+		position: absolute;
+		width: 100%;
+		top: 0;
+		bottom: 0;
+		background: linear-gradient(
+			0deg,
+			rgba(255, 255, 255, 0.8),
+			calc(100% - 20px),
+			transparent
+		);
+		z-index: 3;
+	}
 }
 
 .copy-text {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .training-test-id {
-    display: inline-block;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: #ddd;
+	display: inline-block;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	background-color: #ddd;
 }
 
 .practice-task {
-    padding: 10px;
+	padding: 10px;
 }
 
 .topic-status {
+	&.past {
+		color: #ff672b;
+	}
 
-    &.past {
-        color: #ff672b;
-    }
-
-    &.actual {
-        color: #42c600;
-    }
+	&.actual {
+		color: #42c600;
+	}
 }

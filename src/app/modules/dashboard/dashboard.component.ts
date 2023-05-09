@@ -9,13 +9,19 @@ import { TrainingService } from './services/training.service';
 	styleUrls: ['./dashboard.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardComponent extends CenteredContainerDirective implements OnInit {
+export class DashboardComponent
+	extends CenteredContainerDirective
+	implements OnInit
+{
 	public user$ = this.userService.user$;
-    public profiles$ = this.trainingService.studentProfiles$
+	public profiles$ = this.trainingService.studentProfiles$;
 
-	constructor(private userService: UserService, private trainingService: TrainingService) {
-        super();
-    }
+	constructor(
+		private userService: UserService,
+		private trainingService: TrainingService
+	) {
+		super();
+	}
 
 	ngOnInit(): void {}
 }

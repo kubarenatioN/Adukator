@@ -1,107 +1,112 @@
 <ng-container *ngIf="user$ | async as user">
+	<div class="profile-banner">
+		<div class="row">
+			<img
+				crossorigin="anonymous"
+				referrerpolicy="no-referrer"
+				[src]="user.photo"
+				alt="User Avatar"
+			/>
+			<h1>{{ user.username }}</h1>
+		</div>
+		<h3>Ранг: {{ user.role }}</h3>
+		<div *ngIf="userTrainingProfile$ | async as userTrainingProfile">
+			<div class="competencies">
+				<h4>Компетенции</h4>
+				<ul
+					*ngIf="
+						userTrainingProfile.competencies.length > 0;
+						else noItems
+					"
+				>
+					<li *ngFor="let comp of userTrainingProfile.competencies">
+						{{ comp }}
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
 
-    <div class="profile-banner">
-        <div class="row">
-            <img crossorigin="anonymous" referrerpolicy="no-referrer" [src]="user.photo" alt="User Avatar">
-            <h1>{{user.username}}</h1>
-        </div>
-        <h3>Ранг: {{user.role}}</h3>
-        <div *ngIf="userTrainingProfile$ | async as userTrainingProfile">
-            
-            <div class="competencies">
-                <h4>Компетенции</h4>
-                <ul *ngIf="userTrainingProfile.competencies.length > 0; else noItems">
-                    <li *ngFor="let comp of userTrainingProfile.competencies">
-                        {{ comp }}
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <ng-container [ngSwitch]="user.role">
-        <ng-container 
-            *ngSwitchCase="'student'"
-            [ngTemplateOutlet]="studentPermissionProfile">
-        </ng-container>
-        <ng-container 
-            *ngSwitchCase="'teacher'"
-            [ngTemplateOutlet]="teacherPermissionProfile">
-        </ng-container>
-    </ng-container>
+	<ng-container [ngSwitch]="user.role">
+		<ng-container
+			*ngSwitchCase="'student'"
+			[ngTemplateOutlet]="studentPermissionProfile"
+		>
+		</ng-container>
+		<ng-container
+			*ngSwitchCase="'teacher'"
+			[ngTemplateOutlet]="teacherPermissionProfile"
+		>
+		</ng-container>
+	</ng-container>
 </ng-container>
 <button mat-raised-button color="primary" (click)="logOut()">Выйти</button>
 
 <ng-template #studentPermissionProfile>
+	<div class="courses-section">
+		<h2>Мои курсы</h2>
 
-    <div class="courses-section">
-        <h2>Мои курсы</h2>
+		<div *ngIf="studentApprovedCourses$ | async as trainings; else loader">
+			<h3>Зачислен</h3>
+			<ng-container *ngIf="trainings.length > 0; else noItems">
+				<div class="courses-list">
+					<ng-container
+						*ngFor="let training of trainings"
+						[ngTemplateOutlet]="approvedCourse"
+						[ngTemplateOutletContext]="{ training }"
+					></ng-container>
+				</div>
+			</ng-container>
+		</div>
 
-        <div *ngIf="studentApprovedCourses$ | async as trainings; else loader">
-            <h3>Зачислен</h3>
-            <ng-container *ngIf="trainings.length > 0; else noItems">
-                <div class="courses-list">
-                    <ng-container *ngFor="let training of trainings"
-                    [ngTemplateOutlet]="approvedCourse"
-                    [ngTemplateOutletContext]="{ training }"></ng-container>
-                </div>
-            </ng-container>
-        </div>
+		<div *ngIf="studentPendingCourses$ | async as trainings; else loader">
+			<h3>В ожидании</h3>
+			<ng-container *ngIf="trainings.length > 0; else noItems">
+				<div class="courses-list">
+					<ng-container
+						*ngFor="let training of trainings"
+						[ngTemplateOutlet]="pendingCourse"
+						[ngTemplateOutletContext]="{ training }"
+					></ng-container>
+				</div>
+			</ng-container>
+		</div>
+	</div>
 
-        <div *ngIf="studentPendingCourses$ | async as trainings; else loader">
-            <h3>В ожидании</h3>
-            <ng-container *ngIf="trainings.length > 0; else noItems">
-                <div class="courses-list">
-                    <ng-container *ngFor="let training of trainings"
-                    [ngTemplateOutlet]="pendingCourse"
-                    [ngTemplateOutletContext]="{ training }"></ng-container>
-                </div>
-            </ng-container>
-        </div>
-
-    </div>
-
-    <h2>Еще какой-нибудь раздел в профиле студента</h2>
-
+	<h2>Еще какой-нибудь раздел в профиле студента</h2>
 </ng-template>
 
 <ng-template #teacherPermissionProfile>
-
-    <div class="students-section">
-        <h2>Еще какой-нибудь раздел в профиле преподавателя</h2>
-        <p>Например, информация о студентах, учащихся у этого преподавателя</p>
-    </div>
-
+	<div class="students-section">
+		<h2>Еще какой-нибудь раздел в профиле преподавателя</h2>
+		<p>Например, информация о студентах, учащихся у этого преподавателя</p>
+	</div>
 </ng-template>
 
 <ng-template #pendingCourse let-training="training">
-    <a class="course-item" 
-    [routerLink]="['/app/learn/course/overview', training.uuid]">
-        <p>
-            {{training.course.title}}
-        </p>
-        <span class="course-status">
-            Pending
-        </span>
-    </a>
+	<a
+		class="course-item"
+		[routerLink]="['/app/learn/course/overview', training.uuid]"
+	>
+		<p>
+			{{ training.course.title }}
+		</p>
+		<span class="course-status"> Pending </span>
+	</a>
 </ng-template>
 
 <ng-template #approvedCourse let-training="training">
-    <a class="course-item" 
-    [routerLink]="['/app/student/training', training.uuid]">
-        <p>
-            {{training.course.title}}
-        </p>
-        <span class="course-status">
-            Approved
-        </span>
-    </a>
+	<a
+		class="course-item"
+		[routerLink]="['/app/student/training', training.uuid]"
+	>
+		<p>
+			{{ training.course.title }}
+		</p>
+		<span class="course-status"> Approved </span>
+	</a>
 </ng-template>
 
-<ng-template #loader>
-    Loading...
-</ng-template>
+<ng-template #loader> Loading... </ng-template>
 
-<ng-template #noItems>
-    Здесь пусто ;(
-</ng-template>
+<ng-template #noItems> Здесь пусто ;( </ng-template>

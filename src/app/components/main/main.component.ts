@@ -13,11 +13,11 @@ import { User } from 'src/app/typings/user.types';
 export class MainComponent implements OnInit {
 	public user$: Observable<User | null>;
 	public isAdmin$: Observable<boolean>;
-    public appName = AppName;
+	public appName = AppName;
 
 	constructor(private userService: UserService) {
 		this.user$ = this.userService.user$;
-        this.isAdmin$ = this.userService.isAdmin$
+		this.isAdmin$ = this.userService.isAdmin$;
 	}
 
 	ngOnInit(): void {}

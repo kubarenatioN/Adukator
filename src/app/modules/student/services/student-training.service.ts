@@ -1,7 +1,15 @@
 import { Injectable } from '@angular/core';
-import { distinctUntilChanged, filter, map, ReplaySubject, shareReplay, switchMap, tap } from 'rxjs';
 import {
-    TrainingData,
+	distinctUntilChanged,
+	filter,
+	map,
+	ReplaySubject,
+	shareReplay,
+	switchMap,
+	tap,
+} from 'rxjs';
+import {
+	TrainingData,
 	TrainingProfileFull,
 	TrainingProfileTraining,
 	TrainingReply,
@@ -12,26 +20,26 @@ import { TrainingDataService } from '../../../services/training-data.service';
 export class StudentTrainingService {
 	private trainingDataStore$ = new ReplaySubject<TrainingData>(1);
 
-	public trainingData$ = this.trainingDataStore$.asObservable()
+	public trainingData$ = this.trainingDataStore$.asObservable();
 	public profile$ = this.trainingData$.pipe(
-        map(trainingData => trainingData.profile),
-        filter(Boolean),
-        shareReplay(1)
-    )
+		map((trainingData) => trainingData.profile),
+		filter(Boolean),
+		shareReplay(1)
+	);
 	public personalization$ = this.trainingData$.pipe(
-        map(trainingData => trainingData.personalization),
-        shareReplay(1)
-    )
+		map((trainingData) => trainingData.personalization),
+		shareReplay(1)
+	);
 	public progress$ = this.trainingData$.pipe(
-        map(trainingData => trainingData.progress),
-        shareReplay(1)
-    )
+		map((trainingData) => trainingData.progress),
+		shareReplay(1)
+	);
 
-    public set trainingData(profile: TrainingData) {
-        if (profile) {
-            this.trainingDataStore$.next(profile)
-        }
-    }
+	public set trainingData(profile: TrainingData) {
+		if (profile) {
+			this.trainingDataStore$.next(profile);
+		}
+	}
 
 	constructor(private trainingDataService: TrainingDataService) {}
 
@@ -40,6 +48,6 @@ export class StudentTrainingService {
 	}
 
 	public getProfile(uuid: string, options?: { include?: string[] }) {
-		return this.trainingDataService.getProfile({ uuid }, options)
+		return this.trainingDataService.getProfile({ uuid }, options);
 	}
 }

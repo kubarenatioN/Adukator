@@ -12,23 +12,27 @@ import { User, UserTrainingProfile } from 'src/app/typings/user.types';
 	styleUrls: ['./user-profile.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserProfileComponent extends CenteredContainerDirective {    
-    public user$: Observable<User | null>;
-    public userTrainingProfile$: Observable<UserTrainingProfile>;
-    
-    private userAsStudentCourses$ = this.studentCoursesService.courses$
+export class UserProfileComponent extends CenteredContainerDirective {
+	public user$: Observable<User | null>;
+	public userTrainingProfile$: Observable<UserTrainingProfile>;
 
-    public studentPendingCourses$ = this.userAsStudentCourses$
-    public studentApprovedCourses$ = this.userAsStudentCourses$
+	private userAsStudentCourses$ = this.studentCoursesService.courses$;
 
-	constructor(private userService: UserService, private router: Router, private studentCoursesService: StudentCoursesService) {
-        super();
-        this.user$ = this.userService.user$
-        this.userTrainingProfile$ = this.userService.trainingProfile$
-    }
+	public studentPendingCourses$ = this.userAsStudentCourses$;
+	public studentApprovedCourses$ = this.userAsStudentCourses$;
 
-    public logOut(): void {
-        this.userService.logout()
-        this.router.navigate(['/auth'])
-    }
+	constructor(
+		private userService: UserService,
+		private router: Router,
+		private studentCoursesService: StudentCoursesService
+	) {
+		super();
+		this.user$ = this.userService.user$;
+		this.userTrainingProfile$ = this.userService.trainingProfile$;
+	}
+
+	public logOut(): void {
+		this.userService.logout();
+		this.router.navigate(['/auth']);
+	}
 }

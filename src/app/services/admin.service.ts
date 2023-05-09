@@ -7,9 +7,9 @@ import { AdminCoursesService } from './admin-courses.service';
 	providedIn: 'root',
 })
 export class AdminService {
-    public reviewCoursesList$: Observable<CourseReview[]>
+	public reviewCoursesList$: Observable<CourseReview[]>;
 
 	constructor(private adminCoursesService: AdminCoursesService) {
-        this.reviewCoursesList$ = this.adminCoursesService.reviewCoursesList$;
-    }
+		this.reviewCoursesList$ = this.adminCoursesService.reviewCoursesList$;
+	}
 }

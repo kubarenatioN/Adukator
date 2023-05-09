@@ -31,7 +31,7 @@ import { StudentTraining } from 'src/app/models/course.model';
 export class CourseOverviewComponent {
 	private enrollmentSub?: Subscription;
 	private courseEnrollTrigger$ = new BehaviorSubject<void>(undefined);
-	private competenciesConfig$: Observable<CourseCompetency[]>
+	private competenciesConfig$: Observable<CourseCompetency[]>;
 
 	public training$: Observable<StudentTraining | null>;
 
@@ -40,23 +40,25 @@ export class CourseOverviewComponent {
 	public competenciesDiff$: Observable<string[]>;
 	public canEnroll$: Observable<boolean>;
 	public isUserOwner$: Observable<boolean>;
-	public trainingLookup$: Observable<TrainingProfileMeta | 'NoEnroll'> | null = null
-	public competenciesConfig: CourseCompetency[] | null = null
+	public trainingLookup$: Observable<
+		TrainingProfileMeta | 'NoEnroll'
+	> | null = null;
+	public competenciesConfig: CourseCompetency[] | null = null;
 
 	public isDisabledEnrollActions = false;
 
 	constructor(
 		private activatedRoute: ActivatedRoute,
 		private userService: UserService,
-    private learnService: LearnService,
-		private configService: ConfigService,
+		private learnService: LearnService,
+		private configService: ConfigService
 	) {
-		this.competenciesConfig$ = this.configService.loadCourseCompetencies()
-		
+		this.competenciesConfig$ = this.configService.loadCourseCompetencies();
+
 		this.training$ = this.competenciesConfig$.pipe(
-			switchMap(config => {
-				this.competenciesConfig = config
-				return this.activatedRoute.paramMap
+			switchMap((config) => {
+				this.competenciesConfig = config;
+				return this.activatedRoute.paramMap;
 			}),
 			switchMap((paramMap) => {
 				const id = String(paramMap.get('id'));
@@ -81,19 +83,28 @@ export class CourseOverviewComponent {
 		this.competenciesDiff$ = this.competenciesConfig$.pipe(
 			withLatestFrom(this.userService.user$, this.training$),
 			map(([competencies, user, training]) => {
-				const userComps = user.trainingProfile.competencies
-				const diff = training?.course.competencies.required.reduce((diff, comp) => {
-					if (!userComps.includes(comp)) {
-						diff.push(comp)
-					}
-					return diff
-				}, [] as string[]) ?? []
-				return diff.map(compKey => competencies.find(c => c.id === compKey)).filter(Boolean).map(comp => comp!.label);
+				const userComps = user.trainingProfile.competencies;
+				const diff =
+					training?.course.competencies.required.reduce(
+						(diff, comp) => {
+							if (!userComps.includes(comp)) {
+								diff.push(comp);
+							}
+							return diff;
+						},
+						[] as string[]
+					) ?? [];
+				return diff
+					.map((compKey) =>
+						competencies.find((c) => c.id === compKey)
+					)
+					.filter(Boolean)
+					.map((comp) => comp!.label);
 			}),
-			tap(diff => {
-				this.isDisabledEnrollActions = diff.length > 0
+			tap((diff) => {
+				this.isDisabledEnrollActions = diff.length > 0;
 			})
-		)
+		);
 
 		this.canEnroll$ = this.userService.user$.pipe(
 			withLatestFrom(this.isUserOwner$),
@@ -102,12 +113,12 @@ export class CourseOverviewComponent {
 			})
 		);
 
-  			this.trainingLookup$ = combineLatest([
+		this.trainingLookup$ = combineLatest([
 			this.courseEnrollTrigger$.asObservable(),
 			this.training$,
 			this.userService.user$,
 		]).pipe(
-						switchMap(([_, training, user]) => {
+			switchMap(([_, training, user]) => {
 				if (training && user) {
 					return this.learnService.lookupTraining(
 						[user._id],
@@ -116,25 +127,28 @@ export class CourseOverviewComponent {
 				}
 				return of(null);
 			}),
-						map(lookup => {
-								if (lookup && lookup.length > 0) {
-										return lookup[0]
-								}
-								return 'NoEnroll';
-						}),
-						shareReplay(1)
-			)
+			map((lookup) => {
+				if (lookup && lookup.length > 0) {
+					return lookup[0];
+				}
+				return 'NoEnroll';
+			}),
+			shareReplay(1)
+		);
 	}
 
 	public enrollTraining(training: Training): void {
-		this.makeCourseEnrollAction(training._id, NetworkRequestKey.CreateTrainingEnroll);
+		this.makeCourseEnrollAction(
+			training._id,
+			NetworkRequestKey.CreateTrainingEnroll
+		);
 	}
 
 	public cancelTrainingEnroll(training: Training): void {
 		this.makeCourseEnrollAction(
-            training._id,
-            NetworkRequestKey.UpdateTrainingEnroll,
-        );
+			training._id,
+			NetworkRequestKey.UpdateTrainingEnroll
+		);
 	}
 
 	public leaveTraining(training: Training) {
@@ -145,15 +159,17 @@ export class CourseOverviewComponent {
 	}
 
 	public getCompLabel(id: string) {
-		return this.competenciesConfig?.find(comp => comp.id === id)?.label ?? ''
+		return (
+			this.competenciesConfig?.find((comp) => comp.id === id)?.label ?? ''
+		);
 	}
 
 	public getTrainingDuration(course: Course) {
 		const days = course.topics.reduce((days, topic) => {
-			return days + topic.duration
-		}, 0)
+			return days + topic.duration;
+		}, 0);
 
-		return `Недель: ${Math.floor(days / 7)}`
+		return `Недель: ${Math.floor(days / 7)}`;
 	}
 
 	private makeCourseEnrollAction(trainingId: string, key: string): void {

@@ -10,14 +10,13 @@ import { UserService } from '../services/user.service';
 @Injectable({
 	providedIn: 'root',
 })
-export class AuthGuardService
-	implements CanActivate
-{
+export class AuthGuardService implements CanActivate {
 	constructor(private userService: UserService) {}
 
-	public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-		return this.userService.userToken$.pipe(
-			map(user => user === null)
-		)
+	public canActivate(
+		route: ActivatedRouteSnapshot,
+		state: RouterStateSnapshot
+	) {
+		return this.userService.userToken$.pipe(map((user) => user === null));
 	}
 }

@@ -1,91 +1,91 @@
 :host {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    margin: 5px;
-    border: 1px solid #333;
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	margin: 5px;
+	border: 1px solid #333;
 }
 
 .wrapper {
-    display: flex;
-    flex-direction: column;
-    min-height: 100px;
+	display: flex;
+	flex-direction: column;
+	min-height: 100px;
 }
 
 .dropzone {
-    flex-grow: 1;
-    position: relative;
+	flex-grow: 1;
+	position: relative;
 }
 
 .dropzone.fileover {
-    & .dropzone-wrapper {
-        opacity: 1;
-    }
+	& .dropzone-wrapper {
+		opacity: 1;
+	}
 
-    & .upload-inner .upload-box-footer *,
-    & .upload-inner .files-container * {
-        pointer-events: none;
-        background-color: green;
-        color: red;
-    }
+	& .upload-inner .upload-box-footer *,
+	& .upload-inner .files-container * {
+		pointer-events: none;
+		background-color: green;
+		color: red;
+	}
 }
 
 .dropzone-wrapper {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(122, 122, 122, 0.644);
-    color: #fff;
-    z-index: 2;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .3s;
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(122, 122, 122, 0.644);
+	color: #fff;
+	z-index: 2;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.3s;
 }
 
 .file-input {
-    position: absolute;
-    width: 0;
-    opacity: 0;
+	position: absolute;
+	width: 0;
+	opacity: 0;
 }
 
 .upload-inner {
-    display: flex;
-    flex-direction: column;
-    min-height: 120px;
-    background-color: rgb(233, 239, 255);
+	display: flex;
+	flex-direction: column;
+	min-height: 120px;
+	background-color: rgb(233, 239, 255);
 
-    &.download {
-        background-color: rgb(248, 255, 225);
-        overflow-y: auto;
-    }
+	&.download {
+		background-color: rgb(248, 255, 225);
+		overflow-y: auto;
+	}
 }
 
 .files-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    flex-grow: 1;
-    padding: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	flex-grow: 1;
+	padding: 10px;
 
-    &--empty {
-        display: block;
-    }
+	&--empty {
+		display: block;
+	}
 }
 
 .upload-box-footer {
-    height: 40px;
+	height: 40px;
 }
 
 .file-item {
-    width: 23%;
-    min-height: 100px;
+	width: 23%;
+	min-height: 100px;
 
-    & button {
-        margin-top: auto;
-    }
+	& button {
+		margin-top: auto;
+	}
 }

@@ -1,75 +1,80 @@
-<app-layout class="container layout" *ngIf="viewData$ | async as viewData; else loader">
-    <div slot="main" class="training-container">
-        <section class="content">
-            
-            <div>
-                <a routerLink="../">К прогрессу</a>
-            </div>
+<app-layout
+	class="container layout"
+	*ngIf="viewData$ | async as viewData; else loader"
+>
+	<div slot="main" class="training-container">
+		<section class="content">
+			<div>
+				<a routerLink="../">К прогрессу</a>
+			</div>
 
-            <ng-container [ngSwitch]="viewData.viewType">
-                
-                <ng-container *ngSwitchCase="viewTypes.Main"
-                    [ngTemplateOutlet]="mainView"
-                    [ngTemplateOutletContext]="{ 
-                        training: viewData.training
-                    }"
-                ></ng-container>
+			<ng-container [ngSwitch]="viewData.viewType">
+				<ng-container
+					*ngSwitchCase="viewTypes.Main"
+					[ngTemplateOutlet]="mainView"
+					[ngTemplateOutletContext]="{
+						training: viewData.training
+					}"
+				></ng-container>
 
-                <ng-container 
-                    *ngSwitchCase="viewTypes.Module"
-                    [ngTemplateOutlet]="moduleView"
-                ></ng-container>
+				<ng-container
+					*ngSwitchCase="viewTypes.Module"
+					[ngTemplateOutlet]="moduleView"
+				></ng-container>
 
-                <ng-container 
-                    *ngSwitchCase="viewTypes.Topic"
-                    [ngTemplateOutlet]="topicView"
-                    [ngTemplateOutletContext]="{ 
-                        topic: viewData.topic,
-                        training: viewData.training,
-                        profileId: viewData.profileId
-                    }"
-                ></ng-container>
+				<ng-container
+					*ngSwitchCase="viewTypes.Topic"
+					[ngTemplateOutlet]="topicView"
+					[ngTemplateOutletContext]="{
+						topic: viewData.topic,
+						training: viewData.training,
+						profileId: viewData.profileId
+					}"
+				></ng-container>
+			</ng-container>
+		</section>
+	</div>
 
-            </ng-container>
-
-        </section>
-    </div>
-
-    <app-course-sidenav 
-        class="sidebar" slot="sidebar"
-        [training]="viewData.training"></app-course-sidenav>
-
+	<app-course-sidenav
+		class="sidebar"
+		slot="sidebar"
+		[training]="viewData.training"
+	></app-course-sidenav>
 </app-layout>
 
 <ng-template #mainView let-training="training">
-    <span>Статус: {{ training.status }}</span>
-    <h1>Тренинг по курсу {{training.course.title}}</h1>
-    <p>{{training.course.description}}</p>
-    <p>Категория: {{training.course.category}}</p>
+	<span>Статус: {{ training.status }}</span>
+	<h1>Тренинг по курсу {{ training.course.title }}</h1>
+	<p>{{ training.course.description }}</p>
+	<p>Категория: {{ training.course.category }}</p>
 
-    <h2>Программа</h2>
-    <div class="modules-list">
-        <div *ngFor="let node of training.contentTree" class="module-item">
-            <h3>{{ node.module.title }}</h3>
-        </div>
-    </div>
+	<h2>Программа</h2>
+	<div class="modules-list">
+		<div *ngFor="let node of training.contentTree" class="module-item">
+			<h3>{{ node.module.title }}</h3>
+		</div>
+	</div>
 </ng-template>
 
 <ng-template #moduleView let-module="module">
-    <h1>{{ module.title }}</h1>
+	<h1>{{ module.title }}</h1>
 </ng-template>
 
-<ng-template #topicView let-topic="topic" let-training="training" let-profileId="profileId">
-    <app-topic-training 
-    *ngIf="topic"
-    (sendReply)="onSendReply($event)"
-    [topic]="topic"
-    [profileId]="profileId"
-    [training]="training"></app-topic-training>
+<ng-template
+	#topicView
+	let-topic="topic"
+	let-training="training"
+	let-profileId="profileId"
+>
+	<app-topic-training
+		*ngIf="topic"
+		(sendReply)="onSendReply($event)"
+		[topic]="topic"
+		[profileId]="profileId"
+		[training]="training"
+	></app-topic-training>
 </ng-template>
 
 <ng-template #loader>
-    <p>
-        Loading...
-    </p>
+	<p>Loading...</p>
 </ng-template>

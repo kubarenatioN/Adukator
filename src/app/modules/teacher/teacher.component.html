@@ -1,77 +1,99 @@
 <h1 class="title">Кабинет преподавателя</h1>
 
 <div class="courses">
-    
-    <div class="menu">
-        <a [routerLink]="['/app/course-builder/create']" mat-raised-button color="primary">
-            Создать курс
-        </a>
-        
-        <a [routerLink]="['profile']" mat-raised-button color="primary">
-            Аналитика
-        </a>
-        
-        <a [routerLink]="['personalization']" mat-raised-button color="primary">
-            Персонализация
-        </a>
-        
-        <a [routerLink]="['bundle']" mat-raised-button color="primary">
-            Пакеты курсов
-        </a>
-    </div>
+	<div class="menu">
+		<a
+			[routerLink]="['/app/course-builder/create']"
+			mat-raised-button
+			color="primary"
+		>
+			Создать курс
+		</a>
 
-    <h3>Текущие тренинги</h3>
-    <div class="courses-list">
-        <ng-container *ngIf="trainings$ | async as trainings; else loader">
-            <a class="course-item" 
-            *ngFor="let training of trainings"
-            [routerLink]="['/app/teacher/training', training.uuid, 'manage']">
-                <span>Треннинг</span>
-                <h4>{{training.title}}</h4>
-                <p>Статус: {{ training.status }}</p>
-            </a>
-        </ng-container>
-    </div>
+		<a [routerLink]="['profile']" mat-raised-button color="primary">
+			Аналитика
+		</a>
 
-    <h3>Мои курсы</h3>
-    <div class="courses-list published">
-        <ng-container *ngIf="publishedCourses; else loader">
-            <div class="course-item published" 
-            *ngFor="let course of publishedCourses">
-                <h4>{{course.title}}</h4>
+		<a [routerLink]="['personalization']" mat-raised-button color="primary">
+			Персонализация
+		</a>
 
-                <div class="left">
-                    <a *ngIf="course.training" [routerLink]="['/app/learn/course/overview', course.training.uuid]">К тренингу</a>
-                    <button (click)="startCourse(course, $event)" [disabled]="course.training">Начать</button>
-                </div>
-            </div>
-        </ng-container>
-    </div>
-    
-    <h3>Ожидают публикации</h3>
-    <div class="courses-list">
-        <ng-container *ngIf="reviewCourses$ | async as reviewCourses; else loader">
-            <ng-container *ngIf="reviewCourses.length > 0; else noData">
-                <a class="course-item" 
-                *ngFor="let course of reviewCourses"
-                [routerLink]="['/app/course-review/review', course.uuid]">
-                    <span>На проверке</span>
-                    <h4>{{course.title}}</h4>
-                </a>
-            </ng-container>
-        </ng-container>
-    </div>
+		<a [routerLink]="['bundle']" mat-raised-button color="primary">
+			Пакеты курсов
+		</a>
+	</div>
+
+	<h3>Текущие тренинги</h3>
+	<div class="courses-list">
+		<ng-container *ngIf="trainings$ | async as trainings; else loader">
+			<a
+				class="course-item"
+				*ngFor="let training of trainings"
+				[routerLink]="[
+					'/app/teacher/training',
+					training.uuid,
+					'manage'
+				]"
+			>
+				<span>Треннинг</span>
+				<h4>{{ training.title }}</h4>
+				<p>Статус: {{ training.status }}</p>
+			</a>
+		</ng-container>
+	</div>
+
+	<h3>Мои курсы</h3>
+	<div class="courses-list published">
+		<ng-container *ngIf="publishedCourses; else loader">
+			<div
+				class="course-item published"
+				*ngFor="let course of publishedCourses"
+			>
+				<h4>{{ course.title }}</h4>
+
+				<div class="left">
+					<a
+						*ngIf="course.training"
+						[routerLink]="[
+							'/app/learn/course/overview',
+							course.training.uuid
+						]"
+						>К тренингу</a
+					>
+					<button
+						(click)="startCourse(course, $event)"
+						[disabled]="course.training"
+					>
+						Начать
+					</button>
+				</div>
+			</div>
+		</ng-container>
+	</div>
+
+	<h3>Ожидают публикации</h3>
+	<div class="courses-list">
+		<ng-container
+			*ngIf="reviewCourses$ | async as reviewCourses; else loader"
+		>
+			<ng-container *ngIf="reviewCourses.length > 0; else noData">
+				<a
+					class="course-item"
+					*ngFor="let course of reviewCourses"
+					[routerLink]="['/app/course-review/review', course.uuid]"
+				>
+					<span>На проверке</span>
+					<h4>{{ course.title }}</h4>
+				</a>
+			</ng-container>
+		</ng-container>
+	</div>
 </div>
 
-
 <ng-template #loader>
-    <div class="loader">
-        Loading...
-    </div>
+	<div class="loader">Loading...</div>
 </ng-template>
 
 <ng-template #noData>
-    <div class="message">
-        Здесь ничего нет...
-    </div>
+	<div class="message">Здесь ничего нет...</div>
 </ng-template>

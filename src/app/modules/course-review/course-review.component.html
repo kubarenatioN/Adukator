@@ -1,9 +1,8 @@
-<app-back-btn class="back-btn">
-    Назад
-</app-back-btn>
+<app-back-btn class="back-btn"> Назад </app-back-btn>
 <div *ngIf="courseHistory$ | async as reviewItems" class="review-content">
+	<app-course-review-diff
+		[courseVersions]="reviewItems"
+	></app-course-review-diff>
 
-    <app-course-review-diff [courseVersions]="reviewItems"></app-course-review-diff>
-
-    <!-- <button mat-stroked-button color="primary" (click)="onPublish()">Опубликовать</button> -->
+	<!-- <button mat-stroked-button color="primary" (click)="onPublish()">Опубликовать</button> -->
 </div>

@@ -1,17 +1,17 @@
 <form [formGroup]="form">
+	<mat-form-field
+		*appFormElWrapper="form; control: 'title'; type: controlsType"
+		appearance="fill"
+	>
+		<mat-label>Название модуля</mat-label>
+		<input matInput formControlName="title" />
+	</mat-form-field>
 
-    <mat-form-field 
-        *appFormElWrapper="form; control: 'title'; type: controlsType"
-        appearance="fill">
-        <mat-label>Название модуля</mat-label>
-        <input matInput formControlName="title" />
-    </mat-form-field>
-
-    <mat-form-field 
-        *appFormElWrapper="form; control: 'description'; type: controlsType"
-        appearance="fill">
-        <mat-label>Описание модуля</mat-label>
-        <input matInput formControlName="description" />
-    </mat-form-field>
-
+	<mat-form-field
+		*appFormElWrapper="form; control: 'description'; type: controlsType"
+		appearance="fill"
+	>
+		<mat-label>Описание модуля</mat-label>
+		<input matInput formControlName="description" />
+	</mat-form-field>
 </form>

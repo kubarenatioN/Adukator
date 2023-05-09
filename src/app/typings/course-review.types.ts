@@ -1,6 +1,6 @@
-import { FormGroup } from "@angular/forms";
+import { FormGroup } from '@angular/forms';
 
 export interface CourseReviewControlComment {
-    id: number,
-    label: string
+	id: number;
+	label: string;
 }

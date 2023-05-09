@@ -1,63 +1,69 @@
 <div class="content">
-    <ng-container *ngTemplateOutlet="content"></ng-container>
+	<ng-container *ngTemplateOutlet="content"></ng-container>
 </div>
 
 <ng-container [ngSwitch]="type">
-    <ng-container *ngSwitchCase="'review'">
-        <ng-container
-            [ngTemplateOutlet]="reviewWrapper"
-        ></ng-container>
-    </ng-container>
-    <ng-container *ngSwitchCase="'edit'">
-        <ng-container
-            *ngIf="hasComments$ | async"
-            [ngTemplateOutlet]="editWrapper"
-        ></ng-container>
-    </ng-container>
+	<ng-container *ngSwitchCase="'review'">
+		<ng-container [ngTemplateOutlet]="reviewWrapper"></ng-container>
+	</ng-container>
+	<ng-container *ngSwitchCase="'edit'">
+		<ng-container
+			*ngIf="hasComments$ | async"
+			[ngTemplateOutlet]="editWrapper"
+		></ng-container>
+	</ng-container>
 </ng-container>
 
 <ng-template #reviewWrapper>
-    <button [class.active]="isReviewActive$ | async" class="action-btn" mat-raised-button (click)="onToggle('review')" [color]="(isReviewActive$ | async) === true ? 'primary' : ''">
-        <span class="material-icons-outlined">
-            rate_review
-        </span>
-    </button>
-    
-    <ng-container *ngIf="isReviewActive$ | async">
-        <ng-container
-            [ngTemplateOutlet]="commentOptions"
-        ></ng-container>
-    </ng-container>
+	<button
+		[class.active]="isReviewActive$ | async"
+		class="action-btn"
+		mat-raised-button
+		(click)="onToggle('review')"
+		[color]="(isReviewActive$ | async) === true ? 'primary' : ''"
+	>
+		<span class="material-icons-outlined"> rate_review </span>
+	</button>
+
+	<ng-container *ngIf="isReviewActive$ | async">
+		<ng-container [ngTemplateOutlet]="commentOptions"></ng-container>
+	</ng-container>
 </ng-template>
 
 <ng-template #editWrapper>
-    <button [class.active]="isEditDone$ | async" class="action-btn" mat-raised-button (click)="onToggle('edit')" [color]="(isEditDone$ | async) ? 'primary' : ''">
-        <span class="material-icons-outlined">
-            error_outline
-        </span>
-    </button>
-    
-    <ng-container *ngIf="(isEditDone$ | async) === false">
-        <div>
-            <span *ngFor="let comment of comments$ | async">
-                {{comment.label}}.
-            </span>
-        </div>
-    </ng-container>
+	<button
+		[class.active]="isEditDone$ | async"
+		class="action-btn"
+		mat-raised-button
+		(click)="onToggle('edit')"
+		[color]="(isEditDone$ | async) ? 'primary' : ''"
+	>
+		<span class="material-icons-outlined"> error_outline </span>
+	</button>
+
+	<ng-container *ngIf="(isEditDone$ | async) === false">
+		<div>
+			<span *ngFor="let comment of comments$ | async">
+				{{ comment.label }}.
+			</span>
+		</div>
+	</ng-container>
 </ng-template>
 
 <ng-template #commentOptions>
-    <mat-form-field  
-    appearance="standard" 
-    [formGroup]="form">
-        <mat-select 
-            (selectionChange)="onChange($event)"    
-            multiple 
-            disableOptionCentering
-            [formControlName]="control">
-            <mat-option *ngFor="let option of reviewItems$ | async" [value]="option">
-                {{option.label}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field>
+	<mat-form-field appearance="standard" [formGroup]="form">
+		<mat-select
+			(selectionChange)="onChange($event)"
+			multiple
+			disableOptionCentering
+			[formControlName]="control"
+		>
+			<mat-option
+				*ngFor="let option of reviewItems$ | async"
+				[value]="option"
+			>
+				{{ option.label }}
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
 </ng-template>

@@ -1,32 +1,32 @@
 form {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
 }
 
 mat-form-field {
-    max-width: 400px;
-    width: 100%;
+	max-width: 400px;
+	width: 100%;
 }
 
 app-module-topic {
-    display: block;
+	display: block;
 }
 
 .topics {
-    width: 100%;
-    padding-left: 40px;
+	width: 100%;
+	padding-left: 40px;
 }
 
 .topics-container {
-    width: 100%;
+	width: 100%;
 }
 
 .topic-item {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    border-radius: 8px;
-    background-color: #eee;
-    margin: 10px 0;
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	border-radius: 8px;
+	background-color: #eee;
+	margin: 10px 0;
 }

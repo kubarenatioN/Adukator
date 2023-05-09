@@ -4,11 +4,11 @@ import { UserPageComponent } from './components/user-page/user-page.component';
 import { UserProfileComponent } from './user-profile.component';
 
 const routes: Routes = [
-    {
+	{
 		path: ':id',
 		component: UserProfileComponent,
 	},
-    {
+	{
 		path: 'user/:id',
 		component: UserPageComponent,
 	},

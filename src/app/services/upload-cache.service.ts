@@ -33,6 +33,6 @@ export class UploadCacheService {
 	}
 
 	public clearCache(controlId: string) {
-		this.materialsCache.delete(controlId)
+		this.materialsCache.delete(controlId);
 	}
 }

@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import {
+	ActivatedRouteSnapshot,
+	CanActivate,
+	Router,
+	RouterStateSnapshot,
+	UrlTree,
+} from '@angular/router';
 import { map } from 'rxjs';
 import { UserService } from '../services/user.service';
 
@@ -13,14 +19,16 @@ export class AppGuardService implements CanActivate {
 		route: ActivatedRouteSnapshot,
 		state: RouterStateSnapshot
 	) {
-		return this.hasUser()
+		return this.hasUser();
 	}
 
-    private hasUser() {
-			return this.userService.userToken$.pipe(
-				map(user => {
-					return user !== null ? true : this.router.parseUrl('/auth/login')
-				})
-			);
-    }
+	private hasUser() {
+		return this.userService.userToken$.pipe(
+			map((user) => {
+				return user !== null
+					? true
+					: this.router.parseUrl('/auth/login');
+			})
+		);
+	}
 }

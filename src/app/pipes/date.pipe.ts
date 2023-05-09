@@ -6,9 +6,9 @@ import { formatDate } from '../helpers/date-fns.helper';
 })
 export class DatePipe implements PipeTransform {
 	transform(value?: string | Date, format?: string): string {
-        if (!value) {
-            return ''
-        }
+		if (!value) {
+			return '';
+		}
 		return formatDate(value, format);
 	}
 }

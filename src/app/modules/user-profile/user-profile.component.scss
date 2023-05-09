@@ -1,33 +1,33 @@
 .user-courses-container {
-    margin: 10px 0;
-    padding: 10px 0;
-    background-color: #eee;
+	margin: 10px 0;
+	padding: 10px 0;
+	background-color: #eee;
 }
 
 .course-item {
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #f8f8f8;
-    margin: 20px 0;
-    display: flex;
-    align-items: center;
-    text-decoration: none;
+	padding: 20px;
+	border-radius: 10px;
+	background-color: #f8f8f8;
+	margin: 20px 0;
+	display: flex;
+	align-items: center;
+	text-decoration: none;
 }
 .course-status {
-    display: inline-block;
-    margin-left: auto;
+	display: inline-block;
+	margin-left: auto;
 }
 
 .row {
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 
-    & img {
-        width: 160px;
-        height: 160px;
-        border-radius: 10px;
-        border: 3px solid #a5d;
-        object-fit: cover;
-        margin-right: 10px;
-    }
+	& img {
+		width: 160px;
+		height: 160px;
+		border-radius: 10px;
+		border: 3px solid #a5d;
+		object-fit: cover;
+		margin-right: 10px;
+	}
 }

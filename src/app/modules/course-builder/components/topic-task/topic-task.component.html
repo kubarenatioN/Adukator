@@ -1,19 +1,18 @@
 <form [formGroup]="form">
+	<label>Задание</label>
+	<input formControlName="taskDescr" />
 
-    <label>Задание</label>
-    <input formControlName="taskDescr" />
-
-    <div class="field" >
-        <h3>Ресурсы</h3>
-        <app-upload-box
-            class="upload-box" 
-            [type]="uploadType"
-            [folder]="uploadFolder"
-            [controlId]="controlId"
-            serveFrom="local"
-            [preloadExisting]="shouldPreloadExisting"
-            [autoRemoveOnDestroy]="false"
-            (uploadFilesChanged)="onUploadFilesChanged($event)"></app-upload-box>
-    </div>
-
+	<div class="field">
+		<h3>Ресурсы</h3>
+		<app-upload-box
+			class="upload-box"
+			[type]="uploadType"
+			[folder]="uploadFolder"
+			[controlId]="controlId"
+			serveFrom="local"
+			[preloadExisting]="shouldPreloadExisting"
+			[autoRemoveOnDestroy]="false"
+			(uploadFilesChanged)="onUploadFilesChanged($event)"
+		></app-upload-box>
+	</div>
 </form>

@@ -6,9 +6,8 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 	styleUrls: ['./learn.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LearnComponent implements OnInit
-{
-	constructor() { }
+export class LearnComponent implements OnInit {
+	constructor() {}
 
 	ngOnInit(): void {}
 }

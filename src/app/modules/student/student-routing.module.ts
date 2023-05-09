@@ -4,22 +4,22 @@ import { CourseTrainingComponent } from './components/course-training/course-tra
 import { StudentProfileComponent } from './components/student-profile/student-profile.component';
 
 const routes: Routes = [
-    {
-        path: 'profile/:id/training',
-        component: CourseTrainingComponent
-    },
-    {
-        path: 'profile/:id',
-        component: StudentProfileComponent,
-    },
-    {
-        path: 'profile',
-        component: StudentProfileComponent
-    },
-    {
-        path: '**',
-        redirectTo: '/app/learn/catalog',
-    }
+	{
+		path: 'profile/:id/training',
+		component: CourseTrainingComponent,
+	},
+	{
+		path: 'profile/:id',
+		component: StudentProfileComponent,
+	},
+	{
+		path: 'profile',
+		component: StudentProfileComponent,
+	},
+	{
+		path: '**',
+		redirectTo: '/app/learn/catalog',
+	},
 ];
 
 @NgModule({

@@ -1,6 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, takeUntil, switchMap, shareReplay, withLatestFrom } from 'rxjs';
+import {
+	Observable,
+	takeUntil,
+	switchMap,
+	shareReplay,
+	withLatestFrom,
+} from 'rxjs';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { CoursesService } from 'src/app/services/courses.service';
 import { CourseReview } from 'src/app/typings/course.types';

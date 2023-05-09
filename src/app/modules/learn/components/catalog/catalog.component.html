@@ -1,10 +1,14 @@
 <div class="catalog-wrapper">
 	<h1 class="title">Каталог курсов</h1>
-	
-    <a *ngIf="isTeacherUser$ | async" [routerLink]="['/app/course-builder/create']" mat-raised-button color="primary"
+
+	<a
+		*ngIf="isTeacherUser$ | async"
+		[routerLink]="['/app/course-builder/create']"
+		mat-raised-button
+		color="primary"
 		>Создать курс</a
 	>
-    
+
 	<div class="catalog-filters">Filters...</div>
 
 	<h2>Тренинги</h2>
@@ -18,7 +22,9 @@
 			<p class="catalog-item__views">Status: {{ training.status }}</p>
 			<div class="catalog-item__footer">
 				<span class="catalog-item__views">Views: 2.3k</span>
-				<span class="catalog-item__participants">Participants: 123</span>
+				<span class="catalog-item__participants"
+					>Participants: 123</span
+				>
 			</div>
 		</a>
 	</div>
@@ -26,10 +32,11 @@
 	<div>
 		<h2>Пакеты курсов</h2>
 		<div class="catalog-content">
-			<a 
-			*ngFor="let bundle of bundlesList$ | async"
-			class="catalog-item bundle"
-			[routerLink]="['../overview/bundle', bundle.uuid]">
+			<a
+				*ngFor="let bundle of bundlesList$ | async"
+				class="catalog-item bundle"
+				[routerLink]="['../overview/bundle', bundle.uuid]"
+			>
 				<h3>{{ bundle.title }}</h3>
 				<p>Курсы в пакете</p>
 				<ol class="courses-list" *ngFor="let course of bundle.courses">

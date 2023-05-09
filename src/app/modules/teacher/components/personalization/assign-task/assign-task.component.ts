@@ -1,18 +1,32 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormArray } from '@angular/forms';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { map, shareReplay, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import {
+	map,
+	shareReplay,
+	startWith,
+	switchMap,
+	tap,
+	withLatestFrom,
+} from 'rxjs/operators';
 import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
 import { generateUUID } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { StudentTraining } from 'src/app/models/course.model';
 import { ModuleTopic, TopicTask } from 'src/app/typings/course.types';
-import { PersonalTask, TrainingProfilePersonalizations, TrainingProfileUser } from 'src/app/typings/training.types';
+import {
+	PersonalTask,
+	TrainingProfilePersonalizations,
+	TrainingProfileUser,
+} from 'src/app/typings/training.types';
 import { PersonalizationService } from '../../../services/personalization.service';
 import { TeacherTrainingService } from '../../../services/teacher-training.service';
 import { UserService } from 'src/app/services/user.service';
 
-export type PersonalizationProfile = { profile: TrainingProfilePersonalizations, hasAssignedTask: boolean }
+export type PersonalizationProfile = {
+	profile: TrainingProfilePersonalizations;
+	hasAssignedTask: boolean;
+};
 
 @Component({
 	selector: 'app-assign-task',
@@ -21,167 +35,206 @@ export type PersonalizationProfile = { profile: TrainingProfilePersonalizations,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AssignTaskComponent implements OnInit {
-    private profiles$!: Observable<TrainingProfilePersonalizations[]>
-    private tasks: PersonalTask[] = []
-    private refreshProfiles$ = new BehaviorSubject<void>(undefined)
-    
-	public trainings$ = this.teacherService.getTeacherTrainings(CoursesSelectFields.Modules).pipe(shareReplay(1))
-    public topics$!: Observable<ModuleTopic[] | null>
-    public tasks$!: Observable<PersonalTask[] | null | 'NoTasks'>
+	private profiles$!: Observable<TrainingProfilePersonalizations[]>;
+	private tasks: PersonalTask[] = [];
+	private refreshProfiles$ = new BehaviorSubject<void>(undefined);
+
+	public trainings$ = this.teacherService
+		.getTeacherTrainings(CoursesSelectFields.Modules)
+		.pipe(shareReplay(1));
+	public topics$!: Observable<ModuleTopic[] | null>;
+	public tasks$!: Observable<PersonalTask[] | null | 'NoTasks'>;
 	public personalizations$!: Observable<PersonalizationProfile[]>;
 
-    public form;
-    public canAssign = false;
+	public form;
+	public canAssign = false;
 
 	constructor(
-        private teacherService: TeacherTrainingService, 
-        private personalizationService: PersonalizationService,
-        private userService: UserService,
-        private fbHelper: FormBuilderHelper,
-    ) {
-        this.form = this.fbHelper.createAssignTaskForm()
+		private teacherService: TeacherTrainingService,
+		private personalizationService: PersonalizationService,
+		private userService: UserService,
+		private fbHelper: FormBuilderHelper
+	) {
+		this.form = this.fbHelper.createAssignTaskForm();
 
-        this.form.valueChanges.subscribe(model => {
-            // console.log(model);
-            this.canAssign = !!(model.task && model.topic && model.training && model.personalizations) && this.form.controls.personalizations.dirty
-        })
-    }
+		this.form.valueChanges.subscribe((model) => {
+			// console.log(model);
+			this.canAssign =
+				!!(
+					model.task &&
+					model.topic &&
+					model.training &&
+					model.personalizations
+				) && this.form.controls.personalizations.dirty;
+		});
+	}
 
 	ngOnInit(): void {
-        const personalTasks$ = this.personalizationService.getTeacherTasks()
+		const personalTasks$ = this.personalizationService.getTeacherTasks();
 
-        this.topics$ = this.form.controls.training.valueChanges.pipe(
-            withLatestFrom(this.trainings$),
-            map(([trainingId, trainings]) => {
-                const training = trainings.find(t => t._id === trainingId)
-                return training ? new StudentTraining(training).topics : null
-            }),
-            tap(() => {
-                this.form.controls.topic.setValue('', { onlySelf: true })
-            })
-        )
-        
-        this.profiles$ = combineLatest([
-            this.refreshProfiles$,
-            this.form.controls.training.valueChanges,
-        ]).pipe(
-            switchMap(([_, trainingId]) => {
-                if (trainingId) {
-                    return this.teacherService.getTrainingProfiles(trainingId, { include: ['personalization'] }).pipe(map(res => res.profiles))
-                }
-                return of(null)
-            }),
-            map(profiles => profiles ? profiles as TrainingProfilePersonalizations[] : [])
-        )
+		this.topics$ = this.form.controls.training.valueChanges.pipe(
+			withLatestFrom(this.trainings$),
+			map(([trainingId, trainings]) => {
+				const training = trainings.find((t) => t._id === trainingId);
+				return training ? new StudentTraining(training).topics : null;
+			}),
+			tap(() => {
+				this.form.controls.topic.setValue('', { onlySelf: true });
+			})
+		);
 
-        this.form.controls.topic.valueChanges.subscribe(topic => {
-            this.form.controls.task?.setValue('', { onlySelf: true })
-        })
+		this.profiles$ = combineLatest([
+			this.refreshProfiles$,
+			this.form.controls.training.valueChanges,
+		]).pipe(
+			switchMap(([_, trainingId]) => {
+				if (trainingId) {
+					return this.teacherService
+						.getTrainingProfiles(trainingId, {
+							include: ['personalization'],
+						})
+						.pipe(map((res) => res.profiles));
+				}
+				return of(null);
+			}),
+			map((profiles) =>
+				profiles ? (profiles as TrainingProfilePersonalizations[]) : []
+			)
+		);
 
-        this.tasks$ = combineLatest([
-            this.form.valueChanges,
-            personalTasks$,
-        ]).pipe(
-            map(([model, tasks]) => {
-                const { training, topic } = model
-                if (training && topic) {
-                    const personalTasks = tasks.filter(task => task.training._id === model.training && task.topicId === model.topic)
-                    this.tasks = personalTasks
-                    return personalTasks.length > 0 ? personalTasks : 'NoTasks'
-                }
-                return null
-            })
-        )
+		this.form.controls.topic.valueChanges.subscribe((topic) => {
+			this.form.controls.task?.setValue('', { onlySelf: true });
+		});
 
-        this.personalizations$ = combineLatest([
-            this.form.controls.task.valueChanges,
-            this.profiles$,
-        ]).pipe(
-            map(([taskId, profiles]) => {
-                this.form.controls.personalizations.clear()
-                const { training, topic } = this.form.value
+		this.tasks$ = combineLatest([
+			this.form.valueChanges,
+			personalTasks$,
+		]).pipe(
+			map(([model, tasks]) => {
+				const { training, topic } = model;
+				if (training && topic) {
+					const personalTasks = tasks.filter(
+						(task) =>
+							task.training._id === model.training &&
+							task.topicId === model.topic
+					);
+					this.tasks = personalTasks;
+					return personalTasks.length > 0 ? personalTasks : 'NoTasks';
+				}
+				return null;
+			})
+		);
 
-                const assigments = !taskId || !training || !topic 
-                    ? [] 
-                    : profiles?.map(profile => {
-                        const hasAssignedTask = profile.personalizations.findIndex(p => p.type === 'assignment' && p.task?.uuid === taskId) > -1;
-                        return {
-                            profile,
-                            hasAssignedTask
-                        }
-                    })
+		this.personalizations$ = combineLatest([
+			this.form.controls.task.valueChanges,
+			this.profiles$,
+		]).pipe(
+			map(([taskId, profiles]) => {
+				this.form.controls.personalizations.clear();
+				const { training, topic } = this.form.value;
 
-                const items = assigments.map(a => this.fbHelper.fbRef.group(a))
-                // const items = this.fbHelper.fbRef.array(assigments.map(a => this.fbHelper.fbRef.group(a)))
+				const assigments =
+					!taskId || !training || !topic
+						? []
+						: profiles?.map((profile) => {
+								const hasAssignedTask =
+									profile.personalizations.findIndex(
+										(p) =>
+											p.type === 'assignment' &&
+											p.task?.uuid === taskId
+									) > -1;
+								return {
+									profile,
+									hasAssignedTask,
+								};
+						  });
 
-                items.forEach(item => {
-                    this.form.controls.personalizations.push(item)
-                })
-                
-                return assigments
-            }),
-            shareReplay(1)
-        )
-    }
+				const items = assigments.map((a) =>
+					this.fbHelper.fbRef.group(a)
+				);
+				// const items = this.fbHelper.fbRef.array(assigments.map(a => this.fbHelper.fbRef.group(a)))
 
-    public onAssign() {
-        const { training, topic, task, personalizations } = this.form.value
+				items.forEach((item) => {
+					this.form.controls.personalizations.push(item);
+				});
 
-        if (!training || !topic || !task || !personalizations || personalizations.length === 0) {
-            console.warn('Invalid form.');
-            return;
-        }
+				return assigments;
+			}),
+			shareReplay(1)
+		);
+	}
 
-        const taskId = this.tasks.find(t => t.uuid === task)?._id
-        if (!taskId) {
-            console.warn('No task for given uuid found.');
-            return;
-        }
+	public onAssign() {
+		const { training, topic, task, personalizations } = this.form.value;
 
-        // console.log(personalizations);
-        const profiles = (personalizations as PersonalizationProfile[]).map(pers => {
-            return {
-                uuid: generateUUID(),
-                profile: pers.profile._id,
-                task: taskId,
-                taskPersonalization: pers.profile.personalizations.find(pers => pers.type === 'assignment' && pers.task?._id === taskId)?.uuid,
-                isAssigned: pers.hasAssignedTask
-            }
-        })
+		if (
+			!training ||
+			!topic ||
+			!task ||
+			!personalizations ||
+			personalizations.length === 0
+		) {
+			console.warn('Invalid form.');
+			return;
+		}
 
-        const payload = profiles.reduce((acc, profile) => {
-            if (profile.isAssigned && !profile.taskPersonalization) {
-                acc.assign.push(profile)
-            }
-            else if(!profile.isAssigned && profile.taskPersonalization) {
-                acc.unassign.push(profile)
-            }
-            return acc
-        }, {
-            assign: new Array<typeof profiles[0]>(),
-            unassign: new Array<typeof profiles[0]>()
-        })
+		const taskId = this.tasks.find((t) => t.uuid === task)?._id;
+		if (!taskId) {
+			console.warn('No task for given uuid found.');
+			return;
+		}
 
-        if (payload.assign.length === 0 && payload.unassign.length === 0) {
-            console.log('No assignment changes');
-            return;
-        }
+		// console.log(personalizations);
+		const profiles = (personalizations as PersonalizationProfile[]).map(
+			(pers) => {
+				return {
+					uuid: generateUUID(),
+					profile: pers.profile._id,
+					task: taskId,
+					taskPersonalization: pers.profile.personalizations.find(
+						(pers) =>
+							pers.type === 'assignment' &&
+							pers.task?._id === taskId
+					)?.uuid,
+					isAssigned: pers.hasAssignedTask,
+				};
+			}
+		);
 
-        this.canAssign = false;
-        this.form.controls.personalizations.disable()
+		const payload = profiles.reduce(
+			(acc, profile) => {
+				if (profile.isAssigned && !profile.taskPersonalization) {
+					acc.assign.push(profile);
+				} else if (!profile.isAssigned && profile.taskPersonalization) {
+					acc.unassign.push(profile);
+				}
+				return acc;
+			},
+			{
+				assign: new Array<(typeof profiles)[0]>(),
+				unassign: new Array<(typeof profiles)[0]>(),
+			}
+		);
 
-        this.personalizationService.applyTasksAssignment(payload)
-        .subscribe({
-            next: (res) => {
-                this.refreshProfiles$.next()
-                // this.form.controls.personalizations.enable()
-                this.form.controls.personalizations.markAsPristine()
-                this.canAssign = true;
-            },
-            error: (err) => {
-                console.error('Assignment error', err);
-                this.canAssign = true;
-            },
-        })
-    }
+		if (payload.assign.length === 0 && payload.unassign.length === 0) {
+			console.log('No assignment changes');
+			return;
+		}
+
+		this.canAssign = false;
+		this.form.controls.personalizations.disable();
+
+		this.personalizationService.applyTasksAssignment(payload).subscribe({
+			next: (res) => {
+				this.refreshProfiles$.next();
+				// this.form.controls.personalizations.enable()
+				this.form.controls.personalizations.markAsPristine();
+				this.canAssign = true;
+			},
+			error: (err) => {
+				console.error('Assignment error', err);
+				this.canAssign = true;
+			},
+		});
+	}
 }

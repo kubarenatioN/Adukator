@@ -26,8 +26,8 @@ import { UserService } from 'src/app/services/user.service';
 
 export type OpeningPersonalization = {
 	profile: TrainingProfilePersonalizations;
-  persId: string | null
-  hasOpening: boolean
+	persId: string | null;
+	hasOpening: boolean;
 };
 
 @Component({
@@ -40,7 +40,7 @@ export class OpenTaskComponent implements OnInit {
 	private profiles$!: Observable<TrainingProfilePersonalizations[]>;
 	private tasks: TopicTask[] = [];
 	private refreshProfiles$ = new BehaviorSubject<void>(undefined);
-  private currentTraining: Training | null = null
+	private currentTraining: Training | null = null;
 
 	public trainings$ = this.teacherService
 		.getTeacherTrainings(CoursesSelectFields.Modules)
@@ -78,7 +78,7 @@ export class OpenTaskComponent implements OnInit {
 			withLatestFrom(this.trainings$),
 			map(([trainingId, trainings]) => {
 				const training = trainings.find((t) => t._id === trainingId);
-        this.currentTraining = training ?? null
+				this.currentTraining = training ?? null;
 				return training ? new StudentTraining(training).topics : null;
 			}),
 			tap(() => {
@@ -86,12 +86,13 @@ export class OpenTaskComponent implements OnInit {
 			})
 		);
 
-    this.tasks$ = this.form.controls.topic.valueChanges
-		.pipe(
+		this.tasks$ = this.form.controls.topic.valueChanges.pipe(
 			map((topicId) => {
-        const tasks = this.currentTraining?.course.topics.find(topic => topic.id === topicId)?.practice?.tasks
-        this.tasks = tasks ?? []
-        return tasks && tasks.length > 0 ? tasks : null
+				const tasks = this.currentTraining?.course.topics.find(
+					(topic) => topic.id === topicId
+				)?.practice?.tasks;
+				this.tasks = tasks ?? [];
+				return tasks && tasks.length > 0 ? tasks : null;
 			})
 		);
 
@@ -126,26 +127,24 @@ export class OpenTaskComponent implements OnInit {
 				this.form.controls.personalizations.clear();
 				const { training, topic } = this.form.value;
 
-				const openings = !taskId || !training || !topic
+				const openings =
+					!taskId || !training || !topic
 						? []
 						: profiles?.map((profile) => {
+								const pers = profile.personalizations.find(
+									(p) =>
+										p.type === 'opening' &&
+										p.opening === taskId
+								);
 
-                const pers = profile.personalizations.find(
-                  (p) =>
-                    p.type === 'opening' &&
-                    p.opening === taskId
-                );
-                
 								return {
 									profile,
-                  persId: pers?._id ?? null,
+									persId: pers?._id ?? null,
 									hasOpening: pers != null,
 								};
 						  });
 
-				const items = openings.map((a) =>
-					this.fbHelper.fbRef.group(a)
-				);
+				const items = openings.map((a) => this.fbHelper.fbRef.group(a));
 				// const items = this.fbHelper.fbRef.array(assigments.map(a => this.fbHelper.fbRef.group(a)))
 
 				items.forEach((item) => {
@@ -158,46 +157,54 @@ export class OpenTaskComponent implements OnInit {
 		);
 	}
 
-  public applyOpenings() {
-    const { personalizations, task } = this.form.value
+	public applyOpenings() {
+		const { personalizations, task } = this.form.value;
 
-    if (!personalizations) {
-      console.warn('No personalizations');
-      return;
-    }
+		if (!personalizations) {
+			console.warn('No personalizations');
+			return;
+		}
 
-    if (!task) {
-      console.warn('No task provided');
-      return;
-    }
+		if (!task) {
+			console.warn('No task provided');
+			return;
+		}
 
-    const openings = (personalizations as OpeningPersonalization[]).map(pers => ({
-      uuid: generateUUID(),
-      profile: pers.profile._id,
-      persId: pers.persId,
-      task,
-      hasOpening: pers.hasOpening,
-    }))
+		const openings = (personalizations as OpeningPersonalization[]).map(
+			(pers) => ({
+				uuid: generateUUID(),
+				profile: pers.profile._id,
+				persId: pers.persId,
+				task,
+				hasOpening: pers.hasOpening,
+			})
+		);
 
-    const body = openings.reduce((acc, item) => {
-      if (item.hasOpening) {
-        acc.open.push(item)
-      } else {
-        acc.close.push(item)
-      }
-      return acc;
-    }, { open: new Array<typeof openings[0]>(), close: new Array<typeof openings[0]>() })
+		const body = openings.reduce(
+			(acc, item) => {
+				if (item.hasOpening) {
+					acc.open.push(item);
+				} else {
+					acc.close.push(item);
+				}
+				return acc;
+			},
+			{
+				open: new Array<(typeof openings)[0]>(),
+				close: new Array<(typeof openings)[0]>(),
+			}
+		);
 
-    this.personalizationService.applyTasksOpening(body).subscribe({
-      next: (res) => {
-        this.refreshProfiles$.next()
-        this.form.controls.personalizations.markAsPristine()
-        this.isListChanged = false;
-      },
-      error: (err) => {
-          console.error('Opening error', err);
-          this.isListChanged = false;
-      },
-    })
-  }
+		this.personalizationService.applyTasksOpening(body).subscribe({
+			next: (res) => {
+				this.refreshProfiles$.next();
+				this.form.controls.personalizations.markAsPristine();
+				this.isListChanged = false;
+			},
+			error: (err) => {
+				console.error('Opening error', err);
+				this.isListChanged = false;
+			},
+		});
+	}
 }

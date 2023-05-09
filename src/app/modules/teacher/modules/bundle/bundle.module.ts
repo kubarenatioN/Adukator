@@ -10,22 +10,15 @@ import { BundleService } from './services/bundle.service';
 import { BundleItemComponent } from './bundle-item/bundle-item.component';
 import { SharedModule } from 'src/app/modules/shared/shared.module';
 
-
 @NgModule({
-  declarations: [
-    BundleComponent,
-    CreateComponent,
-    BundleItemComponent
-  ],
-  imports: [
-    CommonModule,
-    BundleRoutingModule,
-    ReactiveFormsModule,
-    SharedModule,
-    LayoutComponent
-  ],
-  providers: [
-    BundleService,
-  ]
+	declarations: [BundleComponent, CreateComponent, BundleItemComponent],
+	imports: [
+		CommonModule,
+		BundleRoutingModule,
+		ReactiveFormsModule,
+		SharedModule,
+		LayoutComponent,
+	],
+	providers: [BundleService],
 })
-export class BundleModule { }
+export class BundleModule {}

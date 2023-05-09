@@ -1,107 +1,140 @@
 <form [formGroup]="form">
+	<mat-form-field
+		*appFormElWrapper="form; control: 'title'; type: controlsType"
+		appearance="fill"
+	>
+		<mat-label>Название темы</mat-label>
+		<input matInput formControlName="title" />
+	</mat-form-field>
 
-    <mat-form-field 
-        *appFormElWrapper="form; control: 'title'; type: controlsType"
-        appearance="fill">
-        <mat-label>Название темы</mat-label>
-        <input matInput formControlName="title" />
-    </mat-form-field>
+	<mat-form-field
+		*appFormElWrapper="form; control: 'description'; type: controlsType"
+		appearance="fill"
+	>
+		<mat-label>Описание темы</mat-label>
+		<input matInput formControlName="description" />
+	</mat-form-field>
 
-    <mat-form-field 
-        *appFormElWrapper="form; control: 'description'; type: controlsType"
-        appearance="fill">
-        <mat-label>Описание темы</mat-label>
-        <input matInput formControlName="description" />
-    </mat-form-field>
+	<div *ngIf="controlsType === 'edit'">
+		<p>Добавить раздел</p>
+		<button
+			[disabled]="activeSections.materials"
+			(click)="onAddSection('materials')"
+		>
+			Материалы
+		</button>
+		<button
+			[disabled]="activeSections.theory"
+			(click)="onAddSection('theory')"
+		>
+			Теория
+		</button>
+		<button
+			[disabled]="activeSections.practice"
+			(click)="onAddSection('practice')"
+		>
+			Практика
+		</button>
+		<button [disabled]="activeSections.test" (click)="onAddSection('test')">
+			Тест
+		</button>
+	</div>
 
-    <div *ngIf="controlsType === 'edit'">
-        <p>Добавить раздел</p>
-        <button [disabled]="activeSections.materials" (click)="onAddSection('materials')">Материалы</button>
-        <button [disabled]="activeSections.theory" (click)="onAddSection('theory')">Теория</button>
-        <button [disabled]="activeSections.practice" (click)="onAddSection('practice')">Практика</button>
-        <button [disabled]="activeSections.test" (click)="onAddSection('test')">Тест</button>
-    </div>
+	<ng-container
+		*ngIf="activeSections.materials"
+		[ngTemplateOutlet]="materials"
+	></ng-container>
 
-    <ng-container *ngIf="activeSections.materials" 
-        [ngTemplateOutlet]="materials"></ng-container>
+	<ng-container
+		*ngIf="activeSections.theory"
+		[ngTemplateOutlet]="theory"
+	></ng-container>
 
-    <ng-container *ngIf="activeSections.theory" 
-        [ngTemplateOutlet]="theory"></ng-container>
+	<ng-container
+		*ngIf="activeSections.practice && hasPracticeFormGroup"
+		[ngTemplateOutlet]="practice"
+		[ngTemplateOutletContext]="{ practiceForm: practiceFormGroup }"
+	></ng-container>
 
-    <ng-container *ngIf="activeSections.practice && hasPracticeFormGroup" 
-        [ngTemplateOutlet]="practice"
-        [ngTemplateOutletContext]="{ practiceForm: practiceFormGroup }"></ng-container>
-
-    <ng-container *ngIf="activeSections.test" 
-        [ngTemplateOutlet]="test"></ng-container>
-
+	<ng-container
+		*ngIf="activeSections.test"
+		[ngTemplateOutlet]="test"
+	></ng-container>
 </form>
 
 <ng-template #materials>
-    <div class="section materials">
-        <h3>Материалы</h3>
-        <button (click)="onRemoveSection('materials')">Удалить раздел</button>
+	<div class="section materials">
+		<h3>Материалы</h3>
+		<button (click)="onRemoveSection('materials')">Удалить раздел</button>
 
-        <app-upload-box
-            class="upload-box"      
-            [folder]="uploadFolder"
-            [controlId]="controlId"
-            [type]="uploadType"
-            serveFrom="local"
-            [preloadExisting]="shouldPreloadExisting"
-            [autoRemoveOnDestroy]="false"
-            (uploadFilesChanged)="onUploadFilesChanged($event)">
-        </app-upload-box>
-    </div>
+		<app-upload-box
+			class="upload-box"
+			[folder]="uploadFolder"
+			[controlId]="controlId"
+			[type]="uploadType"
+			serveFrom="local"
+			[preloadExisting]="shouldPreloadExisting"
+			[autoRemoveOnDestroy]="false"
+			(uploadFilesChanged)="onUploadFilesChanged($event)"
+		>
+		</app-upload-box>
+	</div>
 </ng-template>
 
 <ng-template #practice let-practiceForm="practiceForm">
-    <div class="section" [formGroup]="practiceForm">
-        <h3>Практика</h3>
-        <button (click)="onRemoveSection('practice')">Удалить раздел</button>
+	<div class="section" [formGroup]="practiceForm">
+		<h3>Практика</h3>
+		<button (click)="onRemoveSection('practice')">Удалить раздел</button>
 
-        <textarea formControlName="goal">{{practiceForm.value.goal}}</textarea>
+		<textarea formControlName="goal">{{
+			practiceForm.value.goal
+		}}</textarea>
 
-        <button (click)="onAddTask()">Добавить задание</button>
-        <div class="tasks-list">
-            <ng-container *ngIf="tasksFormArray.controls.length > 0">
-                <div 
-                *ngFor="let taskForm of tasksFormArray.controls; let i = index"
-                class="task-item">
-                    <app-topic-task [form]="taskForm"></app-topic-task>
+		<button (click)="onAddTask()">Добавить задание</button>
+		<div class="tasks-list">
+			<ng-container *ngIf="tasksFormArray.controls.length > 0">
+				<div
+					*ngFor="
+						let taskForm of tasksFormArray.controls;
+						let i = index
+					"
+					class="task-item"
+				>
+					<app-topic-task [form]="taskForm"></app-topic-task>
 
-                    <button [disabled]="i === 0" (click)="onRemoveTaskAt(i)">
-                        Удалить задачу
-                    </button>
-                </div>
-            </ng-container>
-        </div>
-    </div>
+					<button [disabled]="i === 0" (click)="onRemoveTaskAt(i)">
+						Удалить задачу
+					</button>
+				</div>
+			</ng-container>
+		</div>
+	</div>
 </ng-template>
 
 <ng-template #theory>
-    <div class="section" [formGroup]="form">
-        <h3>Теория</h3>
-        <button (click)="onRemoveSection('theory')">Удалить раздел</button>
-        <mat-form-field 
-        *appFormElWrapper="form; control: 'theory'; type: controlsType"
-        appearance="fill">
-            <mat-label>Теория</mat-label>
-            <textarea matInput formControlName="theory"></textarea>
-        </mat-form-field>
-    </div>
+	<div class="section" [formGroup]="form">
+		<h3>Теория</h3>
+		<button (click)="onRemoveSection('theory')">Удалить раздел</button>
+		<mat-form-field
+			*appFormElWrapper="form; control: 'theory'; type: controlsType"
+			appearance="fill"
+		>
+			<mat-label>Теория</mat-label>
+			<textarea matInput formControlName="theory"></textarea>
+		</mat-form-field>
+	</div>
 </ng-template>
 
 <ng-template #test>
-    <div class="section" [formGroup]="form">
-        <h3>Тест</h3>
-        <button (click)="onRemoveSection('test')">Удалить раздел</button>
-        <mat-form-field 
-        *appFormElWrapper="form; control: 'testLink'; type: controlsType"
-        appearance="fill">
-            <mat-label>Ссылка на тест</mat-label>
-            <input matInput formControlName="testLink" />
-        </mat-form-field>
-    </div>
-
+	<div class="section" [formGroup]="form">
+		<h3>Тест</h3>
+		<button (click)="onRemoveSection('test')">Удалить раздел</button>
+		<mat-form-field
+			*appFormElWrapper="form; control: 'testLink'; type: controlsType"
+			appearance="fill"
+		>
+			<mat-label>Ссылка на тест</mat-label>
+			<input matInput formControlName="testLink" />
+		</mat-form-field>
+	</div>
 </ng-template>

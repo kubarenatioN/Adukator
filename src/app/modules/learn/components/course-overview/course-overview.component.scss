@@ -1,67 +1,67 @@
 .container {
-    max-width: 800px;
+	max-width: 800px;
 }
 
 .course-banner-content,
 .course-banner-wrapper {
-    height: 280px;
+	height: 280px;
 }
 
 .course-banner-wrapper {
-    position: absolute;
-    left: 0;
-    right: 0;
-    background-size: cover;
-    background-position: center center;
+	position: absolute;
+	left: 0;
+	right: 0;
+	background-size: cover;
+	background-position: center center;
 
-    &::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        background-color: rgba(255, 255, 255, 0.5);
-    }
+	&::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		background-color: rgba(255, 255, 255, 0.5);
+	}
 }
 
 .course-banner-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-    padding: 40px 0;
+	max-width: 1200px;
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+	position: relative;
+	z-index: 1;
+	padding: 40px 0;
 }
 
 .back-btn {
-    position: absolute;
-    top: 10px;
-    left: 20px;
-    z-index: 2;
+	position: absolute;
+	top: 10px;
+	left: 20px;
+	z-index: 2;
 }
 
 .course-content {
-    margin-top: 40px;
+	margin-top: 40px;
 }
 
 .info-items {
-    padding: 20px 0;
-    display: flex;
-    justify-content: space-around;
+	padding: 20px 0;
+	display: flex;
+	justify-content: space-around;
 }
 
 .modules {
-    max-width: 600px;
-    margin: 0 auto;
+	max-width: 600px;
+	margin: 0 auto;
 }
 
 .competencies {
-    display: flex;
-    justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 
-    &-list {
-        padding-left: 20px;
-    }
+	&-list {
+		padding-left: 20px;
+	}
 }

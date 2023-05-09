@@ -19,10 +19,10 @@ export class CourseNavComponent implements OnInit {
 
 	ngOnInit(): void {}
 
-    public navigate(query: Record<string, string | number>) {
-        this.router.navigate([], {
-            queryParams: query,
-            skipLocationChange: true,
-        });
-    }
+	public navigate(query: Record<string, string | number>) {
+		this.router.navigate([], {
+			queryParams: query,
+			skipLocationChange: true,
+		});
+	}
 }

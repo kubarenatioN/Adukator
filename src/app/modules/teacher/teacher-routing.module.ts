@@ -20,49 +20,52 @@ const routes: Routes = [
 		children: [
 			{
 				path: 'manage',
-                component: CourseManagementComponent
+				component: CourseManagementComponent,
 			},
 			{
 				path: 'check/:profileId',
-                component: TrainingCheckComponent
+				component: TrainingCheckComponent,
 			},
 			{
 				path: 'check',
-                component: TrainingCheckComponent
+				component: TrainingCheckComponent,
 			},
 		],
 	},
-    {
-        path: 'profile',
-        component: StudentProfileComponent
-    },
-    {
-        path: 'personalization',
-        children: [
-            {
-                path: 'tasks',
-                component: PersonalTasksComponent
-            },
-            {
-                path: '',
-                component: TrainingPersonalizationComponent,
-                children: [
-                    {
-                        path: 'assign',
-                        component: AssignTaskComponent,
-                    },
-                    {
-                        path: 'open',
-                        component: OpenTaskComponent,
-                    },
-                ]
-            }
-        ]
-    },
-	{ 
-        path: 'bundle', 
-        loadChildren: () => import('./modules/bundle/bundle.module').then(m => m.BundleModule) 
-    },
+	{
+		path: 'profile',
+		component: StudentProfileComponent,
+	},
+	{
+		path: 'personalization',
+		children: [
+			{
+				path: 'tasks',
+				component: PersonalTasksComponent,
+			},
+			{
+				path: '',
+				component: TrainingPersonalizationComponent,
+				children: [
+					{
+						path: 'assign',
+						component: AssignTaskComponent,
+					},
+					{
+						path: 'open',
+						component: OpenTaskComponent,
+					},
+				],
+			},
+		],
+	},
+	{
+		path: 'bundle',
+		loadChildren: () =>
+			import('./modules/bundle/bundle.module').then(
+				(m) => m.BundleModule
+			),
+	},
 ];
 
 @NgModule({
