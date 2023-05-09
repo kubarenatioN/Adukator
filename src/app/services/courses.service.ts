@@ -101,14 +101,16 @@ export class CoursesService {
     }
 
     public getCourseBundles(options?: {
-        ids?: string[]
+        ids?: string,
+        uuids?: string,
+        courseFields?: string,
     }) {
         const key = NetworkRequestKey.GetCoursesBundles
         const payload = NetworkHelper.createRequestPayload(key, {
             params: { reqId: key }
         })
         if (options) {
-            payload.params?.appendAll(options)
+            payload.params = payload.params?.appendAll(options)
         }
         return this.dataService.send<{ data: CourseBundle[] }>(payload).pipe(map(res => res.data))
     }

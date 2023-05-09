@@ -1,0 +1,25 @@
+<div class="wrapper">
+  <ng-container *ngIf="bundle$ | async as bundle">
+    <div class="banner">
+      <h1 class="banner__title">
+        {{ bundle.title }}
+      </h1>
+      <p class="descr">
+        {{ bundle.description }}
+      </p>
+    </div>
+    <div class="main">
+      <h2>Что входит в пакет</h2>
+      <div class="courses-list">
+
+        <div 
+        *ngFor="let course of bundle.courses"
+        class="course-section">
+          <h3>{{ course.title }}</h3>
+          <p>{{ course.description }}</p>
+        </div>
+
+      </div>
+    </div>
+  </ng-container>
+</div>

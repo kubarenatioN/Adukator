@@ -8,6 +8,7 @@ import { SharedModule } from '../shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CourseOverviewComponent } from './components/course-overview/course-overview.component';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
+import { BundleOverviewComponent } from './components/bundle-overview/bundle-overview.component';
 
 @NgModule({
     providers: [
@@ -17,6 +18,7 @@ import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 		LearnComponent,
 		CatalogComponent,
 		CourseOverviewComponent,
+  	BundleOverviewComponent,
 	],
 	imports: [
 		CommonModule,
