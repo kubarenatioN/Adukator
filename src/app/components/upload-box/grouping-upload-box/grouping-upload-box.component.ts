@@ -39,7 +39,7 @@ const filesFromRemoteMock = {
       },
       {
           "filename": "cameras.response-08.05.23:23:42.json",
-          "uploadedAt": "2023-05-08T19:43:09+00:00",
+          "uploadedAt": "2023-05-08T19:43:09+03:00",
           "url": "https://res.cloudinary.com/dzg3gqpxf/raw/upload/v1683578589/training/if6Br4Lltm6hT_UjRcBza/406dVwBfj7zz6-9hJHb31/cameras.response-08.05.23:23:42.json"
       },
       {
@@ -129,14 +129,14 @@ export class GroupingUploadBoxComponent implements OnInit, OnChanges, OnDestroy 
 
   private getFilesFromFolder(folder: string): Observable<UserFile[]> {
     // DEBUG
-    // return of(filesFromRemoteMock)
-    //   .pipe(
-    //     map(res => res.files)
-    //   )
-    return this.uploadService.getFilesFromFolder(folder, 'remote')
+    return of(filesFromRemoteMock)
       .pipe(
         map(res => res.files)
       )
+    // return this.uploadService.getFilesFromFolder(folder, 'remote')
+    //   .pipe(
+    //     map(res => res.files)
+    //   )
   }
 
   private groupFiles(files: UserFile[]) {
@@ -158,7 +158,9 @@ export class GroupingUploadBoxComponent implements OnInit, OnChanges, OnDestroy 
         }
       }
       return acc
-    }, [] as typeof this.filesStore)
+    }, [] as typeof this.filesStore).slice(0).sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime()
+    })
   }
 
   private restoreFilesFromCache(key: string) {

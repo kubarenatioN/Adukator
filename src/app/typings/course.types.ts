@@ -242,7 +242,7 @@ export interface CourseBundle {
     uuid: string,
     title: string,
     description: string,
-    courses: Course[]
+    courses: Partial<Course>[]
 }
 
 export interface CourseBundleCreatePayload { 

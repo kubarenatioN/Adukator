@@ -6,10 +6,12 @@
 	>
     
 	<div class="catalog-filters">Filters...</div>
+
+	<h2>Тренинги</h2>
 	<div class="catalog-content">
 		<a
 			class="catalog-item"
-			[routerLink]="['../course', 'overview', training.uuid]"
+			[routerLink]="['../overview/course', training.uuid]"
 			*ngFor="let training of list$ | async"
 		>
 			<h3>{{ training.title }}</h3>
@@ -19,5 +21,21 @@
 				<span class="catalog-item__participants">Participants: 123</span>
 			</div>
 		</a>
+	</div>
+
+	<div>
+		<h2>Пакеты курсов</h2>
+		<div class="catalog-content">
+			<a 
+			*ngFor="let bundle of bundlesList$ | async"
+			class="catalog-item bundle"
+			[routerLink]="['../overview/bundle', bundle.uuid]">
+				<h3>{{ bundle.title }}</h3>
+				<p>Курсы в пакете</p>
+				<ol class="courses-list" *ngFor="let course of bundle.courses">
+					<li>{{ course?.title }}</li>
+				</ol>
+			</a>
+		</div>
 	</div>
 </div>

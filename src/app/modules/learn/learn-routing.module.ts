@@ -14,10 +14,10 @@ const routes: Routes = [
 		pathMatch: 'full',
 	},
 	{
-		path: 'course',
+		path: 'overview',
 		children: [
 			{
-				path: 'overview/:id',
+				path: 'course/:id',
 				component: CourseOverviewComponent,
 			},
 		],

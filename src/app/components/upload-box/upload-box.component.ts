@@ -159,7 +159,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
     private formatFileToUserFile(file: File): UserFile {
         return {
             filename: file.name,
-            uploadedAt: new Date().toString()
+            uploadedAt: new Date().toUTCString()
         }
     }
 

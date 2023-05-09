@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, ReplaySubject, shareReplay } from 'rxjs';
 import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
+import { CoursesService } from 'src/app/services/courses.service';
 import { TrainingDataService } from 'src/app/services/training-data.service';
 import { Training } from 'src/app/typings/training.types';
 
@@ -16,14 +17,8 @@ export class LearnService {
     );
 	// public training$ = this.trainingStore$.pipe(shareReplay(1));
 
-	constructor(private trainingDataService: TrainingDataService) {
-        this.loadList({
-            pagination: {
-                offset: 0,
-                limit: 10,
-            },
-            fields: CoursesSelectFields.Short
-        })
+	constructor(private trainingDataService: TrainingDataService, private coursesService: CoursesService) {
+        
     }
 
     public loadList(options: {
@@ -36,6 +31,10 @@ export class LearnService {
     }) {
         this.trainingDataService.getTrainingsList(options)
         .subscribe(trainings => this.trainingsListStore$.next(trainings));
+    }
+
+    public loadBundles() {
+        return this.coursesService.getCourseBundles()
     }
 
     public getTraining(trainingId: string) {

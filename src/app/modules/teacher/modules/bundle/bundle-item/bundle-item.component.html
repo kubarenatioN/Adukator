@@ -6,7 +6,7 @@
 
   <div class="courses-list">
     <div *ngFor="let course of bundle.courses" class="course-item">
-      <span>Курс {{ course.title }}</span>
+      <span>Курс {{ course?.title }}</span>
       <span>Длительность: {{ '5 недель' }}</span>
     </div>
   </div>

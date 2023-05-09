@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, forkJoin, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { Course, CourseReview } from '../typings/course.types';
+import { Course, CourseBundle, CourseReview } from '../typings/course.types';
 import { CoursesResponse, CoursesSelectResponse, CourseReviewHistory } from '../typings/response.types';
 import { Training } from '../typings/training.types';
 import { DataService } from './data.service';
@@ -12,15 +12,6 @@ import { UserService } from './user.service';
 	providedIn: 'root',
 })
 export class CoursesService {
-    private coursesStore$ = new BehaviorSubject<{
-        published: Course[],
-        review: CourseReview[]
-    }>({
-        published: [],
-        review: []
-    });
-
-
 	constructor(private dataService: DataService, private userService: UserService) {
         
     }
@@ -109,17 +100,16 @@ export class CoursesService {
         return this.dataService.send<unknown>(payload)
     }
 
-    // public getStudentCourses(userId: string) {
-    //     const key = NetworkRequestKey.StudentCourses
-    //     const payload = NetworkHelper.createRequestPayload(key, {
-    //         body: {
-    //             userId,
-    //             fields: CoursesSelectFields.Short
-    //         },
-    //         params: { reqId: key }
-    //     })
-    //     return this.dataService.send<{ 
-    //         data: Training[]
-    //     }>(payload);
-    // }
+    public getCourseBundles(options?: {
+        ids?: string[]
+    }) {
+        const key = NetworkRequestKey.GetCoursesBundles
+        const payload = NetworkHelper.createRequestPayload(key, {
+            params: { reqId: key }
+        })
+        if (options) {
+            payload.params?.appendAll(options)
+        }
+        return this.dataService.send<{ data: CourseBundle[] }>(payload).pipe(map(res => res.data))
+    }
 }
