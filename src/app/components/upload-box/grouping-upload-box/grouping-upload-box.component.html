@@ -1,0 +1,21 @@
+<div class="upload-inner download">
+  <div class="files-container">
+      <ng-container *ngIf="filesStore.length > 0; else noFiles">
+        <div class="files-group" *ngFor="let group of filesStore">
+          <h3>Отправлено {{ group.date }}</h3>
+          <div class="group-files-list">
+            <app-file-item *ngFor="let file of group.files"
+                class="file-item" 
+                [userFile]="file"
+                (download)="onDownload($event)"
+                type="download">
+            </app-file-item>
+          </div>
+        </div>
+      </ng-container>
+  </div>
+</div>
+
+<ng-template #noFiles>
+  <p>Нет файлов.</p>
+</ng-template>

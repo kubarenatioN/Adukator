@@ -22,6 +22,7 @@ import { FormElementWrapperDirective } from 'src/app/directives/form-element-wra
 import { FileItemComponent } from 'src/app/components/upload-box/components/file-item/file-item.component';
 import { TopicsProgressChartComponent } from './charts/topics-progress-chart/topics-progress-chart.component';
 import { NgChartsModule } from 'ng2-charts';
+import { GroupingUploadBoxComponent } from 'src/app/components/upload-box/grouping-upload-box/grouping-upload-box.component';
 
 @NgModule({
 	declarations: [
@@ -29,6 +30,7 @@ import { NgChartsModule } from 'ng2-charts';
 		DatePipe,
 		TimeDurationPipe,
 		UploadBoxComponent,
+		GroupingUploadBoxComponent,
         FileItemComponent,
 		DndDirective,
         FormElementWrapperDirective,
@@ -64,6 +66,7 @@ import { NgChartsModule } from 'ng2-charts';
 		DatePipe,
 		TimeDurationPipe,
 		UploadBoxComponent,
+		GroupingUploadBoxComponent,
 		FileItemComponent,
 		DndDirective,
 		FormElementWrapperDirective,

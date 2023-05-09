@@ -34,12 +34,17 @@
                 <div class="topic-task" *ngFor="let checkTask of checkTasks; let i = index">
                     <h3>Задание {{ i + 1 }}. {{ checkTask.task.taskDescr }}</h3>
                     <div *ngIf="checkTask.thread; else noAnswers" class="task-answers">
-                        <app-upload-box
+                        <app-grouping-upload-box
+                            class="student-files-box"
+                            [folder]="checkTask.folder"
+                            label="Файлы на проверку от студента">
+                        ></app-grouping-upload-box>
+                        <!-- <app-upload-box
                             class="student-files-box"
                             type="download"
                             [folder]="checkTask.folder"
                             label="Файлы на проверку от студента">
-                        </app-upload-box>
+                        </app-upload-box> -->
                         <div class="thread-list">
                             <div class="thread-list-item" *ngFor="let reply of checkTask.thread">
                                 <h4>{{ reply.message }}</h4>
