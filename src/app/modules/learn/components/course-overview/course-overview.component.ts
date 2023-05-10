@@ -9,18 +9,20 @@ import {
 	Subscription,
 	switchMap,
 	throwError,
-	withLatestFrom,
 	combineLatest,
 	shareReplay,
 	tap,
 } from 'rxjs';
 import { NetworkRequestKey } from 'src/app/helpers/network.helper';
 import { UserService } from 'src/app/services/user.service';
-import { Course, CourseCompetency } from 'src/app/typings/course.types';
+import { Course, CourseCompetency, CourseFeedback } from 'src/app/typings/course.types';
 import { Training, TrainingProfileMeta } from 'src/app/typings/training.types';
 import { LearnService } from '../../services/learn.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { StudentTraining } from 'src/app/models/course.model';
+import { FormBuilder, Validators } from '@angular/forms';
+import { FeedbackService } from '../../services/feedback.service';
+import { User } from 'src/app/typings/user.types';
 
 type ViewData = {
 	course: Course
@@ -29,8 +31,10 @@ type ViewData = {
 	trainingLookup: TrainingProfileMeta | null | 'NoEnroll'
 	isUserOwner: boolean
 	canEnroll: boolean
+	user: User
 	canAddReview: boolean
 	competenciesConfig: CourseCompetency[]
+	feedbacks: CourseFeedback[] | null,
 }
 
 @Component({
@@ -42,6 +46,7 @@ type ViewData = {
 export class CourseOverviewComponent implements OnInit {
 	private enrollmentSub?: Subscription;
 	private courseEnrollTrigger$ = new BehaviorSubject<void>(undefined);
+	private feedbacksRefresh$ = new BehaviorSubject<CourseFeedback[]>([])
 
 	public viewData$!: Observable<ViewData | null>
 
@@ -52,11 +57,18 @@ export class CourseOverviewComponent implements OnInit {
 
 	public isDisabledEnrollActions = false;
 
+	public feedbackForm = this.fb.group({
+		text: ['', Validators.required],
+		rating: [null]
+	})
+
 	constructor(
 		private activatedRoute: ActivatedRoute,
 		private userService: UserService,
 		private learnService: LearnService,
-		private configService: ConfigService
+		private configService: ConfigService,
+		private feedbackService: FeedbackService,
+		private fb: FormBuilder,
 	) { }
 
 	public ngOnInit(): void {
@@ -128,12 +140,44 @@ export class CourseOverviewComponent implements OnInit {
 			shareReplay(1)
 		);
 
+		const initialFeedbacks$ = training$.pipe(
+			switchMap(training => {
+				if (training) {
+					return this.feedbackService.getCourseFeedbacks(training.course._id, training._id)
+				}
+				return of(null)
+			}),
+			catchError(err => {
+				return of(null)
+			}),
+			map(res => {
+				return res ? res.data : null
+			})
+		)
+
+		const feedbacks$ = combineLatest([
+			initialFeedbacks$,
+			this.feedbacksRefresh$
+		]).pipe(
+			map(([ feedbacks, refreshFeedbacks ]) => {
+				if (feedbacks) {
+					if (refreshFeedbacks.length > 0) {
+						feedbacks.unshift(...refreshFeedbacks)
+						return feedbacks
+					}
+					return feedbacks
+				}
+				return null
+			})
+		)
+
 		this.viewData$ = combineLatest([
 			training$,
 			competenciesDiff$,
 			trainingLookup$,
 			this.configService.competencies$,
 			this.userService.user$,
+			feedbacks$,
 		]).pipe(
 			map(([
 				training,
@@ -141,6 +185,7 @@ export class CourseOverviewComponent implements OnInit {
 				trainingLookup,
 				competenciesConfig,
 				user,
+				feedbacks
 			]) => {
 				if (!training) {
 					return null
@@ -156,8 +201,10 @@ export class CourseOverviewComponent implements OnInit {
 					trainingLookup,
 					isUserOwner: isOwner,
 					canEnroll: user.role !== 'admin' && !isOwner,
+					user,
 					canAddReview,
 					competenciesConfig,
+					feedbacks,
 				}
 			})
 		)
@@ -196,6 +243,29 @@ export class CourseOverviewComponent implements OnInit {
 		}, 0);
 
 		return `Недель: ${Math.floor(days / 7)}`;
+	}
+
+	public onSendFeedback(viewData: ViewData) {
+		if (!this.feedbackForm.valid) {
+			console.warn('Form is invalid');
+			return;
+		}
+
+		const { text, rating } = this.feedbackForm.value
+		const { training, course, user } = viewData
+		if (text) {
+			this.feedbackService.postCourseFeedback({
+				text,
+				rating: Number(rating),
+				authorId: user._id,
+				courseId: course._id,
+				trainingId: training._id
+			}).subscribe(res => {
+				this.feedbackForm.reset()
+				const { created } = res
+				this.feedbacksRefresh$.next([created])
+			})
+		}
 	}
 
 	private makeCourseEnrollAction(trainingId: string, key: string): void {

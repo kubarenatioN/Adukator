@@ -58,12 +58,15 @@ export enum NetworkRequestKey {
 	// TEACHER
 	GetReviewCourses = 'GetReviewCourses',
 	TeacherCourses = 'TeacherCourses',
+
+	// Feedback
+	Feedback = 'Feedback'
 }
 
 export const REQUEST_TYPE = new HttpContextToken<string>(() => '');
 
 interface RequestCoreMetadata {
-	method: string;
+	method?: string;
 	url: string;
 }
 
@@ -72,6 +75,7 @@ interface RequestMetadata {
 	params?: Record<string, string | string[] | number | number[]>;
 	urlId?: string | number;
 	headers?: HttpHeaders;
+	method?: 'GET' | 'POST'
 }
 
 interface RequestsMetadataMap {
@@ -141,10 +145,6 @@ export class NetworkHelper {
 			method: 'POST',
 			url: `${DATA_ENDPOINTS.api.training}/list`,
 		},
-		// [NetworkRequestKey.TrainingAccess]: {
-		//     method: 'POST',
-		//     url: `${DATA_ENDPOINTS.api.training}/access`,
-		// },
 
 		[NetworkRequestKey.CreateTrainingEnroll]: {
 			method: 'POST',
@@ -240,6 +240,11 @@ export class NetworkHelper {
 			method: 'GET',
 			url: `${DATA_ENDPOINTS.api.personalization}`,
 		},
+
+		// Feedback
+		[NetworkRequestKey.Feedback]: {
+			url: `${DATA_ENDPOINTS.api.courses}/feedback`,
+		},
 	};
 
 	public static createRequestPayload(
@@ -247,7 +252,7 @@ export class NetworkHelper {
 		extendedPayload?: RequestMetadata
 	): DataRequestPayload {
 		const basePayload = this.requestsMetadataMap[key];
-		const { method } = basePayload;
+		const method = basePayload.method ?? extendedPayload?.method ?? 'GET';
 		const headers = extendedPayload?.headers;
 		const context = new HttpContext().set(REQUEST_TYPE, key);
 
@@ -255,6 +260,7 @@ export class NetworkHelper {
 			...basePayload,
 			headers,
 			context,
+			method,
 		};
 		request.body = extendedPayload?.body;
 

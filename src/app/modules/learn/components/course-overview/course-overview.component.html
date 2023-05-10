@@ -188,18 +188,31 @@
 		<div class="reviews">
 			<div class="reviews-form" *ngIf="viewData.canAddReview">
 				<h2>Вы завершили данный тренинг. Оставьте свой отзыв о курсе!</h2>
-				<form>
-					<textarea cols="30" rows="10"></textarea>
+				<form [formGroup]="feedbackForm">
+					<textarea formControlName="text" cols="30" rows="10"></textarea>
+					<input formControlName="rating" type="number" min="0" max="5" placeholder="Оценка">
+					<button (click)="onSendFeedback(viewData)">Отправить</button>
 				</form>
 			</div>
 
-			<div class="reviews-list">
-				<div
-
-				class="review-item">
-
+			<ng-container *ngIf="viewData.feedbacks as feedbacks">
+				<div class="reviews-list">
+					<div
+					*ngFor="let feedback of feedbacks"
+					class="review-item">
+						<span>
+							Автор: <a [routerLink]="['/app/user', feedback.author.uuid]">{{ feedback.author.username }}</a>
+						</span>
+						<span *ngIf="feedback.rating > 0">Rating: {{ feedback.rating }}</span>
+						<p>
+							{{ feedback.text }}
+						</p>
+						<p>
+							{{ feedback.date }}
+						</p>
+					</div>
 				</div>
-			</div>
+			</ng-container>
 		</div>
 	</div>
 </ng-container>

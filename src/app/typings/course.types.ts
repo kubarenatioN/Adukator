@@ -1,6 +1,7 @@
 import { CourseReviewControlComment } from './course-review.types';
 import { ChipItem } from '../modules/course-builder/controls/chips-control/chips-control.component';
 import { Training } from './training.types';
+import { User } from './user.types';
 
 export enum CourseTopFormGroups {
 	OverallInfo = 'overallInfo',
@@ -249,4 +250,15 @@ export interface CourseBundleCreatePayload {
 	description: string;
 	courses: string[];
 	authorId: string;
+}
+
+export interface CourseFeedback {
+	_id: string
+	uuid: string
+	text: string
+	rating: number
+	author: User
+	course: Course
+	training: Training
+	date: string
 }
