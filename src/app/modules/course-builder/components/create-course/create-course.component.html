@@ -1,26 +1,11 @@
-<app-back-btn>Назад</app-back-btn>
+<div class="form-container">
+	<app-course-form
+		[formData]="formData$ | async"
+		(createReviewVersion)="onCreateReviewVersion($event)"
+		(saveReview)="onSaveReview($event)"
+		(publish)="onPublish($event)"
+		(formChanged)="onFormChanged($event)"
+	>
+	</app-course-form>
+</div>
 
-<app-layout>
-	<app-course-nav
-		*ngIf="modules$ | async as modules"
-		[items]="modules"
-		slot="sidebar"
-	></app-course-nav>
-
-	<ng-container slot="main">
-		<div class="form-container">
-			<app-course-form
-				[formData]="formData$ | async"
-				(createReviewVersion)="onCreateReviewVersion($event)"
-				(saveReview)="onSaveReview($event)"
-				(publish)="onPublish($event)"
-				(formChanged)="onFormChanged($event)"
-			>
-			</app-course-form>
-		</div>
-	</ng-container>
-</app-layout>
-
-<ng-template #loader> Loading course data... </ng-template>
-
-<ng-template #sentOnReview> Course sent to admin on review. </ng-template>

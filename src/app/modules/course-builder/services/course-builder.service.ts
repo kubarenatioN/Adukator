@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import {
 	of,
 	ReplaySubject,
@@ -12,6 +13,7 @@ import {
 	isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
 import {
+	constructCourseTreeFromForm,
 	convertCourseFormDataToCourse,
 	convertCourseFormDataToCourseReview,
 	generateUUID,
@@ -25,8 +27,10 @@ import {
 } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
 import {
+	Course,
 	CourseBuilderViewData,
 	CourseBuilderViewType,
+	CourseContentTree,
 	CourseFormData,
 	CourseFormMetadata,
 	CourseFormViewMode,
@@ -39,6 +43,7 @@ import { User } from 'src/app/typings/user.types';
 @Injectable()
 export class CourseBuilderService {
 	private viewDataStore$ = new ReplaySubject<CourseBuilderViewData>(1);
+	private contentTreeStore$ = new ReplaySubject<CourseContentTree>(1);
 	private courseMetadata!: CourseFormMetadata;
 
 	public courseId: string;
@@ -47,7 +52,12 @@ export class CourseBuilderService {
 		return this.courseMetadata;
 	}
 
+	public set contentTree(value: CourseContentTree) {
+		this.contentTreeStore$.next(value);
+	}
+
 	public viewData$ = this.viewDataStore$.asObservable().pipe(shareReplay(1));
+	public contentTree$ = this.contentTreeStore$.asObservable().pipe(shareReplay(1));
 
 	constructor(
 		private userService: UserService,
@@ -73,7 +83,7 @@ export class CourseBuilderService {
 			module?: string;
 			topic?: string;
 		},
-		mode: CourseFormViewMode
+		mode: CourseFormViewMode,
 	) {
 		const viewData = {
 			viewPath: { ...navQuery },
@@ -171,9 +181,7 @@ export class CourseBuilderService {
 				}
 
 				if (mode === CourseFormViewMode.Review) {
-					return this.adminCoursesService.getCourseReviewVersion(
-						courseId
-					);
+					return this.adminCoursesService.getCourseReviewVersion(courseId);
 				} else if (mode === CourseFormViewMode.Edit) {
 					return this.coursesService.getCourseReviewVersion(courseId);
 				} else {
@@ -200,6 +208,10 @@ export class CourseBuilderService {
 			...segments,
 			controlId
 		);
+	}
+
+	public rebuildContentTree(form: FormGroup) {
+		this.contentTree = constructCourseTreeFromForm(form)
 	}
 
 	private restoreCourseMetadata(

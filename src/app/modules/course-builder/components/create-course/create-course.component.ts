@@ -10,17 +10,13 @@ import {
 	combineLatest,
 	Observable,
 	BehaviorSubject,
-	ReplaySubject,
-	of,
 	throwError,
 } from 'rxjs';
 import {
 	catchError,
-	distinctUntilChanged,
 	map,
 	shareReplay,
 	switchMap,
-	withLatestFrom,
 } from 'rxjs/operators';
 import { EmptyCourseFormData } from 'src/app/constants/common.constants';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
@@ -29,10 +25,7 @@ import {
 	CourseBuilderViewData,
 	CourseBuilderViewType,
 	CourseFormData,
-	CourseFormMetadata,
-	CourseFormModule,
 	CourseFormViewMode,
-	CourseModule,
 	CourseReview,
 } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
@@ -48,11 +41,7 @@ export class CreateCourseComponent
 	extends CenteredContainerDirective
 	implements OnInit, OnDestroy
 {
-	private modulesStore$ = new ReplaySubject<CourseFormModule[]>(1);
-
 	public formMode: CourseFormViewMode = CourseFormViewMode.Create;
-
-	public modules$: Observable<CourseFormModule[]>;
 	public formData$!: Observable<CourseReview | EmptyCourseFormData | null>;
 	public viewData$!: Observable<CourseBuilderViewData>;
 
@@ -65,7 +54,6 @@ export class CreateCourseComponent
 		private router: Router
 	) {
 		super();
-		this.modules$ = this.modulesStore$.asObservable();
 	}
 
 	public ngOnInit(): void {
@@ -104,7 +92,7 @@ export class CreateCourseComponent
 			shareReplay(1)
 		);
 
-		combineLatest([navQuery$, this.formData$]).subscribe(([navQuery]) => {
+		combineLatest([navQuery$, this.formData$]).subscribe(([navQuery, formData]) => {
 			this.courseBuilderService.setViewData(navQuery, mode);
 		});
 	}
@@ -182,7 +170,7 @@ export class CreateCourseComponent
 	}
 
 	public onFormChanged(form: FormGroup) {
-		this.modulesStore$.next(form.controls['modules'].value);
+		this.courseBuilderService.rebuildContentTree(form)
 	}
 
 	private resolveViewType(

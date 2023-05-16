@@ -4,37 +4,44 @@ import { AdminGuardService } from 'src/app/guards/admin-guard.service';
 import { TeacherGuardService } from 'src/app/guards/teacher-guard.service';
 import { CourseFormViewMode } from 'src/app/typings/course.types';
 import { CreateCourseComponent } from './components/create-course/create-course.component';
+import { ReviewCourseComponent } from './components/review-course/review-course.component';
+import { CourseBuilderComponent } from './course-builder.component';
 
 const routes: Routes = [
 	{
-		path: 'create',
-		canActivate: [TeacherGuardService],
-		component: CreateCourseComponent,
-		data: { mode: CourseFormViewMode.Create },
-	},
-	{
-		path: ':id',
+		path: '',
+		component: CourseBuilderComponent,
 		children: [
 			{
-				path: 'edit',
+				path: 'create',
 				canActivate: [TeacherGuardService],
 				component: CreateCourseComponent,
-				data: { mode: CourseFormViewMode.Edit },
+				data: { mode: CourseFormViewMode.Create },
 			},
 			{
-				path: 'update',
-				canActivate: [TeacherGuardService],
-				component: CreateCourseComponent,
-				data: { mode: CourseFormViewMode.Update },
+				path: ':id',
+				children: [
+					{
+						path: 'edit',
+						canActivate: [TeacherGuardService],
+						component: CreateCourseComponent,
+						data: { mode: CourseFormViewMode.Edit },
+					},
+					{
+						path: 'update',
+						canActivate: [TeacherGuardService],
+						component: CreateCourseComponent,
+						data: { mode: CourseFormViewMode.Update },
+					},
+					{
+						path: 'review',
+						canActivate: [AdminGuardService],
+						component: ReviewCourseComponent,
+					},
+				],
 			},
-			{
-				path: 'review',
-				canActivate: [AdminGuardService],
-				component: CreateCourseComponent,
-				data: { mode: CourseFormViewMode.Review },
-			},
-		],
-	},
+		]
+	}
 ];
 
 @NgModule({

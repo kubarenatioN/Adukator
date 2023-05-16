@@ -11,8 +11,6 @@ import { takeUntil } from 'rxjs';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { BaseComponent } from 'src/app/shared/base.component';
 import {
-	CourseBuilderViewData,
-	CourseBuilderViewType,
 	CourseFormViewMode,
 	WrapperType,
 } from 'src/app/typings/course.types';

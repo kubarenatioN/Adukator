@@ -12,7 +12,6 @@ import {
 	Observable,
 	combineLatest,
 	debounceTime,
-	generate,
 	map,
 	takeUntil,
 	tap,
@@ -23,7 +22,6 @@ import {
 } from 'src/app/constants/common.constants';
 import {
 	convertCourseReviewToCourseFormData,
-	generateUUID,
 } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { getTopicMinDate, getTopicMaxDate } from 'src/app/helpers/forms.helper';
@@ -36,7 +34,6 @@ import {
 	CourseFormData,
 	CourseFormViewMode,
 	CourseReview,
-	ModuleTopic,
 	WrapperType,
 } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
@@ -79,9 +76,8 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 		if (!isEmptyCourseFormData(data)) {
 			const formData = convertCourseReviewToCourseFormData(data);
 			this.setCourseModel(formData);
+			this.formChanged.emit(this.courseForm);
 		}
-
-		this.formChanged.emit(this.courseForm);
 	}
 
 	@Output() public createReviewVersion = new EventEmitter<{
@@ -106,7 +102,6 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 		this.courseForm = this.fbHelper.getNewCourseFormModel(courseId);
 
 		this.courseForm.valueChanges.subscribe((res) => {
-			// console.log('111 main course form', res);
 			this.formChanged.emit(this.courseForm);
 		});
 
@@ -115,10 +110,7 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 			tap((viewData) => {
 				const { metadata, mode, viewPath } = viewData;
 				this.formMode = mode;
-				if (mode === CourseFormViewMode.Review) {
-					this.canEditForm = false;
-					this.controlsType = 'review';
-				}
+
 				this.viewType$.next(viewPath.type);
 				this.overallInfoSubform.controls.id.setValue(metadata.uuid);
 				this.activeFormGroup = this.getFormGroup(viewPath);
@@ -152,7 +144,6 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 		const topicsArray = moduleForm.controls.topics;
 		topicsArray.push(emptyTopicForm);
 		moduleForm.controls.topics = topicsArray;
-		// console.log(topicsArray, this.modulesFormArray.value);
 	}
 
 	public removeModule(id: string): void {

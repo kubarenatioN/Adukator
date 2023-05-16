@@ -156,18 +156,20 @@ export const generateUUID = (): string => {
 	return nanoid();
 };
 
-export const constructCourseTreeFromForm = (form: FormGroup) => {
-	const modules = form.get('modules')?.value as CourseFormModule[];
-	const topics = form.get('topics')?.value as ModuleTopic[];
-	const tree = modules.map((module) => {
-		const moduleTopics = topics.filter(
-			(topic) => topic.moduleId === module.id
-		);
-		module.topics = moduleTopics;
-		return module;
-	});
-
-	return tree;
+export const constructCourseTreeFromForm = (form: FormGroup): CourseContentTree => {
+	const course = form.value as CourseFormData
+	const topics = course.modules.reduce((acc, m) => {
+		acc.push(...m.topics)
+		return acc
+	}, [] as ModuleTopic[])
+	
+	return course.modules.map(m => {
+		return {
+			moduleId: m.id,
+			module: m,
+			topics: topics.filter(topic => topic.moduleId === m.id),
+		};
+	})
 };
 
 export const constructCourseTree = (course: Course): CourseContentTree => {
