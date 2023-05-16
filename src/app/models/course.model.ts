@@ -2,17 +2,11 @@ import { addDays } from 'date-fns/esm';
 import { formatTopicsDeadlines } from '../modules/student/helpers/course-training.helper';
 import { Course, CourseModule, ModuleTopic } from '../typings/course.types';
 import { Personalization, Training } from '../typings/training.types';
+import { constructCourseTree } from '../helpers/courses.helper';
 
 export class StudentTraining {
 	private _training: Training;
-	private _course: {
-		course: Course;
-		contentTree: {
-			moduleId: string;
-			module: CourseModule;
-			topics: ModuleTopic[];
-		}[];
-	};
+	private _course: Course;
 	private _topics: ModuleTopic[] = [];
 
 	public get contentTree() {
@@ -20,7 +14,7 @@ export class StudentTraining {
 	}
 
 	public get course() {
-		return this._course.course;
+		return this._course;
 	}
 
 	public get training() {
@@ -62,20 +56,7 @@ export class StudentTraining {
 		this._topics = course.topics.slice();
 		this._topics = formatTopicsDeadlines(this.topics, this.training);
 
-		const contentTree = course.modules.map((module) => {
-			return {
-				moduleId: module.id,
-				module,
-				topics: this._topics.filter(
-					(topic) => topic.moduleId === module.id
-				),
-			};
-		});
-
-		return {
-			course,
-			contentTree,
-		};
+		return course;
 	}
 
 	private applyPersonalization(personalization: Personalization[]) {

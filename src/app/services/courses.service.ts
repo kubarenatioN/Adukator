@@ -1,24 +1,20 @@
 import { Injectable } from '@angular/core';
 import {
-	BehaviorSubject,
 	forkJoin,
 	map,
 	Observable,
-	of,
-	shareReplay,
 	switchMap,
 } from 'rxjs';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { Course, CourseBundle, CourseReview } from '../typings/course.types';
 import {
-	CoursesResponse,
-	CoursesSelectResponse,
 	CourseReviewHistory,
 } from '../typings/response.types';
-import { Training } from '../typings/training.types';
 import { DataService } from './data.service';
 import { UserService } from './user.service';
+import { DATA_ENDPOINTS } from '../constants/network.constants';
+import { Training } from '../typings/training.types';
 
 @Injectable({
 	providedIn: 'root',
@@ -101,6 +97,23 @@ export class CoursesService {
 		return this.dataService.send<T>(payload);
 	}
 
+	public getCoursesList(options: {
+		pagination?: {
+			offset: number;
+			limit: number;
+		};
+		filters?: {};
+		fields: string[];
+	}) {
+		const key = NetworkRequestKey.ListCourses
+		const payload = NetworkHelper.createRequestPayload(key, {
+			params: { reqId: key },
+			body: { options }
+		})
+
+		return this.dataService.send<{ data: Course[] }>(payload)
+	}
+
 	public getCourseReviewHistory(masterId: string) {
 		const requestKey = NetworkRequestKey.GetCourseReviewHistory;
 		const payload = NetworkHelper.createRequestPayload(requestKey, {
@@ -145,5 +158,11 @@ export class CoursesService {
 		return this.dataService
 			.send<{ data: CourseBundle[] }>(payload)
 			.pipe(map((res) => res.data));
+	}
+
+	public getCourseTrainings(courseUId: string) {
+		return this.dataService.http.get<{ trainings: Training[] | null }>(`${DATA_ENDPOINTS.api.courses}/${courseUId}/trainings`, {
+			params: { reqId: 'CourseTrainings' }
+		})
 	}
 }

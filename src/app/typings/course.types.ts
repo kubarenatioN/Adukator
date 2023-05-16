@@ -125,7 +125,14 @@ export interface Course extends CourseCore {
 	topics: ModuleTopic[];
 	training?: Training;
 	score?: number;
+	contentTree?: CourseContentTree
 }
+
+export type CourseContentTree = {
+	moduleId: string;
+	module: CourseModule;
+	topics: ModuleTopic[];
+}[]
 
 // 'on review' course raw data
 export interface CourseReview extends CourseCore {

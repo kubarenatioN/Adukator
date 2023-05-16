@@ -12,6 +12,7 @@ import {
 	combineLatest,
 	shareReplay,
 	tap,
+	filter,
 } from 'rxjs';
 import { NetworkRequestKey } from 'src/app/helpers/network.helper';
 import { UserService } from 'src/app/services/user.service';
@@ -23,10 +24,12 @@ import { StudentTraining } from 'src/app/models/course.model';
 import { FormBuilder, Validators } from '@angular/forms';
 import { FeedbackService } from '../../services/feedback.service';
 import { User } from 'src/app/typings/user.types';
+import { constructCourseTree } from 'src/app/helpers/courses.helper';
 
 type ViewData = {
-	course: Course
-	training: StudentTraining
+	course: Course | null
+	trainings: Training[] | null
+	activeTraining: StudentTraining | null
 	competenciesDiff: string[]
 	trainingLookup: TrainingProfileMeta | null | 'NoEnroll'
 	isUserOwner: boolean
@@ -47,8 +50,10 @@ export class CourseOverviewComponent implements OnInit {
 	private enrollmentSub?: Subscription;
 	private courseEnrollTrigger$ = new BehaviorSubject<void>(undefined);
 	private feedbacksRefresh$ = new BehaviorSubject<CourseFeedback[]>([])
+	private activeTraining: Training | null = null
 
 	public viewData$!: Observable<ViewData | null>
+	public course$!: Observable<Course | null>
 
 	public trainingLookup$: Observable<
 		TrainingProfileMeta | 'NoEnroll'
@@ -72,31 +77,43 @@ export class CourseOverviewComponent implements OnInit {
 	) { }
 
 	public ngOnInit(): void {
-		const training$ = this.configService.competencies$.pipe(
-			switchMap((config) => {
-				this.competenciesConfig = config;
-				return this.activatedRoute.paramMap;
-			}),
+		const course$ = this.activatedRoute.paramMap.pipe(
 			switchMap((paramMap) => {
 				const id = String(paramMap.get('id'));
 				if (id) {
-					return this.learnService.getTraining(id);
+					return this.learnService.getCourse(id);
 				}
 				return of(null);
 			}),
-			map((res) => (res ? new StudentTraining(res[0]) : null)),
+			map(res => res ? res.data[0] : null),
+			tap(course => {
+				if (course) {
+					course.contentTree = constructCourseTree(course)
+				}
+			}),
 			shareReplay(1)
 		);
+
+		const trainings$ = course$.pipe(
+			switchMap(course => {
+				return course ? this.learnService.getCourseTrainings(course.uuid) : of(null)
+			}),
+			map(trainings => {
+				this.activeTraining = trainings?.find(t => t.status === 'active') ?? null
+				return trainings ? trainings : null
+			}),
+			shareReplay(1)
+		)
 
 		const competenciesDiff$ = combineLatest([
 			this.configService.competencies$,
 			this.userService.user$, 
-			training$,			
-		]).pipe(		
-			map(([competencies, user, training]) => {
+			course$,			
+		]).pipe(
+			map(([competencies, user, course]) => {
 				const userComps = user.trainingProfile.competencies;
 				const diff =
-					training?.course.competencies.required.reduce(
+					course?.competencies.required.reduce(
 						(diff, comp) => {
 							if (!userComps.includes(comp)) {
 								diff.push(comp);
@@ -119,14 +136,14 @@ export class CourseOverviewComponent implements OnInit {
 
 		const trainingLookup$ = combineLatest([
 			this.courseEnrollTrigger$.asObservable(),
-			training$,
+			trainings$,
 			this.userService.user$,
 		]).pipe(
 			switchMap(([_, training, user]) => {
-				if (training && user) {
+				if (this.activeTraining && user) {
 					return this.learnService.lookupTraining(
 						[user._id],
-						training._id
+						this.activeTraining._id
 					);
 				}
 				return of(null);
@@ -140,10 +157,10 @@ export class CourseOverviewComponent implements OnInit {
 			shareReplay(1)
 		);
 
-		const initialFeedbacks$ = training$.pipe(
-			switchMap(training => {
-				if (training) {
-					return this.feedbackService.getCourseFeedbacks(training.course._id, training._id)
+		const initialFeedbacks$ = course$.pipe(
+			switchMap(course => {
+				if (course) {
+					return this.feedbackService.getCourseFeedbacks(course._id)
 				}
 				return of(null)
 			}),
@@ -172,7 +189,8 @@ export class CourseOverviewComponent implements OnInit {
 		)
 
 		this.viewData$ = combineLatest([
-			training$,
+			trainings$,
+			course$,
 			competenciesDiff$,
 			trainingLookup$,
 			this.configService.competencies$,
@@ -180,23 +198,28 @@ export class CourseOverviewComponent implements OnInit {
 			feedbacks$,
 		]).pipe(
 			map(([
-				training,
+				trainings,
+				course,
 				compDiff,
 				trainingLookup,
 				competenciesConfig,
 				user,
 				feedbacks
-			]) => {
-				if (!training) {
-					return null
-				}
+			]) => {				
+				const isOwner = user.permission === 'teacher' && user.uuid === course?.authorId
+
+				const userTrainings = user.trainingProfile.trainingHistory as string[]
+				const activeTraining = trainings?.find(t => t.status === 'active') ?? null
 				
-				const isOwner = user.permission === 'teacher' && user.uuid === training.course.authorId
-				const canAddReview = (user.trainingProfile.trainingHistory as string[]).includes(training._id) && !isOwner
+				const isUserPassedCourseTraining = trainings?.filter(training => userTrainings.includes(training._id) && training.status === 'archived');
+
+				const canAddReview = isUserPassedCourseTraining ? isUserPassedCourseTraining.length > 0 && !isOwner : false
+				this.competenciesConfig = competenciesConfig
 
 				return {
-					course: training.course,
-					training,
+					course,
+					trainings,
+					activeTraining: activeTraining ? new StudentTraining(activeTraining) : null,
 					competenciesDiff: compDiff,
 					trainingLookup,
 					isUserOwner: isOwner,
@@ -250,16 +273,20 @@ export class CourseOverviewComponent implements OnInit {
 			console.warn('Form is invalid');
 			return;
 		}
-
 		const { text, rating } = this.feedbackForm.value
-		const { training, course, user } = viewData
+		const { trainings, course, user } = viewData
+
+		if (!course) {
+			console.warn('No course found.');
+			return;
+		}
+
 		if (text) {
 			this.feedbackService.postCourseFeedback({
 				text,
 				rating: Number(rating),
 				authorId: user._id,
 				courseId: course._id,
-				trainingId: training._id
 			}).subscribe(res => {
 				this.feedbackForm.reset()
 				const { created } = res

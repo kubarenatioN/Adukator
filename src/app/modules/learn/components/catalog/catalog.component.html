@@ -15,16 +15,16 @@
 	<div class="catalog-content">
 		<a
 			class="catalog-item"
-			[routerLink]="['../overview/course', training.uuid]"
-			*ngFor="let training of list$ | async"
+			[routerLink]="['../overview/course', course.uuid]"
+			*ngFor="let course of list$ | async"
 		>
-			<h3>{{ training.title }}</h3>
-			<p class="catalog-item__views">Status: {{ training.status }}</p>
+			<h3>{{ course.title }}</h3>
+			<p class="catalog-item__views">Status: {{ course?.training?.status }}</p>
 			<div class="catalog-item__footer">
 				<span class="catalog-item__views">Views: 2.3k</span>
-				<span class="catalog-item__participants"
-					>Participants: 123</span
-				>
+				<span class="catalog-item__participants">
+					Participants: 123
+				</span>
 			</div>
 		</a>
 	</div>

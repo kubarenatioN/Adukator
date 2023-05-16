@@ -1,18 +1,24 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, ReplaySubject, shareReplay } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, map, shareReplay } from 'rxjs';
 import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
+import { NetworkRequestKey } from 'src/app/helpers/network.helper';
 import { CoursesService } from 'src/app/services/courses.service';
 import { TrainingDataService } from 'src/app/services/training-data.service';
+import { Course } from 'src/app/typings/course.types';
 import { Training } from 'src/app/typings/training.types';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class LearnService {
-	// private trainingStore$ = new ReplaySubject<Training>(1);
 	private trainingsListStore$ = new BehaviorSubject<Training[]>([]);
+	private coursesListStore$ = new BehaviorSubject<Course[]>([]);
 
 	public trainingsList$: Observable<Training[]> = this.trainingsListStore$
+		.asObservable()
+		.pipe(shareReplay(1));
+
+	public coursesList$: Observable<Course[]> = this.coursesListStore$
 		.asObservable()
 		.pipe(shareReplay(1));
 	// public training$ = this.trainingStore$.pipe(shareReplay(1));
@@ -22,7 +28,7 @@ export class LearnService {
 		private coursesService: CoursesService
 	) {}
 
-	public loadList(options: {
+	public getCoursesList(options: {
 		pagination?: {
 			offset: number;
 			limit: number;
@@ -30,9 +36,12 @@ export class LearnService {
 		filters?: {};
 		fields: string[];
 	}) {
-		this.trainingDataService
-			.getTrainingsList(options)
-			.subscribe((trainings) => this.trainingsListStore$.next(trainings));
+		this.coursesService
+			.getCoursesList(options)
+			.pipe(map(res => res.data))
+			.subscribe(courses => {
+				return this.coursesListStore$.next(courses)
+			});
 	}
 
 	public loadBundles() {
@@ -44,6 +53,21 @@ export class LearnService {
 			trainingsIds: [trainingId],
 			fields: CoursesSelectFields.Full,
 		});
+	}
+
+	public getCourse(courseId: string) {
+		return this.coursesService.getCourses<{ data: Course[] }>({
+			coursesIds: [courseId],
+			type: 'published',
+			reqId: 'OverviewCourse',
+			fields: CoursesSelectFields.Full,
+		});
+	}
+
+	public getCourseTrainings(courseId: string) {
+		return this.coursesService.getCourseTrainings(courseId).pipe(
+			map(res => res.trainings)
+		)
 	}
 
 	public lookupTraining(studentsIds: string[], trainingId: string) {

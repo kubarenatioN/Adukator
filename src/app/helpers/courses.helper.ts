@@ -1,6 +1,7 @@
 import { FormGroup } from '@angular/forms';
 import {
 	Course,
+	CourseContentTree,
 	CourseFormData,
 	CourseFormMetadata,
 	CourseFormModule,
@@ -155,7 +156,7 @@ export const generateUUID = (): string => {
 	return nanoid();
 };
 
-export const constructCourseTree = (form: FormGroup) => {
+export const constructCourseTreeFromForm = (form: FormGroup) => {
 	const modules = form.get('modules')?.value as CourseFormModule[];
 	const topics = form.get('topics')?.value as ModuleTopic[];
 	const tree = modules.map((module) => {
@@ -167,6 +168,17 @@ export const constructCourseTree = (form: FormGroup) => {
 	});
 
 	return tree;
+};
+
+export const constructCourseTree = (course: Course): CourseContentTree => {
+	const topics = course.topics
+	return course.modules.map(m => {
+		return {
+			moduleId: m.id,
+			module: m,
+			topics: topics.filter(topic => topic.moduleId === m.id),
+		};
+	})
 };
 
 export const removeComments = <T>(course: Record<string, any>): T => {

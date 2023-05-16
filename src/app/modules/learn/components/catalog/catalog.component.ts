@@ -5,7 +5,7 @@ import { UserService } from 'src/app/services/user.service';
 import { Training } from 'src/app/typings/training.types';
 import { LearnService } from '../../services/learn.service';
 import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
-import { CourseBundle } from 'src/app/typings/course.types';
+import { Course, CourseBundle } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-courses-catalog',
@@ -17,7 +17,7 @@ export class CatalogComponent
 	extends CenteredContainerDirective
 	implements OnInit
 {
-	public list$!: Observable<Training[]>;
+	public list$!: Observable<Course[]>;
 	public bundlesList$!: Observable<CourseBundle[]>;
 
 	public isTeacherUser$ = this.userService.user$.pipe(
@@ -29,11 +29,11 @@ export class CatalogComponent
 		private userService: UserService
 	) {
 		super();
-		this.list$ = this.learnService.trainingsList$;
 	}
 
 	public ngOnInit(): void {
-		this.learnService.loadList({
+		this.list$ = this.learnService.coursesList$;
+		this.learnService.getCoursesList({
 			pagination: {
 				offset: 0,
 				limit: 10,
