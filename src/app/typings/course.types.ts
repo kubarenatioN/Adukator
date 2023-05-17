@@ -38,7 +38,6 @@ export enum PracticeFormFields {
 export enum TaskFormFields {
 	TaskDescr = 'taskDescr',
 	Materials = 'materials',
-	Comment = 'comment',
 }
 
 export interface TopicTask {
@@ -47,7 +46,7 @@ export interface TopicTask {
 	materials?: string[];
 	type?: 'personal';
 	isOpened?: boolean;
-	comments?: Record<string, string>;
+	comments?: Record<string, CourseReviewControlComment[] | null>;
 }
 
 export interface TopicPractice {
@@ -74,7 +73,7 @@ export interface ModuleTopic {
 	startAt: string;
 	days?: number;
 	weeks?: number;
-	comments: Record<string, string>; // move this review-related field in separate interface
+	comments?: Record<string, CourseReviewControlComment[] | null>;
 	isActual?: boolean;
 	isPast?: boolean;
 }
@@ -84,7 +83,7 @@ export interface CourseFormModule {
 	title: string;
 	description: string;
 	topics: ModuleTopic[];
-	comments: Record<string, string>;
+	comments?: Record<string, CourseReviewControlComment[] | null>;
 }
 
 export interface CourseModule {
@@ -99,7 +98,7 @@ export interface CourseFormOverallInfo {
 	description: string;
 	category: string;
 	categoryLabel?: string;
-	comments: Record<string, CourseReviewControlComment[] | null>;
+	comments?: Record<string, CourseReviewControlComment[] | null>;
 	acquiredCompetencies: string[];
 	requiredCompetencies: string[];
 }
@@ -141,35 +140,33 @@ export interface CourseReview extends CourseCore {
 	createdAt?: string;
 	status?: CourseReviewStatus;
 	modules: CourseFormModule[];
-	comments: {
-		[key: string]: CourseReviewControlComment[] | null;
-	};
+	comments?: Record<string, CourseReviewControlComment[] | null>;
 }
 
 // use type like this to separate review comments from actual course data
-export interface CourseReviewComments {
-	overallComments: {
-		[key: string]: CourseReviewControlComment[] | null;
-	};
-	modules: {
-		id: string;
-		comments: {
-			[key: string]: CourseReviewControlComment[] | null;
-		};
-	}[];
-	topics: {
-		id: string;
-		comments: {
-			[key: string]: CourseReviewControlComment[] | null;
-		};
-	}[];
-	tasks?: {
-		id: string;
-		comments: {
-			[key: string]: CourseReviewControlComment[] | null;
-		};
-	}[];
-}
+// export interface CourseReviewComments {
+// 	overallComments: {
+// 		[key: string]: CourseReviewControlComment[] | null;
+// 	};
+// 	modules: {
+// 		id: string;
+// 		comments: {
+// 			[key: string]: CourseReviewControlComment[] | null;
+// 		};
+// 	}[];
+// 	topics: {
+// 		id: string;
+// 		comments: {
+// 			[key: string]: CourseReviewControlComment[] | null;
+// 		};
+// 	}[];
+// 	tasks?: {
+// 		id: string;
+// 		comments: {
+// 			[key: string]: CourseReviewControlComment[] | null;
+// 		};
+// 	}[];
+// }
 
 export interface CourseCompetency {
 	id: string;

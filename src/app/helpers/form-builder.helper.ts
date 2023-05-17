@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
-	FormArray,
 	FormBuilder,
-	FormControl,
 	FormGroup,
 	Validators,
 } from '@angular/forms';
@@ -10,7 +8,6 @@ import { CourseFormDataMock } from '../mocks/course-form-data';
 import {
 	CourseFormData,
 	CourseFormModule,
-	CourseModule,
 	CourseTopFormGroups,
 	ModuleFormFields,
 	ModuleTopic,
@@ -22,14 +19,11 @@ import {
 	TopicTask,
 } from '../typings/course.types';
 import {
-	Personalization,
 	ProfileProgressRecord,
-	TrainingProfile,
-	TrainingProfilePersonalizations,
-	TrainingProfileUser,
 	TrainingTaskAnswer,
 } from '../typings/training.types';
 import { generateUUID } from './courses.helper';
+import { CourseReviewControlComment } from '../typings/course-review.types';
 
 @Injectable({
 	providedIn: 'root',
@@ -124,7 +118,7 @@ export class FormBuilderHelper {
 			[TaskFormFields.Materials]: task ? [task.materials] : [[]],
 			comments: this.getFormGroupComments(
 				TaskFormFields,
-				task?.comments ?? {}
+				task?.comments ? task.comments : {}
 			),
 		});
 	}
@@ -205,12 +199,13 @@ export class FormBuilderHelper {
 
 	private getFormGroupComments(
 		fields: Record<string, string>,
-		comments: Record<string, unknown>
+		comments: Record<string, CourseReviewControlComment[] | null>
 	) {
-		const commentsObj: { [key: string]: unknown } = {};
+		const commentsObj: Record<string, [CourseReviewControlComment[] | null]> = {};
 		Object.values(fields).forEach((key: string) => {
-			commentsObj[key] = comments[key] ?? null;
+			commentsObj[key] = [comments[key] ?? null];
 		});
+		
 		return this.fb.group(commentsObj);
 	}
 

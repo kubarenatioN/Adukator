@@ -1,6 +1,6 @@
 <form [formGroup]="form">
 	<mat-form-field
-		*appFormElWrapper="form; control: 'title'; type: controlsType"
+		*appFormElWrapper="form; control: 'title'; type: 'edit'"
 		appearance="fill"
 	>
 		<mat-label>Название темы</mat-label>
@@ -8,7 +8,7 @@
 	</mat-form-field>
 
 	<mat-form-field
-		*appFormElWrapper="form; control: 'description'; type: controlsType"
+		*appFormElWrapper="form; control: 'description'; type: 'edit'"
 		appearance="fill"
 	>
 		<mat-label>Описание темы</mat-label>
@@ -66,18 +66,25 @@
 	<div class="section materials">
 		<h3>Материалы</h3>
 		<button (click)="onRemoveSection('materials')">Удалить раздел</button>
-
-		<app-upload-box
-			class="upload-box"
-			[folder]="uploadFolder"
-			[controlId]="controlId"
-			[type]="uploadType"
-			serveFrom="local"
-			[preloadExisting]="shouldPreloadExisting"
-			[autoRemoveOnDestroy]="false"
-			(uploadFilesChanged)="onUploadFilesChanged($event)"
+		
+		<ng-container *appFormElWrapper="
+		form; 
+		control: 'materials'; 
+		type: 'edit';
+		reviewType: 'file'"
 		>
-		</app-upload-box>
+			<app-upload-box
+				class="upload-box"
+				[folder]="uploadFolder"
+				[controlId]="controlId"
+				[type]="uploadType"
+				serveFrom="local"
+				[preloadExisting]="shouldPreloadExisting"
+				[autoRemoveOnDestroy]="false"
+				(uploadFilesChanged)="onUploadFilesChanged($event)"
+			>
+			</app-upload-box>
+		</ng-container>
 	</div>
 </ng-template>
 
@@ -116,7 +123,7 @@
 		<h3>Теория</h3>
 		<button (click)="onRemoveSection('theory')">Удалить раздел</button>
 		<mat-form-field
-			*appFormElWrapper="form; control: 'theory'; type: controlsType"
+			*appFormElWrapper="form; control: 'theory'; type: 'edit'"
 			appearance="fill"
 		>
 			<mat-label>Теория</mat-label>
@@ -130,7 +137,7 @@
 		<h3>Тест</h3>
 		<button (click)="onRemoveSection('test')">Удалить раздел</button>
 		<mat-form-field
-			*appFormElWrapper="form; control: 'testLink'; type: controlsType"
+			*appFormElWrapper="form; control: 'testLink'; type: 'edit'"
 			appearance="fill"
 		>
 			<mat-label>Ссылка на тест</mat-label>

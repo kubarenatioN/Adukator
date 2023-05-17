@@ -1,6 +1,14 @@
 <form [formGroup]="form">
-	<label>Задание</label>
-	<input formControlName="taskDescr" />
+	<ng-container 
+		*appFormElWrapper="
+			form;
+			control: 'taskDescr';
+			type: 'edit'
+		"
+	>
+		<label>Задание</label>
+		<input formControlName="taskDescr" />
+	</ng-container>
 
 	<div class="field">
 		<h3>Ресурсы</h3>

@@ -31,7 +31,8 @@
 </ng-template>
 
 <ng-template #editWrapper>
-	<button
+	<span class="material-icons-outlined"> error_outline </span>
+	<!-- <button
 		[class.active]="isEditDone"
 		class="action-btn"
 		mat-raised-button
@@ -39,9 +40,9 @@
 		[color]="isEditDone ? '' : 'primary'"
 	>
 		<span class="material-icons-outlined"> error_outline </span>
-	</button>
+	</button> -->
 
-	<ng-container *ngIf="isEditDone === false">
+	<ng-container *ngIf="true">
 		<div>
 			<span *ngFor="let comment of comments">
 				{{ comment.label }}.

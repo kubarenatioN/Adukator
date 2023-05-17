@@ -58,7 +58,8 @@ export class FormElementReviewWrapperComponent implements OnInit {
 	
 	@Input() public content!: TemplateRef<any>;
 	@Input() public set form(value: FormGroup) {
-		this._form = value.controls['comments'] as FormGroup;
+		const form = value.controls['comments'] as FormGroup;
+		this._form = form		
 		this.comments = this.getComments(this._form)
 		this.hasComments = this.comments.length > 0
 
