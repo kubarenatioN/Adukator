@@ -1,14 +1,10 @@
 import {
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
 	Component,
 	Input,
 	OnInit,
 	TemplateRef,
 } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { FormGroup } from '@angular/forms';
 import { CourseReviewControlComment } from 'src/app/typings/course-review.types';
 import { WrapperType } from 'src/app/typings/course.types';
 
@@ -31,98 +27,103 @@ const textItems: CourseReviewControlComment[] = [
 	},
 ];
 
-type ReviewType = 'text' | 'category' | 'dates' | 'checkbox';
+const fileItems: CourseReviewControlComment[] = [
+	{
+		id: 1,
+		label: 'Файлы не несут обучающий характер',
+	},
+	{
+		id: 2,
+		label: 'Плохое качество файлов',
+	},
+	{
+		id: 3,
+		label: 'Избыточное количество файлов',
+	},
+];
+
+export type ReviewType = 'text' | 'category' | 'file' | 'dates' | 'checkbox';
 
 @Component({
 	selector: 'app-form-element-review-wrapper',
 	templateUrl: './form-element-review-wrapper.component.html',
 	styleUrls: ['./form-element-review-wrapper.component.scss'],
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormElementReviewWrapperComponent implements OnInit {
 	private _form!: FormGroup;
-	private textItems = textItems;
-	private commentsStore$ = new BehaviorSubject<CourseReviewControlComment[]>(
-		[]
-	);
-	private reviewItemsStore$ = new BehaviorSubject<
-		CourseReviewControlComment[]
-	>(textItems);
-	private isReviewActiveStore$ = new BehaviorSubject<boolean>(false);
-	private isEditDoneStore$ = new BehaviorSubject<boolean>(false);
+	
+	public comments: CourseReviewControlComment[] = []
 
+	public reviewItems: CourseReviewControlComment[] = []
+	
 	@Input() public content!: TemplateRef<any>;
 	@Input() public set form(value: FormGroup) {
 		this._form = value.controls['comments'] as FormGroup;
+		this.comments = this.getComments(this._form)
+		this.hasComments = this.comments.length > 0
+
 		if (this.type === 'review') {
-			this.checkReviewComments();
-		} else {
-			this.commentsStore$.next(this.getComments());
+			this.isReviewActive = this.hasComments
+			this.reviewItems = this.getReviewItems(this.reviewType)
 		}
 	}
 	@Input() public control!: string;
 	@Input() public type: WrapperType = 'review';
 	@Input() public reviewType: ReviewType = 'text';
 
-	public reviewItems$: Observable<CourseReviewControlComment[]>;
-	public comments$: Observable<CourseReviewControlComment[]>;
-	public isReviewActive$: Observable<boolean>;
-	public isEditDone$: Observable<boolean>;
-	public hasComments$: Observable<boolean>;
+	public isReviewActive: boolean = false;
+	public isEditDone: boolean = false;
+	public hasComments: boolean = false;
 
 	public get form(): FormGroup {
 		return this._form;
 	}
 
-	constructor(private cd: ChangeDetectorRef) {
-		this.reviewItems$ = this.reviewItemsStore$.asObservable();
-		this.isReviewActive$ = this.isReviewActiveStore$.asObservable();
-		this.isEditDone$ = this.isEditDoneStore$.asObservable();
-		this.comments$ = this.commentsStore$.asObservable();
-		this.hasComments$ = this.comments$.pipe(
-			map((comments) => comments.length > 0)
-		);
+	constructor() {
 	}
 
-	ngOnInit(): void {}
-
-	public onChange(e: MatSelectChange) {}
+	ngOnInit(): void {
+		
+	}
 
 	public onToggle(type: WrapperType): void {
 		if (type === 'review') {
-			this.isReviewActiveStore$.next(!this.isReviewActiveStore$.value);
+			this.isReviewActive = !this.isReviewActive;
 		} else if (type === 'edit') {
-			this.isEditDoneStore$.next(!this.isEditDoneStore$.value);
+			this.isEditDone = !this.isEditDone;
 		}
 	}
 
-	public getCommentsLabel(comments: CourseReviewControlComment[]) {
-		return comments;
+	public compareCommentOptions(o1: CourseReviewControlComment, o2: CourseReviewControlComment) {
+	return o1 && o2 && o1.id == o2.id;
 	}
 
-	public getItems() {
-		return this.textItems;
+	public getReviewItems(type: ReviewType) {
+		switch (type) {
+			case 'text':
+				return [...textItems]
+		
+			case 'file':
+				return [...fileItems]
+		
+			case 'category':
+				return [...textItems]
+		
+			default:
+				return [...textItems]
+		}
 	}
 
-	private getComments(): CourseReviewControlComment[] {
-		if (this.form === null) {
+	private getComments(form: FormGroup): CourseReviewControlComment[] {
+		if (form === null) {
 			return [];
 		}
 
-		let value = this.form.value[this.control];
+		let value = form.value[this.control];
 		if (value === null) {
 			return [];
 		}
 
 		return Array.isArray(value) ? value : [value];
-	}
-
-	private checkReviewComments() {
-		const comments = this._form.value[this.control];
-
-		const isReviewActive = comments !== null && comments.length > 0;
-		this.isReviewActiveStore$.next(isReviewActive);
-		this.reviewItemsStore$.next(this.reviewItemsStore$.value);
-		// console.log('comments', comments, isReviewActive);
 	}
 }

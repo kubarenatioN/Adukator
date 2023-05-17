@@ -85,8 +85,6 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 		formData: CourseFormData;
 	}>();
 	@Output() public update = new EventEmitter<CourseFormData>();
-	@Output() public publish = new EventEmitter<CourseFormData>();
-	@Output() public saveReview = new EventEmitter();
 	@Output() public formChanged = new EventEmitter<typeof this.courseForm>();
 
 	constructor(
@@ -102,6 +100,7 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 		this.courseForm = this.fbHelper.getNewCourseFormModel(courseId);
 
 		this.courseForm.valueChanges.subscribe((res) => {
+			console.log(res);
 			this.formChanged.emit(this.courseForm);
 		});
 
@@ -113,7 +112,7 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 
 				this.viewType$.next(viewPath.type);
 				this.overallInfoSubform.controls.id.setValue(metadata.uuid);
-				this.activeFormGroup = this.getFormGroup(viewPath);
+				this.activeFormGroup = this.courseBuilderService.getActiveFormGroup(this.courseForm, viewPath);
 			})
 		);
 
@@ -176,14 +175,6 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 				}
 				break;
 			}
-			case 'review': {
-				this.onSaveReview();
-				break;
-			}
-			case 'publish': {
-				this.publish.emit(value as unknown as CourseFormData);
-				break;
-			}
 
 			default:
 				break;
@@ -198,31 +189,6 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 		return getTopicMaxDate(this.courseForm, form);
 	}
 
-	private getFormGroup({ type, module, topic }: CourseBuilderViewPath): any {
-		try {
-			if (module != null && type === 'module') {
-				const moduleForm = this.findControlById(
-					[...this.courseForm.controls.modules.controls],
-					module
-				);
-				if (type === 'module') {
-					return moduleForm;
-				}
-			} else if (topic != null && type === 'topic') {
-				const topics: FormGroup[] = [];
-				this.courseForm.controls.modules.controls.forEach((module) => {
-					topics.push(...module.controls.topics.controls);
-				});
-				return this.findControlById(topics, topic);
-			} else {
-				return this.courseForm.controls.overallInfo;
-			}
-		} catch (error) {
-			this.viewType$.next('main');
-			return this.courseForm.controls.overallInfo;
-		}
-	}
-
 	private onCreateReviewVersion(
 		formData: CourseFormData,
 		isMaster: boolean
@@ -233,19 +199,7 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 		});
 	}
 
-	private onSaveReview() {
-		const comments = {
-			overallComments: this.overallInfoSubform.value.comments,
-			modules: this.modulesFormArray.value,
-		};
-		this.saveReview.emit(comments);
-	}
-
 	private setCourseModel(courseData: CourseFormData): void {
 		this.fbHelper.fillCourseModel(this.courseForm, courseData);
-	}
-
-	private findControlById(array: FormGroup[], id: string): FormGroup {
-		return array.find((control) => control.value.id === id) as FormGroup;
 	}
 }

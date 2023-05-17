@@ -8,7 +8,7 @@
 	</ng-container>
 	<ng-container *ngSwitchCase="'edit'">
 		<ng-container
-			*ngIf="hasComments$ | async"
+			*ngIf="hasComments"
 			[ngTemplateOutlet]="editWrapper"
 		></ng-container>
 	</ng-container>
@@ -16,34 +16,34 @@
 
 <ng-template #reviewWrapper>
 	<button
-		[class.active]="isReviewActive$ | async"
+		[class.active]="isReviewActive"
 		class="action-btn"
 		mat-raised-button
 		(click)="onToggle('review')"
-		[color]="(isReviewActive$ | async) === true ? 'primary' : ''"
+		[color]="isReviewActive === true ? 'primary' : ''"
 	>
 		<span class="material-icons-outlined"> rate_review </span>
 	</button>
 
-	<ng-container *ngIf="isReviewActive$ | async">
+	<ng-container *ngIf="isReviewActive">
 		<ng-container [ngTemplateOutlet]="commentOptions"></ng-container>
 	</ng-container>
 </ng-template>
 
 <ng-template #editWrapper>
 	<button
-		[class.active]="isEditDone$ | async"
+		[class.active]="isEditDone"
 		class="action-btn"
 		mat-raised-button
 		(click)="onToggle('edit')"
-		[color]="(isEditDone$ | async) ? 'primary' : ''"
+		[color]="isEditDone ? '' : 'primary'"
 	>
 		<span class="material-icons-outlined"> error_outline </span>
 	</button>
 
-	<ng-container *ngIf="(isEditDone$ | async) === false">
+	<ng-container *ngIf="isEditDone === false">
 		<div>
-			<span *ngFor="let comment of comments$ | async">
+			<span *ngFor="let comment of comments">
 				{{ comment.label }}.
 			</span>
 		</div>
@@ -53,13 +53,13 @@
 <ng-template #commentOptions>
 	<mat-form-field appearance="standard" [formGroup]="form">
 		<mat-select
-			(selectionChange)="onChange($event)"
 			multiple
 			disableOptionCentering
+			[compareWith]="compareCommentOptions"
 			[formControlName]="control"
 		>
 			<mat-option
-				*ngFor="let option of reviewItems$ | async"
+				*ngFor="let option of reviewItems"
 				[value]="option"
 			>
 				{{ option.label }}

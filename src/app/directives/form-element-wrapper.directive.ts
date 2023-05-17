@@ -7,7 +7,7 @@ import {
 	ViewContainerRef,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { FormElementReviewWrapperComponent } from '../components/form-element-review-wrapper/form-element-review-wrapper.component';
+import { FormElementReviewWrapperComponent, ReviewType } from '../components/form-element-review-wrapper/form-element-review-wrapper.component';
 import { WrapperType } from '../typings/course.types';
 
 @Directive({
@@ -18,6 +18,7 @@ export class FormElementWrapperDirective implements OnInit {
 	private form!: FormGroup;
 	private control!: string;
 	private type!: WrapperType;
+	private reviewType!: ReviewType;
 
 	@Input() public set appFormElWrapper(value: FormGroup) {
 		this.form = value;
@@ -34,6 +35,10 @@ export class FormElementWrapperDirective implements OnInit {
 		this.control = value;
 	}
 
+	@Input() public set appFormElWrapperReviewType(value: ReviewType) {
+		this.reviewType = value;
+	}
+
 	constructor(
 		private templateRef: TemplateRef<any>,
 		private viewContainerRef: ViewContainerRef
@@ -45,6 +50,7 @@ export class FormElementWrapperDirective implements OnInit {
 		);
 		// Order matters
 		this.wrapperContainer.instance.control = this.control;
+		this.wrapperContainer.instance.reviewType = this.reviewType;
 		this.wrapperContainer.instance.type = this.type;
 		this.wrapperContainer.instance.form = this.form;
 		this.wrapperContainer.instance.content = this.templateRef;

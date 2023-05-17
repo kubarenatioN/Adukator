@@ -1,5 +1,5 @@
 <p *ngIf="label">{{ label }}</p>
-<!-- <p>[dev] Folder: {{ folder }}</p> -->
+<p>[dev] Folder: {{ folder }}</p>
 <div class="wrapper">
 	<ng-container *ngIf="type === 'upload'">
 		<div appDnd (filesDropped)="onFilesDropped($event)" class="dropzone">
@@ -20,7 +20,6 @@
 						<app-file-item
 							*ngFor="let file of filesStore.values()"
 							class="file-item"
-							[controlId]="controlId"
 							[userFile]="file.userFile"
 							[autoRemoveOnDestroy]="autoRemoveOnDestroy"
 							[file]="file.uploadFile"

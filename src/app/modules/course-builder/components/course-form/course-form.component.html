@@ -38,10 +38,6 @@
 			*ngSwitchCase="viewModes.Edit"
 			[ngTemplateOutlet]="editHeader"
 		></ng-container>
-		<ng-container
-			*ngSwitchCase="viewModes.Review"
-			[ngTemplateOutlet]="reviewHeader"
-		></ng-container>
 	</ng-container>
 
 	<div [formGroup]="overallInfoSubform">
@@ -214,10 +210,6 @@
 			*ngSwitchCase="viewModes.Edit"
 			[ngTemplateOutlet]="editCourseActionButtons"
 		></ng-template>
-		<ng-template
-			*ngSwitchCase="viewModes.Review"
-			[ngTemplateOutlet]="reviewCourseActionButtons"
-		></ng-template>
 	</ng-container>
 </ng-template>
 
@@ -241,19 +233,6 @@
 	</button>
 </ng-template>
 
-<ng-template #reviewCourseActionButtons>
-	<button
-		mat-raised-button
-		color="primary"
-		(click)="onSubmit(viewModes.Review)"
-	>
-		Отправить на исправление
-	</button>
-	<button mat-raised-button color="primary" (click)="onSubmit('publish')">
-		Опубликовать
-	</button>
-</ng-template>
-
 <ng-template #createHeader>
 	<h1 class="title">Создание курса</h1>
 	<p>Пожалуйста, заполните данные о курсе в форму ниже.</p>
@@ -267,12 +246,4 @@
 <ng-template #editHeader>
 	<h1 class="title">Исправление курса</h1>
 	<p>Обновите содержание курса в соответствии с советами редакции.</p>
-</ng-template>
-
-<ng-template #reviewHeader>
-	<h1 class="title">Проверка курса</h1>
-	<p>
-		Проверьте содержание курса на соответствие
-		<a href="#">политики о содержимом</a>
-	</p>
 </ng-template>

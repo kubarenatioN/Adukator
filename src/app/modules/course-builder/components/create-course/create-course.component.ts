@@ -122,52 +122,8 @@ export class CreateCourseComponent
 				},
 			});
 	}
-
-	public onPublish(formData: CourseFormData): void {
-		const timeoutId = this.queueRedirect(['/app/admin']);
-
-		this.courseBuilderService
-			.publishCourse(formData)
-			.pipe(
-				catchError((err) => {
-					clearTimeout(timeoutId);
-					return throwError(() => err);
-				})
-			)
-			.subscribe({
-				next: (res) => {
-					console.log('Published course!', res);
-				},
-				error: (err) => {
-					console.error(err.message);
-				},
-			});
-	}
-
 	// TODO: return stream back, to refresh state after request
-	public onSaveReview(comments: {
-		overallComments: unknown;
-		modules: unknown;
-	}): void {
-		const timeoutId = this.queueRedirect(['/app/admin']);
-
-		this.courseBuilderService
-			.saveCourseReview(comments)
-			.pipe(
-				catchError((err) => {
-					clearTimeout(timeoutId);
-					return throwError(() => err);
-				})
-			)
-			.subscribe({
-				next: (res) => {
-					console.log('Course review created!', res);
-				},
-				error: (err) => {
-					console.error(err.message);
-				},
-			});
-	}
+	
 
 	public onFormChanged(form: FormGroup) {
 		this.courseBuilderService.rebuildContentTree(form)

@@ -12,7 +12,6 @@ import {
 	SimpleChanges,
 	ViewChild,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { from, map, Observable, Subscription } from 'rxjs';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
 import { UploadService } from 'src/app/services/upload.service';
@@ -32,12 +31,13 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
 
 	@Input() public folder = '';
 	@Input() public type!: 'upload' | 'download';
-	@Input() public controlId!: string;
+	@Input() public controlId?: string;
 	@Input() public label?: string;
 	@Input() public preloadExisting: boolean = false;
 	@Input() public useCache: boolean = true;
 	@Input() public serveFrom: 'cloud' | 'local' = 'cloud';
 	@Input() public autoRemoveOnDestroy = true;
+	@Input() public appendTimestamp = false;
 
 	@Input() public clearObs$?: EventEmitter<void>;
 
@@ -76,8 +76,12 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
 
 	public ngOnInit(): void {
 		this.clearObs$?.subscribe(() => {
-			this.cacheService.clearCache(this.controlId);
-			this.clearBox();
+			if (this.controlId) {
+				this.cacheService.clearCache(this.controlId);
+				this.clearBox();
+			} else {
+				throw new Error('No control ID provided')
+			}
 		});
 	}
 
@@ -115,7 +119,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
 		this.filesStore.delete(file.filename);
 		if (this.folder) {
 			this.uploadService
-				.removeTempFile(file.filename, this.folder, timestamp)
+				.removeTempFile(file.filename, this.folder, this.appendTimestamp ? timestamp : undefined)
 				.subscribe();
 			this.cacheService.removeFileFromCache(this.cacheKey, file);
 		}

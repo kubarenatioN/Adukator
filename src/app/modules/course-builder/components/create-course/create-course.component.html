@@ -2,10 +2,7 @@
 	<app-course-form
 		[formData]="formData$ | async"
 		(createReviewVersion)="onCreateReviewVersion($event)"
-		(saveReview)="onSaveReview($event)"
-		(publish)="onPublish($event)"
-		(formChanged)="onFormChanged($event)"
-	>
+		(formChanged)="onFormChanged($event)">
 	</app-course-form>
 </div>
 

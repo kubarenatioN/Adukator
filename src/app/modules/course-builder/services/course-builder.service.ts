@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 import {
 	of,
 	ReplaySubject,
@@ -29,6 +29,7 @@ import { UserService } from 'src/app/services/user.service';
 import {
 	Course,
 	CourseBuilderViewData,
+	CourseBuilderViewPath,
 	CourseBuilderViewType,
 	CourseContentTree,
 	CourseFormData,
@@ -156,7 +157,7 @@ export class CourseBuilderService {
 		});
 	}
 
-	public saveCourseReview(comments: {
+	public saveCourseReview(formWithComments: {
 		overallComments: unknown;
 		modules: unknown;
 	}) {
@@ -166,7 +167,7 @@ export class CourseBuilderService {
 				() => new Error('No _id provided to save review')
 			);
 		}
-		return this.adminCoursesService.saveCourseReview(id, comments);
+		return this.adminCoursesService.saveCourseReview(id, formWithComments);
 	}
 
 	public getCourse(mode: CourseFormViewMode, courseId: string, author: User) {
@@ -214,6 +215,31 @@ export class CourseBuilderService {
 		this.contentTree = constructCourseTreeFromForm(form)
 	}
 
+	public getActiveFormGroup(courseForm: FormGroup, { type, module, topic }: CourseBuilderViewPath): any {
+		try {
+			if (module != null && type === 'module') {
+				const moduleForm = this.findControlById(
+					[...(courseForm.controls['modules'] as FormArray).controls as FormGroup[]],
+					module
+				);
+				if (type === 'module') {
+					return moduleForm;
+				}
+			} else if (topic != null && type === 'topic') {
+				const topics: FormGroup[] = [];
+				// @ts-ignore
+				courseForm.controls.modules.controls.forEach(module => {
+					topics.push(...module.controls.topics.controls);
+				});
+				return this.findControlById(topics, topic);
+			} else {
+				return courseForm.controls['overallInfo'];
+			}
+		} catch (error) {
+			return courseForm.controls['overallInfo'];
+		}
+	}
+
 	private restoreCourseMetadata(
 		formData: CourseFormData,
 		metadata: CourseFormMetadata
@@ -247,5 +273,9 @@ export class CourseBuilderService {
 					: parentCourse.masterId, // all the versions point to the most first course version, the first one points to null
 			status: parentCourse.status,
 		};
+	}
+
+	private findControlById(array: FormGroup[], id: string): FormGroup {
+		return array.find((control) => control.value.id === id) as FormGroup;
 	}
 }

@@ -43,12 +43,12 @@ export class AdminCoursesService {
 
 	public saveCourseReview(
 		id: string,
-		comments: { overallComments: unknown; modules: unknown }
+		formWithComments: { overallComments: unknown; modules: unknown }
 	): Observable<unknown> {
 		const payload = NetworkHelper.createRequestPayload(
 			NetworkRequestKey.UpdateCourseReview,
 			{
-				body: { id, comments },
+				body: { id, comments: formWithComments },
 				params: { reqId: 'UpdateCourseReview' },
 			}
 		);

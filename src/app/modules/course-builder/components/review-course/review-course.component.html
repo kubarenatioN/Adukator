@@ -6,18 +6,19 @@
 		<ng-container
 			*ngSwitchCase="'main'"
 			[ngTemplateOutlet]="courseMainInfo"
-			[ngTemplateOutletContext]="{ viewData, course: courseForm.value }"
+			[ngTemplateOutletContext]="{ viewData, course: courseForm.value.overallInfo }"
 		>
 		</ng-container>
 		<ng-container
 			*ngSwitchCase="'module'"
 			[ngTemplateOutlet]="module"
+			[ngTemplateOutletContext]="{ module: activeFormGroup.value }"
 		>
 		</ng-container>
 		<ng-container
 			*ngSwitchCase="'topic'"
 			[ngTemplateOutlet]="topic"
-			[ngTemplateOutletContext]="{ viewData }"
+			[ngTemplateOutletContext]="{ viewData, topicForm: activeFormGroup, topic: activeFormGroup.value, course: courseForm.value.overallInfo }"
 		>
 		</ng-container>
 	</ng-container>
@@ -31,89 +32,57 @@
 	</p>
 
 	<div [formGroup]="overallInfoSubform">
+
 		<div class="property">
-			<div
-				*appFormElWrapper="
-					overallInfoSubform;
-					control: 'title';
-					type: controlsType
-				"
-				appearance="fill"
-			>
-				<mat-label>Название курса</mat-label>
+			<ng-container *appFormElWrapper="overallInfoSubform; control: 'title'; type: wrapperControlType">
+				<span>Название курса</span>
 				<h2>
-					{{ course.overallInfo.title }}
+					{{ course.title }}
 				</h2>
-			</div>
+			</ng-container>
 		</div>
 
 		<div class="property">
-			<div
-				*appFormElWrapper="
-					overallInfoSubform;
-					control: 'description';
-					type: controlsType
-				"
-				appearance="fill"
-			>
-				<mat-label>Описание курса</mat-label>
+			<ng-container *appFormElWrapper="overallInfoSubform; control: 'description'; type: wrapperControlType">
+				<span>Описание курса</span>
 				<p>
-					Descr...
+					{{ course.description }}
 				</p>
-			</div>
-		</div>
-
-		<!-- <div class="property">
-			<mat-form-field
-				*appFormElWrapper="
-					overallInfoSubform;
-					control: 'category';
-					type: controlsType
-				"
-				class="categories-container"
-				appearance="fill"
-			>
-				<mat-label>Категория</mat-label>
-				<mat-select formControlName="category">
-					<mat-option
-						*ngFor="let category of categories$ | async"
-						[value]="category.key"
-					>
-						{{ category.name }}
-					</mat-option>
-				</mat-select>
-			</mat-form-field>
+			</ng-container>
 		</div>
 
 		<div class="property">
-			<app-chips-control
-				[form]="overallInfoSubform"
-				[items]="competencies$ | async"
-				[picked]="overallInfoSubform.value.requiredCompetencies"
-				control="requiredCompetencies"
-				title="Необходимые компетенции"
-				class="categories-container"
-			></app-chips-control>
+			<ng-container *appFormElWrapper="overallInfoSubform; control: 'category'; type: wrapperControlType">
+				<span>Категория</span>
+				<p>{{ course.category }}</p>
+			</ng-container>
 		</div>
 
 		<div class="property">
-			<app-chips-control
-				[form]="overallInfoSubform"
-				[items]="competencies$ | async"
-				[picked]="overallInfoSubform.value.acquiredCompetencies"
-				control="acquiredCompetencies"
-				title="Получаемые компетенции"
-				class="categories-container"
-			></app-chips-control>
-		</div> -->
+			<ng-container *appFormElWrapper="overallInfoSubform; control: 'requiredCompetencies'; type: wrapperControlType">
+				<span>Необходимые компетенции</span>
+				<div class="competencies-list">
+					<p *ngFor="let comp of course.requiredCompetencies">{{ comp }}</p>
+				</div>
+			</ng-container>
+		</div>
+
+		<div class="property">
+			<ng-container *appFormElWrapper="overallInfoSubform; control: 'acquiredCompetencies'; type: wrapperControlType">
+				<span>Получаемые компетенции</span>
+				<div class="competencies-list">
+					<p *ngFor="let comp of course.acquiredCompetencies">{{ comp }}</p>
+				</div>
+			</ng-container>
+		</div>
 	</div>
 
 	<!-- <div class="modules">
-		<h3>Модули курса</h3>
+		<h4>Модули курса</h4>
 		<div
 			*ngFor="let moduleForm of modulesFormArray.controls; let i = index"
 			class="module-item">
-			<p>{{ i + 1 }}.{{ moduleForm.value.title }}</p>
+			<h3>{{ i + 1 }}.{{ moduleForm.value.title }}</h3>
 			<div class="topics">
 				<h4>Темы модуля</h4>
 				<div *ngFor="let topicForm of moduleForm.controls.topics.controls"
@@ -123,26 +92,7 @@
 						{{ topicForm.value.title }}
 					</div>
 					<div class="topic-duration">
-						<mat-form-field class="input" appearance="fill">
-							<mat-label>Недель</mat-label>
-							<input
-								formControlName="weeks"
-								matInput
-								type="number"
-								min="1"
-								max="20"
-							/>
-						</mat-form-field>
-						<mat-form-field class="input" appearance="fill">
-							<mat-label>Дней</mat-label>
-							<input
-								formControlName="days"
-								matInput
-								type="number"
-								min="1"
-								max="100"
-							/>
-						</mat-form-field>
+						{{ getTopicDuration(topicForm.value.days, topicForm.value.weeks) }}
 					</div>
 				</div>
 			</div>
@@ -162,10 +112,75 @@
 	</div>
 </ng-template>
 
-<ng-template #module>
-	<h1>Module</h1>
+<ng-template #module let-module="module">
+	<h2>
+		{{ module.title }}
+	</h2>
+	<p>
+		{{ module.description }}
+	</p>
 </ng-template>	
 
-<ng-template #topic>
-	<h1>Topic</h1>
+<ng-template #topic let-topic="topic" let-topicForm="topicForm" let-course="course">
+	<h2 *appFormElWrapper="topicForm; control: 'title'; type: wrapperControlType">
+		{{ topic.title }}
+	</h2>
+	<p *appFormElWrapper="
+	topicForm; 
+	control: 'description'; 
+	type: wrapperControlType">
+		{{ topic.description }}
+	</p>
+	<pre>
+		{{ topicForm.value | json }}
+	</pre>
+	<div *ngIf="topic.theory" class="section-topic section">
+		<ng-container *appFormElWrapper="topicForm; control: 'theory'; type: wrapperControlType">
+
+			<h4>Теория</h4>
+			{{ topic.theory }}
+		</ng-container>
+	</div>
+	
+	<div *ngIf="topic.materials?.length > 0" class="section-materials section">
+		<ng-container *appFormElWrapper="
+		topicForm; 
+		control: 'materials'; 
+		type: wrapperControlType;
+		reviewType: 'file'">
+			<h4>Материалы</h4>
+			<app-upload-box
+				[folder]="'review/' + metadata.masterCourseId + '/topics/' + topic.id"
+				type="download"
+				serveFrom="local"></app-upload-box>
+		</ng-container>
+	</div>
+
+	<div *ngIf="topicForm.controls.practice.controls" class="section-practice section">
+
+		<h4>Практика</h4>
+		<p class="practice-goal">
+			{{ topic.practice.goal }}
+		</p>
+	
+		<ng-container >
+
+		</ng-container>
+		
+		<div *ngFor="let taskForm of topicForm.controls.practice.controls.tasks.controls" 
+		class="topic-task">
+
+			<ng-container *appFormElWrapper="taskForm; control: 'taskDescr'; type: wrapperControlType">
+				<p>Задание: {{ taskForm.value.taskDescr }}</p>
+			</ng-container>
+			<ng-container *appFormElWrapper="taskForm; control: 'materials'; type: wrapperControlType; reviewType: 'file'">
+				<app-upload-box
+					[folder]="'review/' + metadata.masterCourseId + '/tasks/' + taskForm.value.id"
+					type="download"
+					serveFrom="local"></app-upload-box>
+			</ng-container>
+
+		</div>
+
+	</div>
 </ng-template>	

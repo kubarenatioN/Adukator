@@ -31,8 +31,8 @@ export class FileItemComponent implements OnInit, OnDestroy {
 	@Input() userFile!: UserFile;
 	@Input() file?: File;
 	@Input() type!: 'upload' | 'download';
-	@Input() controlId!: string;
 	@Input() clearObs$?: EventEmitter<void>;
+	@Input() appendTimestamp = false;
 
 	@Output() download = new EventEmitter<UserFile>();
 	@Output() uploaded = new EventEmitter<UserFile>();
@@ -50,7 +50,7 @@ export class FileItemComponent implements OnInit, OnDestroy {
 		this.timestamp = getCurrentTime();
 		if (this.type === 'upload' && this.file && this.folder) {
 			this.uploadService
-				.uploadFile(this.folder, this.file, this.timestamp)
+				.uploadFile(this.folder, this.file, this.appendTimestamp ? this.timestamp : undefined)
 				.subscribe((e) => this.handleUploadEvent(e));
 		}
 

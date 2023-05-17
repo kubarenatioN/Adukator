@@ -17,10 +17,12 @@ export type UploadPathSegment = 'tasks' | 'topics' | 'training';
 export class UploadService {
 	constructor(private http: HttpClient) {}
 
-	public uploadFile(tempFolder: string, file: File, timestamp: string) {
+	public uploadFile(tempFolder: string, file: File, timestamp?: string) {
 		const formData = new FormData();
 		formData.append('tempFolder', tempFolder);
-		formData.append('timestamp', timestamp);
+		if (timestamp) {
+			formData.append('timestamp', timestamp);
+		}
 		formData.append('file', file);
 
 		return this.http.post<{ filename: string; file: UserFile }>(
@@ -44,7 +46,7 @@ export class UploadService {
 		return this.getFilesFromLocal(folder);
 	}
 
-	public removeTempFile(filename: string, folder: string, timestamp: string) {
+	public removeTempFile(filename: string, folder: string, timestamp?: string) {
 		return this.http.post(`${apiUrl}/upload/temp/delete`, {
 			filename,
 			folder,
