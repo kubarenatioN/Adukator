@@ -125,15 +125,16 @@
 	<h2 *appFormElWrapper="topicForm; control: 'title'; type: wrapperControlType">
 		{{ topic.title }}
 	</h2>
-	<p *appFormElWrapper="
-	topicForm; 
-	control: 'description'; 
-	type: wrapperControlType">
-		{{ topic.description }}
-	</p>
-	<pre>
-		{{ topicForm.value | json }}
-	</pre>
+	
+	<ng-container *ngIf="topic.description">
+		<p *appFormElWrapper="
+			topicForm; 
+			control: 'description'; 
+			type: wrapperControlType">
+			{{ topic.description }}
+		</p>
+	</ng-container>
+
 	<div *ngIf="topic.theory" class="section-topic section">
 		<ng-container *appFormElWrapper="topicForm; control: 'theory'; type: wrapperControlType">
 

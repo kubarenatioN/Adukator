@@ -199,11 +199,12 @@ export class FormBuilderHelper {
 
 	private getFormGroupComments(
 		fields: Record<string, string>,
-		comments: Record<string, CourseReviewControlComment[] | null>
+		reviewComments: Record<string, CourseReviewControlComment[] | null>
 	) {
-		const commentsObj: Record<string, [CourseReviewControlComment[] | null]> = {};
+		const commentsObj: Record<string, [CourseReviewControlComment[]] | null> = {};
 		Object.values(fields).forEach((key: string) => {
-			commentsObj[key] = [comments[key] ?? null];
+			const comments = reviewComments[key]
+			commentsObj[key] = comments && comments.length > 0 ? [comments] : null
 		});
 		
 		return this.fb.group(commentsObj);
