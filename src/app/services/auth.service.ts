@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { EMPTY, filter, map, Observable, tap, throwError } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { LoginResponse, User } from '../typings/user.types';
+import { LoginResponse, User, UserRegisterData } from '../typings/user.types';
 import { DataRequestPayload, DataService } from './data.service';
-import { UserService } from './user.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -20,8 +18,14 @@ export class AuthService {
 		return this.dataService.send<LoginResponse>(payload);
 	}
 
-	public register() {
-		// TODO: implement
+	public register(userData: UserRegisterData) {
+		const key = NetworkRequestKey.RegisterUser
+		const payload = NetworkHelper.createRequestPayload(
+			key,
+			{ body: { ...userData }, params: { reqId: key } },
+		)
+
+		return this.dataService.send<LoginResponse>(payload)
 	}
 
 	public getUserByToken(): Observable<User | null> {

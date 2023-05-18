@@ -6,9 +6,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { takeUntil } from 'rxjs';
 import { DATA_ENDPOINTS } from 'src/app/constants/network.constants';
-import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 
@@ -20,7 +18,7 @@ import { BaseComponent } from 'src/app/shared/base.component';
 })
 export class LoginComponent extends BaseComponent implements OnInit {
 	public form: FormGroup;
-	public isSubmitDisabled = false;
+	public isLoading = false;
 
 	constructor(
 		private fb: FormBuilder,
@@ -43,7 +41,7 @@ export class LoginComponent extends BaseComponent implements OnInit {
 	public onSubmit(): void {
 		const { value, valid } = this.form;
 		if (valid) {
-			this.isSubmitDisabled = true;
+			this.isLoading = true;
 			this.userService.login(value).subscribe(
 				(user) => {
 					if (user !== null) {
@@ -53,7 +51,7 @@ export class LoginComponent extends BaseComponent implements OnInit {
 				(err) => {
 					console.error('Login Error', err);
 					setTimeout(() => {
-						this.isSubmitDisabled = false;
+						this.isLoading = false;
 						this.cd.detectChanges();
 					}, 500);
 				}

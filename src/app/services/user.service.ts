@@ -1,22 +1,18 @@
 import { Injectable } from '@angular/core';
 import {
-	BehaviorSubject,
 	catchError,
 	filter,
 	map,
 	Observable,
-	of,
 	ReplaySubject,
 	shareReplay,
-	Subject,
 	switchMap,
 	tap,
 	throwError,
 } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { Course } from '../typings/course.types';
 import { DataResponse } from '../typings/response.types';
-import { User, UserTrainingProfile } from '../typings/user.types';
+import { User, UserRegisterData, UserTrainingProfile } from '../typings/user.types';
 import { AuthService } from './auth.service';
 import { DataService } from './data.service';
 import { DATA_ENDPOINTS } from '../constants/network.constants';
@@ -78,6 +74,18 @@ export class UserService {
 				this.setUser(user, token);
 			})
 		);
+	}
+
+	public register(userData: UserRegisterData) {
+		return this.authService.register(userData).pipe(
+			catchError((err) => {
+				this.setUser(null, '');
+				return throwError(() => new Error(err.message));
+			}),
+			tap(({ token, user }) => {
+				this.setUser(user, token);
+			})
+		)
 	}
 
 	public setUser(user: User | null, token?: string) {

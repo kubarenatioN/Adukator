@@ -1,1 +1,34 @@
-<p>register works!</p>
+<h2>Регистрация</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+	<mat-form-field>
+		<mat-label>Почтовый адрес</mat-label>
+		<input formControlName="email" matInput type="email" />
+	</mat-form-field>
+	<mat-form-field>
+		<mat-label>Пароль</mat-label>
+		<input formControlName="password" matInput type="password" />
+	</mat-form-field>
+	<mat-form-field>
+		<mat-label>Повторите пароль</mat-label>
+		<input formControlName="passwordRepeat" matInput type="password" />
+	</mat-form-field>
+
+	<button
+		mat-raised-button
+		color="primary"
+		type="submit"
+		[disabled]="isLoading"
+	>
+		Зарегистрироваться
+	</button>
+</form>
+
+<p>Либо используйте другой способ входа</p>
+<button mat-raised-button color="primary" (click)="login('google')">
+	Google
+</button>
+<a mat-raised-button color="primary" (click)="login('twitter')">Twitter</a>
+
+<p>Уже есть аккаунт? <a routerLink="../login">Войдите</a></p>

@@ -109,6 +109,10 @@ export class NetworkHelper {
 			method: 'POST',
 			url: `${DATA_ENDPOINTS.auth.register}`,
 		},
+		[NetworkRequestKey.RegisterUser]: {
+			method: 'POST',
+			url: `${DATA_ENDPOINTS.auth.register}`,
+		},
 		[NetworkRequestKey.GetUserByToken]: {
 			method: 'POST',
 			url: `${DATA_ENDPOINTS.auth.user}`,

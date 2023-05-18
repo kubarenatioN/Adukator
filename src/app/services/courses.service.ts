@@ -55,7 +55,7 @@ export class CoursesService {
 					type: 'review',
 					coursesIds: [courseId],
 					fields: CoursesSelectFields.Full,
-					authorId: user.role === 'teacher' ? user.uuid : undefined,
+					authorId: user.permission === 'teacher' ? user.uuid : undefined,
 				});
 			}),
 			map((response) => response.data[0])

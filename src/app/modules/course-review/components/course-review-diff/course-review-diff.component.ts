@@ -108,11 +108,16 @@ export class CourseReviewDiffComponent implements OnInit {
 	): Observable<boolean> {
 		return this.userService.user$.pipe(
 			map((user) => {
+				if (!user) {
+					return false;
+				}
 				const isVisibleForTeacher =
-					user?.role === 'teacher' &&
+					user.permission === 'teacher' &&
 					status === CourseReviewStatus.ReadyForUpdate;
+
+				const { role, permission } = user 
 				const isVisibleForEditor =
-					user?.role === 'admin' &&
+					role === 'admin' &&
 					status === CourseReviewStatus.ReadyForReview;
 
 				const isLastVersion = this.isLastVersion(course);

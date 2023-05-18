@@ -6,9 +6,15 @@ export interface User {
 	email: string;
 	username: string;
 	photo?: string;
-	role?: 'teacher' | 'student' | 'admin';
-	permission: 'teacher' | 'student';
+	role: 'user' | 'admin';
+	permission: 'student' | 'teacher' | 'editor' | 'admin';
 	trainingProfile: UserTrainingProfile;
+}
+
+export interface UserRegisterData {
+	email: string,
+	password: string,
+	passwordRepeat: string,
 }
 
 export interface LoginResponse {

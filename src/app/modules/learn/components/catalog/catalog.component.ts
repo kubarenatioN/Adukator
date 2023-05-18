@@ -21,7 +21,7 @@ export class CatalogComponent
 	public bundlesList$!: Observable<CourseBundle[]>;
 
 	public isTeacherUser$ = this.userService.user$.pipe(
-		map((user) => user?.role === 'teacher')
+		map((user) => user?.permission === 'teacher')
 	);
 
 	constructor(
