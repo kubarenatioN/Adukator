@@ -171,10 +171,16 @@
 							/>
 						</mat-form-field>
 					</div>
+					<div class="topic-item-footer">
+						<button (click)="removeTopic(topicForm)">Удалить тему</button>
+					</div>
 				</div>
 				<button *ngIf="canEditForm" (click)="addTopic(moduleForm)">
 					Добавить тему
 				</button>
+			</div>
+			<div class="module-item__footer">
+				<button (click)="removeModule(moduleForm)">Удалить модуль</button>
 			</div>
 		</div>
 		<button *ngIf="canEditForm" (click)="addModule()">

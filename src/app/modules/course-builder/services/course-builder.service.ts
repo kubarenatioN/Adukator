@@ -17,6 +17,7 @@ import {
 	convertCourseFormDataToCourse,
 	convertCourseFormDataToCourseReview,
 	generateUUID,
+	nullifyComments,
 	removeComments,
 } from 'src/app/helpers/courses.helper';
 import { AdminCoursesService } from 'src/app/services/admin-courses.service';
@@ -149,7 +150,8 @@ export class CourseBuilderService {
 		}
 
 		this.restoreCourseMetadata(formData, this.courseMetadata);
-		const courseData = convertCourseFormDataToCourseReview(formData);
+		let courseData = convertCourseFormDataToCourseReview(formData);
+		courseData = nullifyComments(courseData)
 
 		// TODO: Uncomment method below
 		return this.coursesService.createCourseReviewVersion(courseData, {

@@ -203,3 +203,29 @@ export const removeComments = <T>(course: Record<string, any>): T => {
 
 	return course as T;
 };
+
+export const nullifyComments = <T>(course: Record<string, any>): T => {
+	const stack = [course];
+	while (stack?.length > 0) {
+		const currentObj = stack.pop()!;
+		Object.keys(currentObj).forEach((key) => {
+			if (
+				typeof currentObj[key] === 'object' &&
+				currentObj[key] !== null
+			) {
+				if (key === 'comments') {
+					const commentsObj = currentObj[key];
+					if (typeof commentsObj === 'object') {
+						Object.keys(commentsObj).forEach(key => {
+							commentsObj[key] = null
+						})
+					}
+				} else {
+					stack.push(currentObj[key]);
+				}
+			}
+		});
+	}
+
+	return course as T;
+};

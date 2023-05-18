@@ -34,8 +34,10 @@ import {
 	CourseBuilderViewData,
 	CourseBuilderViewType,
 	CourseFormData,
+	CourseFormModule,
 	CourseFormViewMode,
 	CourseReview,
+	ModuleTopic,
 	WrapperType,
 } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
@@ -136,9 +138,18 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 		moduleForm.controls.topics = topicsArray;
 	}
 
-	public removeModule(id: string): void {
-		// IMPLEMENT
-		// this.modulesFormArray.removeAt(index...);
+	public removeModule(moduleForm: FormGroup): void {
+		const module = moduleForm.value as CourseFormModule
+		this.modulesFormArray.removeAt(this.modulesFormArray.value.findIndex(m => m.id === module.id))
+	}
+
+	public removeTopic(topicForm: FormGroup) {
+		const topic = topicForm.value as ModuleTopic
+		const topicModule = this.modulesFormArray.controls.find(m => m.value.id === topic.moduleId)
+		if (topicModule) {
+			const topicIndex = topicModule.controls.topics.value.findIndex(t => t.id === topic.id)
+			topicModule.controls.topics.removeAt(topicIndex)
+		}
 	}
 
 	public onSubmit(action: CourseFormViewMode | 'publish'): void {

@@ -12,15 +12,21 @@
 
 	<div class="field">
 		<h3>Ресурсы</h3>
-		<app-upload-box
-			class="upload-box"
-			[type]="uploadType"
-			[folder]="uploadFolder"
-			[controlId]="controlId"
-			serveFrom="local"
-			[preloadExisting]="shouldPreloadExisting"
-			[autoRemoveOnDestroy]="false"
-			(uploadFilesChanged)="onUploadFilesChanged($event)"
-		></app-upload-box>
+		<ng-container *appFormElWrapper="
+			form;
+			control: 'materials';
+			type: 'edit';
+			reviewType: 'file'">
+			<app-upload-box
+				class="upload-box"
+				[type]="uploadType"
+				[folder]="uploadFolder"
+				[controlId]="controlId"
+				serveFrom="local"
+				[preloadExisting]="shouldPreloadExisting"
+				[autoRemoveOnDestroy]="false"
+				(uploadFilesChanged)="onUploadFilesChanged($event)"
+			></app-upload-box>
+		</ng-container>
 	</div>
 </form>
