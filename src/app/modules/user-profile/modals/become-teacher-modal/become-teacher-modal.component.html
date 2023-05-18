@@ -1,0 +1,10 @@
+<h2>Заявка на получение прав преподавателя</h2>
+
+<form [formGroup]="form">
+	<p>Какова ваша мотивация стать преподавателем?</p>
+	<mat-form-field appearance="fill">
+		<textarea matInput formControlName="motivation" placeholder=""></textarea>
+	</mat-form-field>
+
+	<button (click)="sendRequest()">Отправить заявку</button>
+</form>

@@ -1,46 +1,72 @@
-<ng-container *ngIf="user$ | async as user">
-	<div class="profile-banner">
-		<div class="row">
-			<img
-				crossorigin="anonymous"
-				referrerpolicy="no-referrer"
-				[src]="user.photo"
-				alt="User Avatar"
-			/>
-			<h1>{{ user.username }}</h1>
-		</div>
-		<h3>Ранг: {{ user.role }}</h3>
-		<div *ngIf="userTrainingProfile$ | async as userTrainingProfile">
-			<div class="competencies">
-				<h4>Компетенции</h4>
-				<ul
-					*ngIf="
-						userTrainingProfile.competencies.length > 0;
-						else noItems
-					"
-				>
-					<li *ngFor="let comp of userTrainingProfile.competencies">
-						{{ comp }}
-					</li>
-				</ul>
-			</div>
-		</div>
-	</div>
+<ng-container *ngIf="isUserOwnPage !== null; else loader">
+	<ng-container *ngIf="isUserOwnPage === true; else noAccess">
 
-	<ng-container [ngSwitch]="user.role">
-		<ng-container
-			*ngSwitchCase="'student'"
-			[ngTemplateOutlet]="studentPermissionProfile"
-		>
+		<ng-container *ngIf="user$ | async as user">
+			<div class="profile-banner">
+				<div class="row">
+					<img
+						crossorigin="anonymous"
+						referrerpolicy="no-referrer"
+						[src]="user.photo"
+						alt="User Avatar"
+					/>
+					<h1>{{ user.username }}</h1>
+				</div>
+				<h3>Ранг: {{ user.role }}</h3>
+				<div *ngIf="userTrainingProfile$ | async as userTrainingProfile">
+					<div class="competencies">
+						<h4>Компетенции</h4>
+						<ul
+							*ngIf="
+								userTrainingProfile.competencies.length > 0;
+								else noItems
+							"
+						>
+							<li *ngFor="let comp of userTrainingProfile.competencies">
+								{{ comp }}
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<ng-container [ngSwitch]="user.role">
+				<ng-container
+					*ngSwitchCase="'student'"
+					[ngTemplateOutlet]="studentPermissionProfile"
+				>
+				</ng-container>
+				<ng-container
+					*ngSwitchCase="'teacher'"
+					[ngTemplateOutlet]="teacherPermissionProfile"
+				>
+				</ng-container>
+			</ng-container>
+
+			<ng-container *ngIf="userTeacherPermsRequest$ | async as request; else becomeTeacher">
+				<div class="teacher-perms-request">
+					<p>
+						Заявка на получение прав преподавателя
+					</p>
+					<p>
+						Статус: {{ request.status }}
+					</p>
+					<button (click)="cancelTeacherPermsRequest()">Отозвать заявку</button>
+				</div>
+			</ng-container>
+			<ng-template #becomeTeacher>
+				<button mat-raised-button color="primary" (click)="onRequestTeacherPermission(user)">Стать преподавателем</button>
+			</ng-template>
+			
+			<div class="footer">
+				<button mat-raised-button color="primary" (click)="logOut()">Выйти</button>
+			</div>
+
 		</ng-container>
-		<ng-container
-			*ngSwitchCase="'teacher'"
-			[ngTemplateOutlet]="teacherPermissionProfile"
-		>
-		</ng-container>
+
 	</ng-container>
 </ng-container>
-<button mat-raised-button color="primary" (click)="logOut()">Выйти</button>
+
 
 <ng-template #studentPermissionProfile>
 	<div class="courses-section">
@@ -110,3 +136,8 @@
 <ng-template #loader> Loading... </ng-template>
 
 <ng-template #noItems> Здесь пусто ;( </ng-template>
+<ng-template #noAccess>
+	<p>
+		Нет доступа
+	</p>
+</ng-template>

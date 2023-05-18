@@ -29,3 +29,11 @@ export interface UserTrainingProfile {
 	competencies: string[];
 	trainingHistory: string[] | Training[];
 }
+
+export interface UserTeacherPermsRequest {
+	_id: string
+	uuid: string
+	user: User
+	motivation: string
+	status: 'pending' | 'approved' | 'rejected'
+}
