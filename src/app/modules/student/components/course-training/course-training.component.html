@@ -5,7 +5,14 @@
 	<div slot="main" class="training-container">
 		<section class="content">
 			<div>
-				<a routerLink="../">К прогрессу</a>
+				<a [routerLink]="['/app/learn/overview/course', viewData.training.course.uuid]"
+				mat-raised-button>
+					К обзору курса
+				</a>
+				<a routerLink="../"
+				mat-raised-button>
+					К прогрессу
+				</a>
 			</div>
 
 			<ng-container [ngSwitch]="viewData.viewType">
@@ -38,7 +45,7 @@
 	<app-course-sidenav
 		class="sidebar"
 		slot="sidebar"
-		[training]="viewData.training"
+		[tree]="viewData.contentTree"
 	></app-course-sidenav>
 </app-layout>
 

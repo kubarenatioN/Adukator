@@ -1,4 +1,4 @@
-<ng-container *ngIf="training">
+<ng-container *ngIf="tree">
 	<nav class="nav">
 		<ul class="nav-list">
 			<li>
@@ -6,7 +6,7 @@
 			</li>
 			<ul
 				class="modules-list"
-				*ngFor="let node of training.contentTree; let i = index"
+				*ngFor="let node of tree; let i = index"
 			>
 				<li>
 					{{ node.module.title }}

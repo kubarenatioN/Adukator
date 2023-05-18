@@ -1,8 +1,6 @@
-import { addDays } from 'date-fns/esm';
 import { formatTopicsDeadlines } from '../modules/student/helpers/course-training.helper';
-import { Course, CourseModule, ModuleTopic } from '../typings/course.types';
+import { Course, ModuleTopic } from '../typings/course.types';
 import { Personalization, Training } from '../typings/training.types';
-import { constructCourseTree } from '../helpers/courses.helper';
 
 export class StudentTraining {
 	private _training: Training;

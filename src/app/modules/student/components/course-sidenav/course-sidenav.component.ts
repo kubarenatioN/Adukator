@@ -4,7 +4,7 @@ import {
 	Input,
 	OnInit,
 } from '@angular/core';
-import { StudentTraining } from 'src/app/models/course.model';
+import { CourseContentTree } from 'src/app/typings/course.types';
 
 @Component({
 	selector: 'app-course-sidenav',
@@ -13,7 +13,7 @@ import { StudentTraining } from 'src/app/models/course.model';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseSidenavComponent implements OnInit {
-	@Input() public training!: StudentTraining;
+	@Input() public tree!: CourseContentTree;
 
 	constructor() {}
 

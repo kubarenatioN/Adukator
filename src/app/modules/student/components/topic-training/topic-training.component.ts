@@ -79,7 +79,7 @@ export class TopicTrainingComponent
 	}
 
 	public get deadline() {
-		return addDays(new Date(this.topic.startAt), this.topic.duration);
+		return addDays(new Date(this.topic.startAt), this.topic.duration ?? 0);
 	}
 
 	constructor(

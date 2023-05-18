@@ -6,7 +6,6 @@ import {
 	filter,
 	map,
 	Observable,
-	of,
 	ReplaySubject,
 	shareReplay,
 	switchMap,
@@ -14,19 +13,15 @@ import {
 	tap,
 	withLatestFrom,
 } from 'rxjs';
+import { constructCourseTree } from 'src/app/helpers/courses.helper';
 import { StudentTraining } from 'src/app/models/course.model';
 import { StudentTrainingService } from 'src/app/modules/student/services/student-training.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from 'src/app/shared/base.component';
-import { CourseModule, ModuleTopic } from 'src/app/typings/course.types';
+import { CourseContentTree, CourseModule, ModuleTopic } from 'src/app/typings/course.types';
 import {
-	Personalization,
-	ProfileProgress,
-	TrainingAccess,
 	TrainingData,
-	TrainingProfileFull,
-	TrainingProfileTraining,
 	TrainingReply,
 	TrainingTaskAnswer,
 } from 'src/app/typings/training.types';
@@ -43,6 +38,7 @@ interface ViewConfig {
 	module?: CourseModule;
 	topic?: ModuleTopic;
 	profileId: string;
+	contentTree: CourseContentTree;
 }
 
 @Component({
@@ -123,6 +119,7 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 							training,
 							module: training.getModule(moduleId),
 							profileId: this.profileId,
+							contentTree: constructCourseTree(training.course)
 						};
 					}
 					if (viewType === this.viewTypes.Topic && topicId) {
@@ -133,6 +130,7 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 							module: training.getTopicModule(topic),
 							topic: topic,
 							profileId: this.profileId,
+							contentTree: constructCourseTree(training.course)
 						};
 					}
 
@@ -140,6 +138,7 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 						viewType,
 						training,
 						profileId: this.profileId,
+						contentTree: constructCourseTree(training.course)
 					};
 				}
 			)

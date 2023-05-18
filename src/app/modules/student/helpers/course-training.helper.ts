@@ -17,7 +17,7 @@ export const formatTopicsDeadlines = (
 			now > topicStartDate &&
 			now < addDays(topicStartDate, topic.duration);
 		topic.isPast = now > addDays(topicStartDate, topic.duration);
-		daysFromStart += topic.duration;
+		daysFromStart += topic.duration ? Number(topic.duration) : 0;
 	});
 
 	return topics;
