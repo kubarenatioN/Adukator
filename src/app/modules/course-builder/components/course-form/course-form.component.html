@@ -92,25 +92,41 @@
 		</div>
 
 		<div class="property">
-			<app-chips-control
-				[form]="overallInfoSubform"
-				[items]="competencies$ | async"
-				[picked]="overallInfoSubform.value.requiredCompetencies"
-				control="requiredCompetencies"
-				title="Необходимые компетенции"
-				class="categories-container"
-			></app-chips-control>
+			<ng-container 
+				*appFormElWrapper="
+					overallInfoSubform;
+					control: 'requiredCompetencies';
+					type: 'edit'
+				">
+				<app-chips-control
+					*ngIf="competencies$ | async as competencies"
+					[form]="overallInfoSubform"
+					[items]="competencies"
+					[picked]="overallInfoSubform.value.requiredCompetencies"
+					control="requiredCompetencies"
+					title="Необходимые компетенции"
+					class="categories-container"
+				></app-chips-control>
+			</ng-container>
 		</div>
 
 		<div class="property">
-			<app-chips-control
-				[form]="overallInfoSubform"
-				[items]="competencies$ | async"
-				[picked]="overallInfoSubform.value.acquiredCompetencies"
-				control="acquiredCompetencies"
-				title="Получаемые компетенции"
-				class="categories-container"
-			></app-chips-control>
+			<ng-container 
+				*appFormElWrapper="
+					overallInfoSubform;
+					control: 'acquiredCompetencies';
+					type: 'edit'
+				">
+				<app-chips-control
+					*ngIf="competencies$ | async as competencies"
+					[form]="overallInfoSubform"
+					[items]="competencies"
+					[picked]="overallInfoSubform.value.acquiredCompetencies"
+					control="acquiredCompetencies"
+					title="Получаемые компетенции"
+					class="categories-container"
+				></app-chips-control>
+			</ng-container>
 		</div>
 	</div>
 

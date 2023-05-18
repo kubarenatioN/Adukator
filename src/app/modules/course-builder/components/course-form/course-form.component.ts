@@ -11,8 +11,11 @@ import {
 	BehaviorSubject,
 	Observable,
 	combineLatest,
-	debounceTime,
+	delay,
 	map,
+	of,
+	shareReplay,
+	startWith,
 	takeUntil,
 	tap,
 } from 'rxjs';
@@ -29,7 +32,6 @@ import { ConfigService } from 'src/app/services/config.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import {
 	CourseBuilderViewData,
-	CourseBuilderViewPath,
 	CourseBuilderViewType,
 	CourseFormData,
 	CourseFormViewMode,
@@ -76,6 +78,9 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 		if (!isEmptyCourseFormData(data)) {
 			const formData = convertCourseReviewToCourseFormData(data);
 			this.setCourseModel(formData);
+			if (!this.competencies$) {
+				this.listenCompetencies()
+			}
 			this.formChanged.emit(this.courseForm);
 		}
 	}
@@ -93,14 +98,13 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 		private courseBuilderService: CourseBuilderService
 	) {
 		super();
+		const courseId = this.courseBuilderService.courseId;
+		this.courseForm = this.fbHelper.getNewCourseFormModel(courseId);
 	}
 
 	public ngOnInit(): void {
-		const courseId = this.courseBuilderService.courseId;
-		this.courseForm = this.fbHelper.getNewCourseFormModel(courseId);
-
 		this.courseForm.valueChanges.subscribe((res) => {
-			console.log(res);
+			// console.log('111', res);
 			this.formChanged.emit(this.courseForm);
 		});
 
@@ -113,19 +117,6 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 				this.viewType$.next(viewPath.type);
 				this.overallInfoSubform.controls.id.setValue(metadata.uuid);
 				this.activeFormGroup = this.courseBuilderService.getActiveFormGroup(this.courseForm, viewPath);
-			})
-		);
-
-		this.competencies$ = combineLatest([
-			this.overallInfoSubform.controls.category.valueChanges.pipe(
-				debounceTime(200)
-			),
-			this.configService.competencies$,
-		]).pipe(
-			map(([category, competencies]) => {
-				return competencies.filter((comp) =>
-					!comp.category ? true : comp.category === category
-				);
 			})
 		);
 	}
@@ -187,6 +178,20 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 
 	public getDateInputMax(form: FormGroup): Date | null {
 		return getTopicMaxDate(this.courseForm, form);
+	}
+
+	private listenCompetencies() {
+		this.competencies$ = combineLatest([
+			this.overallInfoSubform.controls.category.valueChanges.pipe(startWith(this.overallInfoSubform.value.category)),
+			this.configService.competencies$,
+		]).pipe(
+			map(([category, competencies]) => {				
+				return competencies.filter((comp) =>
+					!comp.category ? true : comp.category === category
+				);
+			}),
+			shareReplay(1),
+		);
 	}
 
 	private onCreateReviewVersion(

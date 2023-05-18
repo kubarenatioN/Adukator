@@ -68,7 +68,10 @@
 		</div>
 
 		<div class="property">
-			<ng-container *appFormElWrapper="overallInfoSubform; control: 'acquiredCompetencies'; type: wrapperControlType">
+			<ng-container *appFormElWrapper="
+				overallInfoSubform;
+				control: 'acquiredCompetencies';
+				type: wrapperControlType">
 				<span>Получаемые компетенции</span>
 				<div class="competencies-list">
 					<p *ngFor="let comp of course.acquiredCompetencies">{{ comp }}</p>
@@ -128,8 +131,8 @@
 	
 	<ng-container *ngIf="topic.description">
 		<p *appFormElWrapper="
-			topicForm; 
-			control: 'description'; 
+			topicForm;
+			control: 'description';
 			type: wrapperControlType">
 			{{ topic.description }}
 		</p>

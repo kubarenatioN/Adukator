@@ -28,7 +28,6 @@ export class ChipsControlComponent implements OnInit {
 	@Input() public title!: string;
 	@Input() public set items(value: ChipItem[] | null) {
 		this._items = value;
-		this.pickedItems = [];
 	}
 	@Input() public set picked(value: ChipItem[] | null | undefined) {
 		if (value) {
@@ -46,7 +45,7 @@ export class ChipsControlComponent implements OnInit {
 
 	public ngOnInit(): void {
 		this.filteredItems$ = this.query.valueChanges.pipe(
-			startWith(''),
+			startWith(null),
 			debounceTime(300),
 			map((query) => (query ? this.filterItems(query) : this.items ?? []))
 		);

@@ -2,7 +2,8 @@
 	<mat-label>{{ title }}</mat-label>
 	<mat-chip-list #chipList>
 		<mat-chip *ngFor="let c of pickedItems" (removed)="remove(c.id)">
-			{{ c.label }}
+			<!-- {{ c.label }} -->
+			<!-- DEV --> {{ c.label || c }}
 			<button matChipRemove>Х</button>
 		</mat-chip>
 		<input
