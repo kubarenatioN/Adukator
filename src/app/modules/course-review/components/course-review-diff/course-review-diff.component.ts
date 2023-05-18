@@ -77,7 +77,6 @@ export class CourseReviewDiffComponent implements OnInit {
 	}
 
 	private prepareVersionOptions(versions: CourseReview[]) {
-		console.log(versions);
 		const versionsForSelection = versions
 			.filter(
 				(course) =>

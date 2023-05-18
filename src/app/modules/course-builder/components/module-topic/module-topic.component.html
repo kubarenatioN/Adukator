@@ -18,46 +18,46 @@
 	<div *ngIf="controlsType === 'edit'">
 		<p>Добавить раздел</p>
 		<button
-			[disabled]="activeSections.materials"
+			[disabled]="activeSections['materials']"
 			(click)="onAddSection('materials')"
 		>
 			Материалы
 		</button>
 		<button
-			[disabled]="activeSections.theory"
+			[disabled]="activeSections['theory']"
 			(click)="onAddSection('theory')"
 		>
 			Теория
 		</button>
 		<button
-			[disabled]="activeSections.practice"
+			[disabled]="activeSections['practice']"
 			(click)="onAddSection('practice')"
 		>
 			Практика
 		</button>
-		<button [disabled]="activeSections.test" (click)="onAddSection('test')">
+		<button [disabled]="activeSections['testLink']" (click)="onAddSection('testLink')">
 			Тест
 		</button>
 	</div>
 
 	<ng-container
-		*ngIf="activeSections.materials"
+		*ngIf="activeSections['materials']"
 		[ngTemplateOutlet]="materials"
 	></ng-container>
 
 	<ng-container
-		*ngIf="activeSections.theory"
+		*ngIf="activeSections['theory']"
 		[ngTemplateOutlet]="theory"
 	></ng-container>
 
 	<ng-container
-		*ngIf="activeSections.practice && hasPracticeFormGroup"
+		*ngIf="activeSections['practice'] && practiceFormGroup"
 		[ngTemplateOutlet]="practice"
 		[ngTemplateOutletContext]="{ practiceForm: practiceFormGroup }"
 	></ng-container>
 
 	<ng-container
-		*ngIf="activeSections.test"
+		*ngIf="activeSections['testLink']"
 		[ngTemplateOutlet]="test"
 	></ng-container>
 </form>
@@ -65,7 +65,7 @@
 <ng-template #materials>
 	<div class="section materials">
 		<h3>Материалы</h3>
-		<button (click)="onRemoveSection('materials')">Удалить раздел</button>
+		<button (click)="onRemoveSection(fields.Materials)">Удалить раздел</button>
 		
 		<ng-container *appFormElWrapper="
 		form; 
@@ -121,7 +121,7 @@
 <ng-template #theory>
 	<div class="section" [formGroup]="form">
 		<h3>Теория</h3>
-		<button (click)="onRemoveSection('theory')">Удалить раздел</button>
+		<button (click)="onRemoveSection(fields.Theory)">Удалить раздел</button>
 		<mat-form-field
 			*appFormElWrapper="form; control: 'theory'; type: 'edit'"
 			appearance="fill"
@@ -135,7 +135,7 @@
 <ng-template #test>
 	<div class="section" [formGroup]="form">
 		<h3>Тест</h3>
-		<button (click)="onRemoveSection('test')">Удалить раздел</button>
+		<button (click)="onRemoveSection(fields.TestLink)">Удалить раздел</button>
 		<mat-form-field
 			*appFormElWrapper="form; control: 'testLink'; type: 'edit'"
 			appearance="fill"

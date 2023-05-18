@@ -12,11 +12,10 @@ import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { BaseComponent } from 'src/app/shared/base.component';
 import {
 	CourseFormViewMode,
+	TopicFormFields,
 	WrapperType,
 } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
-
-type SectionType = 'materials' | 'theory' | 'practice' | 'test';
 
 @Component({
 	selector: 'app-module-topic',
@@ -30,10 +29,10 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
 	@Input() public set form(form: FormGroup) {
 		this._form = form;
 		this.activeSections = {
-			materials: form.value.materials && form.value.materials.length > 0,
-			theory: form.value.theory,
-			practice: form.value.practice,
-			test: form.value.testLink,
+			[TopicFormFields.Materials]: form.value.materials && form.value.materials.length > 0,
+			[TopicFormFields.Theory]: form.value.theory,
+			practice: form.value.practice != null,
+			[TopicFormFields.TestLink]: form.value.testLink != null,
 		};
 		this.uploadFolder = this.courseBuilderService.getUploadFolder(
 			['topics'],
@@ -60,10 +59,6 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
 		return this.form.controls['practice'] as FormGroup;
 	}
 
-	public get hasPracticeFormGroup(): boolean {
-		return this.practiceFormGroup.value !== null;
-	}
-
 	public get tasksFormArray(): FormArray<FormGroup> {
 		const practiceForm = this.practiceFormGroup;
 		if (practiceForm.value) {
@@ -72,12 +67,13 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
 		return new FormArray([] as FormGroup[]);
 	}
 
-	public activeSections = {
-		materials: false,
+	public activeSections: { [key: string]: boolean } = {
+		[TopicFormFields.Materials]: false,
+		[TopicFormFields.Theory]: false,
+		[TopicFormFields.TestLink]: false,
 		practice: false,
-		theory: false,
-		test: false,
 	};
+	public fields = TopicFormFields;
 
 	constructor(
 		private fbHelper: FormBuilderHelper,
@@ -107,18 +103,20 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
 			});
 	}
 
-	public onAddSection(sectionType: SectionType) {
-		if (
-			sectionType === 'practice' &&
-			this.practiceFormGroup.value === null
-		) {
+	public onAddSection(sectionType: string) {
+		if (sectionType === 'practice' && (!this.practiceFormGroup || !this.practiceFormGroup.value)) {
 			this.onAddPracticeSection();
 		}
 		this.activeSections[sectionType] = true;
 	}
 
-	public onRemoveSection(sectionType: SectionType) {
+	public onRemoveSection(sectionType: string) {
 		this.activeSections[sectionType] = false;
+		if (sectionType === 'practice') {
+			this.form.setControl(sectionType, null);
+		} else {
+			this.form.controls[sectionType].setValue(null)
+		}
 	}
 
 	public onAddTask() {

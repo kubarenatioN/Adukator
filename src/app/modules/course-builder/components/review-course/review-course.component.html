@@ -1,28 +1,30 @@
-<form
-	class="course-form"
-	*ngIf="viewData$ | async as viewData"
-	[formGroup]="courseForm">
-	<ng-container [ngSwitch]="viewData.viewPath.type">
-		<ng-container
-			*ngSwitchCase="'main'"
-			[ngTemplateOutlet]="courseMainInfo"
-			[ngTemplateOutletContext]="{ viewData, course: courseForm.value.overallInfo }"
-		>
+<ng-container *ngIf="viewData$ | async as viewData">
+	<form
+		class="course-form"
+		*ngIf="courseForm"
+		[formGroup]="courseForm">
+		<ng-container [ngSwitch]="viewData.viewPath.type">
+			<ng-container
+				*ngSwitchCase="'main'"
+				[ngTemplateOutlet]="courseMainInfo"
+				[ngTemplateOutletContext]="{ viewData, course: courseForm.value.overallInfo }"
+			>
+			</ng-container>
+			<ng-container
+				*ngSwitchCase="'module'"
+				[ngTemplateOutlet]="module"
+				[ngTemplateOutletContext]="{ module: activeFormGroup.value }"
+			>
+			</ng-container>
+			<ng-container
+				*ngSwitchCase="'topic'"
+				[ngTemplateOutlet]="topic"
+				[ngTemplateOutletContext]="{ viewData, topicForm: activeFormGroup, topic: activeFormGroup.value, course: courseForm.value.overallInfo }"
+			>
+			</ng-container>
 		</ng-container>
-		<ng-container
-			*ngSwitchCase="'module'"
-			[ngTemplateOutlet]="module"
-			[ngTemplateOutletContext]="{ module: activeFormGroup.value }"
-		>
-		</ng-container>
-		<ng-container
-			*ngSwitchCase="'topic'"
-			[ngTemplateOutlet]="topic"
-			[ngTemplateOutletContext]="{ viewData, topicForm: activeFormGroup, topic: activeFormGroup.value, course: courseForm.value.overallInfo }"
-		>
-		</ng-container>
-	</ng-container>
-</form>
+	</form>
+</ng-container>
 
 <ng-template #courseMainInfo let-course="course">
 	<h1 class="title">Проверка курса</h1>
@@ -129,14 +131,17 @@
 		{{ topic.title }}
 	</h2>
 	
-	<ng-container *ngIf="topic.description">
-		<p *appFormElWrapper="
-			topicForm;
-			control: 'description';
-			type: wrapperControlType">
-			{{ topic.description }}
-		</p>
-	</ng-container>
+	<div class="section">
+		<h3>Описание курса</h3>
+		<ng-container *ngIf="topic.description">
+			<p *appFormElWrapper="
+				topicForm;
+				control: 'description';
+				type: wrapperControlType">
+				{{ topic.description }}
+			</p>
+		</ng-container>
+	</div>
 
 	<div *ngIf="topic.theory" class="section-topic section">
 		<ng-container *appFormElWrapper="topicForm; control: 'theory'; type: wrapperControlType">

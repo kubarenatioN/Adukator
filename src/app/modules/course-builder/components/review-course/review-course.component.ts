@@ -93,10 +93,6 @@ export class ReviewCourseComponent implements OnInit {
 		combineLatest([navQuery$, this.formData$]).subscribe(([navQuery]) => {
 			this.courseBuilderService.setViewData(navQuery, CourseFormViewMode.Review);
 		});
-
-		this.courseBuilderService.viewData$.subscribe(viewData => {
-			this.activeFormGroup = this.courseBuilderService.getActiveFormGroup(this.courseForm, viewData.viewPath)
-		})
 	}
 
 	public getTopicDuration(days?: number | null, weeks?: number | null) {
@@ -132,6 +128,10 @@ export class ReviewCourseComponent implements OnInit {
 	private listenForm(form: typeof this.courseForm) {
 		form.valueChanges.subscribe(model => {
 			// console.log(model);
+		})
+
+		this.courseBuilderService.viewData$.subscribe(viewData => {
+			this.activeFormGroup = this.courseBuilderService.getActiveFormGroup(form, viewData.viewPath)
 		})
 	}
 
