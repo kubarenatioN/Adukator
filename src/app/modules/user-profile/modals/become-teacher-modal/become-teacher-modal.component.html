@@ -1,6 +1,16 @@
 <h2>Заявка на получение прав преподавателя</h2>
 
 <form [formGroup]="form">
+	<app-upload-box
+		type="upload"
+		[folder]="requestFilesFolder"
+		[preloadExisting]="true"
+		[autoRemoveOnDestroy]="false"
+		[manualDeleteRemoteOnClear]="true"
+		[clearObs$]="disposeLocalFiles$"
+		(uploadFilesChanged)="uploadFilesChanged($event)"
+		label="Загрузите файлы, подтверждающие вашу экспертность."></app-upload-box>
+
 	<p>Какова ваша мотивация стать преподавателем?</p>
 	<mat-form-field appearance="fill">
 		<textarea matInput formControlName="motivation" placeholder=""></textarea>

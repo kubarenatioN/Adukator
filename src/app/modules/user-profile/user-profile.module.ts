@@ -8,9 +8,13 @@ import { UserPageComponent } from './components/user-page/user-page.component';
 import { BecomeTeacherModalComponent } from './modals/become-teacher-modal/become-teacher-modal.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
+import { UploadCacheService } from 'src/app/services/upload-cache.service';
 
 @NgModule({
 	declarations: [UserProfileComponent, UserPageComponent, BecomeTeacherModalComponent],
 	imports: [CommonModule, SharedModule, UserProfileRoutingModule, ReactiveFormsModule, MatDialogModule],
+	providers: [
+		UploadCacheService,
+	]
 })
 export class UserProfileModule {}

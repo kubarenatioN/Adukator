@@ -59,7 +59,7 @@ export class UploadService {
 		toFolder,
 		subject,
 	}: {
-		subject: 'course:build' | 'training:task' | 'personalization:task';
+		subject: 'course:build' | 'training:task' | 'personalization:task' | 'teacher-perms:request-files';
 		fromFolder: string;
 		toFolder?: string;
 	}) {

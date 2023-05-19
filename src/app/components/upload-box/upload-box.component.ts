@@ -12,7 +12,7 @@ import {
 	SimpleChanges,
 	ViewChild,
 } from '@angular/core';
-import { from, map, Observable, Subscription } from 'rxjs';
+import { from, map, Observable, Subscription, take } from 'rxjs';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
 import { UploadService } from 'src/app/services/upload.service';
 import { UserFile } from 'src/app/typings/files.types';
@@ -38,6 +38,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
 	@Input() public serveFrom: 'cloud' | 'local' = 'cloud';
 	@Input() public autoRemoveOnDestroy = true;
 	@Input() public appendTimestamp = false;
+	@Input() public manualDeleteRemoteOnClear = false;
 
 	@Input() public clearObs$?: EventEmitter<void>;
 
@@ -75,12 +76,17 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
 	}
 
 	public ngOnInit(): void {
-		this.clearObs$?.subscribe(() => {
-			if (this.controlId) {
-				this.cacheService.clearCache(this.controlId);
+		this.clearObs$?.pipe(take(1))
+		.subscribe(() => {
+			if (this.folder !== '') {
+				if (this.manualDeleteRemoteOnClear) {
+					const files = [...this.filesStore.values()]
+					for (const file of files) {
+						this.uploadService.removeTempFile(file.userFile.filename, this.folder).subscribe()
+					}
+				}
+				this.cacheService.clearCache(this.cacheKey);
 				this.clearBox();
-			} else {
-				throw new Error('No control ID provided')
 			}
 		});
 	}
@@ -123,6 +129,9 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
 				.subscribe();
 			this.cacheService.removeFileFromCache(this.cacheKey, file);
 		}
+		this.uploadFilesChanged.emit(
+			[...this.filesStore.values()].map(({ userFile }) => userFile.filename)
+		);
 	}
 
 	public onDownload({ filename, url }: UserFile) {
