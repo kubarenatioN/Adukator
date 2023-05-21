@@ -80,10 +80,11 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 		if (!isEmptyCourseFormData(data)) {
 			const formData = convertCourseReviewToCourseFormData(data);
 			this.setCourseModel(formData);
-			if (!this.competencies$) {
-				this.listenCompetencies()
-			}
 			this.formChanged.emit(this.courseForm);
+		}
+
+		if (!this.competencies$) {
+			this.listenCompetencies()
 		}
 	}
 

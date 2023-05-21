@@ -35,6 +35,11 @@ export class ChipsControlComponent implements OnInit {
 		}
 	}
 	@Input() public addOnBlur = true;
+
+	public get items(): ChipItem[] {
+		return this._items ? this._items : [];
+	}
+
 	readonly separatorKeysCodes = [ENTER] as const;
 	public filteredItems$!: Observable<ChipItem[]>;
 	public pickedItems: ChipItem[] = [];
@@ -47,7 +52,7 @@ export class ChipsControlComponent implements OnInit {
 		this.filteredItems$ = this.query.valueChanges.pipe(
 			startWith(null),
 			debounceTime(300),
-			map((query) => (query ? this.filterItems(query) : this.items ?? []))
+			map((query) => (query ? this.filterItems(query) : this.items))
 		);
 	}
 

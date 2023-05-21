@@ -63,8 +63,9 @@ export class UserService {
 	}
 
 	public initUser() {
-		this.authService.getUserByToken().subscribe((user) => {
-			this.setUser(user);
+		this.authService.getUserByToken().subscribe(res => {
+			const { user, refreshToken } = res			
+			this.setUser(user, refreshToken);
 		});
 	}
 

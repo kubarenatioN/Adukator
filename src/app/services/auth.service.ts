@@ -28,12 +28,11 @@ export class AuthService {
 		return this.dataService.send<LoginResponse>(payload)
 	}
 
-	public getUserByToken(): Observable<User | null> {
+	public getUserByToken(): Observable<{ user: User | null, refreshToken?: string}> {
 		const payload = NetworkHelper.createRequestPayload(
 			NetworkRequestKey.GetUserByToken
 		);
 		return this.dataService
-			.send<{ user: User | null; message: string }>(payload)
-			.pipe(map((res) => res.user));
+			.send<{ user: User | null; refreshToken: string }>(payload);
 	}
 }

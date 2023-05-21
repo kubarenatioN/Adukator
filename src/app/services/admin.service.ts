@@ -22,6 +22,6 @@ export class AdminService {
 	}
 
 	public udpdateTeacherPermsRequest(id: string, payload: { status: UserTeacherPermsRequestStatus }) {
-		return this.dataService.http.patch(`${DATA_ENDPOINTS.user}/become-teacher/${id}`, payload)
+		return this.dataService.http.patch<{ token?: string }>(`${DATA_ENDPOINTS.user}/become-teacher/${id}`, payload)
 	}
 }
