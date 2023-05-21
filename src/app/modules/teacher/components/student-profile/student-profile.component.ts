@@ -4,11 +4,8 @@ import {
 	Component,
 	OnInit,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ChartConfiguration } from 'chart.js';
 import { Observable, of, ReplaySubject } from 'rxjs';
 import {
-	delay,
 	distinctUntilChanged,
 	map,
 	switchMap,
@@ -20,17 +17,13 @@ import { CenteredContainerDirective } from 'src/app/directives/centered-containe
 import { createTopicsProgressConfig } from 'src/app/helpers/charts.config';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { StudentTraining } from 'src/app/models/course.model';
-import { BaseComponent } from 'src/app/shared/base.component';
 import {
-	Personalization,
 	ProfileProgress,
-	ProfileProgressRecord,
 	Training,
 	TrainingProfileTraining,
 	TrainingProfileUser,
 } from 'src/app/typings/training.types';
 import { TeacherTrainingService } from '../../services/teacher-training.service';
-import { TopicTask } from 'src/app/typings/course.types';
 
 type ViewData = {
 	profile: TrainingProfileTraining | null;
@@ -80,8 +73,6 @@ export class StudentProfileComponent
 	}
 
 	ngOnInit(): void {
-		// this.studentControl.disable()
-
 		this.trainingControl.valueChanges
 			.pipe(
 				takeUntil(this.componentLifecycle$),
@@ -105,6 +96,10 @@ export class StudentProfileComponent
 		this.teacherTrainingService.trainings$
 			.pipe(take(1))
 			.subscribe((trainings) => {
+				if (trainings.length === 0) {
+					console.log('No trainings available');
+					return;
+				}
 				this.trainings = trainings;
 				this.filtersForm.patchValue({
 					training: trainings[0]._id,

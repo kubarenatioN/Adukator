@@ -30,10 +30,12 @@ export interface UserTrainingProfile {
 	trainingHistory: string[] | Training[];
 }
 
+export type UserTeacherPermsRequestStatus = 'pending' | 'approved' | 'rejected'
 export interface UserTeacherPermsRequest {
 	_id: string
 	uuid: string
 	user: User
 	motivation: string
-	status: 'pending' | 'approved' | 'rejected'
+	files?: string[]
+	status: UserTeacherPermsRequestStatus
 }

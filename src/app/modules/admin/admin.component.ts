@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { AdminService } from 'src/app/services/admin.service';
 import { Course, CourseReview } from 'src/app/typings/course.types';
+import { UserTeacherPermsRequest } from 'src/app/typings/user.types';
 
 @Component({
 	selector: 'app-admin',
