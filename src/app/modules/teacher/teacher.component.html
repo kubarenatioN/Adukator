@@ -52,14 +52,10 @@
 				<h4>{{ course.title }}</h4>
 
 				<div class="left">
-					<a
-						*ngIf="course.training"
-						[routerLink]="[
-							'/app/learn/course/overview',
-							course.training.uuid
-						]"
-						>К тренингу</a
-					>
+					<a *ngIf="course.training"
+					[routerLink]="['/app/learn/overview/course', course.uuid]">
+						Обзор
+					</a>
 					<button
 						(click)="startCourse(course, $event)"
 						[disabled]="course.training"
