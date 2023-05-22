@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ReplaySubject, map, switchMap } from 'rxjs';
+import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
 import { TrainingDataService } from 'src/app/services/training-data.service';
 import { UserService } from 'src/app/services/user.service';
 import { TrainingProfileTraining } from 'src/app/typings/training.types';
@@ -24,7 +25,7 @@ export class TrainingService {
 			.pipe(
 				switchMap((user) => {
 					return this.trainingDataService.getStudentProfiles(
-						user._id
+						user._id, CoursesSelectFields.Dashboard
 					);
 				}),
 				map((res) => {

@@ -21,6 +21,14 @@
 		class="training-item"
 	>
 		<h3>{{ course.title }}</h3>
+		<span>Начало {{ profile.training.startAt | date : 'dd.MM.yy' }}</span>
+		<span>Длительность {{ course | courseDuration }} дн.</span>
+		<div>
+			<span>Вы изучите</span>
+			<span *ngFor="let comp of course.competencies?.acquired">
+				{{ comp }}
+			</span>
+		</div>
 	</a>
 </ng-template>
 

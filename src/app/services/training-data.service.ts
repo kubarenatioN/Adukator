@@ -119,10 +119,10 @@ export class TrainingDataService {
 		);
 	}
 
-	public getStudentProfiles(studentId: string) {
+	public getStudentProfiles(studentId: string, fields: string[]) {
 		const key = NetworkRequestKey.StudentProfiles;
 		const payload = NetworkHelper.createRequestPayload(key, {
-			body: { studentId, fields: CoursesSelectFields.Short },
+			body: { studentId, fields },
 			params: { reqId: key },
 		});
 

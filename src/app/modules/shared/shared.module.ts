@@ -23,6 +23,7 @@ import { FileItemComponent } from 'src/app/components/upload-box/components/file
 import { TopicsProgressChartComponent } from './charts/topics-progress-chart/topics-progress-chart.component';
 import { NgChartsModule } from 'ng2-charts';
 import { GroupingUploadBoxComponent } from 'src/app/components/upload-box/grouping-upload-box/grouping-upload-box.component';
+import { CourseDurationPipe } from 'src/app/pipes/course-duration.pipe';
 
 @NgModule({
 	declarations: [
@@ -36,6 +37,7 @@ import { GroupingUploadBoxComponent } from 'src/app/components/upload-box/groupi
 		FormElementWrapperDirective,
 		FormElementReviewWrapperComponent,
 		TopicsProgressChartComponent,
+		CourseDurationPipe,
 	],
 	imports: [
 		CommonModule,
@@ -72,6 +74,7 @@ import { GroupingUploadBoxComponent } from 'src/app/components/upload-box/groupi
 		FormElementWrapperDirective,
 		FormElementReviewWrapperComponent,
 		TopicsProgressChartComponent,
+		CourseDurationPipe,
 	],
 })
 export class SharedModule {}
