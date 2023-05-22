@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { UserService } from 'src/app/services/user.service';
-import { Training } from 'src/app/typings/training.types';
 import { LearnService } from '../../services/learn.service';
 import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
 import { Course, CourseBundle } from 'src/app/typings/course.types';
@@ -23,6 +22,8 @@ export class CatalogComponent
 	public isTeacherUser$ = this.userService.user$.pipe(
 		map((user) => user?.permission === 'teacher')
 	);
+
+	public fallbackBanner = 'http://localhost:8080/static/images/course-bg-1.jpg'
 
 	constructor(
 		private learnService: LearnService,

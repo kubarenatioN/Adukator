@@ -18,6 +18,7 @@
 			[routerLink]="['../overview/course', course.uuid]"
 			*ngFor="let course of list$ | async"
 		>
+			<img class="item-poster" [src]="course.banner ?? fallbackBanner" alt="">
 			<h3>{{ course.title }}</h3>
 			<p class="catalog-item__views">Status: {{ course?.training?.status }}</p>
 			<div class="catalog-item__footer">

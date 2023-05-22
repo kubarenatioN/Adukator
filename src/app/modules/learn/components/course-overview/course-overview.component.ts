@@ -66,6 +66,7 @@ export class CourseOverviewComponent implements OnInit {
 		text: ['', Validators.required],
 		rating: [null]
 	})
+	public fallbackBanner = 'http://localhost:8080/static/images/course-bg-1.jpg'
 
 	constructor(
 		private activatedRoute: ActivatedRoute,
@@ -112,6 +113,9 @@ export class CourseOverviewComponent implements OnInit {
 		]).pipe(
 			map(([competencies, user, course]) => {
 				const userComps = user.trainingProfile.competencies;
+				if (!course?.competencies.required) {
+					return []
+				}
 				const diff =
 					course?.competencies.required.reduce(
 						(diff, comp) => {

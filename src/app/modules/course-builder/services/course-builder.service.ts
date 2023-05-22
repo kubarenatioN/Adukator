@@ -1,6 +1,8 @@
+import { HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import {
+	filter,
 	of,
 	ReplaySubject,
 	shareReplay,
@@ -23,6 +25,7 @@ import {
 import { AdminCoursesService } from 'src/app/services/admin-courses.service';
 import { CoursesService } from 'src/app/services/courses.service';
 import {
+	FileUploadHttpResponse,
 	UploadPathSegment,
 	UploadService,
 } from 'src/app/services/upload.service';
@@ -40,6 +43,8 @@ import {
 	CourseReviewStatus,
 	ModuleTopic,
 } from 'src/app/typings/course.types';
+import { CloudinaryFile, UserFile } from 'src/app/typings/files.types';
+import { CloudinaryFilesResponse } from 'src/app/typings/response.types';
 import { User } from 'src/app/typings/user.types';
 
 @Injectable()
@@ -124,11 +129,16 @@ export class CourseBuilderService {
 					console.log('Uploaded files to remote', upload);
 				}),
 				switchMap((upload) => {
+					const posterFile = upload.result.results.find(file => file.isPoster)
+
+					courseData.banner = posterFile?.secure_url ?? 'http://localhost:8080/static/images/course-bg-1.jpg'
 					courseData.uuid = masterId; // Adjust course ID after review
+
 					return this.adminCoursesService.publish(
 						courseData,
 						masterId
 					);
+					// return of(); // DEBUG
 				}),
 				tap(() => {
 					console.log('Course published!');
@@ -200,7 +210,7 @@ export class CourseBuilderService {
 		);
 	}
 
-	public getUploadFolder(segments: UploadPathSegment[], controlId: string) {
+	public getUploadFolder(segments: UploadPathSegment[], controlId: string = '') {
 		const rootCourseId =
 			this.metadata.masterCourseId === null
 				? this.metadata.uuid
@@ -209,8 +219,18 @@ export class CourseBuilderService {
 			'review',
 			rootCourseId,
 			...segments,
-			controlId
+			controlId,
 		);
+	}
+
+	public uploadPoster(file: File, existingFilename: string = '') {
+		const folder = this.getUploadFolder(['poster'])
+		return this.uploadService.removeTempFile(existingFilename, folder).pipe(
+			switchMap(() => {
+				return this.uploadService.uploadFile(folder, file)
+			}),
+			filter((res): res is HttpResponse<FileUploadHttpResponse> => res instanceof HttpResponse),
+		)
 	}
 
 	public rebuildContentTree(form: FormGroup) {

@@ -160,9 +160,10 @@ export class FormBuilderHelper {
 				CourseFormDataMock.descr,
 				Validators.required,
 			],
-			[OverallFormFields.Category]: '',
+			[OverallFormFields.Category]: ['', Validators.required],
 			[OverallFormFields.AcquiredCompetencies]: [],
 			[OverallFormFields.RequiredCompetencies]: [],
+			[OverallFormFields.Banner]: '',
 			comments: this.getFormGroupComments(OverallFormFields, {}),
 		});
 	}

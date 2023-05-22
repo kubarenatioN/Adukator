@@ -42,6 +42,7 @@ export const convertCourseReviewToCourseFormData = (
 		comments,
 		modules,
 		status,
+		banner,
 	} = course;
 	const metadata: CourseFormMetadata = {
 		_id,
@@ -61,6 +62,7 @@ export const convertCourseReviewToCourseFormData = (
 			acquiredCompetencies: competencies.acquired,
 			requiredCompetencies: competencies.required,
 			comments,
+			banner: banner ?? '',
 		},
 		modules,
 		metadata,
@@ -79,6 +81,7 @@ export const convertCourseFormDataToCourseReview = (
 		comments,
 		acquiredCompetencies,
 		requiredCompetencies,
+		banner,
 	} = overallInfo;
 	const { _id, uuid, masterCourseId: masterId, authorId, status } = metadata;
 
@@ -108,6 +111,7 @@ export const convertCourseFormDataToCourseReview = (
 		comments,
 		modules,
 		status,
+		banner,
 	};
 };
 
@@ -121,6 +125,7 @@ export const convertCourseFormDataToCourse = (
 		category,
 		acquiredCompetencies,
 		requiredCompetencies,
+		banner,
 	} = overallInfo;
 	const { uuid, authorId, _id } = metadata;
 
@@ -149,6 +154,7 @@ export const convertCourseFormDataToCourse = (
 		modules: formattedModules,
 		topics: plainTopics,
 		authorId,
+		banner,
 	};
 };
 

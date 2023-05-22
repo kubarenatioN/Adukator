@@ -15,6 +15,7 @@ export enum OverallFormFields {
 	Category = 'category',
 	AcquiredCompetencies = 'acquiredCompetencies',
 	RequiredCompetencies = 'requiredCompetencies',
+	Banner = 'banner',
 }
 
 export enum ModuleFormFields {
@@ -101,6 +102,7 @@ export interface CourseFormOverallInfo {
 	comments?: Record<string, CourseReviewControlComment[] | null>;
 	acquiredCompetencies: string[];
 	requiredCompetencies: string[];
+	banner: string;
 }
 
 interface CourseCore {
@@ -124,6 +126,7 @@ export interface Course extends CourseCore {
 	topics: ModuleTopic[];
 	training?: Training;
 	score?: number;
+	banner?: string;
 	contentTree?: CourseContentTree
 }
 
@@ -140,6 +143,7 @@ export interface CourseReview extends CourseCore {
 	createdAt?: string;
 	status?: CourseReviewStatus;
 	modules: CourseFormModule[];
+	banner?: string;
 	comments?: Record<string, CourseReviewControlComment[] | null>;
 }
 

@@ -42,6 +42,23 @@
 
 	<div [formGroup]="overallInfoSubform">
 		<div class="property">
+			<ng-container
+				*appFormElWrapper="
+					overallInfoSubform;
+					control: 'banner';
+					type: 'edit'
+				"
+				appearance="fill"
+			>
+				<mat-label>Баннер к курсу</mat-label>
+				<div class="preview">
+					<img *ngIf="overallInfoSubform.value.banner" [src]="overallInfoSubform.value.banner" alt="">
+				</div>
+				<input (change)="onUploadPoster($event, formMode)" type="file" accept="image/png, image/jpeg, image/jpg" />
+			</ng-container>
+		</div>
+
+		<div class="property">
 			<mat-form-field
 				*appFormElWrapper="
 					overallInfoSubform;

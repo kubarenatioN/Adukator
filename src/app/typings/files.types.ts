@@ -8,6 +8,7 @@ export interface CloudinaryFile {
 	format: string;
 	resource_type: 'image' | 'raw' | 'video';
 	uploaded_at: string;
+	isPoster?: boolean;
 }
 
 export interface UserFile {

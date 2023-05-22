@@ -1,15 +1,17 @@
-import { HttpClient, HttpEvent } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, map, Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { apiUrl } from '../constants/urls';
-import { UserFile } from '../typings/files.types';
+import { CloudinaryFile, UserFile } from '../typings/files.types';
 import {
 	CloudinaryFilesResponse,
 	CourseFilesResponse,
 } from '../typings/response.types';
-import { getCurrentTime } from '../helpers/date-fns.helper';
 
-export type UploadPathSegment = 'tasks' | 'topics' | 'training';
+export type UploadPathSegment = 'tasks' | 'topics' | 'training' | 'poster';
+export interface FileUploadHttpResponse {
+	filename: string; file: UserFile, tempFolder: string
+}
 
 @Injectable({
 	providedIn: 'root',
@@ -25,7 +27,7 @@ export class UploadService {
 		}
 		formData.append('file', file);
 
-		return this.http.post<{ filename: string; file: UserFile }>(
+		return this.http.post<FileUploadHttpResponse>(
 			`${apiUrl}/upload`,
 			formData,
 			{
@@ -63,7 +65,7 @@ export class UploadService {
 		fromFolder: string;
 		toFolder?: string;
 	}) {
-		return this.http.post(`${apiUrl}/upload/remote`, {
+		return this.http.post<{ result: { results: CloudinaryFile[], total: number, success: number } }>(`${apiUrl}/upload/remote`, {
 			fromFolder,
 			toFolder,
 			subject,
@@ -71,7 +73,7 @@ export class UploadService {
 	}
 
 	public getFilesFolder(...segments: string[]) {
-		return segments.join('/');
+		return segments.filter(Boolean).join('/');
 	}
 
 	private getFilesFromCloud(folder: string): Observable<CourseFilesResponse> {

@@ -11,9 +11,7 @@ import {
 	BehaviorSubject,
 	Observable,
 	combineLatest,
-	delay,
 	map,
-	of,
 	shareReplay,
 	startWith,
 	takeUntil,
@@ -27,7 +25,6 @@ import {
 	convertCourseReviewToCourseFormData,
 } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
-import { getTopicMinDate, getTopicMaxDate } from 'src/app/helpers/forms.helper';
 import { ConfigService } from 'src/app/services/config.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import {
@@ -42,6 +39,7 @@ import {
 } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
 import { ChipItem } from '../../controls/chips-control/chips-control.component';
+import { apiUrl } from 'src/app/constants/urls';
 
 @Component({
 	selector: 'app-course-form',
@@ -50,6 +48,8 @@ import { ChipItem } from '../../controls/chips-control/chips-control.component';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseFormComponent extends BaseComponent implements OnInit {
+	private posterFilename = ''
+	
 	public categories$ = this.configService.loadCourseCategories();
 	public competencies$!: Observable<ChipItem[]>;
 
@@ -184,12 +184,25 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 		}
 	}
 
-	public getDateInputMin(form: FormGroup): Date | null {
-		return getTopicMinDate(this.courseForm, form);
-	}
-
-	public getDateInputMax(form: FormGroup): Date | null {
-		return getTopicMaxDate(this.courseForm, form);
+	public onUploadPoster(e: Event, mode: CourseFormViewMode) {
+		if (mode === 'create') {
+			const file = (e.target as HTMLInputElement).files?.[0]
+			if (!file) {
+				console.warn('No poster file found.');
+				return;
+			}
+			this.courseBuilderService.uploadPoster(file, this.posterFilename).subscribe((res) => {
+				const {body} = res
+				if (!body) {
+					return;
+				} 
+				const { file, tempFolder } = body
+				this.posterFilename = file.filename
+				const posterUrl = `${apiUrl}/local/${tempFolder}/${file.filename}`
+				this.overallInfoSubform.controls.banner.setValue(posterUrl)
+			})
+		}
+		// TODO: handle edit mode
 	}
 
 	private listenCompetencies() {
