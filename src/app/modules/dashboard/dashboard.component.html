@@ -48,15 +48,22 @@
 		[routerLink]="['/app/student/profile', profile.uuid, 'training']"
 		class="training-item"
 	>
-		<h3>{{ course.title }}</h3>
-		<p>Status: {{ profile.training.status }}</p>
-		<p>Начало {{ profile.training.startAt | date : 'dd.MM.yy' }}</p>
-		<p>Длительность {{ course | courseDuration }} дн.</p>
-		<div>
-			<span>Вы изучите</span>
-			<span *ngFor="let comp of course.competencies?.acquired">
-				{{ comp }}
-			</span>
+		<img class="training-item__poster" [src]="course.banner" alt="">
+		<div class="training-item__content">
+
+			<h3 class="training-item__title">{{ course.title }}</h3>
+			<p class="training-item__status">Status: {{ profile.training.status }}</p>
+			<p class="training-item__start">Начало {{ profile.training.startAt | date : 'dd.MM.yy' }}</p>
+			<p class="training-item__duration">Длительность {{ course | courseDuration }} дн.</p>
+			<div class="training-item__comps">
+				<span>Вы изучите</span>
+				<div class="training-item__comps-list">
+					<span *ngFor="let comp of course.competencies?.acquired">
+						{{ comp }}
+					</span>
+				</div>
+			</div>
+			
 		</div>
 	</a>
 </ng-template>

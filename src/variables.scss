@@ -1,0 +1,10 @@
+@import 'custom-theme.scss';
+
+:root,
+:host {
+	--primary-50: #{$primary-50};
+	--primary-100: #{$primary-100};
+	--primary-200: #{$primary-200};
+
+	--box-shadow-default: 0px 1px 5px #ccc
+}

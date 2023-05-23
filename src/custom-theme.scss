@@ -8,6 +8,79 @@
 // Be sure that you only ever include this mixin once!
 @include mat.core();
 
+$primary-50 : #eee7f9;
+$primary-100 : #d4c2ef;
+$primary-200 : #b799e4;
+$primary-300: #9a70d9;
+$primary-400: #8552d1;
+$primary-500: #6f33c9;
+
+$primary: (
+    50 : #eee7f9,
+    100 : #d4c2ef,
+    200 : #b799e4,
+    300 : #9a70d9,
+    400 : #8552d1,
+    500 : #6f33c9,
+    600 : #672ec3,
+    700 : #5c27bc,
+    800 : #5220b5,
+    900 : #4014a9,
+    A100 : #e4dbff,
+    A200 : #bfa8ff,
+    A400 : #9975ff,
+    A700 : #865cff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #ffffff,
+    )
+);
+
+$secondary: (
+    50 : #fae1f2,
+    100 : #f4b5df,
+    200 : #ec84c9,
+    300 : #e452b3,
+    400 : #df2da3,
+    500 : #d90893,
+    600 : #d5078b,
+    700 : #cf0680,
+    800 : #ca0476,
+    900 : #c00264,
+    A100 : #ffe9f3,
+    A200 : #ffb6d7,
+    A400 : #ff83bc,
+    A700 : #ff69ae,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
 $green-palette: (
 	50: #edfee8,
 	100: #d2fbc5,
@@ -94,11 +167,16 @@ $crimson-palette: (
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$adukator-primary: mat.define-palette(mat.$indigo-palette, 500);
-$adukator-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+// $adukator-primary: mat.define-palette(mat.$indigo-palette, 500);
+// $adukator-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
-$adukator-warn: mat.define-palette(mat.$red-palette);
+// $adukator-warn: mat.define-palette(mat.$red-palette);
+
+
+$adukator-primary: mat.define-palette($primary);
+$adukator-accent: mat.define-palette($secondary);
+$adukator-warn: mat.define-palette($crimson-palette);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".

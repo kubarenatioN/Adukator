@@ -1,9 +1,38 @@
 <nav>
-	<ul>
-		<li><a [routerLink]="'/'">Главная</a></li>
-		<li><a [routerLink]="['learn']">Обучение</a></li>
-		<li><a [routerLink]="['boards']">Доски</a></li>
+	<ul class="nav-list">
+		<li>
+			<a class="link" [routerLink]="'/'">
+				<img src="assets/icons/dashboard.svg">
+				Главная
+			</a>
+		</li>
+		<li>
+			<a class="link" [routerLink]="['learn']">
+				<img src="assets/icons/learn.svg">
+				Обучение
+			</a>
+		</li>
+		<li>
+			<a class="link" [routerLink]="['learn']">
+				<img src="assets/icons/learn.svg">
+				Мои тренинги
+			</a>
+		</li>
+		<li>
+			<a class="link" [routerLink]="['learn']">
+				<img src="assets/icons/learn.svg">
+				Прогресс
+			</a>
+		</li>
+		<!-- <li><a [routerLink]="['boards']">Доски</a></li>
 		<li><a [routerLink]="">Чат</a></li>
-		<li><a [routerLink]="">Статистика</a></li>
+		<li><a [routerLink]="">Статистика</a></li> -->
+
 	</ul>
+	<div class="nav-footer">
+		<button mat-raised-button class="logout-btn" (click)="logout()">
+			<img src="assets/icons/logout.svg">
+			Выйти
+		</button>
+	</div>
 </nav>
