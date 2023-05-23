@@ -1,19 +1,47 @@
 <h1>С возвращением, {{ (user$ | async)?.username }}</h1>
 
-<div class="courses-list">
-	<h2>Мои тренинги</h2>
-	<ng-container *ngIf="profiles$ | async as profiles; else loader">
-		<ng-container
-			*ngFor="let profile of profiles"
-			[ngTemplateOutlet]="trainingItem"
-			[ngTemplateOutletContext]="{
-				profile: profile,
-				course: profile.training.course
-			}"
-		>
-		</ng-container>
-	</ng-container>
-</div>
+<ng-container *ngIf="dashboard$ | async as dashboard">
+
+	<div class="section courses">
+		<h2>Мои тренинги</h2>
+
+		<div class="courses__list">
+			<ng-container
+				*ngFor="let profile of dashboard.profiles"
+				[ngTemplateOutlet]="trainingItem"
+				[ngTemplateOutletContext]="{
+					profile: profile,
+					course: profile.training.course
+				}">
+			</ng-container>
+		</div>
+	</div>
+
+	<div class="progress section">
+		<h2>Прогресс</h2>
+
+		<h3>Верхнеуровневый обзор тренингов</h3>
+		<div class="progress__list">
+
+			<ng-container *ngFor="let chart of dashboard.overallInfoCharts">
+				<div class="chart-card">
+					<span>
+						{{ chart.options.training.title }}
+					</span>
+					<app-training-completeness-chart
+						*ngIf="chart.config; else noChartData"
+						[config]="chart.config">
+					</app-training-completeness-chart>
+				</div>
+			</ng-container>
+
+		</div>
+
+	</div>
+
+</ng-container>
+
+
 
 <ng-template #trainingItem let-course="course" let-profile="profile">
 	<a
@@ -21,8 +49,9 @@
 		class="training-item"
 	>
 		<h3>{{ course.title }}</h3>
-		<span>Начало {{ profile.training.startAt | date : 'dd.MM.yy' }}</span>
-		<span>Длительность {{ course | courseDuration }} дн.</span>
+		<p>Status: {{ profile.training.status }}</p>
+		<p>Начало {{ profile.training.startAt | date : 'dd.MM.yy' }}</p>
+		<p>Длительность {{ course | courseDuration }} дн.</p>
 		<div>
 			<span>Вы изучите</span>
 			<span *ngFor="let comp of course.competencies?.acquired">
@@ -34,4 +63,8 @@
 
 <ng-template #loader>
 	<p>Loading...</p>
+</ng-template>
+
+<ng-template #noChartData>
+	<p>Нет данных</p>
 </ng-template>

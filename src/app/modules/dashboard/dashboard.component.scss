@@ -5,3 +5,16 @@
 	margin: 10px;
 	border-radius: 16px;
 }
+
+.chart-card {
+	width: 360px;
+	padding: 10px;
+	border-radius: 10px;
+	box-shadow: 0px 1px 5px #ccc;
+}
+
+.progress__list {
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+}

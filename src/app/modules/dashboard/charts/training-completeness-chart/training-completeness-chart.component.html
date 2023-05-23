@@ -1,0 +1,7 @@
+<ng-container *ngIf="config.data.datasets.length > 0; else noData">
+	<canvas baseChart [data]="config.data" type="doughnut"> </canvas>
+</ng-container>
+
+<ng-template #noData>
+	<p>No Data</p>
+</ng-template>

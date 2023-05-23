@@ -124,6 +124,15 @@ export interface ProfileProgress {
 	quiz: ProfileQuizRecord[];
 }
 
+export interface ProfileProgressTraining {
+	_id?: string;
+	uuid: string;
+	profile?: TrainingProfileTraining;
+	topicId: string;
+	records: ProfileProgressRecord[];
+	quiz: ProfileQuizRecord[];
+}
+
 export interface ProfileProgressRecord {
 	uuid: string;
 	taskId: string;
@@ -131,6 +140,18 @@ export interface ProfileProgressRecord {
 	isCounted?: boolean;
 	date: string;
 	comment?: string;
+}
+
+export interface ProfileProgressRecordDashboard {
+	uuid: string;
+	taskId: string;
+	mark?: number;
+	isCounted?: boolean;
+	date: string;
+	isCurrent: boolean;
+	isDone: boolean;
+	isOverdue: boolean;
+	isComing: boolean;
 }
 
 export interface ProfileQuizRecord {

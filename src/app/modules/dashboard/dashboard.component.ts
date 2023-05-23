@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { UserService } from 'src/app/services/user.service';
-import { TrainingService } from './services/training.service';
+import { DashboardService } from './services/dashboard.service';
+import { Observable, shareReplay, switchMap } from 'rxjs';
+import { StudentDashboard } from './types/dashboard.types';
 
 @Component({
 	selector: 'app-dashboard',
@@ -14,14 +16,21 @@ export class DashboardComponent
 	implements OnInit
 {
 	public user$ = this.userService.user$;
-	public profiles$ = this.trainingService.studentProfiles$;
+	public dashboard$!: Observable<StudentDashboard>
 
 	constructor(
 		private userService: UserService,
-		private trainingService: TrainingService
+		private dashboardService: DashboardService
 	) {
 		super();
 	}
 
-	ngOnInit(): void {}
+	ngOnInit(): void {
+		this.dashboard$ = this.user$.pipe(
+			switchMap(user => {
+				return this.dashboardService.getDashboard(user._id)
+			}),
+			shareReplay(1),
+		)
+	}
 }
