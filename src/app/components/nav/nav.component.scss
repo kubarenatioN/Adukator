@@ -1,14 +1,31 @@
+@import "/src/mixins";
+
 :host {
-	padding: 0px 10px 10px;
+	padding: 10px;
+}
+
+.logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	align-self: center;
+	width: 80px;
+	height: 80px;
+	// background-color: #fff;
+	border-radius: 50%;
+	&-img {
+		height: 70px;
+	}
 }
 
 nav {
+	@include card($br: 20px);
+
 	display: flex;
 	flex-direction: column;
-	background-color: var(--primary-50);
+	background-color: #fff;
 	height: 100%;
 	font-size: 14px;
-	border-radius: 20px;
 	overflow: hidden;
 }
 
@@ -32,12 +49,12 @@ nav {
 	}
 
 	&:hover {
-		background-color: var(--primary-100);
+		background-color: var(--primary-50);
 	}
 }
 
 .nav-footer {
-	background-color: var(--primary-100);
+	background-color: var(--primary-50);
 	padding: 20px 0;
 }
 .logout-btn {

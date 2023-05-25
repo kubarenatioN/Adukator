@@ -1,21 +1,18 @@
 :host {
 	display: flex;
-	flex-direction: column;
+	// flex-direction: column;
 	height: 100vh;
 	overflow: hidden;
 }
 
 .header__wrapper {
-	padding: 10px;
-	padding-bottom: 5px;
+	padding-right: 10px;
 }
 
 .header {
 	display: flex;
 	align-items: center;
 	min-height: 60px;
-	padding: 10px;
-	// background-color: #f1f1f1;
 	border-radius: 10px;
 	box-shadow: var(--box-shadow-default);
 }
@@ -26,7 +23,7 @@
 }
 
 .logo-img {
-	height: 50px;
+	height: 60px;
 	object-fit: contain;
 }
 
@@ -38,12 +35,15 @@
 
 .main {
 	display: flex;
+	flex-direction: column;
 	flex-grow: 1;
+	padding: 10px 0px 0px 10px;
 	min-height: 200px;
-	padding-top: 5px;
 }
 
 .content {
+	margin-top: 10px;
+	padding-top: 10px;
 	overflow-y: auto;
 	width: 100%;
 	position: relative;

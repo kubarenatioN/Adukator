@@ -163,7 +163,6 @@ export class CourseBuilderService {
 		let courseData = convertCourseFormDataToCourseReview(formData);
 		courseData = nullifyComments(courseData)
 
-		// TODO: Uncomment method below
 		return this.coursesService.createCourseReviewVersion(courseData, {
 			isMaster,
 		});

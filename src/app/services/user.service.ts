@@ -80,11 +80,8 @@ export class UserService {
 		})
 	}
 
-	public cancelTeacherPermsRequest() {
-		this.user$.pipe(
-			switchMap(user => {
-				return this.dataService.http.delete<{ request: null }>(`${DATA_ENDPOINTS.user}/become-teacher/${user._id}`)
-			}),
+	public cancelTeacherPermsRequest(reqId: string) {
+		this.dataService.http.delete<{ request: null }>(`${DATA_ENDPOINTS.user}/become-teacher/${reqId}`).pipe(
 			map(res => res.request)
 		).subscribe(request => {
 			this.teacherPermsRequestStore$.next(request)

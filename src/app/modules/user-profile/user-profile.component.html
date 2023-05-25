@@ -51,7 +51,7 @@
 					<p>
 						Статус: {{ request.status }}
 					</p>
-					<button *ngIf="request.status === 'pending'" (click)="cancelTeacherPermsRequest()">Отозвать заявку</button>
+					<button *ngIf="request.status === 'pending'" (click)="cancelTeacherPermsRequest(request._id)">Отозвать заявку</button>
 				</div>
 			</ng-container>
 			<ng-template #becomeTeacher>

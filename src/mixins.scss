@@ -1,4 +1,0 @@
-@mixin card($x: 0px, $y: 0px, $color: #333, $br: 16px) {
-	box-shadow: $x $y 5px $color;
-	border-radius: $br;
-}

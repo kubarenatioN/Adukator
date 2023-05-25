@@ -38,7 +38,7 @@
                         "styles": [
                             "src/custom-theme.scss",
                             "src/variables.scss",
-                            "src/mixins.scss",
+                            "src/_mixins.scss",
                             "src/styles.scss"
                         ],
                         "scripts": []

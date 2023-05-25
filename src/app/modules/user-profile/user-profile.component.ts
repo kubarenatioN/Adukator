@@ -95,8 +95,8 @@ export class UserProfileComponent extends CenteredContainerDirective implements 
 		})
 	}
 
-	public cancelTeacherPermsRequest() {
-		this.userService.cancelTeacherPermsRequest()
+	public cancelTeacherPermsRequest(reqId: string) {
+		this.userService.cancelTeacherPermsRequest(reqId)
 	}
 
 	public logOut(): void {
