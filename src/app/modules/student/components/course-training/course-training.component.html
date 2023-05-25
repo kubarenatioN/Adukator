@@ -9,13 +9,18 @@
 					*ngSwitchCase="viewTypes.Main"
 					[ngTemplateOutlet]="mainView"
 					[ngTemplateOutletContext]="{
-						training: viewData.training
+						training: viewData.training,
+						contentTree: viewData.contentTree
 					}"
 				></ng-container>
 
 				<ng-container
 					*ngSwitchCase="viewTypes.Module"
 					[ngTemplateOutlet]="moduleView"
+					[ngTemplateOutletContext]="{
+						module: viewData.module,
+						training: viewData.training
+					}"
 				></ng-container>
 
 				<ng-container
@@ -37,13 +42,15 @@
 				[tree]="viewData.contentTree">
 			</app-course-sidenav>
 			<div class="sidebar__footer">
-				<a [routerLink]="['/app/learn/overview/course', viewData.training.course.uuid]"
-				mat-raised-button>
-					К обзору курса
-				</a>
-				<a routerLink="../"
-				mat-raised-button>
+				<a 
+					routerLink="../"
+					mat-raised-button>
 					К прогрессу
+				</a>
+				<a 
+					[routerLink]="['/app/learn/overview/course', viewData.training.course.uuid]"
+					mat-raised-button>
+					К обзору курса
 				</a>
 			</div>
 		</div>
@@ -51,22 +58,37 @@
 	
 </app-layout>
 
-<ng-template #mainView let-training="training">
-	<span>Статус: {{ training.status }}</span>
-	<h1>Тренинг по курсу {{ training.course.title }}</h1>
+<ng-template #mainView let-training="training" let-contentTree="contentTree">
+	<div class="training__title-wrapper">
+		<h1>{{ training.course.title }}</h1>
+		<span class="training__status" [class.archived]="training.status !== 'active'">{{ training.status === 'active' ? 'Идет сейчас' : 'В архиве' }}</span>
+	</div>
 	<p>{{ training.course.description }}</p>
 	<p>Категория: {{ training.course.category }}</p>
 
 	<h2>Программа</h2>
 	<div class="modules-list">
-		<div *ngFor="let node of training.contentTree" class="module-item">
+		<div *ngFor="let node of contentTree" class="module-item">
 			<h3>{{ node.module.title }}</h3>
+			<div class="topics-list">
+				<p *ngFor="let topic of node.topics">
+					{{ topic.title }}
+				</p>
+			</div>
 		</div>
 	</div>
 </ng-template>
 
-<ng-template #moduleView let-module="module">
+<ng-template #moduleView let-module="module" let-training="training">
 	<h1>{{ module.title }}</h1>
+	<p class="">{{ module.description }}</p>
+
+	<div class="module-content">
+		<h3>Темы модуля</h3>
+		<div class="module-topic" *ngFor="let t of training.course.topics">
+			<a routerLink="." [queryParams]="{ topic: t.id }">{{ t.title }}</a>
+		</div>
+	</div>
 </ng-template>
 
 <ng-template
@@ -76,6 +98,7 @@
 	let-profileId="profileId"
 >
 	<app-topic-training
+		class="topic-training"
 		*ngIf="topic"
 		(sendReply)="onSendReply($event)"
 		[topic]="topic"

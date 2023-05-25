@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
 	BehaviorSubject,
 	combineLatest,
@@ -78,7 +78,8 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 		private userService: UserService,
 		private trainingService: StudentTrainingService,
 		private activatedRoute: ActivatedRoute,
-		private uploadService: UploadService
+		private uploadService: UploadService,
+		private router: Router,
 	) {
 		super();
 	}
@@ -134,6 +135,11 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 						};
 					}
 
+					this.router.navigate([], {
+						queryParams: {
+							main: true,
+						},
+					})
 					return {
 						viewType,
 						training,

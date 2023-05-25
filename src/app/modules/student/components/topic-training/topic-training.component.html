@@ -1,5 +1,5 @@
 <p *ngIf="status === 'archived'">Тренинг в архиве</p>
-<h1>Тема {{ topic.title }}</h1>
+<h1>{{ topic.title }}</h1>
 
 <h3 class="topic-status actual" *ngIf="isActual">Тема в стадии изучения</h3>
 <h3 class="topic-status past" *ngIf="!isActual && isPast">

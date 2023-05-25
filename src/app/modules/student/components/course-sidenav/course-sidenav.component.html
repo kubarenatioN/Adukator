@@ -1,32 +1,43 @@
 <ng-container *ngIf="tree">
 	<nav class="nav">
 		<ul class="nav-list">
-			<li>
-				<a routerLink="./">Главная</a>
+			<li class="list-item">
+				<a 
+				routerLinkActive="link-active"
+				class="list-item__link" routerLink="./" [queryParams]="{ main: true }">Главная</a>
 			</li>
 			<ul
 				class="modules-list"
 				*ngFor="let node of tree; let i = index"
 			>
-				<li>
-					{{ node.module.title }}
+				<li class="list-item">
+					<a 
+						class="list-item__link"
+						routerLinkActive="link-active"
+						[routerLink]="[]"
+						[queryParams]="{ module: node.module.id }"
+					>
+						{{ node.module.title }}
+					</a>
 				</li>
-				<ul class="topics-list">
+				<ul class="list-item">
 					<li
 						[class.actual]="topic.isActual"
-						class="topic-item"
+						class="list-item list-item__level-2"
 						*ngFor="let topic of node.topics; let j = index"
 					>
 						<a
+						class="list-item__link"
 							[routerLink]="[]"
+							routerLinkActive="link-active"
 							[queryParams]="{ topic: topic.id }"
 						>
 							<span>
 								{{ topic.title }}
 							</span>
-							<span>
+							<!-- <span>
 								({{ topic.startAt | date : 'dd.MM.yy' }})
-							</span>
+							</span> -->
 						</a>
 					</li>
 				</ul>

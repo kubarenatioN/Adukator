@@ -1,10 +1,22 @@
 @import 'custom-theme.scss';
 
+$green-accent: #7aff32;
+
 :root,
 :host {
 	--primary-50: #{$primary-50};
 	--primary-100: #{$primary-100};
 	--primary-200: #{$primary-200};
+	--primary-200: #{$primary-200};
+	--primary-300: #{$primary-300};
+	--primary-400: #{$primary-400};
+	--primary-500: #{$primary-500};
+	--primary-700: #{$primary-700};
+
+
+	--secondary-700: #{$secondary-700};
+
+	--green-accent: #{$green-accent};
 
 	--box-shadow-default: 0px 1px 5px #ccc
 }

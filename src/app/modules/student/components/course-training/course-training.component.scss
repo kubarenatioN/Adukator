@@ -1,15 +1,39 @@
+@import "/src/mixins";
+
 .layout {
 	min-height: 100vh;
 	flex-direction: row-reverse;
 	align-items: stretch;
 }
 
-.training-container {
-	width: 100%;
-	display: flex;
-	align-items: flex-start;
-	height: 100%;
-	overflow-y: auto;
+.training{
+	
+	&-container {
+		width: 100%;
+		display: flex;
+		align-items: flex-start;
+		height: 100%;
+		overflow-y: auto;
+	}
+
+	&__title-wrapper {
+		display: flex;
+		align-items: center;
+	}
+
+	&__status {
+		padding: 4px 14px;
+		font-size: 11px;
+		white-space: nowrap;
+		border-radius: 20px;
+		border: 2px solid #5ba000;
+		background-color: #cffdcc;
+
+		&.archived {
+			background-color: #dedede;
+			border-color: #959595;
+		}
+	}
 }
 
 .content {
@@ -21,8 +45,8 @@
 
 .sidebar {
 	margin-top: 100px;
-	min-width: 280px;
-	width: 280px;
+	min-width: 270px;
+	width: 270px;
 	padding: 10px;
 	
 	&__sticky {
@@ -32,8 +56,11 @@
 	}
 	
 	&__nav {
+		@include card;
+
+		padding: 20px 10px;
 		min-height: 400px;
-		background-color: var(--primary-50);
+		// background-color: var(--primary-50);
 		display: block;
 	}
 
@@ -45,3 +72,7 @@
 		gap: 10px;
 	}
 }
+
+// .topic-training {
+// 	margin-top: 20px;
+// }

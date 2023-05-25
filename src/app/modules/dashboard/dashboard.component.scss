@@ -1,5 +1,11 @@
 @import "/src/mixins.scss";
 
+.trainings__list {
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 10px;
+}
 .training-item {
 	@include card();
 
@@ -7,9 +13,12 @@
 	margin: 10px;
 	border-radius: 16px;
 	overflow: hidden;
+	width: 260px;
+	min-height: 300px;
 	
 	&__poster {
-		max-width: 100%;
+		width: 100%;
+		min-height: 160px;
 		height: 160px;
 		object-fit: cover;
 	}

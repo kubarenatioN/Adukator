@@ -5,7 +5,7 @@
 	<div class="section courses">
 		<h2>Мои тренинги</h2>
 
-		<div class="courses__list">
+		<div class="trainings__list">
 			<ng-container
 				*ngFor="let profile of dashboard.profiles"
 				[ngTemplateOutlet]="trainingItem"
@@ -51,7 +51,7 @@
 		<img class="training-item__poster" [src]="course.banner" alt="">
 		<div class="training-item__content">
 
-			<h3 class="training-item__title">{{ course.title }}</h3>
+			<h3 class="training-item__title">{{ profile.training.title }}</h3>
 			<p class="training-item__status">Status: {{ profile.training.status }}</p>
 			<p class="training-item__start">Начало {{ profile.training.startAt | date : 'dd.MM.yy' }}</p>
 			<p class="training-item__duration">Длительность {{ course | courseDuration }} дн.</p>
