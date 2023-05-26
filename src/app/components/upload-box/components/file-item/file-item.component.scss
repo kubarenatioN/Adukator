@@ -1,23 +1,21 @@
 .progress-bar {
 	height: 2px;
 	width: 0;
-	background-color: rgb(95, 218, 255);
+	background-color: var(--green-accent);
 }
 
 .file-item {
+	padding: 5px;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
 	justify-content: center;
+	align-items: center;
 	height: 100%;
-	padding: 5px;
-}
 
-.download {
-	background-color: #eee;
-	border: 1px solid #333;
-	cursor: pointer;
-	overflow: hidden;
+	&.download {
+		cursor: pointer;
+		overflow: hidden;
+	}
 
 	& span {
 		width: 100%;
@@ -25,6 +23,8 @@
 		word-wrap: break-word;
 	}
 }
+
+
 
 .upload {
 	background-color: #fffaf0;

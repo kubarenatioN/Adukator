@@ -1,6 +1,7 @@
 @import 'custom-theme.scss';
 
 $green-accent: #7aff32;
+$red-accent: #ea2626;
 
 :root,
 :host {
@@ -15,8 +16,10 @@ $green-accent: #7aff32;
 
 
 	--secondary-700: #{$secondary-700};
+	--secondary-500: #{$secondary-500};
 
 	--green-accent: #{$green-accent};
+	--red-accent: #{$red-accent};
 
 	--box-shadow-default: 0px 1px 5px #ccc
 }

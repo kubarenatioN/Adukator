@@ -1,8 +1,15 @@
-<p *ngIf="!isActual && task.isOpened !== true">
-	Задание недоступно для отправки.
-</p>
-<p *ngIf="!isActual && task.isOpened === true">Задание было разблокировано.</p>
-<h3>{{ task.taskDescr }}</h3>
+<div class="task-header">
+	<p class="task-header__note blocked" *ngIf="!isActual && task.isOpened !== true">
+		Задание недоступно для отправки
+	</p>
+	<p *ngIf="!isActual && task.isOpened === true" class="task-header__note unblocked">
+		Задание было разблокировано
+	</p>
+	
+	<span class="task-header__descr-subtitle">Условие задания</span>
+
+	<p class="task-header__descr">{{ task.taskDescr }}</p>
+</div>
 
 <div>
 	<app-upload-box
@@ -13,7 +20,7 @@
 	></app-upload-box>
 </div>
 
-<form [formGroup]="form" *ngIf="isActual || task.isOpened">
+<form class="task-form" [formGroup]="form" *ngIf="isActual || task.isOpened">
 	<app-upload-box
 		class="upload-box"
 		#uploadBox
@@ -29,11 +36,11 @@
 	></app-upload-box>
 
 	<textarea
+		class="textarea"
 		formControlName="comment"
-		cols="50"
-		rows="6"
-		placeholder="Комментарий"
+		placeholder="Комментарий к заданию"
+		rows="3"
 	></textarea>
-	<br />
-	<button (click)="onSend()">Отправить</button>
+
+	<button mat-raised-button class="submit-btn" (click)="onSend()" color="primary">Отправить</button>
 </form>

@@ -1,8 +1,8 @@
-<div class="upload-inner download">
+<div class="upload-inner">
 	<div class="files-container">
 		<ng-container *ngIf="filesStore.length > 0; else noFiles">
 			<div class="files-group" *ngFor="let group of filesStore">
-				<h3>Отправлено {{ group.date }}</h3>
+				<p class="files-group__time">Отправлено {{ group.date }}</p>
 				<div class="group-files-list">
 					<app-file-item
 						*ngFor="let file of group.files"

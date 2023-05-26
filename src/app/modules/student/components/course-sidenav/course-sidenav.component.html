@@ -4,7 +4,7 @@
 			<li class="list-item">
 				<a 
 				routerLinkActive="link-active"
-				class="list-item__link" routerLink="./" [queryParams]="{ main: true }">Главная</a>
+				class="list-item__link" routerLink="./" [routerLinkActiveOptions]= "{exact: true}">Главная</a>
 			</li>
 			<ul
 				class="modules-list"

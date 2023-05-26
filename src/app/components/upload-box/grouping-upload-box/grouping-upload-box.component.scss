@@ -1,35 +1,21 @@
 :host {
 	display: flex;
 	flex-direction: column;
-	padding: 10px;
-	margin: 5px;
 	border: 1px solid #333;
-}
-
-.wrapper {
-	display: flex;
-	flex-direction: column;
-	min-height: 100px;
 }
 
 .upload-inner {
 	display: flex;
 	flex-direction: column;
 	min-height: 120px;
-	background-color: rgb(233, 239, 255);
-
-	&.download {
-		background-color: rgb(248, 255, 225);
-		overflow-y: auto;
-	}
+	overflow-y: auto;
 }
 
 .files-container {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 10px;
 	flex-grow: 1;
-	padding: 10px;
+	padding: 0 10px;
 
 	&--empty {
 		display: block;
@@ -47,6 +33,18 @@
 
 .files-group {
 	width: 100%;
+	padding: 16px 0px;
+	border-bottom: 1px solid #ccc;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&__time {
+		font-size: 14px;
+		font-style: italic;
+		padding: 4px 0;
+	}
 }
 
 .group-files-list {
@@ -54,4 +52,11 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 10px;
+
+	& .file-item {
+		max-width: 20%;
+		min-width: 100px;
+		font-size: 12px;
+		border: 1px solid #ccc;
+	}
 }

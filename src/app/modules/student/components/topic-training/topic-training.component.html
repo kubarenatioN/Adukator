@@ -23,7 +23,7 @@
 	[class.archived]="status === 'archived'"
 >
 	<div *ngIf="topic.theory" class="theory-section section">
-		<h2>Теория</h2>
+		<h3>Теория</h3>
 		<p>{{ topic.theory }}</p>
 	</div>
 
@@ -34,7 +34,7 @@
 			*ngIf="topic.materials && topic.materials.length > 0"
 			class="materials-section section"
 		>
-			<h2>Материалы к теме</h2>
+			<h3>Материалы к теме</h3>
 			<app-upload-box
 				type="download"
 				[folder]="trainingMaterialsFolder"
@@ -43,7 +43,7 @@
 		</div>
 
 		<div *ngIf="topic.practice" class="practice-section section">
-			<h2>Практика</h2>
+			<h3>Практика</h3>
 			<div class="practice-container" *ngIf="topic.practice">
 				<p>{{ topic.practice.goal }}</p>
 				<div class="practice-tasks">
@@ -92,7 +92,7 @@
 			[class.blocked]="isPast"
 			class="test-section section"
 		>
-			<h2>Ссылка на тест</h2>
+			<h3>Тест</h3>
 			<div>
 				<p>Ваш уникальный ID тренинга:</p>
 				<span

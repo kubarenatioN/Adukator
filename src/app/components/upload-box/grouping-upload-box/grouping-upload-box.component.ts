@@ -140,6 +140,7 @@ export class GroupingUploadBoxComponent
 	private getFilesFromFolder(folder: string): Observable<UserFile[]> {
 		// DEBUG
 		return of(filesFromRemoteMock).pipe(map((res) => res.files));
+		
 		// return this.uploadService.getFilesFromFolder(folder, 'remote')
 		//   .pipe(
 		//     map(res => res.files)

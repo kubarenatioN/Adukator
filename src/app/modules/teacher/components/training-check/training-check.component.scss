@@ -1,3 +1,5 @@
+@import "/src/mixins";
+
 .header {
 	padding: 10px 0;
 	border-bottom: 1px solid #ccc;
@@ -9,9 +11,20 @@
 }
 
 .topic-answer-container {
-	padding: 10px;
-	border: 1px solid #333;
 	min-height: 300px;
+}
+
+.task-answers {
+
+}
+
+.topic-task {
+	padding: 20px 0;
+
+	&__descr {
+		padding-bottom: 4px;
+		font-size: 15px;
+	}
 }
 
 .check-results {
@@ -42,17 +55,13 @@
 	margin: 10px 0;
 }
 
-.task-answers {
-	margin: 10px;
-	padding: 10px;
-	border: 1px solid rgb(210, 56, 248);
-}
-
 .thread-list {
 	&-item {
-		padding: 5px;
-		margin: 5px;
-		border: 1px solid rgb(141, 167, 255);
+		@include card;
+		border-radius: 6px;
+		
+		padding: 10px;
+		margin: 10px 0;
 	}
 }
 
@@ -62,5 +71,16 @@
 }
 
 .student-files-box {
-	height: 200px;
+	height: 240px;
+	border: 1px solid #333;
+}
+
+.no-task-answers {
+	height: 60px;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #f2f2f2;
+	border-radius: 20px;
 }

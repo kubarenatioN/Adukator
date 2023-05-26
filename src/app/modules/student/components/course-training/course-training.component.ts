@@ -135,11 +135,6 @@ export class CourseTrainingComponent extends BaseComponent implements OnInit {
 						};
 					}
 
-					this.router.navigate([], {
-						queryParams: {
-							main: true,
-						},
-					})
 					return {
 						viewType,
 						training,
