@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { InjectionToken, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -12,6 +12,11 @@ import { TokenInterceptor } from './interceptors/token-interceptor.service';
 import { ResponseTransformationInterceptor } from './interceptors/response-transformation-interceptor.service';
 import { CenteredContainerDirective } from './directives/centered-container.directive';
 import { NgChartsModule } from 'ng2-charts';
+import { apiUrl } from './constants/urls';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { ValdemortModule } from 'ngx-valdemort';
+
+export const COURSE_BANNER_EMPTY = new InjectionToken<string>('course banner empty img placeholder');
 
 @NgModule({
 	declarations: [
@@ -27,6 +32,7 @@ import { NgChartsModule } from 'ng2-charts';
 		HttpClientModule,
 		SharedModule,
 		NgChartsModule,
+		ValdemortModule,
 	],
 	providers: [
 		{
@@ -39,6 +45,14 @@ import { NgChartsModule } from 'ng2-charts';
 			useClass: ResponseTransformationInterceptor,
 			multi: true,
 		},
+		{
+			provide: COURSE_BANNER_EMPTY,
+			useValue: `${apiUrl}/static/images/course-banner-empty.jpg`
+		},
+		{
+			provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, 
+			useValue: {appearance: 'outline'}
+		}
 	],
 	bootstrap: [AppComponent],
 })

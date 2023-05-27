@@ -18,9 +18,15 @@ import { UploadCacheService } from 'src/app/services/upload-cache.service';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ReviewCourseComponent } from './components/review-course/review-course.component';
+import { ValdemortModule } from 'ngx-valdemort';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
-	providers: [CourseBuilderService, UploadCacheService],
+	providers: [
+		CourseBuilderService, 
+		UploadCacheService,
+	],
 	declarations: [
 		CourseBuilderComponent,
 		CourseFormComponent,
@@ -36,9 +42,11 @@ import { ReviewCourseComponent } from './components/review-course/review-course.
 		CommonModule,
 		CourseBuilderRoutingModule,
 		SharedModule,
+		ValdemortModule,
 
 		MatAutocompleteModule,
-
+		MatFormFieldModule,
+		MatInputModule,
 		ReactiveFormsModule,
 		LayoutComponent,
 	],

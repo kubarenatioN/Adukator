@@ -1,9 +1,10 @@
-<mat-form-field class="example-chip-list" appearance="fill">
+<mat-form-field [formGroup]="form">
 	<mat-label>{{ title }}</mat-label>
-	<mat-chip-list #chipList>
-		<mat-chip *ngFor="let c of pickedItems" (removed)="remove(c.id)">
+	<mat-chip-list #chipList [formControlName]="control">
+		<mat-chip class="comp-chip" *ngFor="let c of pickedItems" (removed)="remove(c.id)">
 			<!-- {{ c.label }} -->
-			<!-- DEV --> {{ c.label || c }}
+			<!-- DEV -->
+			{{ c.label || c }}
 			<button matChipRemove>Х</button>
 		</mat-chip>
 		<input
@@ -27,4 +28,8 @@
 			{{ item.label }}
 		</mat-option>
 	</mat-autocomplete>
+
+	<mat-error>
+		<val-errors [controlName]="control"></val-errors>	
+	</mat-error>
 </mat-form-field>

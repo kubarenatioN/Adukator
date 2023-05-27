@@ -43,20 +43,22 @@
 				</ng-container>
 			</ng-container>
 
-			<ng-container *ngIf="userTeacherPermsRequest$ | async as request; else becomeTeacher">
-				<div class="teacher-perms-request">
-					<p>
-						Заявка на получение прав преподавателя
-					</p>
-					<p>
-						Статус: {{ request.status }}
-					</p>
-					<button *ngIf="request.status === 'pending'" (click)="cancelTeacherPermsRequest(request._id)">Отозвать заявку</button>
-				</div>
+			<ng-container *ngIf="user.role !== 'admin'">
+				<ng-container *ngIf="userTeacherPermsRequest$ | async as request; else becomeTeacher">
+					<div class="teacher-perms-request">
+						<p>
+							Заявка на получение прав преподавателя
+						</p>
+						<p>
+							Статус: {{ request.status }}
+						</p>
+						<button *ngIf="request.status === 'pending'" (click)="cancelTeacherPermsRequest(request._id)">Отозвать заявку</button>
+					</div>
+				</ng-container>
+				<ng-template #becomeTeacher>
+					<button mat-raised-button color="primary" (click)="onRequestTeacherPermission(user)">Стать преподавателем</button>
+				</ng-template>
 			</ng-container>
-			<ng-template #becomeTeacher>
-				<button mat-raised-button color="primary" (click)="onRequestTeacherPermission(user)">Стать преподавателем</button>
-			</ng-template>
 			
 			<div class="footer">
 				<button mat-raised-button color="primary" (click)="logOut()">Выйти</button>

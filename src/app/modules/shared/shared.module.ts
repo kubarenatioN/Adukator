@@ -10,6 +10,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import {MatIconModule} from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { BackBtnComponent } from 'src/app/modules/shared/components/back-btn/back-btn.component';
 import { DatePipe } from 'src/app/pipes/date.pipe';
@@ -53,6 +54,7 @@ import { CourseDurationPipe } from 'src/app/pipes/course-duration.pipe';
 		ReactiveFormsModule,
 		MatChipsModule,
 		NgChartsModule,
+		MatIconModule
 	],
 	exports: [
 		MatButtonModule,
@@ -63,6 +65,7 @@ import { CourseDurationPipe } from 'src/app/pipes/course-duration.pipe';
 		MatSelectModule,
 		MatButtonToggleModule,
 		MatFormFieldModule,
+		MatIconModule,
 		MatChipsModule,
 		BackBtnComponent,
 		DatePipe,

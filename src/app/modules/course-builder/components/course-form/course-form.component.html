@@ -40,21 +40,25 @@
 		></ng-container>
 	</ng-container>
 
-	<div [formGroup]="overallInfoSubform">
+	<div class="overall-info" [formGroup]="overallInfoSubform">
+		<h2>Общая информация</h2>
 		<div class="property">
 			<ng-container
 				*appFormElWrapper="
 					overallInfoSubform;
 					control: 'banner';
 					type: 'edit'
-				"
-				appearance="fill"
-			>
+				">
 				<mat-label>Баннер к курсу</mat-label>
-				<div class="preview">
-					<img *ngIf="overallInfoSubform.value.banner" [src]="overallInfoSubform.value.banner" alt="">
+				<div class="banner">
+					<img class="banner__img" [src]="overallInfoSubform.value.banner || emptyBannerSrc" alt="">
 				</div>
-				<input (change)="onUploadPoster($event, formMode)" type="file" accept="image/png, image/jpeg, image/jpg" />
+				<label class="banner__input-label">
+					<span>Выбрать баннер</span>
+					<input class="banner__input" (change)="onUploadPoster($event, formMode)" type="file" accept="image/png, image/jpeg, image/jpg" />
+				</label>
+				<val-errors class="mat-error" controlName="banner"></val-errors>	
+				<!-- <input matInput> -->
 			</ng-container>
 		</div>
 
@@ -64,25 +68,30 @@
 					overallInfoSubform;
 					control: 'title';
 					type: 'edit'
-				"
-				appearance="fill"
-			>
+				" 
+				class="property__title">
 				<mat-label>Название курса</mat-label>
 				<input matInput formControlName="title" />
+				<mat-error>
+					<val-errors controlName="title"></val-errors>	
+				</mat-error>
 			</mat-form-field>
 		</div>
 
-		<div class="property">
+		<div class="property descr">
 			<mat-form-field
 				*appFormElWrapper="
 					overallInfoSubform;
 					control: 'description';
 					type: 'edit'
 				"
-				appearance="fill"
-			>
+				class="property__description">
 				<mat-label>Описание курса</mat-label>
-				<input matInput formControlName="description" />
+				<textarea 
+				matInput formControlName="description" rows="5"></textarea>
+				<mat-error>
+					<val-errors controlName="description"></val-errors>	
+				</mat-error>
 			</mat-form-field>
 		</div>
 
@@ -93,9 +102,7 @@
 					control: 'category';
 					type: 'edit'
 				"
-				class="categories-container"
-				appearance="fill"
-			>
+				class="categories-container">
 				<mat-label>Категория</mat-label>
 				<mat-select formControlName="category">
 					<mat-option
@@ -105,6 +112,9 @@
 						{{ category.name }}
 					</mat-option>
 				</mat-select>
+				<mat-error>
+					<val-errors controlName="category"></val-errors>	
+				</mat-error>
 			</mat-form-field>
 		</div>
 
@@ -122,7 +132,7 @@
 					[picked]="overallInfoSubform.value.requiredCompetencies"
 					control="requiredCompetencies"
 					title="Необходимые компетенции"
-					class="categories-container"
+					class="property__competencies required"
 				></app-chips-control>
 			</ng-container>
 		</div>
@@ -141,21 +151,32 @@
 					[picked]="overallInfoSubform.value.acquiredCompetencies"
 					control="acquiredCompetencies"
 					title="Получаемые компетенции"
-					class="categories-container"
+					class="property__competencies acquired"
 				></app-chips-control>
 			</ng-container>
 		</div>
 	</div>
 
-	<div class="modules">
-		<h3>Модули курса</h3>
+	<div class="content-list">
+		<h2>Содержание курса</h2>
 		<div
 			*ngFor="let moduleForm of modulesFormArray.controls; let i = index"
 			class="module-item"
 		>
-			<p>{{ i + 1 }}.{{ moduleForm.value.title }}</p>
+			<div class="module-item__header">
+				<div class="module-item__title">
+					<span class="module-item__order">{{ i + 1 }}</span>
+					<h4>{{ moduleForm.value.title }}</h4>
+				</div>
+
+				<button class="icon-btn" (click)="removeModule(moduleForm)">
+					<span class="material-icons-outlined">
+						delete
+					</span>
+				</button>
+			</div>
 			<div class="topics">
-				<h4>Темы модуля</h4>
+				<span>Темы модуля</span>
 				<div
 					*ngFor="
 						let topicForm of moduleForm.controls.topics.controls
@@ -163,44 +184,65 @@
 					class="topic-item"
 					[formGroup]="topicForm"
 				>
-					<div class="topic-info">
-						{{ topicForm.value.title }}
+					<div class="topic-item__header">
+						<div class="topic-item__title">
+							{{ topicForm.value.title }}
+						</div>
+
+						<div class="topic-item__actions">
+							<button 
+							class="icon-btn remove-btn" 
+							(click)="removeTopic(topicForm)">
+								<mat-icon class="icon">delete_outline</mat-icon>
+							</button>
+						</div>
 					</div>
-					<div class="topic-duration">
-						<mat-form-field class="input" appearance="fill">
+					<div class="topic-item__duration">
+						<mat-form-field class="input">
 							<mat-label>Недель</mat-label>
 							<input
 								formControlName="weeks"
 								matInput
+								required
 								type="number"
 								min="1"
-								max="20"
+								max="40"
 							/>
+							<mat-error>
+								<val-errors controlName="weeks"></val-errors>	
+							</mat-error>
 						</mat-form-field>
-						<mat-form-field class="input" appearance="fill">
+
+						<mat-form-field class="input">
 							<mat-label>Дней</mat-label>
 							<input
 								formControlName="days"
 								matInput
+								required
 								type="number"
 								min="1"
 								max="100"
 							/>
+							<mat-error>
+								<val-errors controlName="days"></val-errors>	
+							</mat-error>
 						</mat-form-field>
 					</div>
-					<div class="topic-item-footer">
-						<button (click)="removeTopic(topicForm)">Удалить тему</button>
-					</div>
 				</div>
-				<button *ngIf="canEditForm" (click)="addTopic(moduleForm)">
+				<button
+				class="topic-item__add"
+				*ngIf="canEditForm" (click)="addTopic(moduleForm)">
+					<span class="material-icons-outlined">
+						add_circle_outline
+					</span>
 					Добавить тему
 				</button>
 			</div>
 			<div class="module-item__footer">
-				<button (click)="removeModule(moduleForm)">Удалить модуль</button>
+
 			</div>
 		</div>
-		<button *ngIf="canEditForm" (click)="addModule()">
+		<button (click)="addModule()">
 			Добавить модуль
 		</button>
 	</div>

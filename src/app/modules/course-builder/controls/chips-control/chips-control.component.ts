@@ -1,15 +1,19 @@
 import { ENTER } from '@angular/cdk/keycodes';
 import {
+	AfterViewInit,
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	ElementRef,
+	HostListener,
 	Input,
 	OnInit,
 	ViewChild,
+	forwardRef,
 } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatChipInputEvent } from '@angular/material/chips';
+import { MatChipInputEvent, MatChipList } from '@angular/material/chips';
 import { Observable, debounceTime, map, startWith } from 'rxjs';
 
 export type ChipItem = { id: string; label: string };
@@ -48,12 +52,21 @@ export class ChipsControlComponent implements OnInit {
 	@ViewChild('input')
 	public input!: ElementRef<HTMLInputElement>;
 
+	constructor(
+		public cdRef: ChangeDetectorRef
+	) {}
+
 	public ngOnInit(): void {
 		this.filteredItems$ = this.query.valueChanges.pipe(
 			startWith(null),
 			debounceTime(300),
 			map((query) => (query ? this.filterItems(query) : this.items))
 		);
+
+		const controlForm = this.form.get(this.control)
+		controlForm?.statusChanges.subscribe(st => {
+			console.log(controlForm.touched);
+		})
 	}
 
 	public add(event: MatChipInputEvent): void {

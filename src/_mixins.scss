@@ -2,3 +2,8 @@
 	box-shadow: $x $y 5px $color;
 	border-radius: $br;
 }
+
+@mixin border($b: 1px, $type: solid, $color: #ccc, $r: 0px) {
+	border: $b $type $color;
+	border-radius: $r;
+}

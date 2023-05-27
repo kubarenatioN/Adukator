@@ -1,3 +1,5 @@
+@import "/src/mixins";
+
 form {
 	display: flex;
 	flex-direction: column;
@@ -5,35 +7,89 @@ form {
 	flex-grow: 1;
 }
 
+.overall-info {
+	margin-top: 10px;
+}
+
 mat-form-field {
 	max-width: 370px;
 	width: 100%;
 }
 
-.modules {
+.content-list {
 	width: 100%;
-	padding-left: 40px;
-	margin-top: 60px;
+	margin-top: 40px;
 }
 
-.module-item {
-	padding: 10px;
-	border: 1px solid #ccc;
+.module-item {	
+	padding: 20px 0;
+	border-bottom: 1px solid #ccc;
+
+	&__header {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+	}
+
+	&__title {
+		position: relative;
+	}
+
+	&__order {
+		@include border($color: var(--primary-200), $r: 6px);
+
+		position: absolute;
+		right: calc(100% + 10px);
+		top: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 30px;
+		height: 30px;
+	}
 }
 
 .topic-item {
-	display: flex;
-	justify-content: space-between;
+	@include card($br: 8px);
+	
 	padding: 10px;
-	border: 1px solid #ccc;
-	margin: 10px;
-}
+	margin: 20px 0;
 
-.topic-duration {
-	display: flex;
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
 
-	& .input {
-		width: 100px;
+	&__duration {
+		display: flex;
+	
+		& .input {
+			width: 100px;
+		}
+	}	
+
+	&__add {
+		@include border($r: 8px);
+		
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		min-height: 50px;
+		color: #777;
+		background-color: transparent;
+		cursor: pointer;
+
+		.disabled,
+		[disabled] {
+			pointer-events: none;
+			opacity: .5;
+		}
+
+		& span {
+			margin-right: 8px;
+		}
 	}
 }
 
@@ -71,7 +127,16 @@ mat-form-field {
 .property {
 	// display: flex;
 	align-items: baseline;
-	padding: 8px 0;
+	padding: 4px 0;
+	max-width: 320px;
+
+	&__description {
+		width: 360px;
+	}
+
+	&__competencies {
+		width: 420px;
+	}
 }
 
 p {
@@ -90,4 +155,32 @@ p {
 
 app-chips-control {
 	display: block;
+}
+
+.banner {
+	&__img {
+		@include border($r: 6px);
+
+		height: 120px;
+		width: 360px;
+		object-fit: cover;
+	}
+
+	&__input {
+		display: none;
+	}
+
+	&__input-label {
+		display: inline-block;
+		padding: 5px 8px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		cursor: pointer;
+		transition: .2s;
+		margin-top: 4px;
+
+		&:hover {
+			color: var(--primary-500);
+		}
+	}
 }

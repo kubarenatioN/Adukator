@@ -1,12 +1,16 @@
 import {
+	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
 	EventEmitter,
+	Inject,
 	Input,
 	OnInit,
 	Output,
+	QueryList,
+	ViewChildren,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import {
 	BehaviorSubject,
 	Observable,
@@ -38,8 +42,9 @@ import {
 	WrapperType,
 } from 'src/app/typings/course.types';
 import { CourseBuilderService } from '../../services/course-builder.service';
-import { ChipItem } from '../../controls/chips-control/chips-control.component';
+import { ChipItem, ChipsControlComponent } from '../../controls/chips-control/chips-control.component';
 import { apiUrl } from 'src/app/constants/urls';
+import { COURSE_BANNER_EMPTY } from 'src/app/app.module';
 
 @Component({
 	selector: 'app-course-form',
@@ -70,6 +75,8 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 	public viewModes = CourseFormViewMode;
 	public controlsType: WrapperType = 'edit';
 
+	@ViewChildren(ChipsControlComponent) public compControls!: QueryList<ChipsControlComponent>;
+
 	@Input() public set formData(
 		data: CourseReview | EmptyCourseFormData | null
 	) {
@@ -98,7 +105,8 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 	constructor(
 		private configService: ConfigService,
 		private fbHelper: FormBuilderHelper,
-		private courseBuilderService: CourseBuilderService
+		private courseBuilderService: CourseBuilderService,
+		@Inject(COURSE_BANNER_EMPTY) public emptyBannerSrc: string,
 	) {
 		super();
 		const courseId = this.courseBuilderService.courseId;
@@ -107,7 +115,7 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 
 	public ngOnInit(): void {
 		this.courseForm.valueChanges.subscribe((res) => {
-			// console.log('111', res);
+			// console.log('111', this.courseForm.value);
 			this.formChanged.emit(this.courseForm);
 		});
 
@@ -159,6 +167,9 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 
 		switch (action) {
 			case 'create': {
+				this.compControls.forEach(it => it.cdRef.markForCheck())
+				this.courseForm.markAllAsTouched();
+
 				if (isValid) {
 					this.onCreateReviewVersion(
 						value as unknown as CourseFormData,
@@ -231,5 +242,20 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 
 	private setCourseModel(courseData: CourseFormData): void {
 		this.fbHelper.fillCourseModel(this.courseForm, courseData);
+	}
+
+	private markAsTouched(control: FormGroup | AbstractControl) {
+		control.markAsDirty();
+		if (control instanceof FormGroup) {
+		  for (const key of Object.keys(control.controls)) {
+			this.markAsTouched(control.controls[key]);
+		  }
+		}
+		if (control instanceof FormArray) {
+		  for (const key of Object.keys(control.controls)) {
+			this.markAsTouched(control.controls[Number(key)]);
+		  }
+		}
+		return;
 	}
 }

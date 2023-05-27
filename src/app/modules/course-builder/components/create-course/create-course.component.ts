@@ -38,8 +38,7 @@ import { generateUUID } from 'src/app/helpers/courses.helper';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateCourseComponent
-	extends CenteredContainerDirective
-	implements OnInit, OnDestroy
+	implements OnInit
 {
 	public formMode: CourseFormViewMode = CourseFormViewMode.Create;
 	public formData$!: Observable<CourseReview | EmptyCourseFormData | null>;
@@ -53,7 +52,6 @@ export class CreateCourseComponent
 		private courseBuilderService: CourseBuilderService,
 		private router: Router
 	) {
-		super();
 	}
 
 	public ngOnInit(): void {

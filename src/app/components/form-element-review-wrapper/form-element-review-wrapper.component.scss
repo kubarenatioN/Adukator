@@ -20,11 +20,15 @@
 }
 
 ::ng-deep {
-	& .mat-form-field-wrapper {
-		margin-bottom: -1.3em;
-	}
+	// & .mat-form-field-wrapper {
+	// 	margin-bottom: -1.3em;
+	// }
 
-	& mat-form-field.mat-form-field-appearance-standard .mat-form-field-flex {
-		padding-top: 0;
-	}
+	// & mat-form-field.mat-form-field-appearance-standard .mat-form-field-flex {
+	// 	padding-top: 0;
+	// }
+
+	// & mat-form-field.mat-form-field-appearance-outline .mat-form-field-wrapper {
+	// 	margin-bottom: -1.3em;
+	// }
 }

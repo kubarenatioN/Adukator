@@ -1,3 +1,10 @@
 <div id="app" class="app">
 	<router-outlet></router-outlet>
 </div>
+
+<val-default-errors>
+	<ng-template valError="required">Обязательное поле</ng-template>
+	<ng-template valError="min">Выход за минимум</ng-template>
+	<ng-template valError="max">Выход за максимум</ng-template>
+	<ng-template valError="minComp">Укажите больше компетенций</ng-template>
+</val-default-errors>

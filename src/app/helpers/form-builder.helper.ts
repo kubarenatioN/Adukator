@@ -24,6 +24,7 @@ import {
 } from '../typings/training.types';
 import { generateUUID } from './courses.helper';
 import { CourseReviewControlComment } from '../typings/course-review.types';
+import { ChipsValidator } from './course-validation';
 
 @Injectable({
 	providedIn: 'root',
@@ -161,9 +162,11 @@ export class FormBuilderHelper {
 				Validators.required,
 			],
 			[OverallFormFields.Category]: ['', Validators.required],
-			[OverallFormFields.AcquiredCompetencies]: [],
 			[OverallFormFields.RequiredCompetencies]: [],
-			[OverallFormFields.Banner]: '',
+			[OverallFormFields.AcquiredCompetencies]: [
+				[], ChipsValidator.minLength(1)
+			],
+			[OverallFormFields.Banner]: ['', Validators.required],
 			comments: this.getFormGroupComments(OverallFormFields, {}),
 		});
 	}
