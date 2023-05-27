@@ -179,14 +179,14 @@
 				<span>Темы модуля</span>
 				<div
 					*ngFor="
-						let topicForm of moduleForm.controls.topics.controls
+						let topicForm of moduleForm.controls.topics.controls; let j = index
 					"
 					class="topic-item"
 					[formGroup]="topicForm"
 				>
 					<div class="topic-item__header">
 						<div class="topic-item__title">
-							{{ topicForm.value.title }}
+							{{ j + 1}}. {{ topicForm.value.title }}
 						</div>
 
 						<div class="topic-item__actions">
@@ -242,7 +242,10 @@
 
 			</div>
 		</div>
-		<button (click)="addModule()">
+		<button class="module-item__add" (click)="addModule()">
+			<span class="material-icons-outlined">
+				add_circle_outline
+			</span>
 			Добавить модуль
 		</button>
 	</div>
@@ -256,29 +259,45 @@
 </ng-template>
 
 <ng-template #courseModule>
-	<h3>Модуль {{ activeFormGroup.value.title }}</h3>
-	<app-course-module
-		[form]="activeFormGroup"
-		[controlsType]="controlsType"
-	></app-course-module>
-
-	<div class="topics">
-		<h3>Темы модуля</h3>
-		<div *ngFor="let topic of activeFormGroup.value.topics; let j = index">
-			Тема {{ j + 1 }}. {{ topic.title }}.
+	<ng-container *ngIf="activeFormGroup?.value">
+		<h3>{{ activeFormGroup.value.title }}</h3>
+		<app-course-module
+			[form]="activeFormGroup"
+			[controlsType]="controlsType"
+		></app-course-module>
+	
+		<h4>Темы модуля</h4>
+		<div class="module__topics">
+			<a  
+			routerLink="."
+			[queryParams]="{ topic: topic.id }"
+			class="module__topic-link"
+			*ngFor="let topic of activeFormGroup.value.topics; let j = index">
+				Тема {{ j + 1 }}. {{ topic.title }}.
+			</a>
 		</div>
-		<button *ngIf="canEditForm" (click)="addTopic(activeFormGroup)">
+		<button 
+		class="module__add-topic-btn"
+		mat-raised-button 
+		color="primary"
+		*ngIf="canEditForm" 
+		(click)="addTopic(activeFormGroup)">
+			<span class="material-icons-outlined">
+				add_circle_outline
+			</span>
 			Добавить тему
 		</button>
-	</div>
+	</ng-container>
 </ng-template>
 
 <ng-template #courseTopic let-viewData="viewData">
-	<h3>Тема {{ activeFormGroup.value.title }}</h3>
-	<app-module-topic
-		[form]="activeFormGroup"
-		[controlsType]="controlsType"
-	></app-module-topic>
+	<ng-container *ngIf="activeFormGroup?.value">
+		<h3>Тема {{ activeFormGroup.value.title }}</h3>
+		<app-module-topic
+			[form]="activeFormGroup"
+			[controlsType]="controlsType"
+		></app-module-topic>
+	</ng-container>
 </ng-template>
 
 <ng-template #actionButtons>
@@ -300,7 +319,7 @@
 		color="primary"
 		(click)="onSubmit(viewModes.Create)"
 	>
-		Создать
+		Создать курс
 	</button>
 </ng-template>
 

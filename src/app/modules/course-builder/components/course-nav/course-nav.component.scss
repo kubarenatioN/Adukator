@@ -1,3 +1,5 @@
+@import "/src/mixins";
+
 ul {
 	margin: 0;
 	padding: 0;
@@ -5,12 +7,70 @@ ul {
 }
 
 .sidenav {
-	margin: 100px 10px 10px;
-	padding: 10px;
-	background-color: #dffdff;
-	width: 200px;
+	@include card;
+	
+	width: 240px;
+	margin-top: 80px;
+	padding: 20px 0;
+	position: -webkit-sticky;
+	position: sticky;
+	top: 20px;	
 
 	&-module-topics-list {
 		padding-left: 10px;
+	}
+
+	&-list {
+		min-height: 300px;
+
+		&__link {
+			display: block;
+			padding: .85em 20px;
+			cursor: pointer;
+			transition: .3s;
+			position: relative;
+
+			&::before {
+				content: '';
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 6px;
+				height: 100%;
+				background-color: var(--primary-400);
+				z-index: 2;
+				opacity: 0;
+			}
+
+			&:hover {
+				background-color: var(--primary-50);
+
+				&::before {
+					opacity: 1;
+				}
+			}
+
+			&.active {
+				background-color: var(--primary-50);
+
+				&::before {
+					opacity: 1;
+				}
+			}
+		}
+	}
+}
+
+.modules-list {
+
+	&__topics {
+
+	}
+}
+
+.topics-list {
+	&__title {
+		padding-left: 40px;
+		font-size: 13px;
 	}
 }

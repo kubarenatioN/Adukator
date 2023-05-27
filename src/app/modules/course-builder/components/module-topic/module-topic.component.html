@@ -1,7 +1,6 @@
 <form [formGroup]="form">
 	<mat-form-field
 		*appFormElWrapper="form; control: 'title'; type: 'edit'"
-		appearance="fill"
 	>
 		<mat-label>Название темы</mat-label>
 		<input matInput formControlName="title" />
@@ -9,7 +8,6 @@
 
 	<mat-form-field
 		*appFormElWrapper="form; control: 'description'; type: 'edit'"
-		appearance="fill"
 	>
 		<mat-label>Описание темы</mat-label>
 		<input matInput formControlName="description" />
@@ -124,7 +122,6 @@
 		<button (click)="onRemoveSection(fields.Theory)">Удалить раздел</button>
 		<mat-form-field
 			*appFormElWrapper="form; control: 'theory'; type: 'edit'"
-			appearance="fill"
 		>
 			<mat-label>Теория</mat-label>
 			<textarea matInput formControlName="theory"></textarea>
@@ -138,7 +135,6 @@
 		<button (click)="onRemoveSection(fields.TestLink)">Удалить раздел</button>
 		<mat-form-field
 			*appFormElWrapper="form; control: 'testLink'; type: 'edit'"
-			appearance="fill"
 		>
 			<mat-label>Ссылка на тест</mat-label>
 			<input matInput formControlName="testLink" />

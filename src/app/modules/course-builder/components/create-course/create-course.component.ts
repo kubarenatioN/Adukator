@@ -1,7 +1,6 @@
 import {
 	ChangeDetectionStrategy,
 	Component,
-	OnDestroy,
 	OnInit,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
@@ -19,7 +18,6 @@ import {
 	switchMap,
 } from 'rxjs/operators';
 import { EmptyCourseFormData } from 'src/app/constants/common.constants';
-import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { UserService } from 'src/app/services/user.service';
 import {
 	CourseBuilderViewData,

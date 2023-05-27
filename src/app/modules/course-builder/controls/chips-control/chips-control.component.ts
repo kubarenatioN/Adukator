@@ -62,11 +62,6 @@ export class ChipsControlComponent implements OnInit {
 			debounceTime(300),
 			map((query) => (query ? this.filterItems(query) : this.items))
 		);
-
-		const controlForm = this.form.get(this.control)
-		controlForm?.statusChanges.subscribe(st => {
-			console.log(controlForm.touched);
-		})
 	}
 
 	public add(event: MatChipInputEvent): void {

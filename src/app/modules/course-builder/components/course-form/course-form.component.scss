@@ -47,6 +47,25 @@ mat-form-field {
 		width: 30px;
 		height: 30px;
 	}
+
+	&__add {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		min-height: 50px;
+		margin: 20px 0;
+		padding: 10px;
+		color: #777;
+		background-color: transparent;
+		border: 1px solid #ccc;
+		cursor: pointer;
+		border-radius: 8px;
+
+		& span {
+			margin-right: 8px;
+		}
+	}
 }
 
 .topic-item {
@@ -182,5 +201,22 @@ app-chips-control {
 		&:hover {
 			color: var(--primary-500);
 		}
+	}
+}
+
+.module {
+	&__topics {
+		display: flex;
+		flex-direction: column;
+		max-width: 320px;
+		width: 100%;
+		border-bottom: 1px solid #ccc;
+	}
+	&__topic-link {
+		padding: .8em 20px;
+	}
+
+	&__add-topic-btn {
+		margin-top: 10px;
 	}
 }

@@ -1,16 +1,16 @@
 import {
-	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
 	EventEmitter,
 	Inject,
 	Input,
+	OnDestroy,
 	OnInit,
 	Output,
 	QueryList,
 	ViewChildren,
 } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import {
 	BehaviorSubject,
 	Observable,
@@ -45,6 +45,7 @@ import { CourseBuilderService } from '../../services/course-builder.service';
 import { ChipItem, ChipsControlComponent } from '../../controls/chips-control/chips-control.component';
 import { apiUrl } from 'src/app/constants/urls';
 import { COURSE_BANNER_EMPTY } from 'src/app/app.module';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-course-form',
@@ -52,7 +53,7 @@ import { COURSE_BANNER_EMPTY } from 'src/app/app.module';
 	styleUrls: ['./course-form.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CourseFormComponent extends BaseComponent implements OnInit {
+export class CourseFormComponent extends BaseComponent implements OnInit, OnDestroy {
 	private posterFilename = ''
 	
 	public categories$ = this.configService.loadCourseCategories();
@@ -106,6 +107,7 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 		private configService: ConfigService,
 		private fbHelper: FormBuilderHelper,
 		private courseBuilderService: CourseBuilderService,
+		private router: Router,
 		@Inject(COURSE_BANNER_EMPTY) public emptyBannerSrc: string,
 	) {
 		super();
@@ -114,6 +116,10 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 	}
 
 	public ngOnInit(): void {
+		// this.router.navigate([], {
+		// 	replaceUrl: true
+		// });
+
 		this.courseForm.valueChanges.subscribe((res) => {
 			// console.log('111', this.courseForm.value);
 			this.formChanged.emit(this.courseForm);
@@ -127,7 +133,18 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 
 				this.viewType$.next(viewPath.type);
 				this.overallInfoSubform.controls.id.setValue(metadata.uuid);
-				this.activeFormGroup = this.courseBuilderService.getActiveFormGroup(this.courseForm, viewPath);
+
+				const activeForm = this.courseBuilderService.getActiveFormGroup(this.courseForm, viewPath);
+				if (activeForm) {
+					this.activeFormGroup = activeForm
+				} else {
+					this.activeFormGroup = this.courseBuilderService.getActiveFormGroup(this.courseForm, {
+						type: 'main'
+					});
+					this.router.navigate([], {
+						replaceUrl: true
+					})
+				}
 			})
 		);
 	}
@@ -242,20 +259,5 @@ export class CourseFormComponent extends BaseComponent implements OnInit {
 
 	private setCourseModel(courseData: CourseFormData): void {
 		this.fbHelper.fillCourseModel(this.courseForm, courseData);
-	}
-
-	private markAsTouched(control: FormGroup | AbstractControl) {
-		control.markAsDirty();
-		if (control instanceof FormGroup) {
-		  for (const key of Object.keys(control.controls)) {
-			this.markAsTouched(control.controls[key]);
-		  }
-		}
-		if (control instanceof FormArray) {
-		  for (const key of Object.keys(control.controls)) {
-			this.markAsTouched(control.controls[Number(key)]);
-		  }
-		}
-		return;
 	}
 }

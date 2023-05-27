@@ -31,7 +31,6 @@ import {
 } from 'src/app/services/upload.service';
 import { UserService } from 'src/app/services/user.service';
 import {
-	Course,
 	CourseBuilderViewData,
 	CourseBuilderViewPath,
 	CourseBuilderViewType,
@@ -41,10 +40,7 @@ import {
 	CourseFormViewMode,
 	CourseReview,
 	CourseReviewStatus,
-	ModuleTopic,
 } from 'src/app/typings/course.types';
-import { CloudinaryFile, UserFile } from 'src/app/typings/files.types';
-import { CloudinaryFilesResponse } from 'src/app/typings/response.types';
 import { User } from 'src/app/typings/user.types';
 
 @Injectable()
@@ -236,14 +232,18 @@ export class CourseBuilderService {
 		this.contentTree = constructCourseTreeFromForm(form)
 	}
 
-	public getActiveFormGroup(courseForm: FormGroup, { type, module, topic }: CourseBuilderViewPath): any {
+	public getActiveFormGroup(
+		courseForm: FormGroup, 
+		{ type, module, topic }: CourseBuilderViewPath,
+		mode?: CourseFormViewMode,
+	): any {
 		try {
 			if (module != null && type === 'module') {
 				const moduleForm = this.findControlById(
 					[...(courseForm.controls['modules'] as FormArray).controls as FormGroup[]],
 					module
 				);
-				if (type === 'module') {
+				if (moduleForm) {
 					return moduleForm;
 				}
 			} else if (topic != null && type === 'topic') {
@@ -252,7 +252,8 @@ export class CourseBuilderService {
 				courseForm.controls.modules.controls.forEach(module => {
 					topics.push(...module.controls.topics.controls);
 				});
-				return this.findControlById(topics, topic);
+				const topicForm = this.findControlById(topics, topic);
+				return topicForm
 			} else {
 				return courseForm.controls['overallInfo'];
 			}
