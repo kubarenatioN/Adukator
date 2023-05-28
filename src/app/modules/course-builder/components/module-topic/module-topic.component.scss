@@ -1,15 +1,17 @@
+@import "/src/mixins";
+
 form {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
 }
 
-.mat-form-field {
-	max-width: 360px;
-}
-
 .footer {
 	margin-top: auto;
+}
+
+.descr {
+	width: 400px;
 }
 
 .section {
@@ -17,24 +19,115 @@ form {
 	flex-direction: column;
 	align-items: flex-start;
 	width: 100%;
-	margin: 10px 0;
-	padding: 10px 0;
-	border: 1px solid #ccc;
+	padding: 20px 0;
+	border-bottom: 1px solid #ccc;
+
+	&__header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+		margin-bottom: 2px;
+	}
+
+	&:last-child {
+		border-bottom: none;
+	}
 }
 
-.upload-box {
-	height: 160px;
-	width: 100%;
+.sections-tabs {
+	padding-top: 20px;
+	display: flex;
+	gap: 10px;
 }
 
 .tasks-list {
 	width: 100%;
-	padding: 0 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+
+	&__add-btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		min-height: 50px;
+		border: 1px solid #ccc;
+		border-radius: 8px;
+		background-color: transparent;
+		color: #777;
+		cursor: pointer;
+
+		& span {
+			margin-right: 8px;
+		}
+	}
 }
 
 .task-item {
-	display: block;
-	padding: 10px;
-	border: 1px solid #333;
-	margin: 10px 0;
+	@include card();
+
+	padding: 20px;
+
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		& .icon-btn {
+			color: var(--primary-400);
+			box-shadow: var(--box-shadow-default);
+		}
+	}
+}
+
+.materials {
+	&__upload-box {
+		width: 520px;
+	}
+}
+
+.practice {
+	&__goal {
+		max-width: 400px;
+		width: 100%;
+	}
+}
+
+.theory{
+	&__textarea {
+		width: 400px;
+	}
+}
+
+.test-link {
+	&.section {
+		position: relative;
+	}
+	
+	&__input {
+		width: 400px;
+	}
+
+	&__info-wrapper {
+		display: inline-block;
+		margin-bottom: 6px;
+		.icon-btn {
+			width: 24px;
+			height: 24px;
+		}
+	}
+
+	&__info-overlay-content {
+		.title {
+			font-size: 14px;
+			font-weight: 700;
+			padding-bottom: 6px;
+		}
+	}
+}
+
+.p-overlaypanel .p-overlaypanel-content {
+	padding: 0.8em;
 }

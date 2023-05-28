@@ -15,12 +15,12 @@ import { CourseNavComponent } from './components/course-nav/course-nav.component
 import { ChipsControlComponent } from './controls/chips-control/chips-control.component';
 import { CourseBuilderService } from './services/course-builder.service';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
-
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ReviewCourseComponent } from './components/review-course/review-course.component';
 import { ValdemortModule } from 'ngx-valdemort';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import {OverlayPanelModule} from 'primeng/overlaypanel';
 
 @NgModule({
 	providers: [
@@ -43,12 +43,12 @@ import { MatInputModule } from '@angular/material/input';
 		CourseBuilderRoutingModule,
 		SharedModule,
 		ValdemortModule,
-
 		MatAutocompleteModule,
 		MatFormFieldModule,
 		MatInputModule,
 		ReactiveFormsModule,
 		LayoutComponent,
+		OverlayPanelModule
 	],
 })
 export class CourseBuilderModule {}

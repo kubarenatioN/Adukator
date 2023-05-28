@@ -2,17 +2,19 @@
 	<ng-container *ngTemplateOutlet="content"></ng-container>
 </div>
 
-<ng-container [ngSwitch]="type">
-	<ng-container *ngSwitchCase="'review'">
-		<ng-container [ngTemplateOutlet]="reviewWrapper"></ng-container>
+<div class="comments">
+	<ng-container [ngSwitch]="type">
+		<ng-container *ngSwitchCase="'review'">
+			<ng-container [ngTemplateOutlet]="reviewWrapper"></ng-container>
+		</ng-container>
+		<ng-container *ngSwitchCase="'edit'">
+			<ng-container
+				*ngIf="hasComments"
+				[ngTemplateOutlet]="editWrapper"
+			></ng-container>
+		</ng-container>
 	</ng-container>
-	<ng-container *ngSwitchCase="'edit'">
-		<ng-container
-			*ngIf="hasComments"
-			[ngTemplateOutlet]="editWrapper"
-		></ng-container>
-	</ng-container>
-</ng-container>
+</div>
 
 <ng-template #reviewWrapper>
 	<button
@@ -32,15 +34,6 @@
 
 <ng-template #editWrapper>
 	<span class="material-icons-outlined"> error_outline </span>
-	<!-- <button
-		[class.active]="isEditDone"
-		class="action-btn"
-		mat-raised-button
-		(click)="onToggle('edit')"
-		[color]="isEditDone ? '' : 'primary'"
-	>
-		<span class="material-icons-outlined"> error_outline </span>
-	</button> -->
 
 	<ng-container *ngIf="true">
 		<div>

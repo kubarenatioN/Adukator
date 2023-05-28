@@ -107,10 +107,31 @@ h3.title {
 	.icon {
 		display: block;
 	}
+
+	&[disabled] {
+		opacity: .5;
+		pointer-events: none;
+	}
 }
 
 val-errors.mat-error {
 	padding: 0 1em;
 	margin-top: 0.66em;
 	font-size: 75%;
+}
+
+.test-link__info-overlay.p-overlaypanel {
+	.p-overlaypanel-content {
+		padding: 15px;
+		font-size: 13px;
+		max-width: 360px;
+	}
+}
+
+.text-link {
+	color: var(--primary-500);
+
+	&:hover {
+		text-decoration: underline;
+	}
 }

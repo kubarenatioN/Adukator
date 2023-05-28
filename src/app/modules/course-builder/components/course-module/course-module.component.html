@@ -3,13 +3,17 @@
 		*appFormElWrapper="form; control: 'title'; type: controlsType"
 	>
 		<mat-label>Название модуля</mat-label>
-		<input matInput formControlName="title" />
+		<input 
+		required
+		matInput formControlName="title" />
 	</mat-form-field>
 
 	<mat-form-field
 		*appFormElWrapper="form; control: 'description'; type: controlsType"
 	>
 		<mat-label>Описание модуля</mat-label>
-		<input matInput formControlName="description" />
+		<textarea 
+		required
+		matInput formControlName="description" ></textarea>
 	</mat-form-field>
 </form>

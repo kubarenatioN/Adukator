@@ -3,37 +3,52 @@
 		*appFormElWrapper="form; control: 'title'; type: 'edit'"
 	>
 		<mat-label>Название темы</mat-label>
-		<input matInput formControlName="title" />
+		<input matInput
+		required
+		formControlName="title" />
 	</mat-form-field>
 
 	<mat-form-field
 		*appFormElWrapper="form; control: 'description'; type: 'edit'"
+		class="descr"
 	>
 		<mat-label>Описание темы</mat-label>
-		<input matInput formControlName="description" />
+		<textarea rows="3" 
+		required
+		matInput formControlName="description"></textarea>
 	</mat-form-field>
 
-	<div *ngIf="controlsType === 'edit'">
-		<p>Добавить раздел</p>
+	<p>Добавить раздел</p>
+	<div class="sections-tabs">
 		<button
+			mat-raised-button
+			color="primary"
 			[disabled]="activeSections['materials']"
 			(click)="onAddSection('materials')"
 		>
 			Материалы
 		</button>
 		<button
+			mat-raised-button
+			color="primary"
 			[disabled]="activeSections['theory']"
 			(click)="onAddSection('theory')"
 		>
 			Теория
 		</button>
 		<button
+			mat-raised-button
+			color="primary"
 			[disabled]="activeSections['practice']"
 			(click)="onAddSection('practice')"
 		>
 			Практика
 		</button>
-		<button [disabled]="activeSections['testLink']" (click)="onAddSection('testLink')">
+		<button
+			mat-raised-button
+			color="primary" 
+			[disabled]="activeSections['testLink']" 
+			(click)="onAddSection('testLink')">
 			Тест
 		</button>
 	</div>
@@ -62,17 +77,23 @@
 
 <ng-template #materials>
 	<div class="section materials">
-		<h3>Материалы</h3>
-		<button (click)="onRemoveSection(fields.Materials)">Удалить раздел</button>
+		<div class="section__header">
+			<h3>Материалы</h3>
+			<button class="icon-btn" (click)="onRemoveSection(fields.Materials)">
+				<span class="material-icons-outlined">
+					backspace
+				</span>
+			</button>
+		</div>
 		
 		<ng-container *appFormElWrapper="
-		form; 
-		control: 'materials'; 
-		type: 'edit';
-		reviewType: 'file'"
+			form; 
+			control: 'materials'; 
+			type: 'edit';
+			reviewType: 'file'"
 		>
 			<app-upload-box
-				class="upload-box"
+				class="upload-box materials__upload-box"
 				[folder]="uploadFolder"
 				[controlId]="controlId"
 				[type]="uploadType"
@@ -88,14 +109,26 @@
 
 <ng-template #practice let-practiceForm="practiceForm">
 	<div class="section" [formGroup]="practiceForm">
-		<h3>Практика</h3>
-		<button (click)="onRemoveSection('practice')">Удалить раздел</button>
+		<div class="section__header">
+			<h3>Практика</h3>
+			<button class="icon-btn" (click)="onRemoveSection('practice')">
+				<span class="material-icons-outlined">
+					backspace
+				</span>
+			</button>
+		</div>
 
-		<textarea formControlName="goal">{{
-			practiceForm.value.goal
-		}}</textarea>
+		<mat-form-field class="practice__goal">
+			<mat-label>Цель практического раздела</mat-label>
+			<textarea 
+			required
+			rows="3" 
+			matInput 
+			formControlName="goal">
+				{{practiceForm.value.goal}}
+			</textarea>
+		</mat-form-field>
 
-		<button (click)="onAddTask()">Добавить задание</button>
 		<div class="tasks-list">
 			<ng-container *ngIf="tasksFormArray.controls.length > 0">
 				<div
@@ -105,39 +138,102 @@
 					"
 					class="task-item"
 				>
-					<app-topic-task [form]="taskForm"></app-topic-task>
+					<div class="task-item__header">
+						<p>Задание {{ i + 1 }}.</p>
 
-					<button [disabled]="i === 0" (click)="onRemoveTaskAt(i)">
-						Удалить задачу
-					</button>
+						<button class="icon-btn" [disabled]="tasksFormArray.controls.length === 1" (click)="onRemoveTaskAt(i)">
+							<span class="material-icons-outlined">
+								delete
+							</span>
+						</button>
+					</div>
+					<app-topic-task [form]="taskForm"></app-topic-task>
 				</div>
 			</ng-container>
+			<button class="tasks-list__add-btn" (click)="onAddTask()">	
+				<span class="material-icons-outlined">
+					add_circle_outline
+				</span>
+				Добавить задание
+			</button>
 		</div>
 	</div>
 </ng-template>
 
 <ng-template #theory>
 	<div class="section" [formGroup]="form">
-		<h3>Теория</h3>
-		<button (click)="onRemoveSection(fields.Theory)">Удалить раздел</button>
+		<div class="section__header">
+			<h3>Теория</h3>
+			<button class="icon-btn" (click)="onRemoveSection(fields.Theory)">
+				<span class="material-icons-outlined">
+					backspace
+				</span>
+			</button>
+		</div>
 		<mat-form-field
 			*appFormElWrapper="form; control: 'theory'; type: 'edit'"
+			class="theory__textarea"
 		>
 			<mat-label>Теория</mat-label>
-			<textarea matInput formControlName="theory"></textarea>
+			<textarea rows="3" matInput 
+			required
+			formControlName="theory"></textarea>
 		</mat-form-field>
 	</div>
 </ng-template>
 
 <ng-template #test>
-	<div class="section" [formGroup]="form">
-		<h3>Тест</h3>
-		<button (click)="onRemoveSection(fields.TestLink)">Удалить раздел</button>
+	<div class="section test-link" [formGroup]="form">
+		<div class="section__header">
+			<h3>Тест</h3>
+			<button class="icon-btn"
+			(click)="onRemoveSection(fields.TestLink)">
+				<span class="material-icons-outlined">
+					backspace
+				</span>
+			</button>
+		</div>
+
+		<div class="test-link__info-wrapper">
+			<button 
+			class="icon-btn"
+			pButton 
+			(click)="testLinkInfo.toggle($event)">
+				<span class="material-icons-outlined">
+					info
+				</span>
+			</button>
+		</div>
+		
 		<mat-form-field
 			*appFormElWrapper="form; control: 'testLink'; type: 'edit'"
+			class="test-link__input"
 		>
 			<mat-label>Ссылка на тест</mat-label>
-			<input matInput formControlName="testLink" />
+			<input matInput 
+			required
+			formControlName="testLink" placeholder="https://" />
 		</mat-form-field>
 	</div>
 </ng-template>
+
+<p-overlayPanel 
+#testLinkInfo 
+[showCloseIcon]="true" 
+appendTo="body"
+[styleClass]="'test-link__info-overlay'">
+	<ng-template pTemplate>
+		<div class="test-link__info-overlay-content">
+			<p class="title">
+				Система тестирования студентов в NovaLearn основана на Google Forms.
+			</p>
+			<p>
+				Чтобы добавить тест к курсу, создайте опрос в режиме "тест" используя сервис 
+				<a class="text-link" href="https://docs.google.com/forms" target="_blank">Google Forms</a>.
+			</p>
+			<p>
+				Полное руководство по подключению тестов и авто-проверке см. <a class="text-link" href="#">здесь</a>.
+			</p>
+		</div>
+	</ng-template>
+</p-overlayPanel>

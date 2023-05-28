@@ -1,7 +1,9 @@
 .progress-bar {
-	height: 2px;
+	height: 3px;
 	width: 0;
 	background-color: var(--green-accent);
+	border-radius: 2px;
+	width: 100%;
 }
 
 .file-item {
@@ -11,22 +13,33 @@
 	justify-content: center;
 	align-items: center;
 	height: 100%;
+	background-color: #fff;
 
 	&.download {
 		cursor: pointer;
-		overflow: hidden;
 	}
 
-	& span {
+	.name {
+		display: -webkit-box;
+		max-width: 100%;
 		width: 100%;
-		text-align: center;
+		// text-align: center;
+		flex-shrink: 1;
 		word-wrap: break-word;
+		overflow: hidden;
+		font-size: 13px;
+
+		-webkit-line-clamp: 4;
+		-webkit-box-orient: vertical;
 	}
-}
 
+	&.upload {
+		justify-content: space-between;
 
+		.icon-btn {
+			width: 24px;
+			height: 24px;
+		}
 
-.upload {
-	background-color: #fffaf0;
-	border: 1px solid #333;
+	}
 }

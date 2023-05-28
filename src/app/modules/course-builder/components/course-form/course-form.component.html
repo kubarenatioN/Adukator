@@ -42,7 +42,7 @@
 
 	<div class="overall-info" [formGroup]="overallInfoSubform">
 		<h2>Общая информация</h2>
-		<div class="property">
+		<div class="property banner">
 			<ng-container
 				*appFormElWrapper="
 					overallInfoSubform;
@@ -58,7 +58,6 @@
 					<input class="banner__input" (change)="onUploadPoster($event, formMode)" type="file" accept="image/png, image/jpeg, image/jpg" />
 				</label>
 				<val-errors class="mat-error" controlName="banner"></val-errors>	
-				<!-- <input matInput> -->
 			</ng-container>
 		</div>
 
@@ -197,38 +196,45 @@
 							</button>
 						</div>
 					</div>
-					<div class="topic-item__duration">
-						<mat-form-field class="input">
-							<mat-label>Недель</mat-label>
-							<input
-								formControlName="weeks"
-								matInput
-								required
-								type="number"
-								min="1"
-								max="40"
-							/>
-							<mat-error>
-								<val-errors controlName="weeks"></val-errors>	
-							</mat-error>
-						</mat-form-field>
 
-						<mat-form-field class="input">
-							<mat-label>Дней</mat-label>
-							<input
-								formControlName="days"
-								matInput
-								required
-								type="number"
-								min="1"
-								max="100"
-							/>
-							<mat-error>
-								<val-errors controlName="days"></val-errors>	
-							</mat-error>
-						</mat-form-field>
+					<div class="topic-item__duration-wrapper">
+
+						<span>Длительность темы</span>
+						<div class="topic-item__duration">
+							<mat-form-field class="input">
+								<mat-label>Недель</mat-label>
+								<input
+									formControlName="weeks"
+									matInput
+									required
+									type="number"
+									min="1"
+									max="40"
+								/>
+								<mat-error>
+									<val-errors controlName="weeks"></val-errors>	
+								</mat-error>
+							</mat-form-field>
+	
+							<mat-form-field class="input">
+								<mat-label>Дней</mat-label>
+								<input
+									formControlName="days"
+									matInput
+									required
+									type="number"
+									min="1"
+									max="100"
+								/>
+								<mat-error>
+									<val-errors controlName="days"></val-errors>	
+								</mat-error>
+							</mat-form-field>
+						</div>
+
 					</div>
 				</div>
+				
 				<button
 				class="topic-item__add"
 				*ngIf="canEditForm" (click)="addTopic(moduleForm)">
@@ -296,6 +302,7 @@
 		<app-module-topic
 			[form]="activeFormGroup"
 			[controlsType]="controlsType"
+			class="topic"
 		></app-module-topic>
 	</ng-container>
 </ng-template>

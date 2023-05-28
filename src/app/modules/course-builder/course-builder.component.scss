@@ -3,3 +3,7 @@
 	flex-direction: row-reverse;
 	justify-content: center;
 }
+
+[slot=main] {
+	flex-grow: 1;
+}

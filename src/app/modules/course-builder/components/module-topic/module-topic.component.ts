@@ -125,7 +125,7 @@ export class ModuleTopicComponent extends BaseComponent implements OnInit {
 	}
 
 	public onRemoveTaskAt(index: number) {
-		if (index === 0) {
+		if (this.tasksFormArray.length === 1) {
 			return;
 		}
 		this.tasksFormArray.removeAt(index);

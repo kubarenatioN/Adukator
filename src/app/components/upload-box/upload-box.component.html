@@ -36,9 +36,9 @@
 		</div>
 
 		<div *ngIf="filesStore.size > 0" class="upload-box-footer">
-			<label class="pick-files-btn" [for]="fileInputId"
-				>Добавить файлы</label
-			>
+			<label class="pick-files-btn" [for]="fileInputId">
+				Добавить файлы
+			</label>
 		</div>
 	</ng-container>
 
@@ -62,8 +62,11 @@
 
 <ng-template #emptyDropzone>
 	<div class="files-container files-container--empty">
-		<h3>Для загрузки, перетащите файлы сюда.</h3>
-		<p>или</p>
+		<span class="material-icons-outlined icon">
+			upload_file
+		</span>
+		<p class="title">Для загрузки, перенесите файлы сюда.</p>
+		<span>или</span>
 		<label class="pick-files-btn" [for]="fileInputId">Выберите файлы</label>
 	</div>
 </ng-template>

@@ -1,17 +1,23 @@
 <form [formGroup]="form">
-	<ng-container 
-		*appFormElWrapper="
+	<mat-form-field
+			*appFormElWrapper="
 			form;
 			control: 'taskDescr';
 			type: 'edit'
 		"
-	>
-		<label>Задание</label>
-		<input formControlName="taskDescr" />
-	</ng-container>
+		class="task-descr">
+		<mat-label>Условие</mat-label>
+		<textarea 
+		matInput 
+		rows="3"
+		required
+		formControlName="taskDescr"></textarea>
+		<mat-error>
+			<val-errors controlName="taskDescr"></val-errors>	
+		</mat-error>
+	</mat-form-field>
 
 	<div class="field">
-		<h3>Ресурсы</h3>
 		<ng-container *appFormElWrapper="
 			form;
 			control: 'materials';
@@ -26,6 +32,7 @@
 				[preloadExisting]="shouldPreloadExisting"
 				[autoRemoveOnDestroy]="false"
 				(uploadFilesChanged)="onUploadFilesChanged($event)"
+				label="Загрузите материалы к заданию"
 			></app-upload-box>
 		</ng-container>
 	</div>

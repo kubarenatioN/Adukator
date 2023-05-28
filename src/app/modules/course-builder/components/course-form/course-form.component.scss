@@ -12,8 +12,7 @@ form {
 }
 
 mat-form-field {
-	max-width: 370px;
-	width: 100%;
+	width: 320px;
 }
 
 .content-list {
@@ -123,7 +122,6 @@ mat-form-field {
 }
 
 .categories-container {
-	width: 100%;
 
 	& mat-form-field {
 		max-width: 240px;
@@ -147,14 +145,18 @@ mat-form-field {
 	// display: flex;
 	align-items: baseline;
 	padding: 4px 0;
-	max-width: 320px;
+	width: 320px;
 
 	&__description {
-		width: 360px;
+		width: 420px;
 	}
 
 	&__competencies {
 		width: 420px;
+	}
+
+	&.banner {
+		padding-bottom: 20px;
 	}
 }
 
@@ -219,4 +221,8 @@ app-chips-control {
 	&__add-topic-btn {
 		margin-top: 10px;
 	}
+}
+
+.topic {
+	width: 100%;
 }
