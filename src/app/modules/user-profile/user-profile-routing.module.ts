@@ -5,12 +5,12 @@ import { UserProfileComponent } from './user-profile.component';
 
 const routes: Routes = [
 	{
-		path: ':id',
-		component: UserProfileComponent,
-	},
-	{
 		path: 'wall/:id',
 		component: UserPageComponent,
+	},
+	{
+		path: ':id',
+		component: UserProfileComponent,
 	},
 ];
 

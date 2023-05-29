@@ -25,6 +25,7 @@ import { TopicsProgressChartComponent } from './charts/topics-progress-chart/top
 import { NgChartsModule } from 'ng2-charts';
 import { GroupingUploadBoxComponent } from 'src/app/components/upload-box/grouping-upload-box/grouping-upload-box.component';
 import { CourseDurationPipe } from 'src/app/pipes/course-duration.pipe';
+import { CourseStatusPipe } from 'src/app/pipes/course-status.pipe';
 
 @NgModule({
 	declarations: [
@@ -39,6 +40,7 @@ import { CourseDurationPipe } from 'src/app/pipes/course-duration.pipe';
 		FormElementReviewWrapperComponent,
 		TopicsProgressChartComponent,
 		CourseDurationPipe,
+		CourseStatusPipe,
 	],
 	imports: [
 		CommonModule,
@@ -78,6 +80,7 @@ import { CourseDurationPipe } from 'src/app/pipes/course-duration.pipe';
 		FormElementReviewWrapperComponent,
 		TopicsProgressChartComponent,
 		CourseDurationPipe,
+		CourseStatusPipe,
 	],
 })
 export class SharedModule {}

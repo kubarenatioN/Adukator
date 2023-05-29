@@ -1,40 +1,72 @@
 <div class="catalog-wrapper">
 	<h1 class="title">Каталог курсов</h1>
 
-	<div class="catalog-filters">Filters...</div>
+	<!-- <div class="catalog-filters">Filters...</div> -->
 
-	<h2>Тренинги</h2>
-	<div class="catalog-content">
-		<a
-			class="catalog-item"
-			[routerLink]="['../overview/course', course.uuid]"
-			*ngFor="let course of list$ | async"
-		>
-			<img class="item-poster" [src]="course.banner ?? fallbackBanner" alt="">
-			<h3>{{ course.title }}</h3>
-			<p class="catalog-item__views">Status: {{ course?.training?.status }}</p>
-			<div class="catalog-item__footer">
-				<span class="catalog-item__views">Views: 2.3k</span>
-				<span class="catalog-item__participants">
-					Participants: 123
-				</span>
-			</div>
-		</a>
+	<div class="courses">
+		<h2>Тренинги</h2>
+		<div class="courses-content">
+			<a
+				class="course-card"
+				[routerLink]="['../overview/course', course.uuid]"
+				*ngFor="let course of list$ | async"
+			>
+				<img class="course-card__poster" [src]="course.banner ?? fallbackBanner" alt="">
+				<div class="course-card__content">
+					<p [title]="course.title" class="course-card__title">{{ course.title }}</p>
+					<p class="course-card__descr">
+						{{ course.description }}
+					</p>
+					<span class="course-card__status" [ngClass]="course.status">
+						{{ course.status === 'active' ? 'Проходит тренинг' : 'Идет набор' }}
+					</span>
+	
+					<div class="course-card__footer">
+						<span class="course-card__rating">
+							<span class="star material-icons-outlined">
+								star
+							</span>
+							{{ course?.rating || 4.5 }}
+						</span>
+	
+						<a 
+						[routerLink]="['/app/user/wall', course.authorId]"
+						class="course-card__author" *ngIf="course.author">
+							Автор
+							<img [src]="course.author.photo" alt="">
+						</a>
+					</div>
+				</div>
+			</a>
+		</div>
 	</div>
 
-	<div>
+	<div class="bundles">
 		<h2>Пакеты курсов</h2>
-		<div class="catalog-content">
+		<div class="bundles-catalog">
 			<a
 				*ngFor="let bundle of bundlesList$ | async"
-				class="catalog-item bundle"
+				class="bundles-catalog__bundle bundle"
 				[routerLink]="['../overview/bundle', bundle.uuid]"
 			>
-				<h3>{{ bundle.title }}</h3>
-				<p>Курсы в пакете</p>
-				<ol class="courses-list" *ngFor="let course of bundle.courses">
-					<li>{{ course?.title }}</li>
+				<ol class="bundle__course-list">
+					<li class="bundle__course-item" 
+					*ngFor="let course of bundle.courses | slice : 0 : 3; let i = index"
+					[ngClass]="'img-item-' + (i + 1)"
+					>
+						<img class="bundle__course-img" [src]="course.banner">
+					</li>
 				</ol>
+				<div class="bundle__info">
+					<h3>{{ bundle.title }}</h3>
+					<p>{{ bundle.description }}</p>
+					<p>Курсы в пакете</p>
+					<ol class="bundle__courses-list">
+						<li *ngFor="let course of bundle.courses">
+							<span>{{ course.title }}</span>
+						</li>
+					</ol>
+				</div>
 			</a>
 		</div>
 	</div>

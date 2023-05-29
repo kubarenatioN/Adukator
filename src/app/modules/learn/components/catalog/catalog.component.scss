@@ -1,6 +1,20 @@
-.catalog-content {
+@import "/src/mixins";
+
+:host {
+	padding-bottom: 40px;
+}
+
+.title {
+	margin: 0;
+}
+
+.courses {
+	padding: 40px 0;
+}
+
+.courses-content {
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
+	grid-template-columns: repeat(2, 1fr);
 	gap: 20px;
 }
 
@@ -8,11 +22,107 @@
 	padding: 40px 0;
 }
 
-.catalog-item {
-	padding: 10px;
-	border-radius: 10px;
-	background-color: #eee;
+.course-card {
+	@include card($br: 10px);
+
+	display: flex;
 	text-decoration: none;
+	overflow: hidden;
+	height: 160px;
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		max-width: 50%;
+		width: 100%;
+		padding: 20px 10px 10px;
+		position: relative;
+	}
+
+	&__title {
+		display: -webkit-box;
+		display: -moz-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		font-size: 15px;
+		font-weight: 700;
+		padding: 8px 0 6px;
+		overflow: hidden;
+	}
+
+	&__descr {
+		color: #555;
+		font-size: 13px;
+		display: -webkit-box;
+		display: -moz-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+		overflow: hidden;
+	}
+
+	&__status {
+		position: absolute;
+		right: 10px;
+		top: 6px;
+		font-size: 11px;
+		padding: 2px 6px;
+		background-color: #fefefe;
+		border-radius: 6px;
+		border: 1px solid #555;
+
+		&.active {
+			background-color: var(--primary-400);
+			color: #fff;
+		}
+		&.hold {
+			color: #333;
+			background-color: rgb(255, 229, 58);
+		}
+	}
+
+	&__footer {
+		margin-top: auto;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	&__rating {
+		display: inline-flex;
+		align-items: center;
+
+		.star {
+			font-size: 22px;
+			margin-bottom: 2px;
+			padding-right: 3px;
+			color: var(--primary-500);
+		}
+	}
+
+	&__author {
+		display: flex;
+		align-items: center;
+		font-size: 12px;
+
+		img {
+			width: 30px;
+			height: 30px;
+			border-radius: 50%;
+			margin-left: 8px;
+		}
+
+	}
+
+	&__poster {
+		max-width: 50%;
+		width: 100%;
+		object-fit: cover;
+	}
+
+	&:nth-child(4n + 4),
+	&:nth-child(4n + 3) {
+		flex-direction: row-reverse;	
+	}
 }
 
 .catalog-item__footer {
@@ -20,9 +130,136 @@
 	justify-content: space-around;
 }
 
-.item-poster {
-	max-width: 100%;
-	width: 100%;
-	height: 100px;
-	object-fit: cover;
+.bundles {
+	padding: 40px 0;
+}
+.bundles-catalog {
+	display: flex;
+	flex-wrap: wrap;
+	// display: grid;
+	// grid-template-columns: repeat(2, 1fr);
+	gap: 20px;
+
+	&__bundle {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		padding: 50px 0;
+		padding-left: 60px;
+	}
+}
+
+.bundle {
+	@include card();
+
+	&__course-list {
+		padding-right: 60px;
+		position: relative;
+	}
+
+	&__course-item {
+		display: inline-block;
+		border: 3px solid #fff;
+		border-radius: 8px;
+		overflow: hidden;
+		box-shadow: var(--box-shadow-default);
+
+		&.img-item-1 {
+			position: relative;
+			z-index: 2;
+		}
+
+		&.img-item-2 {
+			position: absolute;
+			left: 40px;
+			top: 50px;
+		}
+
+		&.img-item-3 {
+			position: absolute;
+			left: -40px;
+			top: -50px;
+		}
+	}
+
+	&__course-img {
+		display: block;
+		width: 220px;
+		height: 140px;
+		object-fit: cover;
+	}
+
+	&__info {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
+
+@media (max-width: 1200px) {
+	.courses-content {
+		grid-template-columns: repeat(3, 1fr);
+	}
+
+	.course-card {
+		flex-direction: column;
+		height: auto;
+
+		&__poster {
+			max-width: 100%;
+			height: 120px;
+		}
+
+		&__content {
+			max-width: 100%;
+		}
+
+		&:nth-child(4n + 4),
+		&:nth-child(4n + 3) {
+			flex-direction: column;	
+		}
+
+		&__footer {
+			padding-top: 8px;
+		}
+	}
+}
+
+@media (max-width: 1000px) {
+	.courses-content {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+
+	.course-card {
+		min-width: 240px;
+		max-width: 48%;
+		gap: 0;
+	}
+}
+
+@media (max-width: 800px) {
+	.course-card {
+		flex-direction: row;
+		max-width: 100%;
+		height: 160px;
+
+		&:nth-child(n) {
+			flex-direction: row;	
+		}
+
+		&:nth-child(2n) {
+			flex-direction: row-reverse;	
+		}
+
+		&__content,
+		&__poster {
+			max-width: 50%;
+		}
+
+		&__poster {
+			height: 160px;
+		}
+	}
 }

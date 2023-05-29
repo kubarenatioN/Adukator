@@ -123,16 +123,17 @@ export class UserService {
 		this.clearUser();
 	}
 
-	public getUserById(userId: number): Observable<User | null> {
+	public getUserById(userId: string): Observable<User | null> {
 		const payload = NetworkHelper.createRequestPayload(
 			NetworkRequestKey.GetUserById,
 			{
 				urlId: userId,
 			}
 		);
+
 		return this.dataService
-			.send<DataResponse<User | null>>(payload)
-			.pipe(map((res) => res.data));
+			.send<{ user: User | null }>(payload)
+			.pipe(map((res) => res.user));
 	}
 
 	private clearUser(): void {

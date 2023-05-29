@@ -81,6 +81,7 @@ mat-form-field {
 
 	&__duration {
 		display: flex;
+		gap: 8px;
 	
 		& .input {
 			width: 100px;

@@ -30,9 +30,9 @@ export class UserPageComponent
 		super();
 		this.user$ = this.activatedRoute.paramMap.pipe(
 			switchMap((params) => {
-				const userId = Number(params.get('id'));
-				if (Number.isNaN(userId)) {
-					return of(null);
+				const userId = params.get('id');
+				if (!userId) {
+					return of(null)
 				}
 				return this.userService.getUserById(userId);
 			}),

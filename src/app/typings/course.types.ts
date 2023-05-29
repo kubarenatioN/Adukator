@@ -119,15 +119,28 @@ interface CourseCore {
 	};
 }
 
+export interface LearnCatalogCourse extends Course {
+	trainings?: Training[]
+}
+
 // publicly accessed course, used for overview & training
 export interface Course extends CourseCore {
 	_id: string;
 	modules: CourseModule[];
 	topics: ModuleTopic[];
 	training?: Training;
-	score?: number;
 	banner?: string;
-	contentTree?: CourseContentTree
+	score?: number;
+	contentTree?: CourseContentTree;
+	rating?: number;
+	
+	// custom
+	status?: 'active' | 'hold';
+	trainings?: Training[];
+	author?: {
+		username: string,
+		photo: string
+	}
 }
 
 export type CourseContentTree = {

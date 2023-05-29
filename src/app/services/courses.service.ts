@@ -7,7 +7,7 @@ import {
 } from 'rxjs';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
-import { Course, CourseBundle, CourseReview } from '../typings/course.types';
+import { Course, CourseBundle, CourseReview, LearnCatalogCourse } from '../typings/course.types';
 import {
 	CourseReviewHistory,
 } from '../typings/response.types';
@@ -111,7 +111,18 @@ export class CoursesService {
 			body: { options }
 		})
 
-		return this.dataService.send<{ data: Course[] }>(payload)
+		return this.dataService.send<{ data: LearnCatalogCourse[] }>(payload)
+			.pipe(
+				map(res => {
+					res.data = res.data.map(c => ({
+						...c,
+						status: !!c?.trainings?.find(t => t.status === 'active') 
+							? 'active'
+							: 'hold'
+					}))
+					return res
+				})
+			)
 	}
 
 	public getCourseReviewHistory(masterId: string) {
