@@ -88,6 +88,8 @@ export class CourseFormComponent extends BaseComponent implements OnInit, OnDest
 		if (!isEmptyCourseFormData(data)) {
 			const formData = convertCourseReviewToCourseFormData(data);
 			this.setCourseModel(formData);
+			const sliceBannerSubsrt = 'poster/';
+			this.posterFilename = formData.overallInfo.banner.slice(formData.overallInfo.banner.indexOf(sliceBannerSubsrt) + sliceBannerSubsrt.length);
 			this.formChanged.emit(this.courseForm);
 		}
 
@@ -213,7 +215,7 @@ export class CourseFormComponent extends BaseComponent implements OnInit, OnDest
 	}
 
 	public onUploadPoster(e: Event, mode: CourseFormViewMode) {
-		if (mode === 'create') {
+		if (mode === 'create' || mode === 'edit') {
 			const file = (e.target as HTMLInputElement).files?.[0]
 			if (!file) {
 				console.warn('No poster file found.');

@@ -47,14 +47,15 @@
 				*appFormElWrapper="
 					overallInfoSubform;
 					control: 'banner';
-					type: 'edit'
+					type: 'edit';
+					isVertical: true;
 				">
 				<mat-label>Баннер к курсу</mat-label>
 				<div class="banner">
 					<img class="banner__img" [src]="overallInfoSubform.value.banner || emptyBannerSrc" alt="">
 				</div>
 				<label class="banner__input-label">
-					<span>Выбрать баннер</span>
+					<span>Выберите баннер</span>
 					<input class="banner__input" (change)="onUploadPoster($event, formMode)" type="file" accept="image/png, image/jpeg, image/jpg" />
 				</label>
 				<val-errors class="mat-error" controlName="banner"></val-errors>	
@@ -208,7 +209,7 @@
 									matInput
 									required
 									type="number"
-									min="1"
+									min="0"
 									max="40"
 								/>
 								<mat-error>
@@ -223,7 +224,7 @@
 									matInput
 									required
 									type="number"
-									min="1"
+									min="0"
 									max="100"
 								/>
 								<mat-error>

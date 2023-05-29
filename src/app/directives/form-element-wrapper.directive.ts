@@ -19,6 +19,7 @@ export class FormElementWrapperDirective implements OnInit {
 	private control!: string;
 	private type!: WrapperType;
 	private reviewType!: ReviewType;
+	private isVertical: boolean = false;
 
 	@Input() public set appFormElWrapper(value: FormGroup) {
 		this.form = value;
@@ -39,6 +40,10 @@ export class FormElementWrapperDirective implements OnInit {
 		this.reviewType = value;
 	}
 
+	@Input() public set appFormElWrapperIsVertical(value: boolean) {
+		this.isVertical = value;
+	}
+
 	constructor(
 		private templateRef: TemplateRef<any>,
 		private viewContainerRef: ViewContainerRef
@@ -49,6 +54,7 @@ export class FormElementWrapperDirective implements OnInit {
 			FormElementReviewWrapperComponent
 		);
 		// Order matters
+		this.wrapperContainer.instance.isVertical = this.isVertical;
 		this.wrapperContainer.instance.control = this.control;
 		this.wrapperContainer.instance.reviewType = this.reviewType;
 		this.wrapperContainer.instance.type = this.type;

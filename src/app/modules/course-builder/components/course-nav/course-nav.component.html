@@ -3,10 +3,10 @@
 		<li>
 			<a 
 			[routerLink]="[]"
-			[queryParams]="{ }"
+			[queryParams]="null"
 			routerLinkActive="active"
 			[routerLinkActiveOptions]="{exact: true}"
-			class="sidenav-list__link" (click)="navigate({})">Главная</a>
+			class="sidenav-list__link">Главная</a>
 		</li>
 		<li *ngFor="let node of items; let i = index" class="modules-list__item">
 			<a 

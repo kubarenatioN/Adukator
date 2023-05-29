@@ -1,5 +1,6 @@
 import {
 	Component,
+	HostBinding,
 	Input,
 	OnInit,
 	TemplateRef,
@@ -42,7 +43,44 @@ const fileItems: CourseReviewControlComment[] = [
 	},
 ];
 
-export type ReviewType = 'text' | 'category' | 'file' | 'dates' | 'checkbox';
+const categoryItems: CourseReviewControlComment[] = [
+	{
+		id: 1,
+		label: 'Категория не соответствует содержанию',
+	},
+];
+
+const imageItems: CourseReviewControlComment[] = [
+	{
+		id: 1,
+		label: 'Изображение не соответствует содержанию',
+	},
+	{
+		id: 2,
+		label: 'Изображение не образовательного характера',
+	},
+];
+
+const competenciesItems: CourseReviewControlComment[] = [
+	{
+		id: 4,
+		label: 'Недостаточно компетенций',
+	},
+	{
+		id: 1,
+		label: 'Слишком много компетенций',
+	},
+	{
+		id: 2,
+		label: 'Несочетающиеся компетенции',
+	},
+	{
+		id: 3,
+		label: 'Неподходящие к категории компетенции',
+	},
+];
+
+export type ReviewType = 'text' | 'category' | 'file' | 'dates' | 'checkbox' | 'image' | 'competencies';
 
 @Component({
 	selector: 'app-form-element-review-wrapper',
@@ -50,6 +88,8 @@ export type ReviewType = 'text' | 'category' | 'file' | 'dates' | 'checkbox';
 	styleUrls: ['./form-element-review-wrapper.component.scss'],
 })
 export class FormElementReviewWrapperComponent implements OnInit {
+	@HostBinding('class') classes = '';
+	
 	private _form!: FormGroup;
 	
 	public comments: CourseReviewControlComment[] = []
@@ -71,6 +111,7 @@ export class FormElementReviewWrapperComponent implements OnInit {
 	@Input() public control!: string;
 	@Input() public type: WrapperType = 'review';
 	@Input() public reviewType: ReviewType = 'text';
+	@Input() public isVertical: boolean = false;
 
 	public isReviewActive: boolean = false;
 	public isEditDone: boolean = false;
@@ -84,7 +125,7 @@ export class FormElementReviewWrapperComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		
+		this.classes = this.classes + ` ${this.isVertical ? 'vertical' : ''}`;
 	}
 
 	public onToggle(type: WrapperType): void {
@@ -108,7 +149,13 @@ export class FormElementReviewWrapperComponent implements OnInit {
 				return [...fileItems]
 		
 			case 'category':
-				return [...textItems]
+				return [...categoryItems]
+		
+			case 'image':
+				return [...imageItems]
+		
+			case 'competencies':
+				return [...competenciesItems]
 		
 			default:
 				return [...textItems]

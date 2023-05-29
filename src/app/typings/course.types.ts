@@ -100,8 +100,16 @@ export interface CourseFormOverallInfo {
 	category: string;
 	categoryLabel?: string;
 	comments?: Record<string, CourseReviewControlComment[] | null>;
-	acquiredCompetencies: string[];
-	requiredCompetencies: string[];
+	acquiredCompetencies: {
+		id: string,
+		label: string,
+		category?: string,
+	}[];
+	requiredCompetencies: {
+		id: string,
+		label: string,
+		category?: string,
+	}[];
 	banner: string;
 }
 
@@ -113,10 +121,6 @@ interface CourseCore {
 	advantages?: string;
 	authorId: string;
 	categoryLabel?: string;
-	competencies: {
-		acquired: string[];
-		required: string[];
-	};
 }
 
 export interface LearnCatalogCourse extends Course {
@@ -133,14 +137,18 @@ export interface Course extends CourseCore {
 	score?: number;
 	contentTree?: CourseContentTree;
 	rating?: number;
-	
+	competencies: {
+		acquired: string[];
+		required: string[];
+	}
+
 	// custom
 	status?: 'active' | 'hold';
 	trainings?: Training[];
 	author?: {
 		username: string,
 		photo: string
-	}
+	},
 }
 
 export type CourseContentTree = {
@@ -157,6 +165,18 @@ export interface CourseReview extends CourseCore {
 	status?: CourseReviewStatus;
 	modules: CourseFormModule[];
 	banner?: string;
+	competencies: {
+		acquired: {
+			id: string,
+			label: string,
+			category?: string,
+		}[];
+		required: {
+			id: string,
+			label: string,
+			category?: string,
+		}[];
+	};
 	comments?: Record<string, CourseReviewControlComment[] | null>;
 }
 

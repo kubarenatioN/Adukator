@@ -1,46 +1,52 @@
-<h1>С возвращением, {{ (user$ | async)?.username }}</h1>
+<ng-container *ngIf="user$ | async as user">
+	<h1>С возвращением, {{ user.username }}</h1>
 
-<ng-container *ngIf="dashboard$ | async as dashboard">
+	<ng-container *ngIf="user.role === 'user'">
 
-	<div class="section courses">
-		<h2>Мои тренинги</h2>
-
-		<div class="trainings__list">
-			<ng-container
-				*ngFor="let profile of dashboard.profiles"
-				[ngTemplateOutlet]="trainingItem"
-				[ngTemplateOutletContext]="{
-					profile: profile,
-					course: profile.training.course
-				}">
-			</ng-container>
-		</div>
-	</div>
-
-	<div class="progress section">
-		<h2>Прогресс</h2>
-
-		<h3>Верхнеуровневый обзор тренингов</h3>
-		<div class="progress__list">
-
-			<ng-container *ngFor="let chart of dashboard.overallInfoCharts">
-				<div class="chart-card">
-					<span>
-						{{ chart.options.training.title }}
-					</span>
-					<app-training-completeness-chart
-						*ngIf="chart.config; else noChartData"
-						[config]="chart.config">
-					</app-training-completeness-chart>
+		<ng-container *ngIf="dashboard$ | async as dashboard">
+		
+			<div class="section courses">
+				<h2>Мои тренинги</h2>
+		
+				<div class="trainings__list">
+					<ng-container
+						*ngFor="let profile of dashboard.profiles"
+						[ngTemplateOutlet]="trainingItem"
+						[ngTemplateOutletContext]="{
+							profile: profile,
+							course: profile.training.course
+						}">
+					</ng-container>
 				</div>
-			</ng-container>
+			</div>
+		
+			<div class="progress section">
+				<h2>Прогресс</h2>
+		
+				<h3>Верхнеуровневый обзор тренингов</h3>
+				<div class="progress__list">
+		
+					<ng-container *ngFor="let chart of dashboard.overallInfoCharts">
+						<div class="chart-card">
+							<span>
+								{{ chart.options.training.title }}
+							</span>
+							<app-training-completeness-chart
+								*ngIf="chart.config; else noChartData"
+								[config]="chart.config">
+							</app-training-completeness-chart>
+						</div>
+					</ng-container>
+		
+				</div>
+		
+			</div>
+		
+		</ng-container>
 
-		</div>
-
-	</div>
+	</ng-container>
 
 </ng-container>
-
 
 
 <ng-template #trainingItem let-course="course" let-profile="profile">

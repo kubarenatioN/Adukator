@@ -9,3 +9,35 @@
 	margin: 10px 0;
 	border: 1px solid #333;
 }
+
+.banner {
+
+	&__img {
+		width: 320px;
+		height: 160px;
+		border: 2px solid #555;
+		border-radius: 6px;
+	}
+}
+
+.form {
+	padding: 40px 0;
+}
+
+.property {
+	padding: 20px 0;
+
+	.label {
+		font-size: 13px;
+		font-style: italic;
+	}
+}
+
+.competency-item {
+	display: inline-block;
+	font-size: 13px;
+	padding: 4px 10px;
+	background-color: var(--primary-50);
+	border: 1px solid var(--primary-500);
+	border-radius: 16px;
+}

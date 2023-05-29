@@ -62,6 +62,11 @@ export class ChipsControlComponent implements OnInit {
 			debounceTime(300),
 			map((query) => (query ? this.filterItems(query) : this.items))
 		);
+
+		this.form.valueChanges.subscribe(res => {
+			console.log(res);
+			
+		})
 	}
 
 	public add(event: MatChipInputEvent): void {
@@ -76,6 +81,8 @@ export class ChipsControlComponent implements OnInit {
 			.find((it) => it.label === label);
 		if (value) {
 			this.pickedItems.push(value);
+			console.log(this.pickedItems);
+			
 			this.form.patchValue({
 				[this.control]: this.pickedItems,
 			});

@@ -13,7 +13,7 @@
 			<ng-container
 				*ngSwitchCase="'module'"
 				[ngTemplateOutlet]="module"
-				[ngTemplateOutletContext]="{ module: activeFormGroup.value }"
+				[ngTemplateOutletContext]="{ module: activeFormGroup.value, moduleForm: activeFormGroup }"
 			>
 			</ng-container>
 			<ng-container
@@ -33,18 +33,24 @@
 		<a href="#">политики о содержимом</a>
 	</p>
 
-	<div [formGroup]="overallInfoSubform">
+	<div class="form" [formGroup]="overallInfoSubform">
 
-		<div class="property">
-			<ng-container *appFormElWrapper="overallInfoSubform; control: 'banner'; type: wrapperControlType">
-				<span>Баннер</span>
-				<img [src]="course.banner" alt="Banner">
+		<div class="property banner">
+			<ng-container *appFormElWrapper="
+				overallInfoSubform; 
+				control: 'banner'; 
+				type: wrapperControlType; 
+				reviewType: 'image'; 
+				isVertical: true;
+			">
+				<span class="label">Баннер</span>
+				<img class="banner__img" [src]="course.banner" alt="Banner">
 			</ng-container>
 		</div>
 
 		<div class="property">
 			<ng-container *appFormElWrapper="overallInfoSubform; control: 'title'; type: wrapperControlType">
-				<span>Название курса</span>
+				<span class="label">Название курса</span>
 				<h2>
 					{{ course.title }}
 				</h2>
@@ -53,7 +59,7 @@
 
 		<div class="property">
 			<ng-container *appFormElWrapper="overallInfoSubform; control: 'description'; type: wrapperControlType">
-				<span>Описание курса</span>
+				<span class="label">Описание курса</span>
 				<p>
 					{{ course.description }}
 				</p>
@@ -61,29 +67,31 @@
 		</div>
 
 		<div class="property">
-			<ng-container *appFormElWrapper="overallInfoSubform; control: 'category'; type: wrapperControlType">
-				<span>Категория</span>
+			<ng-container *appFormElWrapper="overallInfoSubform; control: 'category'; type: wrapperControlType; reviewType: 'category'">
+				<span class="label">Категория</span>
 				<p>{{ course.category }}</p>
 			</ng-container>
 		</div>
 
 		<div class="property">
-			<ng-container *appFormElWrapper="overallInfoSubform; control: 'requiredCompetencies'; type: wrapperControlType">
-				<span>Необходимые компетенции</span>
+			<ng-container *appFormElWrapper="overallInfoSubform; control: 'requiredCompetencies'; type: wrapperControlType; reviewType: 'competencies';">
+				<span class="label">Необходимые компетенции</span>
 				<div class="competencies-list">
-					<p *ngFor="let comp of course.requiredCompetencies">{{ comp }}</p>
+					<span class="competency-item" *ngFor="let comp of course.requiredCompetencies">{{ comp.label }}</span>
 				</div>
 			</ng-container>
 		</div>
 
 		<div class="property">
 			<ng-container *appFormElWrapper="
-				overallInfoSubform;
-				control: 'acquiredCompetencies';
-				type: wrapperControlType">
-				<span>Получаемые компетенции</span>
+					overallInfoSubform;
+					control: 'acquiredCompetencies';
+					type: wrapperControlType;
+					reviewType: 'competencies';
+				">
+				<span class="label">Получаемые компетенции</span>
 				<div class="competencies-list">
-					<p *ngFor="let comp of course.acquiredCompetencies">{{ comp }}</p>
+					<span class="competency-item" *ngFor="let comp of course.acquiredCompetencies">{{ comp.label }}</span>
 				</div>
 			</ng-container>
 		</div>
@@ -124,8 +132,12 @@
 	</div>
 </ng-template>
 
-<ng-template #module let-module="module">
-	<h2>
+<ng-template #module let-module="module" let-moduleForm="moduleForm">
+	<h2 *appFormElWrapper="
+			moduleForm; 
+			control: 'title'; 
+			type: wrapperControlType;
+		">
 		{{ module.title }}
 	</h2>
 	<p>
@@ -184,7 +196,13 @@
 			<ng-container *appFormElWrapper="taskForm; control: 'taskDescr'; type: wrapperControlType">
 				<p>Задание: {{ taskForm.value.taskDescr }}</p>
 			</ng-container>
-			<ng-container *appFormElWrapper="taskForm; control: 'materials'; type: wrapperControlType; reviewType: 'file'">
+			<ng-container *appFormElWrapper="
+					taskForm; 
+					control: 'materials'; 
+					type: wrapperControlType; 
+					reviewType: 'file';
+					isVertical: true;
+				">
 				<app-upload-box
 					[folder]="'review/' + metadata.masterCourseId + '/tasks/' + taskForm.value.id"
 					type="download"

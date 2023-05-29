@@ -218,7 +218,7 @@ export class CourseBuilderService {
 		);
 	}
 
-	public uploadPoster(file: File, existingFilename: string = '') {
+	public uploadPoster(file: File, existingFilename: string = '', removeFrom?: 'temp' | 'remote') {
 		const folder = this.getUploadFolder(['poster'])
 		return this.uploadService.removeTempFile(existingFilename, folder).pipe(
 			switchMap(() => {

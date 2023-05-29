@@ -91,7 +91,7 @@ export class FormBuilderHelper {
 				: null,
 			[TopicFormFields.TestLink]: topic ? topic.testLink : null,
 			[TopicFormFields.Duration]: topic ? topic.duration : null,
-			days: topic ? topic.days : null,
+			days: topic ? topic.days : 0,
 			weeks: topic ? topic.weeks : null,
 			comments: this.getFormGroupComments(
 				TopicFormFields,
