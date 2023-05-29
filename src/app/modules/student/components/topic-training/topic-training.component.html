@@ -12,9 +12,14 @@
 <span>Описание</span>
 <p>{{ topic.description }}</p>
 
-<p>
-	<span>Дедлайн: </span>
-	<span>{{ deadline | date : 'dd.MM.yy' }}</span>
+<p class="deadline">
+	<span class="icon material-icons-outlined">
+		timer
+	</span>
+	<span>
+		Дедлайн: 
+	</span>
+	<span class="value">{{ deadline | date : 'dd.MM.yy' }}</span>
 </p>
 
 <div
@@ -74,8 +79,11 @@
 								let i = index;
 								trackBy: tasksTrackBy
 							"
-							class="practice-task"
+							class="practice-task personal-task"
 						>
+							<span class="personal-task__icon material-icons-outlined">
+								whatshot
+							</span>
 							<app-training-task
 								(send)="onSendTask($event)"
 								[isActual]="true"

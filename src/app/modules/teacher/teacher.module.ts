@@ -18,6 +18,7 @@ import { DismissTaskComponent } from './components/personalization/dismiss-task/
 import { OpenTaskComponent } from './components/personalization/open-task/open-task.component';
 import { StartTrainingSubmitComponent } from './modals/start-training-submit/start-training-submit.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ValdemortModule } from 'ngx-valdemort';
 
 @NgModule({
 	providers: [UploadCacheService],
@@ -41,6 +42,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 		ReactiveFormsModule,
 		MatDialogModule,
 		SharedModule,
+		ValdemortModule,
 	],
 })
 export class TeacherModule {}

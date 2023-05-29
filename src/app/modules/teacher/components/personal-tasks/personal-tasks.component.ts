@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { map, Observable, shareReplay, tap, withLatestFrom } from 'rxjs';
 import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
 import { generateUUID } from 'src/app/helpers/courses.helper';
@@ -36,9 +36,9 @@ export class PersonalTasksComponent implements OnInit {
 	) {
 		this.form = this.fb.group({
 			uuid: generateUUID(),
-			training: '',
-			topic: '',
-			taskDescr: '',
+			training: ['', Validators.required],
+			topic: ['', Validators.required],
+			taskDescr: ['', Validators.required],
 			materials: [[] as string[]],
 		});
 
@@ -123,5 +123,9 @@ export class PersonalTasksComponent implements OnInit {
 			.subscribe((res) => {
 				console.log(res);
 			});
+	}
+
+	public getTopic(task: PersonalTask) {
+		return task.training.course.topics.find(t => t.id === task.topicId)
 	}
 }

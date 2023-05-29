@@ -43,19 +43,21 @@
 	</ng-container>
 
 	<ng-container *ngIf="type === 'download'">
-		<div class="upload-inner download">
-			<div class="files-container">
+		<div class="upload-inner download" [class.no-items]="filesStore.size === 0">
+			<ng-container *ngIf="!isLoading; else loader">
 				<ng-container *ngIf="filesStore.size > 0; else noFiles">
-					<app-file-item
-						*ngFor="let file of filesStore.values()"
-						class="file-item"
-						[userFile]="file.userFile"
-						(download)="onDownload($event)"
-						type="download"
-					>
-					</app-file-item>
+					<div class="files-container">
+						<app-file-item
+							*ngFor="let file of filesStore.values()"
+							class="file-item"
+							[userFile]="file.userFile"
+							(download)="onDownload($event)"
+							type="download"
+						>
+						</app-file-item>
+					</div>
 				</ng-container>
-			</div>
+			</ng-container>
 		</div>
 	</ng-container>
 </div>

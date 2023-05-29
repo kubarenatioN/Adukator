@@ -52,6 +52,8 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
 		return `fileInput-${this.folder}`;
 	}
 
+	public isLoading = true;
+
 	private filesUploadSubscription?: Subscription;
 	private get cacheKey() {
 		return this.folder;
@@ -165,6 +167,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
 					userFile: file,
 				})
 			);
+			this.isLoading = false;
 		} else {
 			// Preload files if specified and have 'upload' type or if have 'download' type
 			const needPreloadForUpload =
@@ -184,6 +187,7 @@ export class UploadBoxComponent implements OnInit, OnChanges, OnDestroy {
 						});
 						this.cacheService.addFileToCache(this.cacheKey, file);
 					});
+					this.isLoading = false;
 					this.cd.detectChanges();
 				});
 			}

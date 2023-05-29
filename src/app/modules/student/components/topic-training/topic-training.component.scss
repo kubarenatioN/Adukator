@@ -60,6 +60,18 @@
 	margin: 30px 0;
 }
 
+.personal-task {
+	position: relative;
+
+	&__icon {
+		position: absolute;
+		right: 20px;
+		bottom: 20px;
+		font-size: 32px;
+		color: var(--secondary-500);
+	}
+}
+
 .topic-status {
 	&.past {
 		color: #ff672b;
@@ -72,4 +84,18 @@
 
 app-upload-box {
 	max-width: 600px;
+}
+
+.deadline {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+
+	.icon {
+		font-size: 32px;
+	}
+
+	.value {
+		padding-left: 6px;
+	}
 }

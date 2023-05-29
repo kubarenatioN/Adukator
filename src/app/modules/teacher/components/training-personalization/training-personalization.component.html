@@ -1,11 +1,14 @@
 <app-back-btn>Назад</app-back-btn>
 
 <div class="menu">
-	<a routerLink="assign" [skipLocationChange]="true"> Назначение задания </a>
-	<!-- <a routerLink="dismiss">
-        Снятие задания
-    </a> -->
-	<a routerLink="open" [skipLocationChange]="true"> Продлить задание </a>
+	<a routerLink="assign" 
+	mat-raised-button 
+	color="primary"
+	[skipLocationChange]="true"> Назначение задания </a>
+	<a routerLink="open" 
+	[skipLocationChange]="true" 
+	mat-raised-button 
+	color="primary"> Продлить задание </a>
 	<a routerLink="tasks" mat-raised-button color="primary"> Задания </a>
 </div>
 

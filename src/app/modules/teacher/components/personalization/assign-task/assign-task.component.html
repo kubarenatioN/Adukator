@@ -1,65 +1,100 @@
-<form [formGroup]="form">
-	<div class="filters">
-		<label class="filters-training">
-			<select formControlName="training">
-				<option
-					*ngFor="let training of trainings$ | async"
-					[value]="training._id"
-				>
-					{{ training.course.title }}
-				</option>
-			</select>
-		</label>
+<form [formGroup]="form" class="form">
 
-		<label class="filters-topic">
-			<select formControlName="topic" *ngIf="topics$ | async as topics">
-				<option [value]=""></option>
-				<option *ngFor="let topic of topics" [value]="topic.id">
-					{{ topic.title }}
-				</option>
-			</select>
-		</label>
+	<div class="row">
 
-		<label class="filters-task">
-			<ng-container *ngIf="tasks$ | async as tasks">
-				<select
-					formControlName="task"
-					*ngIf="tasks !== 'NoTasks'; else noTasks"
+		<div class="filters">
+			<h3>Выберите задание</h3>
+	
+			<label class="filters-training">
+				<mat-form-field>
+					<mat-label>Тренинг</mat-label>
+					<mat-select formControlName="training">
+						<mat-option
+							*ngFor="let training of trainings$ | async"
+							[value]="training._id"
+						>
+							{{ training.course.title }}
+						</mat-option>
+					</mat-select>
+					<!-- <mat-error>
+						<val-errors controlName="category"></val-errors>	
+					</mat-error> -->
+				</mat-form-field>
+			</label>
+	
+			<label class="filters-topic">
+				<mat-form-field *ngIf="topics$ | async as topics">
+					<mat-label>Тема</mat-label>
+					<mat-select formControlName="topic">
+						<mat-option
+							*ngFor="let topic of topics" 
+							[value]="topic.id"
+						>
+							{{ topic.title }}
+						</mat-option>
+					</mat-select>
+					<!-- <mat-error>
+						<val-errors controlName="category"></val-errors>	
+					</mat-error> -->
+				</mat-form-field>
+			</label>
+	
+			<label class="filters-task">
+				<ng-container *ngIf="tasks$ | async as tasks">
+					<mat-form-field *ngIf="tasks !== 'NoTasks'; else noTasks">
+						<mat-label>Задание</mat-label>
+						<mat-select formControlName="task">
+							<mat-option
+								*ngFor="let taskInfo of tasks"
+								[value]="taskInfo.uuid"
+							>
+								{{ taskInfo.task.taskDescr }}
+							</mat-option>
+						</mat-select>
+						<!-- <mat-error>
+							<val-errors controlName="category"></val-errors>	
+						</mat-error> -->
+					</mat-form-field>
+				</ng-container>
+			</label>
+	
+		</div>
+	
+		<div class="personalizations" *ngIf="personalizations$ | async as personalizations">
+			<ng-container *ngIf="personalizations.length > 0">
+	
+				<h3>Студенты</h3>
+		
+				<div
+					class="filters-personalizations"
+					formArrayName="personalizations"
 				>
-					<option [value]=""></option>
-					<option
-						*ngFor="let taskInfo of tasks"
-						[value]="taskInfo.uuid"
+					<label
+						class="profile-label"
+						*ngFor="
+							let pers of form.controls.personalizations.controls;
+							let i = index
+						"
+						[formGroupName]="i"
 					>
-						{{ taskInfo.task.taskDescr }}
-					</option>
-				</select>
+						<mat-checkbox formControlName="hasAssignedTask">
+							{{ pers.value.profile.student.username }}
+						</mat-checkbox>
+					</label>
+				</div>
+	
 			</ng-container>
-		</label>
+		</div>
 	</div>
 
-	<ng-container *ngIf="personalizations$ | async as personalizations">
-		<div
-			class="filters-personalizations"
-			formArrayName="personalizations"
-			*ngIf="personalizations.length > 0"
-		>
-			<label
-				class="profile-label"
-				*ngFor="
-					let pers of form.controls.personalizations.controls;
-					let i = index
-				"
-				[formGroupName]="i"
-			>
-				<input formControlName="hasAssignedTask" type="checkbox" />
-				<span>{{ pers.value.profile.student.username }}</span>
-			</label>
-		</div>
-	</ng-container>
+	<button 
+		class="submit-btn"
+		mat-raised-button
+		(click)="onAssign()" 
+		[disabled]="!canAssign">
+		Назначить
+	</button>
 </form>
-
-<button (click)="onAssign()" [disabled]="!canAssign">Назначить</button>
 
 <ng-template #noTasks>
 	<p>По выбранной теме не создано персональных практических заданий.</p>

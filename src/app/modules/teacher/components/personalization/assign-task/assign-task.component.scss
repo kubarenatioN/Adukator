@@ -1,4 +1,24 @@
+.form {
+	margin: 0 auto;
+	max-width: 720px;
+	width: 100%;
+}
+
+.row {
+	display: flex;
+	gap: 30px;
+}
+
+.filters {
+	display: flex;
+	flex-direction: column;
+}
+
 .filters-personalizations {
 	display: flex;
 	flex-direction: column;
+}
+
+.submit-btn {
+	margin-top: 20px;
 }

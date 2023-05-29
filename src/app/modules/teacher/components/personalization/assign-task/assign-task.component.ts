@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormArray } from '@angular/forms';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import {
 	map,
 	shareReplay,
-	startWith,
 	switchMap,
 	tap,
 	withLatestFrom,
@@ -13,11 +11,10 @@ import { CoursesSelectFields } from 'src/app/config/course-select-fields.config'
 import { generateUUID } from 'src/app/helpers/courses.helper';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { StudentTraining } from 'src/app/models/course.model';
-import { ModuleTopic, TopicTask } from 'src/app/typings/course.types';
+import { ModuleTopic } from 'src/app/typings/course.types';
 import {
 	PersonalTask,
 	TrainingProfilePersonalizations,
-	TrainingProfileUser,
 } from 'src/app/typings/training.types';
 import { PersonalizationService } from '../../../services/personalization.service';
 import { TeacherTrainingService } from '../../../services/teacher-training.service';
@@ -41,7 +38,10 @@ export class AssignTaskComponent implements OnInit {
 
 	public trainings$ = this.teacherService
 		.getTeacherTrainings(CoursesSelectFields.Modules)
-		.pipe(shareReplay(1));
+		.pipe(
+			map(trainings => trainings.filter(t => t.status === 'active')),
+			shareReplay(1)
+		);
 	public topics$!: Observable<ModuleTopic[] | null>;
 	public tasks$!: Observable<PersonalTask[] | null | 'NoTasks'>;
 	public personalizations$!: Observable<PersonalizationProfile[]>;

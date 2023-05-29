@@ -81,7 +81,6 @@ export class ChipsControlComponent implements OnInit {
 			.find((it) => it.label === label);
 		if (value) {
 			this.pickedItems.push(value);
-			console.log(this.pickedItems);
 			
 			this.form.patchValue({
 				[this.control]: this.pickedItems,

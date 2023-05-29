@@ -1,11 +1,75 @@
+@import "/src/mixins";
+
+:host {
+	display: block;
+	padding: 0 10px;
+}
+
+.task-form-container {
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.task-create {
+	max-width: 720px;
+	margin: 0 auto;
+}
+
 .task-form {
-	padding: 10px;
-	border: 1px solid #ccc;
+	@include card($br: 12px);
+	padding: 20px;
+}
+
+.row {
+	display: flex;
+	gap: 20px;
+}
+
+.prop {
+	display: flex;
+	flex-direction: column;
+}
+
+.label {
+	font-size: 13px;
+	font-style: italic;
+	padding: 8px 0 4px;
+}
+
+.create-btn {
+	margin-top: 20px;
+}
+
+.tasks {
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.tasks-list {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
 }
 
 .task-item {
+	width: 49%;
+	@include card($br: 16px);
+
+	margin: 10px 0;
 	padding: 10px;
-	margin: 5px;
-	border-radius: 16px;
-	background-color: rgb(240, 212, 232);
+
+	& .training {
+		display: inline-block;
+		font-size: 16px;
+		font-weight: 700;
+		padding-bottom: 8px;
+	}
+
+	p {
+		padding: 8px 0;
+	}
+
+	& .descr {
+		max-width: 400px;
+	}
 }
