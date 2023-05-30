@@ -1,5 +1,9 @@
 @import "/src/mixins";
 
+:host {
+	padding-bottom: 60px;
+}
+
 .header {
 	padding: 10px 0;
 	border-bottom: 1px solid #ccc;
@@ -7,6 +11,8 @@
 
 .filters {
 	display: flex;
+	align-items: center;
+	gap: 20px;
 	padding: 20px 0;
 }
 
@@ -19,10 +25,12 @@
 }
 
 .topic-task {
-	padding: 20px 0;
+	@include card();
 
+	padding: 20px 20px 30px;
+	margin: 20px 0;
 	&__descr {
-		padding-bottom: 4px;
+		padding-bottom: 8px;
 		font-size: 15px;
 	}
 }
@@ -57,7 +65,6 @@
 
 .thread-list {
 	&-item {
-		@include card;
 		border-radius: 6px;
 		
 		padding: 10px;
@@ -72,7 +79,8 @@
 
 .student-files-box {
 	height: 240px;
-	border: 1px solid #333;
+	background-color: #f8f8f8;
+	border-radius: 10px;
 }
 
 .no-task-answers {

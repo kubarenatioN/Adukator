@@ -1,7 +1,7 @@
 <app-back-btn>Назад</app-back-btn>
 
 <ng-container *ngIf="bundle$ | async as bundle; else loader">
-	<h1>Пакет курсов "{{ bundle.title }}"</h1>
+	<!-- <h1>Пакет курсов "{{ bundle.title }}"</h1>
 	<p>{{ bundle.description }}</p>
 
 	<div class="courses-list">
@@ -9,8 +9,43 @@
 			<span>Курс {{ course?.title }}</span>
 			<span>Длительность: {{ '5 недель' }}</span>
 		</div>
-	</div>
+	</div> -->
+
+	<a
+		class="bundle"
+		[routerLink]="['../overview/bundle', bundle.uuid]"
+	>
+
+		<div class="bundle__info">
+			<h3>Пакет курсов {{ bundle.title }}</h3>
+			<p>{{ bundle.description }}</p>
+			<div class="bundle__courses">
+				<p>Курсы в пакете</p>
+				<ol class="bundle__courses-list">
+					<li *ngFor="let course of bundle.courses">
+						<div class="bundle__course-title">
+							<span>
+								{{ course.title }}
+							</span>
+							<a [routerLink]="['/app/learn/overview/course', course.uuid]">
+								<span class="material-icons-outlined">
+									open_in_new
+								</span>
+							</a>
+						</div>
+						<p class="bundle__course-descr">
+							{{ course.description }}
+						</p>
+						<img class="bundle__course-img" [src]="course.banner" alt="">
+					</li>
+				</ol>
+			</div>
+		</div>
+
+	</a>
 </ng-container>
+
+
 
 <ng-template #loader>
 	<p>Loading...</p>

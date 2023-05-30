@@ -1,18 +1,25 @@
 <form [formGroup]="form">
 	<!-- <p>[dev] task id: {{ task.id }}</p> -->
 	<div class="result">
-		<input
-			formControlName="mark"
-			type="number"
-			max="100"
-			min="0"
-			step="5"
-			[defaultValue]="0"
-		/>
+		<mat-form-field class="mark-input">
+			<input
+				matInput
+				formControlName="mark"
+				type="number"
+				max="100"
+				min="0"
+				step="5"
+				[defaultValue]="0"
+			/>
+			<mat-error>
+				<val-errors controlName="mark"></val-errors>	
+			</mat-error>
+		</mat-form-field>
 
 		<label class="result-count">
-			<input formControlName="isCounted" type="checkbox" />
-			<span>Засчитано</span>
+			<mat-checkbox formControlName="isCounted">
+				Засчитано
+			</mat-checkbox>
 		</label>
 	</div>
 	<!-- <textarea 

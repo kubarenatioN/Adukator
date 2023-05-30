@@ -9,6 +9,7 @@ import { ModuleTopic, TopicTask } from 'src/app/typings/course.types';
 import { PersonalTask, Training } from 'src/app/typings/training.types';
 import { PersonalizationService } from '../../services/personalization.service';
 import { TeacherTrainingService } from '../../services/teacher-training.service';
+import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 
 @Component({
 	selector: 'app-personal-tasks',
@@ -16,7 +17,10 @@ import { TeacherTrainingService } from '../../services/teacher-training.service'
 	styleUrls: ['./personal-tasks.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PersonalTasksComponent implements OnInit {
+export class PersonalTasksComponent 
+	extends CenteredContainerDirective
+	implements OnInit 
+{
 	private activeTraining?: Training;
 
 	public trainings$: Observable<Training[]>;
@@ -34,6 +38,7 @@ export class PersonalTasksComponent implements OnInit {
 		private teacherService: TeacherTrainingService,
 		private personalizationService: PersonalizationService
 	) {
+		super();
 		this.form = this.fb.group({
 			uuid: generateUUID(),
 			training: ['', Validators.required],

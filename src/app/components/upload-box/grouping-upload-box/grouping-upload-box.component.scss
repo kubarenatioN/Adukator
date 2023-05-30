@@ -1,7 +1,6 @@
 :host {
 	display: flex;
 	flex-direction: column;
-	border: 1px solid #333;
 }
 
 .upload-inner {
@@ -15,7 +14,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	flex-grow: 1;
-	padding: 0 10px;
+	padding: 0 15px;
 
 	&--empty {
 		display: block;

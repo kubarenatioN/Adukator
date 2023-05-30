@@ -1,18 +1,36 @@
 <app-back-btn>Назад</app-back-btn>
-<a routerLink="create">Создать</a>
 
-<h2>Мои пакеты курсов</h2>
+<div class="bundles__header">
+	<h2>Мои пакеты курсов</h2>
+	<a class="bundles__create" mat-raised-button routerLink="create">Создать</a>
+</div>
+
 <ng-container *ngIf="bundles$ | async as bundles; else loader">
-	<div class="bundles-list" *ngIf="bundles.length > 0; else noItems">
+	<div class="bundles__list" *ngIf="bundles.length > 0; else noItems">
 		<a
 			*ngFor="let bundle of bundles$ | async"
-			class="bundle-item"
+			class="bundles__list-item"
 			[routerLink]="[bundle.uuid]"
 		>
-			<h4>{{ bundle.title }}</h4>
+			
+			<div class="bundle-item__images">
+				<img 
+					class="bundle-item__img"
+					*ngFor="let course of bundle.courses; let i = index" 
+					[ngClass]="'img-' + (i + 1)"
+					[src]="course.banner" alt="">
+			</div>
+
+			<div class="bundle-item__content">
+				<h4 class="bundle-item__title">{{ bundle.title }}</h4>
+
+				<p class="bundle-item__descr">{{ bundle.description }}</p>
+			</div>
+
 		</a>
 	</div>
 </ng-container>
 
 <ng-template #noItems>Пусто ;(</ng-template>
+
 <ng-template #loader>Loading</ng-template>

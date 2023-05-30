@@ -1,3 +1,5 @@
+@import "/src/mixins";
+
 .bundle-item {
 	display: inline-block;
 	padding: 10px;
@@ -6,4 +8,77 @@
 	margin: 10px;
 	min-height: 100px;
 	width: 200px;
+}
+
+.bundles {
+	&__header {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		padding: 10px 0;
+		border-bottom: 1px solid #ccc;
+	}
+
+	&__create {
+		margin-left: 40px;
+	}
+
+	&__list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 20px;
+		padding: 20px 0;
+	}
+
+	&__list-item {
+		@include card();
+
+		min-height: 240px;
+		width: calc(33% - 20px);
+		overflow: hidden;
+	}
+}
+
+.bundle-item {
+	&__images {
+		display: flex;
+		justify-content: center;
+		position: relative;
+		padding: 40px 20px 10px;
+	}
+	
+	&__img {
+		width: 240px;
+		height: 120px;
+		object-fit: cover;
+		z-index: 1;
+		border-radius: 10px;
+		border: 3px solid #fff;
+		
+		&.img-1 {
+			position: relative;
+			z-index: 2;
+		}
+
+		&.img-2 {
+			position: absolute;
+			left: -10px;
+			top: -10px;
+		}
+
+		&.img-3 {
+			position: absolute;
+			right: -10px;
+			top: 10px;
+		}
+	}
+
+	&__content {
+		padding: 20px;
+	}
+
+	&__descr {
+		padding: 10px 0;
+	}
+
 }

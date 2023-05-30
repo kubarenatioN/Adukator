@@ -7,7 +7,6 @@ import {
 	Output,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { getTodayTime } from 'src/app/helpers/date-fns.helper';
 import { TopicTask } from 'src/app/typings/course.types';
 import { ProfileProgressRecord } from 'src/app/typings/training.types';
 

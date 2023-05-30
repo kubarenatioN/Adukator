@@ -15,6 +15,7 @@ import { NetworkRequestKey } from 'src/app/helpers/network.helper';
 import { UserService } from 'src/app/services/user.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BundleService } from '../services/bundle.service';
+import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 
 @Component({
 	selector: 'app-create',
@@ -22,7 +23,10 @@ import { BundleService } from '../services/bundle.service';
 	styleUrls: ['./create.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CreateComponent implements OnInit {
+export class CreateComponent 
+	extends CenteredContainerDirective
+	implements OnInit 
+{
 	private originalCoursesRef: Course[] = [];
 	public teacherCourses: Course[] = [];
 	public bundleCourses: Course[] = [];
@@ -35,6 +39,8 @@ export class CreateComponent implements OnInit {
 		private cdRef: ChangeDetectorRef,
 		private fb: FormBuilder
 	) {
+		super()
+		
 		this.bundleForm = this.fb.group({
 			title: ['', Validators.required],
 			description: ['', Validators.required],

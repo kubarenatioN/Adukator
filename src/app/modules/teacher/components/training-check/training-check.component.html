@@ -1,3 +1,5 @@
+<app-back-btn>Назад</app-back-btn>
+
 <ng-container *ngIf="viewData$ | async as viewData; else loader">
 	<div class="header">
 		<h2>Оценивание</h2>
@@ -6,27 +8,31 @@
 
 	<div class="filters" [formGroup]="checkConfigForm">
 		<label>
-			<span>Студент</span>
-			<select formControlName="profile" name="student">
-				<option
-					*ngFor="let profile of viewData.members"
-					[value]="profile._id"
-				>
-					{{ profile.student.username }}
-				</option>
-			</select>
+			<mat-form-field>
+				<mat-label>Студент</mat-label>
+				<mat-select formControlName="profile">
+					<mat-option
+						*ngFor="let profile of viewData.members"
+						[value]="profile._id"
+					>
+						{{ profile.student.username }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
 		</label>
 
 		<label>
-			<span>Тема</span>
-			<select formControlName="topic" name="topic">
-				<option
-					*ngFor="let topic of viewData.training.topics"
-					[value]="topic.id"
-				>
-					{{ topic.title }}
-				</option>
-			</select>
+			<mat-form-field>
+				<mat-label>Тема</mat-label>
+				<mat-select #topicSelect formControlName="topic">
+					<mat-option
+						*ngFor="let topic of viewData.training.topics"
+						[value]="topic.id"
+					>
+						{{ topic.title }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
 		</label>
 	</div>
 
@@ -34,7 +40,7 @@
 		<ng-container
 			*ngIf="(isLoadingAnswers$ | async) !== true; else answersLoader"
 		>
-			<p>Последняя версия выполненных заданий по теме.</p>
+			<h3>Задания студента по выбранной теме</h3>
 
 			<div class="topic-answer-container">
 				<div
@@ -65,7 +71,7 @@
 			</div>
 
 			<div class="check-results">
-				<p>Подведение результатов</p>
+				<h3>Подведение результатов</h3>
 
 				<div
 					*ngFor="
@@ -75,7 +81,7 @@
 					"
 					class="task-item-wrapper"
 				>
-					<h3>Задание {{ i + 1 }}</h3>
+					<h4>Задание {{ i + 1 }}</h4>
 					<p class="descr">{{ taskCheck.task.taskDescr }}</p>
 					<app-training-task-result
 						[task]="taskCheck.task"

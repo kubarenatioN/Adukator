@@ -1,6 +1,7 @@
 .result {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
+	gap: 15px;
 }
 
 .descr {
@@ -9,4 +10,9 @@
 
 .result-count {
 	user-select: none;
+}
+
+.mark-input {
+	min-width: 100px;
+	width: 100px;
 }

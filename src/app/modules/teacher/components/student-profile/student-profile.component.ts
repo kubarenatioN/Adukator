@@ -8,6 +8,7 @@ import { Observable, of, ReplaySubject } from 'rxjs';
 import {
 	distinctUntilChanged,
 	map,
+	shareReplay,
 	switchMap,
 	take,
 	takeUntil,
@@ -24,6 +25,8 @@ import {
 	TrainingProfileUser,
 } from 'src/app/typings/training.types';
 import { TeacherTrainingService } from '../../services/teacher-training.service';
+import { CourseContentTree } from 'src/app/typings/course.types';
+import { constructCourseTree } from 'src/app/helpers/courses.helper';
 
 type ViewData = {
 	profile: TrainingProfileTraining | null;
@@ -33,6 +36,7 @@ type ViewData = {
 	charts: {
 		[key: string]: any;
 	};
+	contentTree: CourseContentTree | null;
 };
 
 @Component({
@@ -128,6 +132,7 @@ export class StudentProfileComponent
 				const personalTasks = res?.personalization
 					?.filter((pers) => pers.type === 'assignment')
 					.map((pers) => pers.task!);
+
 				return {
 					profile: res.profile,
 					hasAccess: res.hasAccess,
@@ -143,8 +148,10 @@ export class StudentProfileComponent
 								  )
 								: null,
 					},
+					contentTree: training ? constructCourseTree(training.course) : null
 				};
-			})
+			}),
+			shareReplay(1),
 		);
 
 		this.viewData$.subscribe((res) => {

@@ -3,6 +3,7 @@ import { BundleService } from './services/bundle.service';
 import { CourseBundle } from 'src/app/typings/course.types';
 import { Observable, shareReplay, switchMap } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
+import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 
 @Component({
 	selector: 'app-bundle',
@@ -10,13 +11,15 @@ import { UserService } from 'src/app/services/user.service';
 	styleUrls: ['./bundle.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BundleComponent implements OnInit {
+export class BundleComponent extends CenteredContainerDirective implements OnInit {
 	public bundles$!: Observable<CourseBundle[]>;
 
 	constructor(
 		private bundleService: BundleService,
 		private userService: UserService
-	) {}
+	) {
+		super();
+	}
 
 	ngOnInit(): void {
 		this.bundles$ = this.userService.user$.pipe(

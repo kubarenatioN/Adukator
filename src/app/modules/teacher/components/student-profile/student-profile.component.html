@@ -2,23 +2,31 @@
 
 <form class="filters" [formGroup]="filtersForm">
 	<label>
-		<p>Тренинг</p>
-		<select formControlName="training">
-			<option *ngFor="let training of trainings" [value]="training._id">
-				{{ training.course.title }}
-			</option>
-		</select>
+		<mat-form-field>
+			<mat-label>Тренинг</mat-label>
+			<mat-select formControlName="training">
+				<mat-option
+					*ngFor="let training of trainings" 
+					[value]="training._id"
+				>
+					{{ training.course.title }}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+
 	</label>
 	<label>
-		<p>Студент</p>
-		<select
-			*ngIf="profiles$ | async as profiles; else noTrainingProfiles"
-			formControlName="student"
-		>
-			<option *ngFor="let profile of profiles" [value]="profile.uuid">
-				{{ profile.student.username }}
-			</option>
-		</select>
+		<mat-form-field *ngIf="profiles$ | async as profiles; else noTrainingProfiles">
+			<mat-label>Студент</mat-label>
+			<mat-select formControlName="student">
+				<mat-option
+					*ngFor="let profile of profiles" 
+					[value]="profile.uuid"
+				>
+					{{ profile.student.username }}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
 	</label>
 </form>
 
@@ -27,6 +35,7 @@
 		<ng-container
 			[ngTemplateOutlet]="profileInfo"
 			[ngTemplateOutletContext]="{
+				viewData,
 				training: viewData.training,
 				student: viewData.profile?.student,
 				progress: viewData.progress,
@@ -42,23 +51,30 @@
 	let-student="student"
 	let-progress="progress"
 	let-charts="charts"
+	let-viewData="viewData"
 >
 	<h2>Прогресс студента</h2>
 	<p>студент: {{ student.username }}</p>
 	<p>тренинг: {{ training.course.title }}</p>
 
+	<div class="progress">
+		<app-topics-progress-chart
+			[config]="charts.topics"
+		></app-topics-progress-chart>
+	</div>
+
 	<div class="training-program">
 		<div
-			*ngFor="let module of training.modules"
+			*ngFor="let node of viewData.contentTree"
 			class="training-program__module"
 		>
-			<h3>{{ module.title }}</h3>
+			<h3>{{ node.module.title }}</h3>
 			<!-- <div>
                 {{ module.topics | json }}
             </div> -->
 			<div class="module-topics">
 				<div
-					*ngFor="let topic of module.topics"
+					*ngFor="let topic of node.topics"
 					class="training-program__topic"
 				>
 					<h4>Тема: {{ topic.title }}</h4>
@@ -81,19 +97,13 @@
 							</span>
 						</div>
 					</div>
-					<div class="topic-test" *ngIf="topic.testLink">
+					<!-- <div class="topic-test" *ngIf="topic.testLink">
 						<h4>Тест</h4>
 						<p>{{ topic.testLink }}</p>
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</div>
-	</div>
-
-	<div class="progress">
-		<app-topics-progress-chart
-			[config]="charts.topics"
-		></app-topics-progress-chart>
 	</div>
 </ng-template>
 

@@ -1,7 +1,13 @@
+:host {
+	padding-bottom: 60px;
+}
+
 .filters {
 	display: flex;
+	align-items: center;
+	gap: 10px;
 	padding: 10px;
-	border-bottom: 1px solid #333;
+	border-bottom: 1px solid #ccc;
 }
 
 .topic-task {
@@ -19,4 +25,8 @@
 		background-color: rgb(255, 242, 55);
 		border: 1px solid #333;
 	}
+}
+
+.training-program {
+	margin-top: 30px;
 }
