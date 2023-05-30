@@ -10,21 +10,47 @@
 	@include card();
 
 	display: inline-block;
-	margin: 10px;
+	margin: 10px 0;
 	border-radius: 16px;
 	overflow: hidden;
-	width: 260px;
-	min-height: 300px;
-	
-	&__poster {
-		width: 100%;
-		min-height: 160px;
-		height: 160px;
-		object-fit: cover;
-	}
+	max-width: calc(24% - 10px);
+	width: 100%;
+	min-height: 240px;
+	position: relative;
 
 	&__content {
 		padding: 10px;
+	}
+
+	&__title {
+		margin: 0;
+		margin-bottom: 8px;
+	}
+
+	&__status {
+		position: absolute;
+		right: 10px;
+		top: 10px;
+		border-radius: 12px;
+		padding: 4px 10px;
+		font-size: 12px;
+		text-align: center;
+		min-width: 80px;
+
+		&.active {
+			background-color: rgb(204, 255, 129);
+		}
+
+		&.archived {
+			background-color: rgb(230, 230, 230);
+		}
+	}
+
+	&__poster {
+		width: 100%;
+		min-height: 120px;
+		height: 120px;
+		object-fit: cover;
 	}
 }
 

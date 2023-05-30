@@ -10,7 +10,7 @@
 		
 				<div class="trainings__list">
 					<ng-container
-						*ngFor="let profile of dashboard.profiles"
+						*ngFor="let profile of dashboard.profiles | sortStudentTraining"
 						[ngTemplateOutlet]="trainingItem"
 						[ngTemplateOutletContext]="{
 							profile: profile,
@@ -54,11 +54,11 @@
 		[routerLink]="['/app/student/profile', profile.uuid, 'training']"
 		class="training-item"
 	>
+		<p class="training-item__status" [ngClass]="profile.training.status">{{ profile.training.status === 'active' ? 'Активен' : 'В архиве' }}</p>
 		<img class="training-item__poster" [src]="course.banner" alt="">
 		<div class="training-item__content">
 
 			<h3 class="training-item__title">{{ profile.training.title }}</h3>
-			<p class="training-item__status">Status: {{ profile.training.status }}</p>
 			<p class="training-item__start">Начало {{ profile.training.startAt | date : 'dd.MM.yy' }}</p>
 			<p class="training-item__duration">Длительность {{ course | courseDuration }} дн.</p>
 			<div class="training-item__comps">

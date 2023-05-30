@@ -26,6 +26,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { GroupingUploadBoxComponent } from 'src/app/components/upload-box/grouping-upload-box/grouping-upload-box.component';
 import { CourseDurationPipe } from 'src/app/pipes/course-duration.pipe';
 import { CourseStatusPipe } from 'src/app/pipes/course-status.pipe';
+import { SortStudentTrainingPipe } from 'src/app/pipes/sort-student-training.pipe';
 
 @NgModule({
 	declarations: [
@@ -41,6 +42,7 @@ import { CourseStatusPipe } from 'src/app/pipes/course-status.pipe';
 		TopicsProgressChartComponent,
 		CourseDurationPipe,
 		CourseStatusPipe,
+		SortStudentTrainingPipe,
 	],
 	imports: [
 		CommonModule,
@@ -81,6 +83,7 @@ import { CourseStatusPipe } from 'src/app/pipes/course-status.pipe';
 		TopicsProgressChartComponent,
 		CourseDurationPipe,
 		CourseStatusPipe,
+		SortStudentTrainingPipe,
 	],
 })
 export class SharedModule {}
