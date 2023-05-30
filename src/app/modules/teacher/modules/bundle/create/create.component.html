@@ -9,39 +9,77 @@
 
 <form class="builder" [formGroup]="bundleForm">
 	<div class="main-info">
-		<input
-			formControlName="title"
-			type="text"
-			placeholder="Название пакета"
-		/>
-		<textarea
-			formControlName="description"
-			cols="30"
-			rows="5"
-			placeholder="Описание пакета"
-		></textarea>
+		<mat-form-field>
+			<mat-label>Название</mat-label>
+			<input
+				matInput
+				required
+				formControlName="title"
+				type="text"
+			/>
+			<mat-error>
+				<val-errors controlName="title"></val-errors>	
+			</mat-error>
+		</mat-form-field>
+
+		<mat-form-field class="bundle__descr">
+			<mat-label>Описание</mat-label>
+			<textarea
+				matInput
+				formControlName="description"
+				required
+				rows="4"
+			></textarea>
+			<mat-error>
+				<val-errors controlName="description"></val-errors>
+			</mat-error>
+		</mat-form-field>
 	</div>
 
 	<app-layout>
-		<div slot="sidebar" class="techaer-courses-list">
+		<div slot="sidebar" class="teacher-courses-list">
 			<h3>Ваши опубликованные курсы</h3>
-			<div *ngFor="let course of teacherCourses" class="course-card">
-				<p>{{ course.title }}</p>
-				<button (click)="addToBundle(course)">Добавить</button>
+			<div class="teacher-courses-list__courses">
+				<div *ngFor="let course of teacherCourses" class="course-card">
+					<p>{{ course.title }}</p>
+					<button 
+					mat-raised-button
+					color="primary"
+					class="course-card__btn" (click)="addToBundle(course)">
+						Добавить в пакет
+						<span class="material-icons-outlined">
+							add_circle_outline
+						</span>
+					</button>
+				</div>
 			</div>
 		</div>
 
 		<div slot="main" class="bundle-list">
 			<h3>Курсы пакета</h3>
-			<div
-				*ngFor="let course of bundleForm.value.courses"
-				class="course-card"
-			>
-				<p>{{ course.title }}</p>
-				<button (click)="removeCourseFromBundle(course)">Убрать</button>
+			<div class="bundle-list__courses">
+				<div
+					*ngFor="let course of bundleForm.value.courses"
+					class="course-card"
+				>
+					<p>{{ course.title }}</p>
+					<button 
+					mat-raised-button
+					class="course-card__btn"
+					(click)="removeCourseFromBundle(course)">
+						Убрать
+						<span class="material-icons-outlined">
+							remove_circle_outline
+						</span>
+					</button>
+				</div>
 			</div>
 
-			<button *ngIf="bundleCourses.length > 1" (click)="createBundle()">
+			<button 
+			class="bundle__create-btn"
+			mat-raised-button
+			color="primary"
+			*ngIf="bundleCourses.length > 1" (click)="createBundle()">
 				Создать пакет
 			</button>
 		</div>

@@ -94,7 +94,12 @@ export class CreateComponent
 	}
 
 	public createBundle() {
-		const { value } = this.bundleForm;
+		const { value, invalid } = this.bundleForm;
+
+		if (invalid) {
+			console.warn('Invalid form');
+			return;
+		}
 
 		this.userService.user$
 			.pipe(

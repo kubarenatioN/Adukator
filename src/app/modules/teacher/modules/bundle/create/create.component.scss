@@ -1,9 +1,11 @@
+@import "/src/mixins";
+
 .builder {
 	// display: flex;
 }
 
 .main-info {
-	padding-left: 260px;
+	padding-left: 280px;
 	max-width: 460px;
 	display: flex;
 	flex-direction: column;
@@ -12,13 +14,49 @@
 
 .bundle-list {
 	margin-left: 40px;
+	display: flex;
+	flex-direction: column;
+
+	&__courses {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 20px;
+	}
+}
+
+.teacher-courses-list {
+
+	&__courses {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
 }
 
 .course-card {
-	margin: 10px;
-	padding: 10px;
-	border-radius: 16px;
-	background-color: #ececec;
-	width: 200px;
-	min-height: 100px;
+	@include card($br: 10px);
+
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	
+	padding: 20px;
+	width: 240px;
+	min-height: 120px;
+
+	&__btn {
+		margin-top: auto;
+		align-self: flex-end;
+	}
+}
+
+.bundle {
+	&__create-btn {
+		margin-top: 20px;
+		margin-left: auto;
+	}
+	
+	&__descr {
+		width: 420px;
+	}
 }

@@ -9,6 +9,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BundleService } from './services/bundle.service';
 import { BundleItemComponent } from './bundle-item/bundle-item.component';
 import { SharedModule } from 'src/app/modules/shared/shared.module';
+import { ValdemortModule } from 'ngx-valdemort';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
 	declarations: [BundleComponent, CreateComponent, BundleItemComponent],
@@ -18,6 +20,7 @@ import { SharedModule } from 'src/app/modules/shared/shared.module';
 		ReactiveFormsModule,
 		SharedModule,
 		LayoutComponent,
+		ValdemortModule,
 	],
 	providers: [BundleService],
 })
