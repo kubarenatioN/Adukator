@@ -14,6 +14,7 @@ import {
 	getEmptyCourseFormData,
 	isEmptyCourseFormData,
 } from 'src/app/constants/common.constants';
+import { apiUrl } from 'src/app/constants/urls';
 import {
 	constructCourseTreeFromForm,
 	convertCourseFormDataToCourse,
@@ -127,7 +128,7 @@ export class CourseBuilderService {
 				switchMap((upload) => {
 					const posterFile = upload.result.results.find(file => file.isPoster)
 
-					courseData.banner = posterFile?.secure_url ?? 'http://localhost:8080/static/images/course-bg-1.jpg'
+					courseData.banner = posterFile?.secure_url ?? `${apiUrl}/static/images/course-bg-1.jpg`
 					courseData.uuid = masterId; // Adjust course ID after review
 
 					return this.adminCoursesService.publish(

@@ -25,6 +25,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { FeedbackService } from '../../services/feedback.service';
 import { User } from 'src/app/typings/user.types';
 import { constructCourseTree } from 'src/app/helpers/courses.helper';
+import { apiUrl } from 'src/app/constants/urls';
 
 type ViewData = {
 	course: Course | null
@@ -66,7 +67,7 @@ export class CourseOverviewComponent implements OnInit {
 		text: ['', Validators.required],
 		rating: [null]
 	})
-	public fallbackBanner = 'http://localhost:8080/static/images/course-bg-1.jpg'
+	public fallbackBanner = `${apiUrl}/static/images/course-bg-1.jpg`
 
 	constructor(
 		private activatedRoute: ActivatedRoute,

@@ -5,6 +5,7 @@ import { UserService } from 'src/app/services/user.service';
 import { LearnService } from '../../services/learn.service';
 import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
 import { Course, CourseBundle } from 'src/app/typings/course.types';
+import { apiUrl } from 'src/app/constants/urls';
 
 @Component({
 	selector: 'app-courses-catalog',
@@ -23,7 +24,7 @@ export class CatalogComponent
 		map((user) => user?.permission === 'teacher')
 	);
 
-	public fallbackBanner = 'http://localhost:8080/static/images/course-bg-1.jpg'
+	public fallbackBanner = `${apiUrl}/static/images/course-bg-1.jpg`
 
 	constructor(
 		private learnService: LearnService,

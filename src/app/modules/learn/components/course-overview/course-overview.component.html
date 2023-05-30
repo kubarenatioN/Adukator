@@ -1,147 +1,143 @@
 <ng-container *ngIf="viewData$ | async as viewData; else loader">
 	<ng-container *ngIf="viewData.course as course; else noCourse">
-		<div class="course-banner-wrapper">
-			<img class="course-banner-image" [src]="course.banner || fallbackBanner" alt="Banner">
+		<div 
+		class="course-banner-wrapper"
+		[ngStyle]="{
+			'background-image': 'url(' + course.banner + ')'
+		}">
 			<app-back-btn class="back-btn"> Назад </app-back-btn>
-		</div>
-		<div class="course-banner-content">
-			<div class="info">
-				<h1 class="title">{{ course.title }}</h1>
-				<p class="descr">{{ course.description }}</p>
 
-				<ng-container *ngIf="viewData.activeTraining">
+			<div class="course-banner-content">
+				<div class="info">
+					<h1 class="title">{{ course.title }}</h1>
+					<p class="descr">{{ course.description }}</p>
+				</div>
+	
+				<div class="info__footer">
 
-					<div class="enrollment-panel" *ngIf="viewData.isUserOwner !== true">
-						<ng-container
-							*ngIf="
-								viewData.trainingLookup as profile;
-								else lookupLoader
-							"
-						>
-							<ng-container *ngIf="profile !== 'NoEnroll'">
-								<div *ngIf="profile.enrollment === 'pending'">
-									<p>Заявка на рассмотрении</p>
-									<button
-										[disabled]="isDisabledEnrollActions"
-										mat-raised-button
-										(click)="
-											cancelTrainingEnroll(viewData.activeTraining.training)
-										"
-									>
-										Отозвать
-									</button>
-								</div>
-								<div *ngIf="profile.enrollment === 'approved'">
-									<button
-										*ngIf="viewData.activeTraining.status === 'active'"
-										[disabled]="isDisabledEnrollActions"
-										mat-raised-button
-										color="accent"
-										(click)="leaveTraining(viewData.activeTraining.training)"
-									>
-										Покинуть
-									</button>
-									<a
-										mat-raised-button
-										[routerLink]="[
-											'/app/student/profile',
-											profile.uuid,
-											'training'
-										]"
-										>Перейти к треннингу</a
-									>
-									<a
-										mat-raised-button
-										[routerLink]="[
-											'/app/student/profile',
-											profile.uuid
-										]"
-										>Прогресс</a
-									>
-								</div>
-							</ng-container>
+					<ng-container *ngIf="viewData.activeTraining">
+		
+							<div class="enrollment-panel" *ngIf="viewData.isUserOwner !== true">
+								<ng-container
+									*ngIf="
+										viewData.trainingLookup as profile;
+										else lookupLoader
+									"
+								>
+									<ng-container *ngIf="profile !== 'NoEnroll'">
+										<div class="enrollment-pending" *ngIf="profile.enrollment === 'pending'">
+											<p>Заявка на рассмотрении</p>
+											<button
+												[disabled]="isDisabledEnrollActions"
+												mat-raised-button
+												(click)="
+													cancelTrainingEnroll(viewData.activeTraining.training)
+												"
+											>
+												Отозвать
+											</button>
+										</div>
+										<div class="flex-gap" *ngIf="profile.enrollment === 'approved'">
+											<a
+												mat-raised-button
+												color="accent"
+												[routerLink]="[
+													'/app/student/profile',
+													profile.uuid,
+													'training'
+												]"
+												>
 
-							<ng-container *ngIf="profile === 'NoEnroll'">
-								<div class="enroll-btn-wrapper">
-									<button
-										*ngIf="viewData.canEnroll === true"
-										mat-raised-button
-										color="accent"
-										[disabled]="isDisabledEnrollActions"
-										(click)="enrollTraining(viewData.activeTraining.training)"
-									>
-										Записаться
-									</button>
-
-									<ng-container
-										*ngIf="viewData.competenciesDiff as compDiff"
-									>
-										<p *ngIf="compDiff.length > 0">
-											<span>Не хватает компетенций: </span>
-											<span>{{ compDiff }}</span>
-										</p>
+													К треннингу
+												</a
+											>
+											<a
+												mat-raised-button
+												[routerLink]="[
+													'/app/student/profile',
+													profile.uuid
+												]"
+												>Прогресс</a
+											>
+											<button
+												*ngIf="viewData.activeTraining.status === 'active'"
+												mat-raised-button
+												(click)="leaveTraining(viewData.activeTraining.training)"
+											>
+												Покинуть
+											</button>
+										</div>
 									</ng-container>
-								</div>
-							</ng-container>
-						</ng-container>
-					</div>
-
-					<a
-						*ngIf="viewData.isUserOwner"
-						mat-raised-button
-						color="accent"
-						[routerLink]="[
-							'/app/teacher/training',
-							viewData.activeTraining.training.uuid,
-							'manage'
-						]">
-						Управление
+		
+									<ng-container *ngIf="profile === 'NoEnroll'">
+										<div class="flex-gap enrollment-enroll">
+											<button
+												*ngIf="viewData.canEnroll === true"
+												mat-raised-button
+												color="accent"
+												[disabled]="isDisabledEnrollActions"
+												(click)="enrollTraining(viewData.activeTraining.training)"
+											>
+												Записаться
+											</button>
+		
+											<ng-container
+												*ngIf="viewData.competenciesDiff as compDiff"
+											>
+												<div class="enrollment-no-comps" *ngIf="compDiff.length > 0">
+													<p class="enrollment-no-comps__text">
+														<span class="material-icons-outlined">
+															error_outline
+														</span>
+														<span>Недостаточно компетенций: </span>
+													</p>
+													<p class="enrollment-no-comps__list">
+														<span class="comp-item" *ngFor="let c of compDiff">
+															{{ c }}
+														</span>
+													</p>
+												</div>
+											</ng-container>
+										</div>
+									</ng-container>
+								</ng-container>
+							</div>
+		
+							<a
+								*ngIf="viewData.isUserOwner"
+								mat-raised-button
+								color="accent"
+								[routerLink]="[
+									'/app/teacher/training',
+									viewData.activeTraining.training.uuid,
+									'manage'
+								]">
+								Управление
+							</a>
+					</ng-container>
+		
+					<ng-container *ngIf="!viewData.activeTraining && viewData.isUserOwner">
+						<a mat-raised-button color="accent" [routerLink]="['/app/teacher']">
+							Начать тренинг
+						</a>
+					</ng-container>
+				</div>
+	
+				<div class="course-banner-author">
+					<a 
+					class="course-banner-author-link"
+					[routerLink]="['/app/user/wall/', viewData.course.authorId]">
+						Автор
 					</a>
-				</ng-container>
-
-				<ng-container *ngIf="!viewData.activeTraining && viewData.isUserOwner">
-					<a mat-raised-button color="accent" [routerLink]="['/app/teacher']">
-						Начать тренинг
-					</a>
-				</ng-container>
-
+				</div>
 			</div>
+
 		</div>
 
-		<div class="course-content container">
-			<div class="competencies">
-				<div class="competencies-required">
-					<h3>
-						Для зачисления на курс вам необходимо владеть следующими
-						компетенциями
-					</h3>
-					<ul class="competencies-list">
-						<li
-							*ngFor="
-								let comp of viewData.course.competencies.required
-							"
-						>
-							{{ getCompLabel(comp) }}
-						</li>
-					</ul>
-				</div>
-
-				<div class="competencies-acquired">
-					<h3>
-						После успешного прохождения курса, вы получите следующие
-						компетенции
-					</h3>
-					<ul class="competencies-list">
-						<li
-							*ngFor="
-								let comp of viewData.course.competencies.acquired
-							"
-						>
-							{{ getCompLabel(comp) }}
-						</li>
-					</ul>
-				</div>
-			</div>
+		<div class="course-content">
+			<pre>
+				<!-- {{ viewData.course.competencies | json }} -->
+			</pre>
 
 			<div class="info-items">
 				<div class="info-item">
@@ -170,6 +166,45 @@
 							>Профиль</a
 						>
 					</p>
+				</div>
+			</div>
+
+			<div class="competencies">
+				<div class="competencies-box competencies-required" *ngIf="viewData.course.competencies.required.length > 0">
+					<p class="title">
+						Для зачисления на курс вам необходимо владеть следующими
+						компетенциями
+					</p>
+					<ul class="competencies-list">
+						<li
+							*ngFor="
+								let comp of viewData.course.competencies.required
+							"
+						>
+							<span class="comp-item">
+								{{ getCompLabel(comp) }}
+							</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="competencies-box competencies-acquired">
+					<p class="title">
+						После успешного прохождения курса, вы получите следующие
+						компетенции
+					</p>
+					<ul class="competencies-list">
+						<li
+							*ngFor="
+								let comp of viewData.course.competencies.acquired
+							"
+						>
+						
+							<span class="comp-item">
+								{{ getCompLabel(comp) }}
+							</span>
+						</li>
+					</ul>
 				</div>
 			</div>
 

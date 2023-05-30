@@ -1,4 +1,4 @@
-<a routerLink="training">К тренингу</a>
+<a mat-raised-button routerLink="training">К тренингу</a>
 
 <ng-container *ngIf="viewData$ | async as viewData">
 	<ng-container [ngSwitch]="viewData.mode">

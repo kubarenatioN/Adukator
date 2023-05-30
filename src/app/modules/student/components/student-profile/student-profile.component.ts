@@ -12,6 +12,7 @@ import {
 import { StudentProfileService } from '../../services/student-profile.service';
 import { StudentTrainingService } from '../../services/student-training.service';
 import { TopicTask } from 'src/app/typings/course.types';
+import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 
 enum ViewMode {
 	SingleProfile = 'SingleProfile',
@@ -35,7 +36,7 @@ type ViewData = {
 	styleUrls: ['./student-profile.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StudentProfileComponent implements OnInit {
+export class StudentProfileComponent extends CenteredContainerDirective implements OnInit {
 	private viewDataStore$ = new ReplaySubject<ViewData>();
 
 	public viewData$: Observable<ViewData> = this.viewDataStore$.asObservable();
@@ -44,7 +45,9 @@ export class StudentProfileComponent implements OnInit {
 		private activatedRoute: ActivatedRoute,
 		private trainingService: StudentTrainingService,
 		private studentProfileService: StudentProfileService
-	) {}
+	) {
+		super();
+	}
 
 	ngOnInit(): void {
 		this.activatedRoute.paramMap.subscribe((params) => {

@@ -1,28 +1,10 @@
-.container {
-	max-width: 800px;
-}
-
-.course-banner-content,
-.course-banner-wrapper {
-	height: 280px;
-}
+@import "/src/mixins";
 
 .course-banner-wrapper {
-	position: absolute;
-	left: 0;
-	right: 0;
+	position: relative;
 	background-size: cover;
 	background-position: center center;
-
-	&::before {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: 0;
-		bottom: 0;
-		background-color: rgba(255, 255, 255, 0.5);
-	}
+	background-attachment: fixed;
 }
 
 .course-banner-image {
@@ -34,12 +16,48 @@
 
 .course-banner-content {
 	max-width: 1200px;
+	min-height: 40vh;
 	margin: 0 auto;
 	display: flex;
-	align-items: center;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
 	position: relative;
 	z-index: 1;
-	padding: 40px 0;
+	padding: 70px 0 40px;
+
+	.info {
+		@include card($color: #333);
+	
+		display: inline-block;
+		background-color: #fff;
+		padding: 30px 20px;
+
+		.title {
+			margin: 0;
+		}
+
+		.descr {
+			margin-top: 15px;
+			max-width: 600px;
+		}
+
+		&__footer {
+			margin-top: 20px;
+		}
+	}
+}
+
+.course-banner-author {
+	position: absolute;
+	right: 0;
+	bottom: 40px;
+
+	&-link {
+		padding: 6px 20px;
+		background-color: #fff;
+		border-radius: 8px;
+	}
 }
 
 .back-btn {
@@ -50,7 +68,9 @@
 }
 
 .course-content {
-	margin-top: 40px;
+	max-width: 1000px;
+	padding-top: 40px;
+	margin: 0 auto;
 }
 
 .info-items {
@@ -59,18 +79,17 @@
 	justify-content: space-around;
 }
 
+.info-item {
+	@include card();
+	
+	max-width: 30%;
+	width: 100%;
+	min-height: 300px;
+}
+
 .modules {
 	max-width: 600px;
 	margin: 0 auto;
-}
-
-.competencies {
-	display: flex;
-	justify-content: space-between;
-
-	&-list {
-		padding-left: 20px;
-	}
 }
 
 .review-item {
@@ -78,4 +97,73 @@
 	background-color: #fdf7ff;
 	border-radius: 6px;
 	margin: 10px;
+}
+
+.flex { 
+	display: flex;
+}
+
+.flex-gap {
+	display: flex;
+	gap: 10px;
+}
+
+.enrollment-pending {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.enrollment-enroll {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.enrollment-no-comps {
+	@include card();
+	
+	background-color: #fff;
+	padding: 20px;
+
+	&__list  {
+		padding-top: 8px;
+		padding-left: 31px;
+	}
+
+	&__text {
+		display: flex;
+		align-items: center;
+		gap: 7px;
+	}
+}
+
+.competencies {
+	display: flex;
+	justify-content: space-around;
+	margin: 40px 0;
+
+	&-list {
+		padding-top: 20px;
+		padding-left: 20px;
+	}
+}
+
+.competencies-box {
+	@include card();
+	
+	max-width: calc(50% - 100px);
+	padding: 20px;
+
+	& .title {
+		font-size: 16px;
+	}
+}
+
+.comp-item {
+	padding: 6px 15px;
+	font-size: 13px;
+	border-radius: 20px;
+	background-color: var(--primary-50);
+	border: 1px solid var(--primary-500);
 }
