@@ -1,48 +1,102 @@
 <div class="catalog-wrapper">
-	<h1 class="title">Каталог курсов</h1>
+	<h1 class="title">Обучение</h1>
 
-	<!-- <div class="catalog-filters">Filters...</div> -->
+	<div class="filters">
+		<button 
+			class="reset-filters-btn"
+			mat-raised-button (click)="resetFilters()">
+			Сбросить
+			<span class="material-icons-outlined">
+				clear
+			</span>
+		</button>
+		<form class="filters-form" [formGroup]="filtersForm">
+
+			<mat-form-field>
+				<mat-label>
+					<span class="search-icon material-icons-outlined">
+						search
+					</span>
+					По ключевым словам
+				</mat-label>
+				<input matInput formControlName="search">
+			</mat-form-field>
+
+			<mat-form-field>
+				<mat-label>Категория</mat-label>
+				<mat-select formControlName="categories" multiple>
+					<mat-option *ngFor="let category of categories$ | async" [value]="category.key">
+						{{ category.name }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+
+			<mat-form-field>
+				<mat-label>Сортировать по</mat-label>
+				<mat-select formControlName="sortBy">
+					<mat-option value="rating">
+						Лучшие отзывы
+					</mat-option>
+					<mat-option value="-createdAt">
+						Сначала новые
+					</mat-option>
+					<mat-option value="+createdAt">
+						Сначала старые
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+
+		</form>
+	</div>
 
 	<div class="courses">
-		<h2>Тренинги</h2>
+		<h3 class="section-title">Курсы и тренинги</h3>
 		<div class="courses-content">
-			<a
-				class="course-card"
-				[routerLink]="['../overview/course', course.uuid]"
-				*ngFor="let course of list$ | async"
-			>
-				<img class="course-card__poster" [src]="course.banner ?? fallbackBanner" alt="">
-				<div class="course-card__content">
-					<p [title]="course.title" class="course-card__title">{{ course.title }}</p>
-					<p class="course-card__descr">
-						{{ course.description }}
-					</p>
-					<span class="course-card__status" [ngClass]="course.status">
-						{{ course.status === 'active' ? 'Проходит тренинг' : 'Идет набор' }}
-					</span>
-	
-					<div class="course-card__footer">
-						<span class="course-card__rating">
-							<span class="star material-icons-outlined">
-								star
-							</span>
-							{{ course?.rating || 4.5 }}
+			<ng-container *ngIf="list$ | async as courses; else loader">
+
+				<ng-container *ngIf="courses.length > 0; else noData">
+
+					<a
+						class="course-card"
+						[routerLink]="['../overview/course', course.uuid]"
+						*ngFor="let course of courses"
+					>
+					<img class="course-card__poster" [src]="course.banner ?? fallbackBanner" alt="">
+					<div class="course-card__content">
+						<p [title]="course.title" class="course-card__title">{{ course.title }}</p>
+						<p class="course-card__descr">
+							{{ course.description }}
+						</p>
+						<span class="course-card__status" [ngClass]="course.status">
+							{{ course.status === 'active' ? 'Проходит тренинг' : 'Идет набор' }}
 						</span>
-	
-						<a 
-						[routerLink]="['/app/user/wall', course.authorId]"
-						class="course-card__author" *ngIf="course.author">
-							Автор
-							<img [src]="course.author.photo" alt="">
-						</a>
+		
+						<div class="course-card__footer">
+							<span class="course-card__rating">
+								<span class="star material-icons-outlined">
+									star
+								</span>
+								{{ course?.rating || 4.5 }}
+							</span>
+		
+							<a 
+							[routerLink]="['/app/user/wall', course.authorId]"
+							class="course-card__author" *ngIf="course.author">
+								Автор
+								<img [src]="course.author.photo" alt="">
+							</a>
+						</div>
 					</div>
-				</div>
-			</a>
+				</a>
+
+				</ng-container>
+
+			</ng-container>
 		</div>
 	</div>
 
 	<div class="bundles">
-		<h2>Пакеты курсов</h2>
+		<h3 class="section-title">Пакеты курсов</h3>
 		<div class="bundles-catalog">
 			<a
 				*ngFor="let bundle of bundlesList$ | async"
@@ -71,3 +125,15 @@
 		</div>
 	</div>
 </div>
+
+<ng-template #noData>
+	<p>
+		Нет записей
+	</p>
+</ng-template>
+
+<ng-template #loader>
+	<p>
+		Loading...
+	</p>
+</ng-template>

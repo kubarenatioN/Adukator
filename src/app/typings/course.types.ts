@@ -132,6 +132,7 @@ export interface Course extends CourseCore {
 	_id: string;
 	modules: CourseModule[];
 	topics: ModuleTopic[];
+	createdAt?: string;
 	training?: Training;
 	banner?: string;
 	score?: number;
