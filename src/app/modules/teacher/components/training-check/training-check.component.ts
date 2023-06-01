@@ -144,7 +144,7 @@ export class TrainingCheckComponent
 				);
 				const tasks = topic?.practice?.tasks ?? [];
 				const personalTasks = checkData.personalization
-					.filter((pers) => pers.type === 'assignment')
+					.filter((pers) => pers.type === 'assignment' && pers.task?.topicId === topicId)
 					.map((pers) => pers.task!.task);
 				const profileUUId =
 					members.find((member) => member._id === profileId)?.uuid ??
@@ -216,7 +216,7 @@ export class TrainingCheckComponent
 			training.topics.find((topic) => topic.id === topicId)?.practice
 				?.tasks ?? [];
 		const personalTasks = personalization
-			.filter((pers) => pers.type === 'assignment')
+			.filter((pers) => pers.type === 'assignment' && pers.task?.topicId === topicId)
 			.map((pers) => pers.task?.task!);
 		this.resultsFormMap = {};
 		if (progress) {
