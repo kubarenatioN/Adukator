@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subject, switchMap, takeUntil, tap, throwError, withLatestFrom } from 'rxjs';
+import { Observable, Subject, filter, switchMap, takeUntil, tap, throwError, withLatestFrom } from 'rxjs';
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { StudentCoursesService } from 'src/app/services/student-courses.service';
 import { UserService } from 'src/app/services/user.service';
@@ -17,8 +17,8 @@ import { UploadService } from 'src/app/services/upload.service';
 	styleUrls: ['./user-profile.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserProfileComponent extends CenteredContainerDirective implements OnInit {
-	public user$: Observable<User | null>;
+export class UserProfileComponent extends CenteredContainerDirective implements OnInit, OnDestroy {
+	public user$: Observable<User>;
 	public userTrainingProfile$: Observable<UserTrainingProfile>;
 
 	public userTeacherPermsRequest$ = this.userService.teacherPermsRequest$;
@@ -30,6 +30,8 @@ export class UserProfileComponent extends CenteredContainerDirective implements 
 
 	public isUserOwnPage: boolean | null = null
 	public disposeLocalFiles$ = new EventEmitter<void>()
+	public clearUploadBox$ = new EventEmitter<void>()
+	public isLoading = false;
 
 	constructor(
 		private dataService: DataService,
@@ -41,7 +43,7 @@ export class UserProfileComponent extends CenteredContainerDirective implements 
 		private activatedRoute: ActivatedRoute,
 	) {
 		super();
-		this.user$ = this.userService.user$;
+		this.user$ = this.userService.user$.pipe(filter(Boolean));
 		this.userTrainingProfile$ = this.userService.trainingProfile$;
 	}
 
@@ -56,10 +58,17 @@ export class UserProfileComponent extends CenteredContainerDirective implements 
 		this.getTeacherPermsRequest()
 	}
 
+	public override ngOnDestroy(): void {
+		this.disposeLocalFiles$.emit()
+		super.ngOnDestroy()
+	}
+
 	public onRequestTeacherPermission(user: User) {
+		this.isLoading = true;
 		const dialogRef = this.dialog.open(BecomeTeacherModalComponent, {
-			data: { user, dispose: this.disposeLocalFiles$ }
+			data: { user, dispose: this.disposeLocalFiles$, clear$: this.clearUploadBox$ }
 		})
+		let formData: any;
 		const cancelStream$ = new Subject<void>()
 		dialogRef.afterClosed()
 		.pipe(
@@ -70,33 +79,55 @@ export class UserProfileComponent extends CenteredContainerDirective implements 
 					cancelStream$.next()
 				}
 			}),
-			switchMap(data => {
-				return this.dataService.http.post(`${DATA_ENDPOINTS.user}/become-teacher`, {
-					request: {
-						...data,
-						userId: user._id,
-					}
-				})
+			tap(data => formData = data),
+			withLatestFrom(this.userTeacherPermsRequest$),
+			switchMap(([_, request]) => {
+				const files = request?.files ?? []
+				
+				return this.removeTeacherFiles(files.map(f => f.public_id))
 			}),
-			withLatestFrom(this.user$),
-			switchMap(([_, user]) => {
-				if (!user) {
-					return throwError(() => new Error('No user'))
-				}
+			switchMap(() => {
 				const folder = this.getUserRequestFilesUploadFolder(user)
 				return this.uploadService.moveFilesToRemote({
 					subject: 'teacher-perms:request-files',
 					fromFolder: folder,
 				})
+			}),
+			switchMap(uploadRes => {
+				formData.files = uploadRes.result.results.map(f => ({
+					secure_url: f.secure_url,
+					public_id: f.public_id,
+				}))
+
+				return this.dataService.http.post(`${DATA_ENDPOINTS.user}/become-teacher`, {
+					request: {
+						...formData,
+						userId: user._id,
+					}
+				})
 			})
 		)
-		.subscribe(res => {
-			this.getTeacherPermsRequest()
+		.subscribe({
+			next: res => {
+				this.getTeacherPermsRequest()
+				this.isLoading = false;
+			},
+			error: err => {
+				this.isLoading = false;
+			}
 		})
 	}
 
-	public cancelTeacherPermsRequest(reqId: string) {
-		this.userService.cancelTeacherPermsRequest(reqId)
+	public cancelTeacherPermsRequest(req: UserTeacherPermsRequest) {
+		this.removeTeacherFiles(req.files.map(f => f.public_id))
+			.subscribe(deleted => {
+				this.clearUploadBox$.emit();
+				return this.userService.cancelTeacherPermsRequest(req._id)
+			})
+	}
+
+	private removeTeacherFiles(files: string[]) {
+		return this.uploadService.removeRemoteFiles(files)
 	}
 
 	public logOut(): void {

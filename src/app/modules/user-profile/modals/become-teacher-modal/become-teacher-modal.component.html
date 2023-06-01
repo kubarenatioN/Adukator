@@ -2,19 +2,19 @@
 
 <form [formGroup]="form">
 	<app-upload-box
+		class="upload-box"
 		type="upload"
 		[folder]="requestFilesFolder"
-		[preloadExisting]="true"
 		[autoRemoveOnDestroy]="false"
 		[manualDeleteRemoteOnClear]="true"
-		[clearObs$]="disposeLocalFiles$"
+		[clearObs$]="clearBox$"
 		(uploadFilesChanged)="uploadFilesChanged($event)"
 		label="Загрузите файлы, подтверждающие вашу экспертность."></app-upload-box>
 
 	<p>Какова ваша мотивация стать преподавателем?</p>
-	<mat-form-field appearance="fill">
-		<textarea matInput formControlName="motivation" placeholder=""></textarea>
+	<mat-form-field>
+		<textarea matInput required formControlName="motivation" placeholder=""></textarea>
 	</mat-form-field>
 
-	<button (click)="sendRequest()">Отправить заявку</button>
+	<button mat-raised-button (click)="sendRequest()">Отправить заявку</button>
 </form>

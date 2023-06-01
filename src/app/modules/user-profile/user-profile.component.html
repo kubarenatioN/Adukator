@@ -46,17 +46,27 @@
 			<ng-container *ngIf="user.role !== 'admin'">
 				<ng-container *ngIf="userTeacherPermsRequest$ | async as request; else becomeTeacher">
 					<div class="teacher-perms-request">
-						<p>
+						<h3>
 							Заявка на получение прав преподавателя
-						</p>
+						</h3>
 						<p>
 							Статус: {{ request.status }}
 						</p>
-						<button *ngIf="request.status === 'pending'" (click)="cancelTeacherPermsRequest(request._id)">Отозвать заявку</button>
+						<button 
+						mat-raised-button
+						*ngIf="request.status === 'pending'" 
+						(click)="cancelTeacherPermsRequest(request)">Отозвать заявку</button>
+						<button 
+						mat-raised-button
+						*ngIf="request.status === 'rejected'" 
+						(click)="onRequestTeacherPermission(user)">Отправить повторно</button>
 					</div>
 				</ng-container>
 				<ng-template #becomeTeacher>
-					<button mat-raised-button color="primary" (click)="onRequestTeacherPermission(user)">Стать преподавателем</button>
+					<button 
+					mat-raised-button 
+					color="primary" 
+					(click)="onRequestTeacherPermission(user)">Стать преподавателем</button>
 				</ng-template>
 			</ng-container>
 			

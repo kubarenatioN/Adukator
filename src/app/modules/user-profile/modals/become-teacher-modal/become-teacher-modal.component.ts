@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { merge } from 'rxjs';
 import { User } from 'src/app/typings/user.types';
 
 type DialogData = {
   user: User,
-  dispose: EventEmitter<void>
+  dispose: EventEmitter<void>,
+  clear$: EventEmitter<void>,
 }
 
 @Component({
@@ -15,6 +17,8 @@ type DialogData = {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BecomeTeacherModalComponent implements OnInit {
+  public clearBox$ = new EventEmitter<void>()
+  
   public form
   public get requestFilesFolder(): string {
     return `teacher-perms-request/${this.data.user.uuid}`
@@ -26,7 +30,6 @@ export class BecomeTeacherModalComponent implements OnInit {
     public dialogRef: MatDialogRef<BecomeTeacherModalComponent>,
     @Inject(MAT_DIALOG_DATA) private data: DialogData,
   ) {
-    this.disposeLocalFiles$ = data.dispose
     this.form = this.fb.group({
       motivation: ['', Validators.required],
       files: [new Array<string>(), Validators.minLength(1)],
@@ -34,6 +37,10 @@ export class BecomeTeacherModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    merge(
+      this.data.dispose,
+      this.data.clear$
+    ).subscribe(() => this.clearBox$.emit())
   }
 
   public uploadFilesChanged(files: string[]) {

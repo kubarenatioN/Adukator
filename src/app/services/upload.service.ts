@@ -56,6 +56,18 @@ export class UploadService {
 		});
 	}
 
+	public removeRemoteFolder(folder: string) {
+		return this.http.delete(`${apiUrl}/upload/temp/delete`, {
+			body: { folder }
+		});
+	}
+
+	public removeRemoteFiles(files: string[]) {
+		return this.http.delete(`${apiUrl}/upload/remote/files`, {
+			body: { files }
+		})
+	}
+
 	public moveFilesToRemote({
 		fromFolder,
 		toFolder,

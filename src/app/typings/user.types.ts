@@ -36,6 +36,9 @@ export interface UserTeacherPermsRequest {
 	uuid: string
 	user: User
 	motivation: string
-	files?: string[]
+	files: {
+		secure_url: string,
+		public_id: string,
+	}[]
 	status: UserTeacherPermsRequestStatus
 }
