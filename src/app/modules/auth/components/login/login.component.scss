@@ -14,3 +14,24 @@ form {
 	padding: 20px;
 	border-radius: 10px;
 }
+
+.external {
+	text-align: center;
+	margin: 20px 0 10px;
+	padding: 20px 0 10px;
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 20px;
+		right: 20%;
+		height: 2px;
+		background-color: var(--primary-100);
+	}
+
+	button {
+		margin: 10px 0;
+	}
+}

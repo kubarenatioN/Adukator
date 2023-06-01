@@ -25,10 +25,11 @@
 	</button>
 </form>
 
-<p>Либо используйте другой способ входа</p>
-<button mat-raised-button color="primary" (click)="login('google')">
-	Google
-</button>
-<a mat-raised-button color="primary" (click)="login('twitter')">Twitter</a>
+<div class="external">
+	<p>Либо используйте другой способ входа</p>
+	<button mat-raised-button (click)="login('google')">
+		Google
+	</button>
+</div>
 
-<p>Уже есть аккаунт? <a routerLink="../login">Войдите</a></p>
+<p class="has-account">Уже есть аккаунт? <a routerLink="../login">Войдите</a></p>

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ConfigService } from './services/config.service';
 import { UserService } from './services/user.service';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-root',
@@ -10,6 +11,7 @@ import { UserService } from './services/user.service';
 export class AppComponent {
 	constructor(
 		private userService: UserService,
+		private router: Router,
 		private configService: ConfigService
 	) {
 		(window as any).__localeId__ = 'ru';
@@ -26,7 +28,10 @@ export class AppComponent {
 			e.data.info.token
 		) {
 			localStorage.setItem('token', e.data.info.token);
-			this.userService.initUser();
+			this.userService.initUser()
+				.then(res => {
+					this.router.navigateByUrl('/app')
+				});
 
 			e.source?.postMessage(
 				{

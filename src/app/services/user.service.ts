@@ -63,10 +63,13 @@ export class UserService {
 	}
 
 	public initUser() {
-		this.authService.getUserByToken().subscribe(res => {
-			const { user, refreshToken } = res			
-			this.setUser(user, refreshToken);
-		});
+		return new Promise((resolve, rej) => {
+			this.authService.getUserByToken().subscribe(res => {
+				const { user, refreshToken } = res
+				this.setUser(user, refreshToken);
+				resolve(res)
+			});
+		})
 	}
 
 	public getTeacherPermsRequest() {
