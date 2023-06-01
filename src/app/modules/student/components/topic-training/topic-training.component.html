@@ -69,27 +69,27 @@
 						></app-training-task>
 					</div>
 
-					<ng-container
-						*ngIf="personalTasks$ | async as personalTasks"
-					>
-						<h4>Индивидуальные задания</h4>
-						<div
-							*ngFor="
-								let task of personalTasks;
-								let i = index;
-								trackBy: tasksTrackBy
-							"
-							class="practice-task personal-task"
-						>
-							<span class="personal-task__icon material-icons-outlined">
-								whatshot
-							</span>
-							<app-training-task
-								(send)="onSendTask($event)"
-								[isActual]="true"
-								[task]="task"
-							></app-training-task>
-						</div>
+					<ng-container *ngIf="personalTasks$ | async as personalTasks">
+						<ng-container *ngIf="personalTasks.length > 0">
+							<h4>Индивидуальные задания</h4>
+							<div
+								*ngFor="
+									let task of personalTasks;
+									let i = index;
+									trackBy: tasksTrackBy
+								"
+								class="practice-task personal-task"
+							>
+								<span class="personal-task__icon material-icons-outlined">
+									whatshot
+								</span>
+								<app-training-task
+									(send)="onSendTask($event)"
+									[isActual]="true"
+									[task]="task"
+								></app-training-task>
+							</div>
+						</ng-container>
 					</ng-container>
 				</div>
 			</div>

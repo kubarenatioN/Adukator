@@ -85,6 +85,19 @@
 	max-width: 30%;
 	width: 100%;
 	min-height: 300px;
+	display: grid;
+	grid-template-rows: 50px 160px auto;
+	justify-items: center;
+	align-items: center;
+	
+	&__icon {
+		display: flex;
+		align-items: center;
+		span {
+			font-size: 120px;
+			color: var(--primary-100);
+		}
+	}
 }
 
 .modules {
@@ -144,6 +157,9 @@
 	margin: 40px 0;
 
 	&-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
 		padding-top: 20px;
 		padding-left: 20px;
 	}
@@ -161,9 +177,14 @@
 }
 
 .comp-item {
+	display: inline-block;
 	padding: 6px 15px;
 	font-size: 13px;
 	border-radius: 20px;
 	background-color: var(--primary-50);
 	border: 1px solid var(--primary-500);
+}
+
+.bg {
+	background-color: #fff;
 }

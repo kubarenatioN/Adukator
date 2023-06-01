@@ -26,7 +26,7 @@
 								>
 									<ng-container *ngIf="profile !== 'NoEnroll'">
 										<div class="enrollment-pending" *ngIf="profile.enrollment === 'pending'">
-											<p>Заявка на рассмотрении</p>
+											<p class="bg">Заявка на рассмотрении</p>
 											<button
 												[disabled]="isDisabledEnrollActions"
 												mat-raised-button
@@ -141,30 +141,45 @@
 
 			<div class="info-items">
 				<div class="info-item">
+					<span>Объем</span>
+					<div class="info-item__icon">
+						<span class="material-icons-outlined">
+							timelapse
+						</span>
+					</div>
 					<div>
-						<p>Старт тренинга:</p>
+						<span>Старт:</span>
 						<span *ngIf="viewData.activeTraining">
 							{{ viewData.activeTraining.training.startAt | date : 'dd.MM.yyyy' }}
 						</span>
+
+						<div>
+							<span>{{ getTrainingDuration(viewData.course) }}</span>
+						</div>
 					</div>
 
-					<div>
-						<p>Длительность</p>
-						<span>{{ getTrainingDuration(viewData.course) }}</span>
-					</div>
 				</div>
 
 				<div class="info-item">
 					<span>Категория</span>
+					<div class="info-item__icon">
+						<span class="material-icons-outlined">
+							category
+						</span>
+					</div>
 					<p>{{ viewData.course.category }}</p>
 				</div>
 
 				<div class="info-item">
 					<span>Автор</span>
+					<div class="info-item__icon">
+						<span class="material-icons-outlined">
+							account_box
+						</span>
+					</div>
 					<p>
 						<a [routerLink]="['/app/user', viewData.course.authorId]"
-							>Профиль</a
-						>
+							>Профиль</a>
 					</p>
 				</div>
 			</div>

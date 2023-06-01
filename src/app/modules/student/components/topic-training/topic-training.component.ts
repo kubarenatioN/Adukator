@@ -50,12 +50,17 @@ export class TopicTrainingComponent
 
 	public trainingMaterialsFolder: string = '';
 
-	public personalTasks$ = this.trainingService.personalization$.pipe(
-		map((personalization) => {
+	public personalTasks$ = 
+	combineLatest([
+		this.topicStore$,
+		this.trainingService.personalization$,
+	])
+	.pipe(
+		map(([topicStore, personalization]) => {
 			let tasks: TopicTask[] | null = null;
-			if (personalization) {
+			if (personalization) {				
 				tasks = personalization
-					.filter((pers) => pers.type === 'assignment')
+					.filter((pers) => pers.type === 'assignment' && pers.task?.topicId === this.topic.id)
 					.map((pers) => pers.task!.task);
 			}
 			return tasks;
@@ -94,6 +99,7 @@ export class TopicTrainingComponent
 		const { topic } = changes;
 		if (topic && topic.currentValue !== topic.previousValue) {
 			this.topicStore$.next(topic.currentValue);
+			this.cdRef.detectChanges()
 		}
 	}
 
@@ -133,8 +139,12 @@ export class TopicTrainingComponent
 		navigator.clipboard.writeText(text);
 	}
 
-	public tasksTrackBy = (index: number, task: TopicTask): string => {
-		const id = `${this.profileId}-${this.topic.id}-${task.id}`;
+	public tasksTrackBy = (index: number, task: any): string => {
+		if (task.type === 'personal') {
+			return task.id
+		}
+
+		const id = `${this.profileId}-${task.id}`;
 
 		return id;
 	};
