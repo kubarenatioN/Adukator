@@ -52,13 +52,14 @@
 				<h4>{{ course.title }}</h4>
 
 				<div class="left">
-					<a *ngIf="course.training"
+					<a mat-raised-button *ngIf="course.training"
 					[routerLink]="['/app/learn/overview/course', course.uuid]">
 						Обзор
 					</a>
 					<button
+						mat-raised-button
 						(click)="startCourse(course, $event)"
-						[disabled]="course.training"
+						[disabled]="!!course.training"
 					>
 						Начать
 					</button>

@@ -28,16 +28,20 @@
 	color: inherit;
 	max-width: 300px;
 	width: 100%;
-	min-height: 100px;
+	min-height: 60px;
 	padding: 10px;
 	border-radius: 10px;
-	background-color: #f5f5ff;
+	background-color: var(--primary-50);
 
 	&.published {
 		max-width: 100%;
-		min-height: 80px;
 		flex-direction: row;
 		justify-content: space-between;
 		padding: 10px 20px;
+	}
+
+	& .left {
+		display: flex;
+		gap: 10px;
 	}
 }

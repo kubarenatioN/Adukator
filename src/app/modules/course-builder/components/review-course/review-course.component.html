@@ -151,8 +151,8 @@
 	</h2>
 	
 	<div class="section">
-		<h3>Описание курса</h3>
-		<ng-container *ngIf="topic.description">
+		<p>Описание курса</p>
+		<ng-container>
 			<p *appFormElWrapper="
 				topicForm;
 				control: 'description';
@@ -164,7 +164,7 @@
 
 	<div *ngIf="topic.theory" class="section-topic section">
 		<ng-container *appFormElWrapper="topicForm; control: 'theory'; type: wrapperControlType">
-			<h4>Теория</h4>
+			<h3>Теория</h3>
 			{{ topic.theory }}
 		</ng-container>
 	</div>
@@ -175,7 +175,7 @@
 		control: 'materials'; 
 		type: wrapperControlType;
 		reviewType: 'file'">
-			<h4>Материалы</h4>
+			<h3>Материалы</h3>
 			<app-upload-box
 				[folder]="'review/' + metadata.masterCourseId + '/topics/' + topic.id"
 				type="download"
@@ -185,7 +185,7 @@
 
 	<div *ngIf="topicForm.controls.practice.controls" class="section-practice section">
 
-		<h4>Практика</h4>
+		<h3>Практика</h3>
 		<p class="practice-goal">
 			{{ topic.practice.goal }}
 		</p>
