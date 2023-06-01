@@ -98,25 +98,32 @@
 		<div
 			*ngIf="topic.testLink"
 			[class.blocked]="isPast"
-			class="test-section section"
+			class="test-section section test-link"
 		>
 			<h3>Тест</h3>
 			<div>
 				<p>Ваш уникальный ID тренинга:</p>
-				<span
-					(click)="copyProfileIdToClipboard(profileIdTextElem)"
-					class="copy-text training-test-id"
-					#profileIdTextElem
-				>
-					{{ profileId + '#' + topic.id }}
-				</span>
-				<button (click)="copyProfileIdToClipboard(profileIdTextElem)">
-					Копировать
-				</button>
+				<div class="test-link__copy-box">
+					<span class="copy-text test-link__id"
+						#profileIdTextElem
+					>
+						{{ profileId + '#' + topic.id }}
+					</span>
+					<button 
+					class="icon-btn"
+					(click)="copyProfileIdToClipboard(profileIdTextElem)">
+						<span class="material-icons-outlined">
+							content_copy
+						</span>	
+					</button>
+				</div>
 			</div>
-			<p>
-				<a target="_blank" [href]="topic.testLink">Перейти</a>
-			</p>
+			<a mat-raised-button color="primary" target="_blank" [href]="topic.testLink">
+				Перейти
+				<span class="material-icons-outlined">
+					open_in_new
+				</span>
+			</a>
 		</div>
 	</ng-container>
 </div>

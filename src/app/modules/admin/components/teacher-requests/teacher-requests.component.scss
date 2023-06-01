@@ -1,35 +1,89 @@
+@import "/src/mixins";
+
 .request-item{
-	
+	margin: 10px 0;
+
 	&-header {
 		display: flex;
 		align-items: center;
-		padding: 10px;
-
+		width: 100%;
+		gap: 20px;
+		padding-right: 20px;
+		
 		& .user {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			flex-basis: 200px;
+
 			& .avatar {
-				width: 50px;
-				height: 50px;
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
 			}
 		}
 	}
 
 	&-content {
-
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
 		& .files {
 
 			& .thumb {
 
 				& img {
-					width: 50px;
-					height: 50px;
+					margin: 0 5px;
+					width: 60px;
+					height: 80px;
+					object-fit: cover;
 				}
 			}
 		}
 
 	}
 
+	&-status {
+		display: flex;
+		align-items: center;
+
+		& span {
+			margin-left: 5px;
+			padding: 3px 12px;
+			border: 1px solid #000;
+			border-radius: 10px;
+			font-size: 12px;
+
+			&.approved {
+				background-color: var(--green-accent);
+			}
+	
+			&.pending {
+				color: #333;
+				background-color: #ffe83b;
+			}
+	
+			&.rejected {
+				border-color: #8b8b8b;
+			}
+		}
+	}
+
+	&-motivation-text {
+		padding: 10px;
+		background-color: #f5f5f5;
+		border-radius: 10px;
+	}
+
 }
 
 .actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
 	margin-left: auto;
+}
+
+mat-expansion-panel-header {
+	min-height: 60px;
 }

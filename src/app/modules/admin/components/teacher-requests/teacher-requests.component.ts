@@ -74,6 +74,22 @@ export class TeacherRequestsComponent implements OnInit {
     })
   }
 
+  public getStatus(req: UserTeacherPermsRequest) {
+    switch (req.status) {
+      case 'approved':
+        return 'Одобрено'
+        
+      case 'pending':
+        return 'В ожидании'
+
+      case 'rejected':
+        return 'Отклонено'
+        
+      default:
+        return ''
+    }
+  }
+
   private getItems() {
     this.adminService.getUserTeacherPermsRequests().subscribe(data => {
       this.requestsStore$.next(data)

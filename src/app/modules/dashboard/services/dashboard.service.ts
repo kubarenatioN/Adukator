@@ -25,7 +25,7 @@ export class DashboardService {
 				})
 				const overallInfoCharts = this.getTrainingOverallChartConfigs(profiles, progress)
 				return {
-					profiles,
+					profiles: profiles.filter(p => p.status === 'active'),
 					progress,
 					overallInfoCharts, 
 				}

@@ -58,17 +58,17 @@
 		<img class="training-item__poster" [src]="course.banner" alt="">
 		<div class="training-item__content">
 
-			<h3 class="training-item__title">{{ profile.training.title }}</h3>
+			<h3 class="training-item__title">{{ course.title }}</h3>
 			<p class="training-item__start">Начало {{ profile.training.startAt | date : 'dd.MM.yy' }}</p>
 			<p class="training-item__duration">Длительность {{ course | courseDuration }} дн.</p>
-			<div class="training-item__comps">
+			<!-- <div class="training-item__comps">
 				<span>Вы изучите</span>
 				<div class="training-item__comps-list">
 					<span *ngFor="let comp of course.competencies?.acquired">
 						{{ comp }}
 					</span>
 				</div>
-			</div>
+			</div> -->
 			
 		</div>
 	</a>

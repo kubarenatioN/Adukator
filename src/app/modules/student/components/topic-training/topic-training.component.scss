@@ -41,18 +41,6 @@
 	}
 }
 
-.copy-text {
-	cursor: pointer;
-}
-
-.training-test-id {
-	display: inline-block;
-	padding: 10px;
-	border: 1px solid #ccc;
-	border-radius: 10px;
-	background-color: #ddd;
-}
-
 .practice-task {
 	@include card();
 
@@ -97,5 +85,21 @@ app-upload-box {
 
 	.value {
 		padding-left: 6px;
+	}
+}
+
+.test-link {
+	
+	p {
+		margin: 10px 0;
+	}
+
+	&__copy-box {
+		@include card();
+
+		display: inline-flex;
+		align-items: center;
+		gap: 20px;
+		padding: 8px 20px;
 	}
 }

@@ -1,32 +1,41 @@
-<h2>Запросы на доступ к преподаванию</h2>
+<h3>Запросы на доступ к преподаванию</h3>
 
 <mat-accordion>
 
 	<mat-expansion-panel *ngFor="let req of requests$ | async" class="request-item">
-		<mat-expansion-panel-header class="request-item-header">
-			<div class="user">
-				<img class="avatar" [src]="req.user.photo">
-				<span class="username">{{ req.user.username }}</span>
-			</div>
+		<mat-expansion-panel-header>
+			<div class="request-item-header">
+				<div class="user">
+					<img class="avatar" [src]="req.user.photo">
+					<span class="username">{{ req.user.username }}</span>
+				</div>
+		
+				<div class="request-item-status">
+					<span [ngClass]="req.status">{{ getStatus(req) }}</span>
+				</div>
 	
-			<div class="status">
-				Status: {{ req.status }}
-			</div>
-
-			<div class="actions">
-				<ng-container *ngIf="req.status === 'pending'">
-					<button [disabled]="isLoading" (click)="approve($event, req)">Подтвердить</button>
-					<button [disabled]="isLoading" (click)="reject($event, req)">Отклонить</button>
-				</ng-container>
+				<div class="actions">
+					<ng-container *ngIf="req.status === 'pending'">
+						<button 
+						mat-raised-button
+						color="accent"
+						[disabled]="isLoading" (click)="approve($event, req)">Подтвердить</button>
+						<button 
+						mat-raised-button
+						[disabled]="isLoading" (click)="reject($event, req)">Отклонить</button>
+					</ng-container>
+				</div>
 			</div>
 		</mat-expansion-panel-header>
 		<div class="request-item-content">
-			<p>Мотивация</p>
-			<p>
-				{{ req.motivation }}
-			</p>
-			<p>Файлы</p>
+			<div class="request-item-motivation">
+				<p>Мотивация</p>
+				<p class="request-item-motivation-text">
+					{{ req.motivation }}
+				</p>
+			</div>
 			<div class="files">
+				<p>Файлы</p>
 				<lightgallery [settings]="lgSettings">
 					<a 
 					class="thumb"

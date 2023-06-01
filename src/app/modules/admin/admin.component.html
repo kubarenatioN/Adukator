@@ -1,11 +1,13 @@
 <h1>Админ панель</h1>
 
-<ng-container *ngIf="reviewCoursesList$ | async as reviewCourses; else loader">
-	<app-admin-courses-review
-		[courses]="reviewCourses"
-	></app-admin-courses-review>
-</ng-container>
-
-<app-teacher-requests></app-teacher-requests>
+<div class="wrapper">
+	<ng-container *ngIf="reviewCoursesList$ | async as reviewCourses; else loader">
+		<app-admin-courses-review
+			[courses]="reviewCourses"
+		></app-admin-courses-review>
+	</ng-container>
+	
+	<app-teacher-requests></app-teacher-requests>
+</div>
 
 <ng-template #loader> Loading... </ng-template>
