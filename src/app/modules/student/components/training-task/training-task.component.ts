@@ -38,6 +38,7 @@ export class TrainingTaskComponent implements OnInit, OnChanges {
 
 	@Input() public task!: TopicTask;
 	@Input() public isActual!: boolean;
+	@Input() public isPersonal = false;
 
 	@Output() public send = new EventEmitter<TrainingReplyMessage>();
 
@@ -70,12 +71,19 @@ export class TrainingTaskComponent implements OnInit, OnChanges {
 		this.initialValue = this.form.value;
 
 		this.trainingService.profile$.subscribe((profile) => {
-			this.taskMaterialsFolder = this.uploadService.getFilesFolder(
-				'course',
-				profile.training.course.uuid,
-				'tasks',
-				this.controlId
-			);
+			this.taskMaterialsFolder = this.isPersonal 
+				? this.uploadService.getFilesFolder(
+					'personalization',
+					profile.training.uuid,
+					this.task.id
+				)
+				: this.uploadService.getFilesFolder(
+					'course',
+					profile.training.course.uuid,
+					'tasks',
+					this.controlId
+				)
+
 			this.uploadFilesFolder = this.uploadService.getFilesFolder(
 				'training',
 				profile.uuid,
