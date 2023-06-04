@@ -92,3 +92,12 @@
 	background-color: #f2f2f2;
 	border-radius: 20px;
 }
+
+.test-item{
+	padding-bottom: 20px;
+
+	&-input {
+		min-width: 100px;
+		width: 100px;
+	}
+}

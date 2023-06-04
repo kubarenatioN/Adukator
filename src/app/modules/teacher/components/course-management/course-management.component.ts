@@ -88,7 +88,7 @@ export class CourseManagementComponent
 			takeUntil(this.componentLifecycle$),
 			map(([params, trainings]) => {
 				const id = String(params.get('id'));
-				console.log(id, trainings);
+
 				if (id) {
 					const training = trainings.find(
 						(training) => training.uuid === id

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { map } from 'rxjs';
 import {
 	NetworkHelper,
 	NetworkRequestKey,
@@ -12,21 +12,17 @@ import {
 	PersonalTask,
 	ProfileProgress,
 	ProfileProgressRecord,
+	ProfileQuizRecord,
 	TopicDiscussionReply,
 	Training,
 	TrainingMembershipSearchParams,
-	TrainingProfile,
-	TrainingProfileFull,
 	TrainingProfileLookup,
 	TrainingProfileTraining,
 	TrainingProfileUser,
 	TrainingReply,
 } from 'src/app/typings/training.types';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
-import { PersonalizationProfile } from '../modules/teacher/components/personalization/assign-task/assign-task.component';
 import { TopicTask } from '../typings/course.types';
-import { CoursesSelectResponse } from '../typings/response.types';
-import { User } from '../typings/user.types';
 
 @Injectable({
 	providedIn: 'root',
@@ -224,6 +220,7 @@ export class TrainingDataService {
 	public updateProgress(body: {
 		progressId: string;
 		records: ProfileProgressRecord[];
+		quiz?: ProfileQuizRecord,
 	}) {
 		const key = NetworkRequestKey.UpdateTrainingProfileProgress;
 		const payload = NetworkHelper.createRequestPayload(key, {

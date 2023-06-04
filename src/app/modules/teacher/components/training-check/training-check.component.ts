@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, combineLatest, forkJoin, Observable, of } from 'rxjs';
 import {
 	filter,
-	finalize,
 	map,
 	shareReplay,
 	switchMap,
@@ -22,10 +21,10 @@ import {
 	Personalization,
 	ProfileProgress,
 	ProfileProgressRecord,
+	ProfileQuizRecord,
 	TaskCheckThread,
 	TopicDiscussionReply,
 	TrainingProfile,
-	TrainingReply,
 	TrainingTaskAnswer,
 } from 'src/app/typings/training.types';
 import { User } from 'src/app/typings/user.types';
@@ -58,6 +57,7 @@ export class TrainingCheckComponent
 	private activeProfileProgressId?: string;
 
 	public resultsFormMap: Record<string, FormGroup> = {};
+	public quizResultsForm: FormGroup | null = null;
 
 	public checkConfigForm;
 
@@ -91,6 +91,7 @@ export class TrainingCheckComponent
 		this.topicCheckData$ = this.checkConfigForm.valueChanges.pipe(
 			tap(() => {
 				this.loadingAnswersStore$.next(true);
+				this.quizResultsForm = null;
 			}),
 			filter((model) => {
 				const { profile, topic } = model;
@@ -126,8 +127,10 @@ export class TrainingCheckComponent
 			tap(([checkData, viewData]) => {
 				const { training } = viewData;
 				const { progress } = checkData;
+
 				this.activeProfileProgressId = progress?._id;
 				this.initResultsForm(training, checkData);
+				this.initQuizForm(training, progress?.quiz ?? [])
 			}),
 			map(([checkData, viewData]) => {
 				const { discussion, progress } = checkData;
@@ -175,31 +178,54 @@ export class TrainingCheckComponent
 		this.checkTasks$
 			.pipe(
 				switchMap((tasksCheck) => {
-					const results = this.resultsForm.value;
+					const resultsControls = this.resultsForm.controls
+					
 					if (!tasksCheck || !this.activeProfileProgressId) {
 						return of(null);
 					}
 					const resultsRecords: ProfileProgressRecord[] =
-						tasksCheck.map((taskCheck, i) => {
-							const task = taskCheck.task;
-							return {
+						resultsControls.reduce((results, control, i) => {
+							if (!control.touched) {
+								return results
+							}
+
+							const result = control.value
+							const task = tasksCheck[i].task;
+							const item = {
 								uuid: generateUUID(),
 								taskId: task.id,
-								mark: results[i].mark,
-								isCounted: results[i].isCounted,
-								comment: results[i].comment,
+								mark: result.mark,
+								isCounted: result.isCounted,
+								comment: result.comment,
 								date,
 							};
-						});
+							results.push(item)
+							return results
+						}, [] as ProfileProgressRecord[]);
+
+
+					
+					let quizRecord
+					if (this.quizResultsForm?.touched) {
+						quizRecord = {
+							uuid: generateUUID(),
+							mark: (this.quizResultsForm?.value.mark ?? 0) / 100,
+							date: new Date().toUTCString()
+						}
+					}
 
 					return this.teacherTraining.saveProfileProgress(
 						this.activeProfileProgressId,
-						resultsRecords
+						resultsRecords,
+						quizRecord,
 					);
 				}),
 				take(1)
 			)
-			.subscribe();
+			.subscribe(() => {
+				this.resultsForm.markAsUntouched()
+				this.quizResultsForm?.markAsUntouched()
+			});
 	}
 
 	public tasksResultsTrackBy(index: number, taskCheck: TaskCheckThread) {
@@ -226,6 +252,20 @@ export class TrainingCheckComponent
 			);
 			this.resultsForm = new FormArray(formArray);
 		}
+	}
+
+	private initQuizForm(training: StudentTraining, quizResults: ProfileQuizRecord[]) {
+		const { topic: topicId } = this.checkConfigForm.value ?? '';
+		const topic = training.topics.find(t => t.id === topicId)
+
+		if (!topic?.testLink) {
+			return;
+		}
+
+		const lastRecord = quizResults.at(-1);
+		this.quizResultsForm = this.fbHelper.fbRef.group({
+			mark: Math.floor(Number(lastRecord?.mark ?? 0) * 100)
+		})
 	}
 
 	private getResultsFormArray(tasks: TopicTask[], profile: ProfileProgress) {

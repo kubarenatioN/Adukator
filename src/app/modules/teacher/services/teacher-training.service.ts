@@ -7,6 +7,7 @@ import {
 	TrainingMembershipSearchParams,
 	TrainingMembershipStatus as EnrollStatus,
 	TrainingProfileUser,
+	ProfileQuizRecord,
 } from '../../../typings/training.types';
 import { UserService } from '../../../services/user.service';
 import { TrainingDataService } from 'src/app/services/training-data.service';
@@ -76,11 +77,13 @@ export class TeacherTrainingService {
 
 	public saveProfileProgress(
 		progressId: string,
-		records: ProfileProgressRecord[]
+		records: ProfileProgressRecord[],
+		quiz?: ProfileQuizRecord
 	) {
 		return this.trainingDataService.updateProgress({
 			progressId,
 			records,
+			quiz,
 		});
 	}
 

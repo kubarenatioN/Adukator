@@ -89,6 +89,17 @@
 					>
 					</app-training-task-result>
 				</div>
+				<div class="test-item" *ngIf="quizResultsForm">
+					<h4>Тест</h4>
+					<!-- <p class="descr">{{  }}</p> -->
+					<mat-form-field class="test-item-input" [formGroup]="quizResultsForm">
+						<input type="number" min="0" max="100" step="10" 
+						matInput formControlName="mark">
+						<mat-error>
+							<val-errors controlName="mark"></val-errors>
+						</mat-error>
+					</mat-form-field>
+				</div>
 
 				<button
 					mat-raised-button
