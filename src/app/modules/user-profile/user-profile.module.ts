@@ -9,9 +9,10 @@ import { BecomeTeacherModalComponent } from './modals/become-teacher-modal/becom
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { UploadCacheService } from 'src/app/services/upload-cache.service';
+import { RequestCompetenciesModalComponent } from './modals/request-competencies-modal/request-competencies-modal.component';
 
 @NgModule({
-	declarations: [UserProfileComponent, UserPageComponent, BecomeTeacherModalComponent],
+	declarations: [UserProfileComponent, UserPageComponent, BecomeTeacherModalComponent, RequestCompetenciesModalComponent],
 	imports: [CommonModule, SharedModule, UserProfileRoutingModule, ReactiveFormsModule, MatDialogModule],
 	providers: [
 		UploadCacheService,

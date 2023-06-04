@@ -13,7 +13,7 @@ import {
 } from 'rxjs';
 import { NetworkHelper, NetworkRequestKey } from '../helpers/network.helper';
 import { DataResponse } from '../typings/response.types';
-import { User, UserRegisterData, UserTeacherPermsRequest, UserTrainingProfile } from '../typings/user.types';
+import { User, UserCompetenciesRequest, UserRegisterData, UserTeacherPermsRequest, UserTrainingProfile } from '../typings/user.types';
 import { AuthService } from './auth.service';
 import { DataService } from './data.service';
 import { DATA_ENDPOINTS } from '../constants/network.constants';
@@ -25,11 +25,13 @@ export class UserService {
 	private _user: User | null = null;
 	private userStore$ = new ReplaySubject<User | null>(1);
 	private teacherPermsRequestStore$ = new BehaviorSubject<UserTeacherPermsRequest | null>(null);
+	private competenciesRequestsStore$ = new BehaviorSubject<UserCompetenciesRequest[] | null>(null);
 
 	public user$: Observable<User>;
 	public userToken$: Observable<User | null>;
 	public trainingProfile$: Observable<UserTrainingProfile>;
 	public teacherPermsRequest$: Observable<UserTeacherPermsRequest | null>;
+	public competenciesRequests$: Observable<UserCompetenciesRequest[] | null>;
 
 	public get userId(): string | null {
 		return this._user?.uuid ?? null;
@@ -60,6 +62,7 @@ export class UserService {
 			shareReplay(1)
 		);
 		this.teacherPermsRequest$ = this.teacherPermsRequestStore$.asObservable().pipe(shareReplay(1))
+		this.competenciesRequests$ = this.competenciesRequestsStore$.asObservable().pipe(shareReplay(1))
 	}
 
 	public initUser() {
@@ -80,6 +83,17 @@ export class UserService {
 			map(res => res.request)
 		).subscribe(request => {
 			this.teacherPermsRequestStore$.next(request)
+		})
+	}
+
+	public getCompetenciesRequests() {
+		this.user$.pipe(
+			switchMap(user => {
+				return this.dataService.http.get<{ data: UserCompetenciesRequest[] | null }>(`${DATA_ENDPOINTS.user}/competencies/user/${user._id}`)
+			}),
+			map(res => res.data)
+		).subscribe(request => {
+			this.competenciesRequestsStore$.next(request)
 		})
 	}
 

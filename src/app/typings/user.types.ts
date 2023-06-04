@@ -42,3 +42,16 @@ export interface UserTeacherPermsRequest {
 	}[]
 	status: UserTeacherPermsRequestStatus
 }
+
+export type UserCompetenciesRequestStatus = 'pending' | 'approved' | 'rejected'
+export interface UserCompetenciesRequest {
+	_id: string
+	uuid: string
+	user: User
+	competencies: string[]
+	files: {
+		secure_url: string,
+		public_id: string,
+	}[]
+	status: UserCompetenciesRequestStatus
+}

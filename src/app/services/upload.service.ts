@@ -13,6 +13,13 @@ export interface FileUploadHttpResponse {
 	filename: string; file: UserFile, tempFolder: string
 }
 
+export type MoveFilesToRemoteSubject = 
+	'course:build' 
+	| 'training:task'
+	| 'personalization:task' 
+	| 'teacher-perms:request-files'
+	| 'competencies-request:files';
+
 @Injectable({
 	providedIn: 'root',
 })
@@ -73,7 +80,7 @@ export class UploadService {
 		toFolder,
 		subject,
 	}: {
-		subject: 'course:build' | 'training:task' | 'personalization:task' | 'teacher-perms:request-files';
+		subject: MoveFilesToRemoteSubject;
 		fromFolder: string;
 		toFolder?: string;
 	}) {

@@ -4,7 +4,7 @@ import { CourseReview } from '../typings/course.types';
 import { AdminCoursesService } from './admin-courses.service';
 import { DataService } from './data.service';
 import { DATA_ENDPOINTS } from '../constants/network.constants';
-import { UserTeacherPermsRequest, UserTeacherPermsRequestStatus } from '../typings/user.types';
+import { UserCompetenciesRequest, UserCompetenciesRequestStatus, UserTeacherPermsRequest, UserTeacherPermsRequestStatus } from '../typings/user.types';
 
 @Injectable({
 	providedIn: 'root',
@@ -21,7 +21,16 @@ export class AdminService {
 			.pipe(map(res => res.data))
 	}
 
-	public udpdateTeacherPermsRequest(id: string, payload: { status: UserTeacherPermsRequestStatus }) {
+	public getUserCompsRequests() {
+		return this.dataService.http.get<{ data: UserCompetenciesRequest[] }>(`${DATA_ENDPOINTS.user}/competencies`)
+			.pipe(map(res => res.data))
+	}
+
+	public updateTeacherPermsRequest(id: string, payload: { status: UserTeacherPermsRequestStatus }) {
 		return this.dataService.http.patch<{ token?: string }>(`${DATA_ENDPOINTS.user}/become-teacher/${id}`, payload)
+	}
+
+	public updateUserCompsRequest(id: string, payload: { status: UserCompetenciesRequestStatus }) {
+		return this.dataService.http.patch<{ token?: string }>(`${DATA_ENDPOINTS.user}/competencies/${id}`, payload)
 	}
 }

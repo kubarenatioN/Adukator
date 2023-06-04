@@ -27,6 +27,7 @@ import { GroupingUploadBoxComponent } from 'src/app/components/upload-box/groupi
 import { CourseDurationPipe } from 'src/app/pipes/course-duration.pipe';
 import { CourseStatusPipe } from 'src/app/pipes/course-status.pipe';
 import { SortStudentTrainingPipe } from 'src/app/pipes/sort-student-training.pipe';
+import { CompetencyPipe } from 'src/app/pipes/competency.pipe';
 
 @NgModule({
 	declarations: [
@@ -43,6 +44,7 @@ import { SortStudentTrainingPipe } from 'src/app/pipes/sort-student-training.pip
 		CourseDurationPipe,
 		CourseStatusPipe,
 		SortStudentTrainingPipe,
+		CompetencyPipe,
 	],
 	imports: [
 		CommonModule,
@@ -58,7 +60,7 @@ import { SortStudentTrainingPipe } from 'src/app/pipes/sort-student-training.pip
 		ReactiveFormsModule,
 		MatChipsModule,
 		NgChartsModule,
-		MatIconModule
+		MatIconModule,
 	],
 	exports: [
 		MatButtonModule,
@@ -84,6 +86,7 @@ import { SortStudentTrainingPipe } from 'src/app/pipes/sort-student-training.pip
 		CourseDurationPipe,
 		CourseStatusPipe,
 		SortStudentTrainingPipe,
+		CompetencyPipe,
 	],
 })
 export class SharedModule {}

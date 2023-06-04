@@ -135,3 +135,11 @@ val-errors.mat-error {
 		text-decoration: underline;
 	}
 }
+
+.competency-item {
+	padding: 4px 10px;
+	background-color: var(--primary-50);
+	border-radius: 16px;
+	border: 1px solid var(--primary-500);
+	font-size: 12px;
+}

@@ -8,6 +8,50 @@
 	</ng-container>
 	
 	<app-teacher-requests></app-teacher-requests>
+
+	<div class="competencies__request-list">
+		<h3>Запросы на получение учебных компетенций</h3>
+		<ng-container *ngIf="userCompetenciesRequests$ | async as compsRequests">
+			<mat-accordion multi>
+				<mat-expansion-panel *ngFor="let req of compsRequests">
+					<mat-expansion-panel-header>
+						<mat-panel-title class="comp-req__header">
+							<img class="comp-req__avatar" [src]="req.user.photo" alt="">
+							<span>{{ req.user.username }}</span>
+						</mat-panel-title>
+						<mat-panel-description class="comp-req__header-descr">
+							<span>{{ req.status }}</span>
+						  </mat-panel-description>
+					</mat-expansion-panel-header>
+					<div class="comp-req__item">
+						<div class="comp-req__comps-list-wrapper">
+							<h4>Компетенции</h4>
+							<div class="comp-req__comps-list">
+								<span class="competency-item" *ngFor="let c of req.competencies">{{ c | competency }}</span>
+							</div>
+						</div>
+						<div class="comp-req__files-wrapper">
+							<h4>Файлы</h4>
+							<lightgallery [settings]="lgSettings">
+								<a 
+								class="thumb"
+								*ngFor="let file of req.files"
+								[href]="file.secure_url">
+									<img alt="Photo" [src]="file.secure_url" />
+								</a>
+							</lightgallery>
+						</div>
+						<ng-container *ngIf="req.status === 'pending'">
+							<div class="comp-req__actions">
+								<button mat-raised-button color="primary" (click)="approveCompReq(req.uuid)">Выдать</button>
+								<button mat-raised-button (click)="rejectCompReq(req.uuid)">Отклонить</button>
+							</div>
+						</ng-container>
+					</div>
+				</mat-expansion-panel>
+			</mat-accordion>
+		</ng-container>
+	</div>
 </div>
 
 <ng-template #loader> Loading... </ng-template>

@@ -1,3 +1,16 @@
+@import "/src/mixins";
+
+:host {
+	padding-bottom: 10px;
+}
+
+.page {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 20px;
+}
+
 .user-courses-container {
 	margin: 10px 0;
 	padding: 10px 0;
@@ -32,8 +45,50 @@
 	}
 }
 
+.competencies {
+	.comps-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		max-width: 420px;
+	}
+
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
 .teacher-perms-request {
 	display: inline-block;
 	padding: 10px 0;
 	margin: 10px 0;
+}
+
+.competencies__request{
+	&-item {
+		@include card();
+
+		margin: 20px 0;
+		padding: 20px;
+	}
+	&-item-header {
+
+	}
+	&-item-body {
+		display: grid;
+		grid-template-columns: 400px 100px auto;
+		gap: 10px;
+		align-items: center;
+		padding-top: 10px;
+	}
+	&-comps-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		padding-right: 10px;
+	}
+}
+
+.info-text {
+	padding: 10px 0;
 }

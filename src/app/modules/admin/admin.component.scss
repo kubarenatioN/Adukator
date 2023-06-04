@@ -2,4 +2,57 @@
 	display: flex;
 	flex-direction: column;
 	gap: 30px;
+	padding-bottom: 40px;
+}
+
+.comp-req{
+	&__header {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+	&__header-descr {
+		display: flex;
+		align-items: center;
+	}
+	
+	&__avatar {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		object-fit: cover;
+	}
+
+	&__username {
+		
+	}
+
+	&__item {
+		padding: 10px 0;
+	}
+
+	&__comps-list {
+		max-width: 400px;
+		display: flex;
+		flex-wrap: wrap;
+		line-height: 10px;
+		gap: 10px;
+	}
+
+	&__actions {
+		padding-top: 10px;
+		display: flex;
+		justify-content: flex-end;
+		gap: 10px;
+	}
+}
+
+.thumb {
+
+	& img {
+		width: 50px;
+		height: 70px;
+		object-fit: cover;
+		margin: 0 5px;
+	}
 }

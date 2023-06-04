@@ -1,0 +1,22 @@
+<h2>Запрос на получение компетенций</h2>
+
+<form [formGroup]="form">
+	<p>Выберите компетенции, которые вы бы хотели получить.</p>
+	<mat-form-field>
+		<mat-select formControlName="comps" multiple>
+			<mat-option *ngFor="let c of comps" [value]="c">{{c.label}}</mat-option>
+		</mat-select>
+	</mat-form-field>
+	
+	<app-upload-box
+		class="upload-box"
+		type="upload"
+		[folder]="requestFilesFolder"
+		[autoRemoveOnDestroy]="false"
+		[manualDeleteRemoteOnClear]="true"
+		[clearObs$]="clearBox$"
+		(uploadFilesChanged)="uploadFilesChanged($event)"
+		label="Загрузите файлы, подтверждающие ваши учебные компетенции."></app-upload-box>
+
+	<button mat-raised-button (click)="send()">Отправить запрос</button>
+</form>

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, filter, shareReplay } from 'rxjs';
+import { BehaviorSubject, Observable, filter, shareReplay, tap } from 'rxjs';
 import { apiUrl } from '../constants/urls';
 import { CourseCompetency } from '../typings/course.types';
 
@@ -14,15 +14,20 @@ export interface CourseCategory {
 })
 export class ConfigService {
 	private courseCategories$: Observable<CourseCategory[]> | null = null;
-	private courseCompetencies$ = new BehaviorSubject<CourseCompetency[] | null>(null);
+	private courseCompetencies$: Observable<CourseCompetency[]> | null = null;
 
 	private configFilesPath = `${apiUrl}/static/config`;
 
+	public competencies: CourseCompetency[] = []
+
 	public get competencies$() {
-		return this.courseCompetencies$.asObservable().pipe(
-			filter(Boolean),
-			shareReplay(1)
-		)
+		if (!this.courseCompetencies$) {
+			this.courseCompetencies$ = this.http.get<CourseCompetency[]>(
+				`${this.configFilesPath}/course-competencies.json`
+			)
+				.pipe(shareReplay(1));
+		}
+		return this.courseCompetencies$;
 	}
 
 	constructor(private http: HttpClient) {}
@@ -36,11 +41,15 @@ export class ConfigService {
 		return this.courseCategories$;
 	}
 
-	public loadCourseCompetencies(): void {
-		this.http.get<CourseCompetency[]>(
-			`${this.configFilesPath}/course-competencies.json`
-		).subscribe(res => {
-			this.courseCompetencies$.next(res)
-		})		
+	public loadCourseCompetencies(): Observable<CourseCompetency[]> {
+		if (!this.courseCompetencies$) {
+			this.courseCompetencies$ = this.http
+				.get<CourseCompetency[]>(`${this.configFilesPath}/course-competencies.json`)
+				.pipe(
+					tap(comps => this.competencies = comps),
+					shareReplay(1)
+				);
+		}
+		return this.courseCompetencies$;
 	}
 }

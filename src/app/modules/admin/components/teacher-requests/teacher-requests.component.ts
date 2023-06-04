@@ -35,7 +35,7 @@ export class TeacherRequestsComponent implements OnInit {
   public approve(e: Event, req: UserTeacherPermsRequest) {
     e.stopPropagation()
     this.isLoading = true
-    this.adminService.udpdateTeacherPermsRequest(req.user._id, {
+    this.adminService.updateTeacherPermsRequest(req.user._id, {
       status: 'approved'
     })
     .pipe(
@@ -56,7 +56,7 @@ export class TeacherRequestsComponent implements OnInit {
   public reject(e: Event, req: UserTeacherPermsRequest) {
     e.stopPropagation()
     this.isLoading = true
-    this.adminService.udpdateTeacherPermsRequest(req.user._id, {
+    this.adminService.updateTeacherPermsRequest(req.user._id, {
       status: 'rejected'
     })
     .pipe(

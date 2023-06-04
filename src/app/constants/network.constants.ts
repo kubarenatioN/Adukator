@@ -33,6 +33,7 @@ export const DATA_ENDPOINTS = {
 		},
 	},
 	admin: {
+		toString: () => `${apiUrl}/admin`,
 		courses: `${apiUrl}/admin/courses`,
 	},
 };
