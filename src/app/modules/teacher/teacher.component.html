@@ -27,7 +27,7 @@
 	<div class="courses-list">
 		<ng-container *ngIf="trainings$ | async as trainings; else loader">
 			<a
-				class="course-item"
+				class="training-item"
 				*ngFor="let training of trainings"
 				[routerLink]="[
 					'/app/teacher/training',
@@ -35,9 +35,7 @@
 					'manage'
 				]"
 			>
-				<span>Треннинг</span>
-				<h4>{{ training.title }}</h4>
-				<p>Статус: {{ training.status }}</p>
+				<h4 class="training-item__title">{{ training.title || training.course.title }}</h4>
 			</a>
 		</ng-container>
 	</div>

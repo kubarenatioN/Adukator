@@ -1,48 +1,40 @@
 <app-back-btn>Назад</app-back-btn>
 
 <ng-container *ngIf="bundle$ | async as bundle; else loader">
-	<!-- <h1>Пакет курсов "{{ bundle.title }}"</h1>
-	<p>{{ bundle.description }}</p>
 
-	<div class="courses-list">
-		<div *ngFor="let course of bundle.courses" class="course-item">
-			<span>Курс {{ course?.title }}</span>
-			<span>Длительность: {{ '5 недель' }}</span>
-		</div>
-	</div> -->
+	<div class="bundle__info">
+		<h2>Пакет курсов {{ bundle.title }}</h2>
+		<p>{{ bundle.description }}</p>
+	</div>
 
-	<a
-		class="bundle"
-		[routerLink]="['../overview/bundle', bundle.uuid]"
-	>
+	<div class="bundle__courses">
+		<h3 class="title">Курсы в пакете</h3>
+		<ol class="bundle__courses-list">
+			<li class="bundle__course" *ngFor="let course of bundle.courses">
+				<img class="bundle__course-img" [src]="course.banner" alt="">
+				<div class="bundle__course-text">
+					<a class="bundle__course-author" [routerLink]="['/app/user/wall', course.authorId]">
+						<img class="bundle__course-author-avatar" [src]="course.author?.photo" alt="">
+						<span>	
+							{{ course.author?.username }}
+						</span>
+					</a>
+					<a class="bundle__course-title text-link" [routerLink]="['/app/learn/overview/course', course.uuid]">
+						<h3>
+							{{ course.title }}
+						</h3>
+						<span class="material-icons-outlined">
+							navigate_next
+						</span>
+					</a>
+					<p class="bundle__course-descr">
+						{{ course.description }}
+					</p>	
+				</div>
+			</li>
+		</ol>
+	</div>
 
-		<div class="bundle__info">
-			<h3>Пакет курсов {{ bundle.title }}</h3>
-			<p>{{ bundle.description }}</p>
-			<div class="bundle__courses">
-				<p>Курсы в пакете</p>
-				<ol class="bundle__courses-list">
-					<li *ngFor="let course of bundle.courses">
-						<div class="bundle__course-title">
-							<span>
-								{{ course.title }}
-							</span>
-							<a [routerLink]="['/app/learn/overview/course', course.uuid]">
-								<span class="material-icons-outlined">
-									open_in_new
-								</span>
-							</a>
-						</div>
-						<p class="bundle__course-descr">
-							{{ course.description }}
-						</p>
-						<img class="bundle__course-img" [src]="course.banner" alt="">
-					</li>
-				</ol>
-			</div>
-		</div>
-
-	</a>
 </ng-container>
 
 

@@ -38,10 +38,19 @@
 
 	<app-layout>
 		<div slot="sidebar" class="teacher-courses-list">
-			<h3>Ваши опубликованные курсы</h3>
+			<h3>Курсы для создания пакета</h3>
+			<mat-form-field>
+				<mat-label>Поиск</mat-label>
+				<input matInput (input)="search(searchInput.value)" #searchInput>
+			</mat-form-field>
 			<div class="teacher-courses-list__courses">
 				<div *ngFor="let course of teacherCourses" class="course-card">
 					<p>{{ course.title }}</p>
+					<a class="course-card__author" 
+					[routerLink]="['/app/user/wall', course.authorId]">
+						<img class="course-card__author-img" [src]="course.author?.photo" alt="">
+						{{course.author?.username}}
+					</a>
 					<button 
 					mat-raised-button
 					color="primary"
@@ -63,6 +72,11 @@
 					class="course-card"
 				>
 					<p>{{ course.title }}</p>
+					<a class="course-card__author" 
+						[routerLink]="['/app/user/wall', course.authorId]">
+						<img class="course-card__author-img" [src]="course.author?.photo" alt="">
+						{{course.author?.username}}
+					</a>
 					<button 
 					mat-raised-button
 					class="course-card__btn"

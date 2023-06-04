@@ -42,11 +42,24 @@
 	
 	padding: 20px;
 	width: 240px;
-	min-height: 120px;
+	min-height: 140px;
 
 	&__btn {
 		margin-top: auto;
 		align-self: flex-end;
+	}
+
+	&__author {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		margin-top: auto;
+	}
+	&__author-img {
+		width: 25px;
+		height: 25px;
+		object-fit: cover;
+		border-radius: 50%;
 	}
 }
 

@@ -154,6 +154,12 @@ export class CoursesService {
 		return this.dataService.send<unknown>(payload);
 	}
 
+	public getCoursesForBundle(authorId: string) {
+		return this.dataService.http.get<{data: (Course & { author: { photo: string, username: string } })[]}>(`${DATA_ENDPOINTS.api.courses}/for-bundle`, {
+			params: { authorId }
+		})
+	}
+
 	public getCourseBundles(options?: {
 		ids?: string;
 		uuids?: string;

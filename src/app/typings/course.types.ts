@@ -284,7 +284,15 @@ export interface CourseBundle {
 	uuid: string;
 	title: string;
 	description: string;
-	courses: Partial<Course>[];
+	courses: Partial<
+		Course & 
+		{ 
+			author?: {
+				username: string,
+				photo: string,
+			}
+		}
+	>[];
 }
 
 export interface CourseBundleCreatePayload {
