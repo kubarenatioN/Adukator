@@ -3,11 +3,17 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
 	<mat-form-field class="example-full-width">
 		<mat-label>Email</mat-label>
-		<input formControlName="email" matInput type="email" />
+		<input formControlName="email" matInput required type="email" />
+		<mat-error>
+			<val-errors controlName="email"></val-errors>
+		</mat-error>
 	</mat-form-field>
 	<mat-form-field>
 		<mat-label>Password</mat-label>
-		<input formControlName="password" matInput type="password" />
+		<input formControlName="password" matInput required type="password" />
+		<mat-error>
+			<val-errors controlName="password"></val-errors>
+		</mat-error>
 	</mat-form-field>
 	<button
 		mat-raised-button

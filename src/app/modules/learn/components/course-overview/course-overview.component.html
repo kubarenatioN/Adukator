@@ -242,12 +242,21 @@
 			</div>
 
 			<div class="reviews">
-				<div class="reviews-form" *ngIf="viewData.canAddReview">
+				<div class="reviews-form-wrapper" *ngIf="viewData.canAddReview">
 					<h2>Вы завершили данный тренинг. Оставьте свой отзыв о курсе!</h2>
-					<form [formGroup]="feedbackForm">
-						<textarea formControlName="text" cols="30" rows="10"></textarea>
-						<input formControlName="rating" type="number" min="0" max="5" placeholder="Оценка">
-						<button (click)="onSendFeedback(viewData)">Отправить</button>
+					<form class="reviews-form" [formGroup]="feedbackForm">
+						<mat-form-field>
+							<mat-label>Текст отзыва</mat-label>
+							<textarea matInput formControlName="text" cols="50" rows="6"></textarea>
+						</mat-form-field>
+						<mat-form-field>
+							<mat-label>Оценка</mat-label>
+							<input matInput formControlName="rating" type="number" min="0" max="5" placeholder="Оценка">
+							<mat-error>
+								<val-errors controlName="rating"></val-errors>
+							</mat-error>
+						</mat-form-field>
+						<button mat-raised-button (click)="onSendFeedback(viewData)">Отправить</button>
 					</form>
 				</div>
 
@@ -257,15 +266,25 @@
 						<div
 						*ngFor="let feedback of feedbacks"
 						class="review-item">
-							<span>
-								Автор: <a [routerLink]="['/app/user', feedback.author.uuid]">{{ feedback.author.username }}</a>
-							</span>
-							<span *ngIf="feedback.rating > 0">Rating: {{ feedback.rating }}</span>
 							<p>
 								{{ feedback.text }}
 							</p>
-							<p>
-								{{ feedback.date }}
+							<div class="flex body">
+								<span *ngIf="feedback.rating > 0" class="rating">
+									<span class="star material-icons-outlined">
+										star
+									</span>
+									{{ feedback.rating }}
+								</span>
+								<span>
+									<a class="author" [routerLink]="['/app/user/wall', feedback.author.uuid]">
+										<img class="avatar" [src]="feedback.author.photo" alt="">
+										{{ feedback.author.username }}
+									</a>
+								</span>
+							</div>
+							<p class="date">
+								{{ feedback.date | date : 'dd.MM.yy' }}
 							</p>
 						</div>
 					</div>

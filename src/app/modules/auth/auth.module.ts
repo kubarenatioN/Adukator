@@ -7,6 +7,7 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
+import { ValdemortModule } from 'ngx-valdemort';
 
 @NgModule({
 	declarations: [AuthComponent, LoginComponent, RegisterComponent],
@@ -15,6 +16,7 @@ import { SharedModule } from '../shared/shared.module';
 		AuthRoutingModule,
 		ReactiveFormsModule,
 		SharedModule,
+		ValdemortModule,
 	],
 })
 export class AuthModule {}
