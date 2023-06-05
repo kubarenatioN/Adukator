@@ -16,7 +16,9 @@
 					class="course-section"
 				>
 					<h3>{{ course.title }}</h3>
+					<img class="img" [src]="course.banner" alt="">
 					<p>{{ course.description }}</p>
+					<a mat-raised-button color="accent" [routerLink]="['/app/learn/overview/course', course.uuid]">Просмотреть курс</a>
 				</div>
 			</div>
 		</div>
