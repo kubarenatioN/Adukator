@@ -23,6 +23,8 @@ import {
 } from 'src/app/typings/training.types';
 import { CoursesSelectFields } from '../config/course-select-fields.config';
 import { TopicTask } from '../typings/course.types';
+import { DATA_ENDPOINTS } from '../constants/network.constants';
+import { UserTrainingResults } from '../typings/user.types';
 
 @Injectable({
 	providedIn: 'root',
@@ -140,6 +142,16 @@ export class TrainingDataService {
 		return this.dataService.send<{
 			profiles: TrainingProfileUser[] | null;
 		}>(payload);
+	}
+
+	public getProfileProgress(profileId: string) {
+		return this.dataService.http.get<{ progress: ProfileProgress[] }>(`${DATA_ENDPOINTS.api.training.progress}/profile/${profileId}`)
+			.pipe(map(res => res.progress))
+	}
+
+	public getUserTrainingResults(userId: string) {
+		return this.dataService.http.get<{ progress: ProfileProgress[] }>(`${DATA_ENDPOINTS.user}/results/${userId}`)
+			.pipe(map(res => res.progress))
 	}
 
 	public getMembers(query: TrainingMembershipSearchParams) {

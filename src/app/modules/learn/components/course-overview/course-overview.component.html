@@ -134,7 +134,7 @@
 
 		</div>
 
-		<div class="course-content">
+		<div class="course-container">
 			<pre>
 				<!-- {{ viewData.course.competencies | json }} -->
 			</pre>
@@ -148,10 +148,12 @@
 						</span>
 					</div>
 					<div>
-						<span>Старт:</span>
-						<span *ngIf="viewData.activeTraining">
-							{{ viewData.activeTraining.training.startAt | date : 'dd.MM.yyyy' }}
-						</span>
+						<ng-container *ngIf="viewData.activeTraining">
+							<span>Старт:</span>
+							<span>
+								{{ viewData.activeTraining.training.startAt | date : 'dd.MM.yyyy' }}
+							</span>
+						</ng-container>
 
 						<div>
 							<span>{{ getTrainingDuration(viewData.course) }}</span>
@@ -167,7 +169,7 @@
 							category
 						</span>
 					</div>
-					<p>{{ viewData.course.category }}</p>
+					<p>{{ getCategory(viewData.course.category) }}</p>
 				</div>
 
 				<div class="info-item">

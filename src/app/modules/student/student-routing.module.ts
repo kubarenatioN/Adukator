@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CourseTrainingComponent } from './components/course-training/course-training.component';
 import { StudentProfileComponent } from './components/student-profile/student-profile.component';
+import { StudentProgressComponent } from './components/student-progress/student-progress.component';
 
 const routes: Routes = [
 	{
@@ -15,6 +16,10 @@ const routes: Routes = [
 	{
 		path: 'profile',
 		component: StudentProfileComponent,
+	},
+	{
+		path: 'progress',
+		component: StudentProgressComponent,
 	},
 	{
 		path: '**',

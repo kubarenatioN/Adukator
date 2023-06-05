@@ -1,0 +1,17 @@
+.row {
+
+	.training {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+}
+
+.content {
+	max-width: 1000px;
+
+	.polar {
+		max-width: 600px;
+		max-height: 600px;
+	}
+}

@@ -1,0 +1,133 @@
+<form class="form" [formGroup]="modeForm">
+	<div class="row mode">
+		<mat-form-field>
+			<mat-label>Режим</mat-label>
+			<mat-select formControlName="mode">
+				<mat-option value="training">За тренинг</mat-option>
+				<mat-option value="overall">Общий</mat-option>
+			</mat-select>
+		</mat-form-field>
+	</div>
+
+	<div class="row" [ngSwitch]="modeForm.value.mode">
+		<ng-container *ngSwitchCase="'training'">
+			<ng-container [ngTemplateOutlet]="trainingFormTemplate"></ng-container>
+		</ng-container>
+		<ng-container *ngSwitchCase="'overall'">
+			<ng-container [ngTemplateOutlet]="overallFormTemplate"></ng-container>
+		</ng-container>
+	</div>
+</form>
+<div class="content">
+	<ng-container [ngSwitch]="chartView$ | async">
+		<ng-container *ngSwitchCase="'module|progress'">
+			<h2>Прогресс по модулям</h2>
+			<!-- <pre>{{ chartsStore$ | async | json }}</pre> -->
+			<canvas baseChart
+				class="chart"
+				*ngIf="(chartsStore$ | async)?.modulesProgress as chart"
+				[data]="chart.config.data"
+				[options]="chart.options"
+				type="bar">
+			</canvas>
+		</ng-container>
+		<ng-container *ngSwitchCase="'module|time-progress'">
+			<h2>Прогресс модуля по темам</h2>
+			<canvas baseChart
+				class="chart"
+				*ngIf="(chartsStore$ | async)?.modulesTimeProgress as chart"
+				[data]="chart.config.data"
+				[options]="chart.options"
+				type="bar">
+			</canvas>
+		</ng-container>
+		<ng-container *ngSwitchCase="'topic|tasks-radar'">
+			<h2>Прогресс по заданиям темы</h2>
+			<canvas baseChart
+				class="chart polar"
+				*ngIf="(chartsStore$ | async)?.tasksRadar as chart"
+				[data]="chart.config.data"
+				[options]="chart.options"
+				type="polarArea">
+			</canvas>
+		</ng-container>
+		<ng-container *ngSwitchCase="'course|topics-ratio'">
+			<h2>Доля тем в модулях курса</h2>
+			<canvas baseChart
+				class="chart"
+				*ngIf="(chartsStore$ | async)?.courseTopicsRatio as chart"
+				[data]="chart.config.data"
+				[options]="chart.options"
+				type="bar">
+			</canvas>
+		</ng-container>
+		<ng-container *ngSwitchCase="'overall|all-trainings'">
+			<h2>Прогресс по тренингам</h2>
+			<canvas baseChart
+				class="chart"
+				*ngIf="(chartsStore$ | async)?.overallTrainings as chart"
+				[data]="chart.config.data"
+				[options]="chart.options"
+				type="line">
+			</canvas>
+		</ng-container>
+	</ng-container>
+</div>
+
+<ng-template #trainingFormTemplate>
+	<ng-container *ngIf="profiles$ | async as profiles">
+		<form class="training" [formGroup]="trainingForm" *ngIf="profiles.length > 0">
+			<mat-form-field>
+				<mat-label>Тренинг</mat-label>
+				<mat-select formControlName="profile">
+					<mat-option value="course" *ngFor="let profile of profiles" [value]="profile">
+						{{ profile.training.title }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+	
+			<mat-form-field>
+				<mat-label>Уровень</mat-label>
+				<mat-select formControlName="level">
+					<mat-option value="course">За курс</mat-option>
+					<mat-option value="module">По модулям</mat-option>
+					<mat-option value="topic">По темам</mat-option>
+				</mat-select>
+			</mat-form-field>
+	
+			<ng-container *ngIf="trainingForm.value.level === 'module'">
+				<mat-form-field>
+					<mat-label>Модуль</mat-label>
+					<mat-select formControlName="module">
+						<mat-option *ngFor="let module of trainingForm.value.profile?.training?.course?.modules" [value]="module">{{ module.title }}</mat-option>
+					</mat-select>
+				</mat-form-field>
+				
+				<mat-form-field *ngIf="trainingForm.value.module">
+					<mat-label>Вид</mat-label>
+					<mat-select formControlName="moduleType">
+						<mat-option value="progress">Прогресс за модуль</mat-option>
+						<mat-option value="time-progress">Прогресс по темам</mat-option>
+					</mat-select>
+				</mat-form-field>
+			</ng-container>
+	
+			<mat-form-field *ngIf="trainingForm.value.level === 'topic'">
+				<mat-label>Тема</mat-label>
+				<mat-select formControlName="topic">
+					<mat-option *ngFor="let topic of trainingForm.value.profile?.training?.course?.topics" [value]="topic">{{ topic.title }}</mat-option>
+				</mat-select>
+			</mat-form-field>
+		</form>
+	</ng-container>
+</ng-template>
+
+<ng-template #overallFormTemplate>
+	<ng-container *ngIf="results$ as results">
+
+		<form class="overall" >
+			
+		</form>
+	</ng-container>
+
+</ng-template>

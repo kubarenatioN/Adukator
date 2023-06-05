@@ -19,7 +19,7 @@ import { UserService } from 'src/app/services/user.service';
 import { Course, CourseCompetency, CourseFeedback } from 'src/app/typings/course.types';
 import { Training, TrainingProfileMeta } from 'src/app/typings/training.types';
 import { LearnService } from '../../services/learn.service';
-import { ConfigService } from 'src/app/services/config.service';
+import { ConfigService, CourseCategory } from 'src/app/services/config.service';
 import { StudentTraining } from 'src/app/models/course.model';
 import { FormBuilder, Validators } from '@angular/forms';
 import { FeedbackService } from '../../services/feedback.service';
@@ -68,6 +68,7 @@ export class CourseOverviewComponent implements OnInit {
 		rating: [null]
 	})
 	public fallbackBanner = `${apiUrl}/static/images/course-bg-1.jpg`
+	private categories: CourseCategory[] = [];
 
 	constructor(
 		private activatedRoute: ActivatedRoute,
@@ -201,6 +202,7 @@ export class CourseOverviewComponent implements OnInit {
 			this.configService.competencies$,
 			this.userService.user$,
 			feedbacks$,
+			this.configService.loadCourseCategories(),
 		]).pipe(
 			map(([
 				trainings,
@@ -209,7 +211,8 @@ export class CourseOverviewComponent implements OnInit {
 				trainingLookup,
 				competenciesConfig,
 				user,
-				feedbacks
+				feedbacks,
+				categories,
 			]) => {				
 				const isOwner = user.permission === 'teacher' && user.uuid === course?.authorId
 
@@ -220,6 +223,8 @@ export class CourseOverviewComponent implements OnInit {
 
 				const canAddReview = isUserPassedCourseTraining ? isUserPassedCourseTraining.length > 0 && !isOwner : false
 				this.competenciesConfig = competenciesConfig
+
+				this.categories = categories
 
 				return {
 					course,
@@ -271,6 +276,10 @@ export class CourseOverviewComponent implements OnInit {
 		}, 0);
 
 		return `Недель: ${Math.floor(days / 7)}`;
+	}
+
+	public getCategory(id: string) {
+		return this.categories.find(c => c.key === id)?.name
 	}
 
 	public onSendFeedback(viewData: ViewData) {

@@ -1,4 +1,4 @@
-import { Training } from './training.types';
+import { Training, TrainingProfile, TrainingProfileTraining } from './training.types';
 
 export interface User {
 	_id: string;
@@ -21,6 +21,16 @@ export interface LoginResponse {
 	token: string;
 	message: string;
 	user: User;
+}
+
+export interface UserTrainingResults {
+	_id: string
+	uuid: string
+	profile: TrainingProfileTraining,
+	summary: {
+		score: number
+	},
+	date: string
 }
 
 export interface UserTrainingProfile {

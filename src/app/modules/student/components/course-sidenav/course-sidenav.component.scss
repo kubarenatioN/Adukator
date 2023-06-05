@@ -2,6 +2,11 @@ ul {
 	list-style: none;
 }
 
+.nav-list {
+	max-height: 500px;
+	overflow-y: auto;
+}
+
 .list-item {
 	&.actual {
 		position: relative;
@@ -16,7 +21,6 @@ ul {
 		height: 12px;
 		border-radius: 50%;
 		border: 3px solid var(--secondary-700);
-		// background-color: var(--secondary-700);
 		z-index: 2;
 	}
 }

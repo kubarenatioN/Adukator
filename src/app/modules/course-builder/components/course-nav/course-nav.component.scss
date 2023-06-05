@@ -14,7 +14,8 @@ ul {
 	padding: 20px 0;
 	position: -webkit-sticky;
 	position: sticky;
-	top: 20px;	
+	top: 20px;
+	bottom: 20px;
 
 	&-module-topics-list {
 		padding-left: 10px;
@@ -22,6 +23,8 @@ ul {
 
 	&-list {
 		min-height: 300px;
+		max-height: 500px;
+		overflow-y: auto;
 
 		&__link {
 			display: block;

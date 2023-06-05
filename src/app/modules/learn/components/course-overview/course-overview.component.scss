@@ -68,9 +68,14 @@
 }
 
 .course-content {
+	padding-top: 40px;
+}
+
+.course-container {
 	max-width: 1000px;
 	padding-top: 40px;
 	margin: 0 auto;
+	padding-bottom: 40px;
 }
 
 .info-items {
@@ -95,7 +100,7 @@
 		align-items: center;
 		span {
 			font-size: 120px;
-			color: var(--primary-100);
+			color: var(--primary-400);
 		}
 	}
 }

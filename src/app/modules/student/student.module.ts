@@ -16,6 +16,7 @@ import { StudentTrainingService } from './services/student-training.service';
 import { StudentProfileComponent } from './components/student-profile/student-profile.component';
 import { StudentProfileService } from './services/student-profile.service';
 import { NgChartsModule } from 'ng2-charts';
+import { StudentProgressComponent } from './components/student-progress/student-progress.component';
 
 @NgModule({
 	declarations: [
@@ -25,6 +26,7 @@ import { NgChartsModule } from 'ng2-charts';
 		TopicTrainingComponent,
 		TrainingTaskComponent,
 		StudentProfileComponent,
+  		StudentProgressComponent,
 	],
 	imports: [
 		CommonModule,

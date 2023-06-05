@@ -136,7 +136,7 @@ export interface ProfileProgressTraining {
 export interface ProfileProgressRecord {
 	uuid: string;
 	taskId: string;
-	mark?: number;
+	mark: number;
 	isCounted?: boolean;
 	date: string;
 	comment?: string;
