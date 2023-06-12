@@ -14,6 +14,8 @@ import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
 import { UploadService } from 'src/app/services/upload.service';
 import { TopicTask } from 'src/app/typings/course.types';
 import {
+	TrainingProfile,
+	TrainingProfileTraining,
 	TrainingReplyMessage,
 	TrainingTaskAnswer,
 } from 'src/app/typings/training.types';
@@ -52,6 +54,7 @@ export class TrainingTaskComponent implements OnInit, OnChanges {
 	public uploadFilesFolder = '';
 	public taskMaterialsFolder = '';
 	public uploadLabel = UploadLabel;
+	public profile: TrainingProfileTraining | null = null;
 
 	public get controlId(): string {
 		return this.task.id;

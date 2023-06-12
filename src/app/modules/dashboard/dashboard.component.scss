@@ -9,7 +9,8 @@
 .training-item {
 	@include card();
 
-	display: inline-block;
+	display: flex;
+	flex-direction: column;
 	margin: 10px 0;
 	border-radius: 16px;
 	overflow: hidden;
@@ -19,7 +20,10 @@
 	position: relative;
 
 	&__content {
-		padding: 10px;
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		padding: 10px 10px 15px;
 	}
 
 	&__title {
@@ -38,7 +42,7 @@
 		min-width: 80px;
 
 		&.active {
-			background-color: rgb(204, 255, 129);
+			background-color: var(--green-accent);
 		}
 
 		&.archived {
@@ -51,6 +55,19 @@
 		min-height: 120px;
 		height: 120px;
 		object-fit: cover;
+	}
+
+	&__duration {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
+	
+	.row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-top: auto;
 	}
 }
 

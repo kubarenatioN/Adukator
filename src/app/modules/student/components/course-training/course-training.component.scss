@@ -19,6 +19,7 @@
 	&__title-wrapper {
 		display: flex;
 		align-items: center;
+		gap: 20px;
 	}
 
 	&__status {
@@ -26,8 +27,8 @@
 		font-size: 11px;
 		white-space: nowrap;
 		border-radius: 20px;
-		border: 2px solid #5ba000;
-		background-color: #cffdcc;
+		border: 1px solid #000;
+		background-color: var(--green-accent);
 
 		&.archived {
 			background-color: #dedede;

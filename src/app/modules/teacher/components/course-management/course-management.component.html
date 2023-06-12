@@ -10,9 +10,14 @@
 		<h3>Студенты</h3>
 
 		<div class="pending-students students-list">
-			<h4>Ожидают зачисления</h4>
-			<input type="text" placeholder="Поиск..." />
-			<button>Обновить</button>
+			<div class="row">
+				<h4>Ожидают зачисления</h4>
+				<button class="icon-btn">
+					<span class="material-icons-outlined">
+						refresh
+					</span>
+				</button>
+			</div>
 			<ng-container
 				*ngIf="pendingStudents$ | async as pendingMembers; else loader"
 			>
@@ -30,9 +35,15 @@
 		</div>
 
 		<div class="approved-students students-list">
-			<h4>Зачисленные на курс</h4>
-			<input type="text" placeholder="Поиск..." />
-			<button>Обновить</button>
+			<div class="row">
+				<h4>Зачисленные на курс</h4>
+				<button class="icon-btn">
+					<span class="material-icons-outlined">
+						refresh
+					</span>
+				</button>
+			</div>
+
 			<ng-container
 				*ngIf="
 					approvedStudents$ | async as approvedMembers;
@@ -65,7 +76,7 @@
 	</button>
 </ng-container>
 
-<ng-template #loader> Loading... </ng-template>
+<ng-template #loader>Loading...</ng-template>
 
 <ng-template #emptyList>
 	<p>Пусто.</p>

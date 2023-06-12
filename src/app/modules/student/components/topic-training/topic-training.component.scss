@@ -103,3 +103,24 @@ app-upload-box {
 		padding: 8px 20px;
 	}
 }
+
+.progress {
+	padding: 20px 0;
+	&__label {
+		padding: 5px 0;
+	}
+	&__bar {
+		display: block;
+		width: 240px;
+		height: 12px;
+
+		&::ng-deep .progress-bar {
+			background-color: var(--primary-500);
+		}
+
+		&::ng-deep .outer-bar {
+			background-color: var(--primary-100);
+			border-radius: 6px;
+		}
+	}
+}

@@ -1,0 +1,15 @@
+.outer-bar {
+	background-color: pink;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.progress-bar {
+	max-width: 100%;
+	background-color: red;
+}
+
+.outer-bar,
+.progress-bar {
+	height: 100%;
+}

@@ -59,8 +59,15 @@
 		<div class="training-item__content">
 
 			<h3 class="training-item__title">{{ course.title }}</h3>
-			<p class="training-item__start">Начало {{ profile.training.startAt | date : 'dd.MM.yy' }}</p>
-			<p class="training-item__duration">Длительность {{ course | courseDuration }} дн.</p>
+			<div class="row">
+				<p class="training-item__start">Старт: {{ profile.training.startAt | date : 'dd.MM.yy' }}</p>
+				<p class="training-item__duration">
+					<span class="material-icons-outlined">
+						timelapse
+					</span>	
+					{{ course | courseDuration }} дн.
+				</p>
+			</div>
 			<!-- <div class="training-item__comps">
 				<span>Вы изучите</span>
 				<div class="training-item__comps-list">

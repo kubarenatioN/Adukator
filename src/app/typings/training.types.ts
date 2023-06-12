@@ -16,6 +16,8 @@ export interface TrainingProfile<T, U> {
 	student: U;
 	enrollment: TrainingMembershipStatus;
 	status: 'active' | 'completed';
+	bestScore?: number;
+	lastScore?: number;
 }
 
 export type TrainingProfileLookup = TrainingProfileMeta;
@@ -122,6 +124,8 @@ export interface ProfileProgress {
 	topicId: string;
 	records: ProfileProgressRecord[];
 	quiz: ProfileQuizRecord[];
+	bestScore?: number;
+	lastScore?: number;
 }
 
 export interface ProfileProgressTraining {

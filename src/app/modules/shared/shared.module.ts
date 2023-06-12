@@ -28,6 +28,7 @@ import { CourseDurationPipe } from 'src/app/pipes/course-duration.pipe';
 import { CourseStatusPipe } from 'src/app/pipes/course-status.pipe';
 import { SortStudentTrainingPipe } from 'src/app/pipes/sort-student-training.pipe';
 import { CompetencyPipe } from 'src/app/pipes/competency.pipe';
+import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
 
 @NgModule({
 	declarations: [
@@ -45,6 +46,7 @@ import { CompetencyPipe } from 'src/app/pipes/competency.pipe';
 		CourseStatusPipe,
 		SortStudentTrainingPipe,
 		CompetencyPipe,
+  		ProgressBarComponent,
 	],
 	imports: [
 		CommonModule,
@@ -87,6 +89,7 @@ import { CompetencyPipe } from 'src/app/pipes/competency.pipe';
 		CourseStatusPipe,
 		SortStudentTrainingPipe,
 		CompetencyPipe,
+		ProgressBarComponent,
 	],
 })
 export class SharedModule {}

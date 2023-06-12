@@ -24,6 +24,8 @@ import { UploadService } from 'src/app/services/upload.service';
 import { BaseComponent } from 'src/app/shared/base.component';
 import { ModuleTopic, TopicTask } from 'src/app/typings/course.types';
 import {
+	ProfileProgress,
+	TrainingProfileTraining,
 	TrainingReply,
 	TrainingReplyMessage,
 } from 'src/app/typings/training.types';
@@ -39,33 +41,37 @@ export class TopicTrainingComponent
 	implements OnInit, OnChanges
 {
 	private topicStore$ = new BehaviorSubject<ModuleTopic>({} as ModuleTopic);
+	private personalTasks: TopicTask[] = []
 
 	@Input() public profileId!: string;
 	@Input() public topic!: ModuleTopic;
 	@Input() public training!: StudentTraining;
-
+	
 	@Output() public sendReply = new EventEmitter<
 		Pick<TrainingReply, 'message' | 'type' | 'topicId'>
 	>();
 
 	public trainingMaterialsFolder: string = '';
-
+	public profile!: TrainingProfileTraining;
+	public progress!: ProfileProgress[];
+	
 	public personalTasks$ = 
-	combineLatest([
-		this.topicStore$,
-		this.trainingService.personalization$,
-	])
-	.pipe(
-		map(([topicStore, personalization]) => {
-			let tasks: TopicTask[] | null = null;
-			if (personalization) {				
-				tasks = personalization
-					.filter((pers) => pers.type === 'assignment' && pers.task?.topicId === this.topic.id)
-					.map((pers) => pers.task!.task);
-			}
-			return tasks;
-		})
-	);
+		combineLatest([
+			this.topicStore$,
+			this.trainingService.personalization$,
+		])
+		.pipe(
+			map(([topicStore, personalization]) => {
+				let tasks: TopicTask[] | null = null;
+				if (personalization) {		
+					tasks = personalization
+						.filter((pers) => pers.type === 'assignment' && pers.task?.topicId === this.topic.id)
+						.map((pers) => pers.task!.task);
+					this.personalTasks = tasks;
+				}
+				return tasks;
+			})
+		);
 
 	public get controlId(): string {
 		return this.topic.id;
@@ -85,6 +91,12 @@ export class TopicTrainingComponent
 
 	public get deadline() {
 		return addDays(new Date(this.topic.startAt), this.topic.duration ?? 0);
+	}
+
+	public get maxScore() {
+		const baseTasks = this.topic.practice?.tasks.length ?? 0
+		const personalTasks = this.personalTasks.length ?? 0
+		return (baseTasks + personalTasks) * 100
 	}
 
 	constructor(
@@ -107,10 +119,14 @@ export class TopicTrainingComponent
 		combineLatest([
 			this.topicStore$.asObservable(),
 			this.trainingService.profile$,
+			this.trainingService.progress$,
 		])
 			.pipe(
 				takeUntil(this.componentLifecycle$),
-				map(([topic, profile]) => {
+				map(([topic, profile, progress]) => {
+					this.profile = profile;
+					this.progress = progress ?? [];
+
 					return this.uploadService.getFilesFolder(
 						'course',
 						profile.training.course.uuid,
@@ -148,4 +164,11 @@ export class TopicTrainingComponent
 
 		return id;
 	};
+
+	public getProgress() {
+		if (this.progress) {
+			return this.progress.find(p => p.topicId === this.topic.id)
+		}
+		return null;
+	}
 }

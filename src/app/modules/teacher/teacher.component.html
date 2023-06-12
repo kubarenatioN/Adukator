@@ -23,65 +23,71 @@
 		</a>
 	</div>
 
-	<h3>Текущие тренинги</h3>
-	<div class="courses-list">
-		<ng-container *ngIf="trainings$ | async as trainings; else loader">
-			<a
-				class="training-item"
-				*ngFor="let training of trainings"
-				[routerLink]="[
-					'/app/teacher/training',
-					training.uuid,
-					'manage'
-				]"
-			>
-				<h4 class="training-item__title">{{ training.title || training.course.title }}</h4>
-			</a>
-		</ng-container>
-	</div>
-
-	<h3>Мои курсы</h3>
-	<div class="courses-list published">
-		<ng-container *ngIf="publishedCourses; else loader">
-			<div
-				class="course-item published"
-				*ngFor="let course of publishedCourses"
-			>
-				<h4>{{ course.title }}</h4>
-
-				<div class="left">
-					<a mat-raised-button
-					[routerLink]="['/app/learn/overview/course', course.uuid]">
-						Обзор
-					</a>
-					<button
-						mat-raised-button
-						(click)="startCourse(course, $event)"
-						[disabled]="!!course.training"
-					>
-						Начать
-					</button>
-				</div>
-			</div>
-		</ng-container>
-	</div>
-
-	<h3>Ожидают публикации</h3>
-	<div class="courses-list">
-		<ng-container
-			*ngIf="reviewCourses$ | async as reviewCourses; else loader"
-		>
-			<ng-container *ngIf="reviewCourses.length > 0; else noData">
+	<div class="section">
+		<h3>Текущие тренинги</h3>
+		<div class="courses-list">
+			<ng-container *ngIf="trainings$ | async as trainings; else loader">
 				<a
-					class="course-item"
-					*ngFor="let course of reviewCourses"
-					[routerLink]="['/app/course-review/review', course.uuid]"
+					class="training-item"
+					*ngFor="let training of trainings"
+					[routerLink]="[
+						'/app/teacher/training',
+						training.uuid,
+						'manage'
+					]"
 				>
-					<span>На проверке</span>
-					<h4>{{ course.title }}</h4>
+					<h4 class="training-item__title">{{ training.title || training.course.title }}</h4>
 				</a>
 			</ng-container>
-		</ng-container>
+		</div>
+	</div>
+
+	<div class="section">
+		<h3>Мои курсы</h3>
+		<div class="courses-list published">
+			<ng-container *ngIf="publishedCourses; else loader">
+				<div
+					class="course-item published"
+					*ngFor="let course of publishedCourses"
+				>
+					<h4>{{ course.title }}</h4>
+	
+					<div class="left">
+						<a mat-raised-button
+						[routerLink]="['/app/learn/overview/course', course.uuid]">
+							Обзор
+						</a>
+						<button
+							mat-raised-button
+							(click)="startCourse(course, $event)"
+							[disabled]="!!course.training"
+						>
+							Начать
+						</button>
+					</div>
+				</div>
+			</ng-container>
+		</div>
+	</div>
+
+	<div class="section">
+		<h3>Ожидают публикации</h3>
+		<div class="courses-list">
+			<ng-container
+				*ngIf="reviewCourses$ | async as reviewCourses; else loader"
+			>
+				<ng-container *ngIf="reviewCourses.length > 0; else noData">
+					<a
+						class="course-item"
+						*ngFor="let course of reviewCourses"
+						[routerLink]="['/app/course-review/review', course.uuid]"
+					>
+						<span>На проверке</span>
+						<h4>{{ course.title }}</h4>
+					</a>
+				</ng-container>
+			</ng-container>
+		</div>
 	</div>
 </div>
 

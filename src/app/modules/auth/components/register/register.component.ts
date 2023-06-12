@@ -23,7 +23,7 @@ export class RegisterComponent implements OnInit {
 		private router: Router,
 	) {
 		this.form = this.fbHelper.fbRef.group({
-			email: ['', Validators.compose([Validators.required, Validators.email]),],
+			email: ['', [Validators.required, Validators.email]],
 			password: ['', [Validators.required, Validators.min(4)]],
 			passwordRepeat: ['', [Validators.required, Validators.min(4)]],
 		})
