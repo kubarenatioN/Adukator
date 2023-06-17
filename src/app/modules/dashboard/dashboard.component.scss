@@ -2,9 +2,8 @@
 
 .trainings__list {
 	display: flex;
-	justify-content: space-between;
 	flex-wrap: wrap;
-	gap: 10px;
+	gap: 20px;
 }
 .training-item {
 	@include card();
@@ -16,7 +15,7 @@
 	overflow: hidden;
 	max-width: calc(24% - 10px);
 	width: 100%;
-	min-height: 240px;
+	min-height: 220px;
 	position: relative;
 
 	&__content {
@@ -28,7 +27,7 @@
 
 	&__title {
 		margin: 0;
-		margin-bottom: 8px;
+		padding: 10px 0;
 	}
 
 	&__status {
@@ -80,6 +79,6 @@
 
 .progress__list {
 	display: flex;
-	justify-content: space-around;
 	flex-wrap: wrap;
+	gap: 20px;
 }

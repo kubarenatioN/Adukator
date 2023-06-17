@@ -9,4 +9,14 @@
 		object-fit: cover;
 		border-radius: 10px;
 	}
+
+	.descr {
+		padding: 10px 0;
+	}
+}
+
+.banner {
+	&__descr {
+		max-width: 600px;
+	}
 }

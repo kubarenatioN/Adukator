@@ -228,17 +228,32 @@
 			<div class="course-content">
 				<h2>Содержание курса</h2>
 
-				<div *ngFor="let node of viewData.course.contentTree" class="module-item">
-					<h3>{{ node.module.title }}</h3>
-					<p>{{ node.module.description }}</p>
-
-					<div class="topics-list">
-						<div *ngFor="let topic of node.topics" class="topic-item">
-							<h4>{{ topic.title }}</h4>
-							<p>{{ topic.description }}</p>
+				<mat-accordion>
+					<mat-expansion-panel *ngFor="let node of viewData.course.contentTree">
+						<mat-expansion-panel-header>
+							<mat-panel-title>
+								<span class="module-title">
+									{{ node.module.title }}
+								</span>
+							</mat-panel-title>
+							<mat-panel-description>
+								<p class="module-descr">
+									{{ node.module.description }}
+								</p>
+							</mat-panel-description>
+						</mat-expansion-panel-header>
+						<div class="module-item">
+							<h4 class="module-item__topics">Темы модуля</h4>
+							<ul class="topics-list">
+								<li *ngFor="let topic of node.topics" class="topic-item">
+									<span>{{ topic.title }}</span>
+								</li>
+							</ul>
 						</div>
-					</div>
-				</div>
+					</mat-expansion-panel>
+
+				</mat-accordion>
+
 			</div>
 
 			<div class="reviews">

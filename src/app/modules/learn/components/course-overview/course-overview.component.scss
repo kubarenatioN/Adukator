@@ -24,7 +24,7 @@
 	align-items: flex-start;
 	position: relative;
 	z-index: 1;
-	padding: 70px 0 40px;
+	padding: 70px 10px 40px;
 
 	.info {
 		@include card($color: #333);
@@ -50,7 +50,7 @@
 
 .course-banner-author {
 	position: absolute;
-	right: 0;
+	right: 10px;
 	bottom: 40px;
 
 	&-link {
@@ -108,6 +108,10 @@
 .modules {
 	max-width: 600px;
 	margin: 0 auto;
+}
+
+.reviews {
+	padding-top: 40px;
 }
 
 .reviews-list {
@@ -244,4 +248,34 @@
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 5px;
+}
+
+:host {
+	.mat-expansion-panel-header-title, 
+	.mat-expansion-panel-header-description {
+		width: 40%;
+	}
+}
+
+.module-title {	
+	display: flex;
+	white-space: nowrap;
+	align-items: center;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.module-descr {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+.topics-list {
+	list-style: circle;
+	padding-left: 16px;
+
+	li {
+		padding: 6px 0;
+	}
 }

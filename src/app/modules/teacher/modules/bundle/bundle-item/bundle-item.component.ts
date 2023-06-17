@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable, map, of, switchMap } from 'rxjs';
 import { Course, CourseBundle } from 'src/app/typings/course.types';
 import { BundleService } from '../services/bundle.service';
+import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 
 @Component({
 	selector: 'app-bundle-item',
@@ -16,7 +17,8 @@ export class BundleItemComponent implements OnInit {
 	constructor(
 		private activatedRoute: ActivatedRoute,
 		private bundleService: BundleService
-	) {}
+	) {
+	}
 
 	ngOnInit(): void {
 		this.bundle$ = this.activatedRoute.paramMap.pipe(

@@ -1,35 +1,46 @@
-<h2>Вход</h2>
+<div class="wrapper">
+	
+	<div class="col">
+		<img src="assets/auth-img.png" alt="Auth img" class="auth-img">
+	</div>
 
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-	<mat-form-field class="example-full-width">
-		<mat-label>Email</mat-label>
-		<input formControlName="email" matInput required type="email" />
-		<mat-error>
-			<val-errors controlName="email"></val-errors>
-		</mat-error>
-	</mat-form-field>
-	<mat-form-field>
-		<mat-label>Password</mat-label>
-		<input formControlName="password" matInput required type="password" />
-		<mat-error>
-			<val-errors controlName="password"></val-errors>
-		</mat-error>
-	</mat-form-field>
-	<button
-		mat-raised-button
-		color="primary"
-		type="submit"
-		[disabled]="isLoading"
-	>
-		Войти
-	</button>
-</form>
+	<div class="col col-form">
+		<h2>Вход</h2>
 
-<div class="external">
-	<p>Либо используйте другой способ входа</p>
-	<button mat-raised-button (click)="login('google')">
-		Google
-	</button>
+		<form [formGroup]="form" (ngSubmit)="onSubmit()">
+			<mat-form-field class="example-full-width">
+				<mat-label>Email</mat-label>
+				<input formControlName="email" matInput required type="email" />
+				<mat-error>
+					<val-errors controlName="email"></val-errors>
+				</mat-error>
+			</mat-form-field>
+			<mat-form-field>
+				<mat-label>Password</mat-label>
+				<input formControlName="password" matInput required type="password" />
+				<mat-error>
+					<val-errors controlName="password"></val-errors>
+				</mat-error>
+			</mat-form-field>
+			<button
+				mat-raised-button
+				color="primary"
+				type="submit"
+				[disabled]="isLoading"
+			>
+				Войти
+			</button>
+		</form>
+		
+		<div class="external">
+			<p>Либо используйте другой способ входа</p>
+			<button mat-raised-button color="primary" (click)="login('google')">
+				<img src="assets/icon-google.svg" alt="">
+				Google
+			</button>
+		</div>
+		
+		<p>Нет аккаунта? <a routerLink="../signup" class="text-link">Зарегистрируйтесь</a></p>		
+	</div>
+
 </div>
-
-<p>Нет аккаунта? <a routerLink="../signup" class="text-link">Зарегистрируйтесь</a></p>

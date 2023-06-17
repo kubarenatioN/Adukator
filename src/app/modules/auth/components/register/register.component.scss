@@ -6,6 +6,25 @@
 	height: 100vh;
 }
 
+.wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.auth-img {
+	width: 600px;
+	padding-right: 80px;
+}
+
+.col-form {
+	padding-right: 60px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
+}
+
 form {
 	display: flex;
 	flex-direction: column;
@@ -33,5 +52,10 @@ form {
 
 	button {
 		margin: 10px 0;
+
+		img {
+			width: 20px;
+			margin-right: 5px;
+		}
 	}
 }

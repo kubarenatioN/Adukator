@@ -4,7 +4,7 @@
 			<h1 class="banner__title">
 				{{ bundle.title }}
 			</h1>
-			<p class="descr">
+			<p class="banner__descr">
 				{{ bundle.description }}
 			</p>
 		</div>
@@ -17,7 +17,7 @@
 				>
 					<h3>{{ course.title }}</h3>
 					<img class="img" [src]="course.banner" alt="">
-					<p>{{ course.description }}</p>
+					<p class="descr">{{ course.description }}</p>
 					<a mat-raised-button color="accent" [routerLink]="['/app/learn/overview/course', course.uuid]">Просмотреть курс</a>
 				</div>
 			</div>
