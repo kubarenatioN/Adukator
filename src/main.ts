@@ -3,9 +3,6 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
-import { apiUrl } from './app/constants/urls';
-import { CourseCategory } from './app/services/config.service';
-import { CourseCompetency } from './app/typings/course.types';
 
 if (environment.production) {
 	enableProdMode();

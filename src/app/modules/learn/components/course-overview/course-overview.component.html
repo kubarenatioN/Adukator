@@ -26,7 +26,7 @@
 								>
 									<ng-container *ngIf="profile !== 'NoEnroll'">
 										<div class="enrollment-pending" *ngIf="profile.enrollment === 'pending'">
-											<p class="bg">Заявка на рассмотрении</p>
+											<!-- <p class="bg">Заявка на рассмотрении</p> -->
 											<button
 												[disabled]="isDisabledEnrollActions"
 												mat-raised-button
@@ -34,7 +34,7 @@
 													cancelTrainingEnroll(viewData.activeTraining.training)
 												"
 											>
-												Отозвать
+												Отозвать заявку
 											</button>
 										</div>
 										<div class="flex-gap" *ngIf="profile.enrollment === 'approved'">
@@ -237,9 +237,9 @@
 								</span>
 							</mat-panel-title>
 							<mat-panel-description>
-								<p class="module-descr">
+								<!-- <p class="module-descr">
 									{{ node.module.description }}
-								</p>
+								</p> -->
 							</mat-panel-description>
 						</mat-expansion-panel-header>
 						<div class="module-item">
@@ -260,9 +260,12 @@
 				<div class="reviews-form-wrapper" *ngIf="viewData.canAddReview">
 					<h2>Вы завершили данный тренинг. Оставьте свой отзыв о курсе!</h2>
 					<form class="reviews-form" [formGroup]="feedbackForm">
-						<mat-form-field>
-							<mat-label>Текст отзыва</mat-label>
+						<mat-form-field class="reviews-form__text">
+							<mat-label>Ваш отзыв</mat-label>
 							<textarea matInput formControlName="text" cols="50" rows="6"></textarea>
+							<mat-error>
+								<val-errors controlName="text"></val-errors>
+							</mat-error>
 						</mat-form-field>
 						<mat-form-field>
 							<mat-label>Оценка</mat-label>
@@ -281,8 +284,13 @@
 						<div
 						*ngFor="let feedback of feedbacks"
 						class="review-item">
-							<p>
-								{{ feedback.text }}
+							<i>
+								<p>
+									{{ feedback.text }}
+								</p>
+							</i>
+							<p class="date">
+								{{ feedback.date | date : 'dd.MM.yy' }}
 							</p>
 							<div class="flex body">
 								<span *ngIf="feedback.rating > 0" class="rating">
@@ -298,9 +306,6 @@
 									</a>
 								</span>
 							</div>
-							<p class="date">
-								{{ feedback.date | date : 'dd.MM.yy' }}
-							</p>
 						</div>
 					</div>
 				</div>

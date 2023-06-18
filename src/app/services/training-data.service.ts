@@ -16,6 +16,7 @@ import {
 	TopicDiscussionReply,
 	Training,
 	TrainingMembershipSearchParams,
+	TrainingProfileFull,
 	TrainingProfileLookup,
 	TrainingProfileTraining,
 	TrainingProfileUser,
@@ -95,6 +96,26 @@ export class TrainingDataService {
 				progress?: ProfileProgress[];
 				personalization?: Personalization[];
 			}>(payload)
+			.pipe(map((response) => response));
+	}
+
+	public getProfiles(
+		body: { profiles: { trainingId?: string; studentId?: string; uuid?: string }[] },
+		options?: { include?: string[] }
+	) {
+		const key = NetworkRequestKey.TrainingProfile;
+		const include = options?.include?.join(',') ?? '';
+		
+		return this.dataService.http.post<{
+					hasAccess: boolean;
+					result: {
+						profile: TrainingProfileFull | null;
+						progress?: ProfileProgress[];
+						personalization?: Personalization[];
+					}[]
+				}>(`${DATA_ENDPOINTS.api.training}/profiles-progress`, body, {
+					params: { reqId: key, include },
+				})
 			.pipe(map((response) => response));
 	}
 

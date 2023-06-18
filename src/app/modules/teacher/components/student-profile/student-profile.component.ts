@@ -4,7 +4,7 @@ import {
 	Component,
 	OnInit,
 } from '@angular/core';
-import { Observable, of, ReplaySubject } from 'rxjs';
+import { combineLatest, Observable, of, ReplaySubject } from 'rxjs';
 import {
 	distinctUntilChanged,
 	map,
@@ -17,26 +17,20 @@ import {
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { createTopicsProgressConfig } from 'src/app/helpers/charts.config';
 import { FormBuilderHelper } from 'src/app/helpers/form-builder.helper';
-import { StudentTraining } from 'src/app/models/course.model';
 import {
+	Personalization,
 	ProfileProgress,
 	Training,
+	TrainingProfileFull,
 	TrainingProfileTraining,
 	TrainingProfileUser,
 } from 'src/app/typings/training.types';
 import { TeacherTrainingService } from '../../services/teacher-training.service';
-import { CourseContentTree } from 'src/app/typings/course.types';
-import { constructCourseTree } from 'src/app/helpers/courses.helper';
 
 type ViewData = {
-	profile: TrainingProfileTraining | null;
-	progress?: ProfileProgress[];
-	hasAccess: boolean;
-	training: StudentTraining | null;
 	charts: {
 		[key: string]: any;
 	};
-	contentTree: CourseContentTree | null;
 };
 
 @Component({
@@ -49,14 +43,20 @@ export class StudentProfileComponent
 	extends CenteredContainerDirective
 	implements OnInit
 {
-	private activeProfileStore$ = new ReplaySubject<string>(1);
+	private activeProfileStore$ = new ReplaySubject<string[]>(1);
 	private profilesStore$ = new ReplaySubject<TrainingProfileUser[] | null>(1);
+	private profilesProgressStore$ = new ReplaySubject<{
+		profile: TrainingProfileFull | null;
+		progress?: ProfileProgress[];
+		personalization?: Personalization[];
+	}[] | null>(1);
 
 	public viewData$!: Observable<ViewData | null>;
 
 	public filtersForm;
 	public trainings: Training[] = [];
 	public profiles$ = this.profilesStore$.asObservable();
+	public profilesProgress$ = this.profilesProgressStore$.asObservable();
 
 	private trainingControl;
 	private studentControl;
@@ -70,7 +70,7 @@ export class StudentProfileComponent
 
 		this.filtersForm = this.fbHelper.fbRef.group({
 			training: '',
-			student: '',
+			student: [new Array<string>()],
 		});
 		this.trainingControl = this.filtersForm.controls.training;
 		this.studentControl = this.filtersForm.controls.student;
@@ -81,6 +81,7 @@ export class StudentProfileComponent
 			.pipe(
 				takeUntil(this.componentLifecycle$),
 				tap(() => {
+					this.studentControl.setValue([]);
 					this.studentControl.disable();
 				}),
 				switchMap((training) => {
@@ -90,7 +91,7 @@ export class StudentProfileComponent
 			.subscribe((profiles) => {
 				if (profiles && profiles.length > 0) {
 					this.profilesStore$.next(profiles);
-					this.studentControl.setValue(profiles[0].uuid);
+					this.preparePfofilesProgress(profiles.map(p => p.uuid))
 				} else {
 					this.profilesStore$.next(null);
 				}
@@ -113,42 +114,32 @@ export class StudentProfileComponent
 
 		this.studentControl.valueChanges
 			.pipe(takeUntil(this.componentLifecycle$))
-			.subscribe((profileId) => {
-				if (profileId) {
-					this.activeProfileStore$.next(profileId);
+			.subscribe((profilesId) => {
+				
+				if (profilesId) {
+					this.activeProfileStore$.next(profilesId);
 				}
 			});
 
-		this.viewData$ = this.activeProfileStore$.asObservable().pipe(
+		this.viewData$ = combineLatest([
+			this.activeProfileStore$,
+			this.profilesProgress$,
+		])
+		.pipe(
 			takeUntil(this.componentLifecycle$),
 			distinctUntilChanged(),
-			switchMap((profileId) => {
-				return this.loadProfileProgress(profileId);
-			}),
-			map((res) => {
-				const training = res.profile
-					? new StudentTraining(res.profile.training)
-					: null;
-				const personalTasks = res?.personalization
-					?.filter((pers) => pers.type === 'assignment')
-					.map((pers) => pers.task!);
+			map(([students, res]) => {
+				
+				if (!res) {
+					return null
+				}
+
+				const activeProfiles = res.filter(p => students.includes(p.profile?.uuid ?? ''))
 
 				return {
-					profile: res.profile,
-					hasAccess: res.hasAccess,
-					progress: res.progress,
-					training,
 					charts: {
-						topics:
-							training && res.progress
-								? createTopicsProgressConfig(
-										training.topics,
-										res.progress,
-										personalTasks
-								  )
-								: null,
+						topics: createTopicsProgressConfig(activeProfiles)
 					},
-					contentTree: training ? constructCourseTree(training.course) : null
 				};
 			}),
 			shareReplay(1),
@@ -164,7 +155,10 @@ export class StudentProfileComponent
 		topicId: string,
 		progress: ProfileProgress[]
 	) {
-		const topicProgress = progress.find((p) => p.topicId === topicId)!;
+		const topicProgress = progress.find((p) => p.topicId === topicId);
+		if (!topicProgress) {
+			return 0;
+		}
 		const marks = topicProgress.records
 			.filter((record) => record.taskId === taskId)
 			.map((record) => record.mark ?? 0);
@@ -186,8 +180,14 @@ export class StudentProfileComponent
 		return of(null);
 	}
 
-	private loadProfileProgress(profileId: string) {
-		return this.teacherTrainingService.getProfile(profileId, {
+	private preparePfofilesProgress(profiles: string[]) {
+		this.loadProfileProgress(profiles).subscribe(data => {
+			this.profilesProgressStore$.next(data.result);
+		})
+	}
+
+	private loadProfileProgress(profiles: string[]) {
+		return this.teacherTrainingService.getProfiles(profiles, {
 			include: ['progress'],
 		});
 	}

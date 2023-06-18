@@ -44,33 +44,20 @@ export class CourseManagementComponent
 
 	public training$!: Observable<Training | null>;
 
-	public get approvedStudents$(): Observable<
-		TrainingProfile<string, User>[]
-	> {
-		return this.courseMembershipStore$.pipe(
-			distinctUntilChanged(),
-			map((store) => store.approved),
-			shareReplay(1)
-		);
-	}
+	public approvedStudents$ = this.courseMembershipStore$.pipe(
+		map((store) => store.approved),
+		shareReplay(1)
+	);
 
-	public get pendingStudents$(): Observable<TrainingProfile<string, User>[]> {
-		return this.courseMembershipStore$.pipe(
-			distinctUntilChanged(),
-			map((store) => store.pending),
-			shareReplay(1)
-		);
-	}
+	public pendingStudents$ = this.courseMembershipStore$.pipe(
+		map((store) => store.pending),
+		shareReplay(1)
+	);
 
-	public get rejectedStudents$(): Observable<
-		TrainingProfile<string, User>[]
-	> {
-		return this.courseMembershipStore$.pipe(
-			distinctUntilChanged(),
-			map((store) => store.rejected),
-			shareReplay(1)
-		);
-	}
+	public rejectedStudents$ = this.courseMembershipStore$.pipe(
+		map((store) => store.rejected),
+		shareReplay(1)
+	);
 
 	constructor(
 		private activatedRoute: ActivatedRoute,
@@ -138,7 +125,12 @@ export class CourseManagementComponent
 				profile.training,
 				EnrollStatus.Approved
 			)
-			.subscribe();
+			.subscribe(res => {
+				const refresh = this.courseMembershipStore$.value
+				refresh.approved.push(profile)
+				refresh.pending = refresh.pending.filter(it => it.uuid !== profile.uuid)
+				this.courseMembershipStore$.next(refresh);
+			});
 	}
 
 	public onExpel(profile: TrainingProfile<string, User>) {

@@ -12,17 +12,17 @@
 
 .topic-task {
 	position: relative;
-	padding: 10px 10px 10px 20px;
+	padding: 10px 10px 10px 16px;
 
 	&.common::before {
 		content: '';
 		position: absolute;
 		left: 0;
-		top: 10px;
-		width: 14px;
-		height: 14px;
+		top: 13px;
+		width: 10px;
+		height: 10px;
 		border-radius: 50%;
-		background-color: rgb(255, 242, 55);
+		background-color: var(--primary-100);
 		border: 1px solid #333;
 	}
 }

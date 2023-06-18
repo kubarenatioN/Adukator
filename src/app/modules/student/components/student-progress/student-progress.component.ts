@@ -1,16 +1,14 @@
-import { L } from '@angular/cdk/keycodes';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ChartConfiguration, ChartDataset } from 'chart.js';
-import { BehaviorSubject, Observable, filter, map, of, shareReplay, switchMap, tap } from 'rxjs';
+import { ChartConfiguration } from 'chart.js';
+import { BehaviorSubject, Observable, filter, map, shareReplay, switchMap } from 'rxjs';
 import { CoursesSelectFields } from 'src/app/config/course-select-fields.config';
 import { StudentCharts } from 'src/app/helpers/charts.config';
-import { StudentTraining } from 'src/app/models/course.model';
 import { TrainingDataService } from 'src/app/services/training-data.service';
 import { UserService } from 'src/app/services/user.service';
 import { ModuleTopic } from 'src/app/typings/course.types';
-import { ProfileProgress, Training, TrainingProfileTraining } from 'src/app/typings/training.types';
-import { UserTrainingProfile, UserTrainingResults } from 'src/app/typings/user.types';
+import { ProfileProgress, TrainingProfileTraining } from 'src/app/typings/training.types';
+import { UserTrainingResults } from 'src/app/typings/user.types';
 
 type ProgressMode = 'overall' | 'training'
 

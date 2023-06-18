@@ -3,15 +3,17 @@ import { format } from 'date-fns';
 import { CourseModule, ModuleTopic, TopicTask } from '../typings/course.types';
 import {
 	PersonalTask,
+	Personalization,
 	ProfileProgress,
 	ProfileProgressRecord,
 	ProfileProgressRecordDashboard,
 	ProfileProgressTraining,
 	Training,
+	TrainingProfileFull,
 	TrainingProfileTraining,
 } from '../typings/training.types';
 import { formatTopicsDeadlines } from '../modules/student/helpers/course-training.helper';
-import { UserTrainingResults } from '../typings/user.types';
+import { chartsColorsPallete, chartsColorsPalleteBright, chartsColorsPalleteDark } from '../constants/common.constants';
 
 const modulesProgressMock = {
 	'FpuM5CmKzq_6nwbTuKYfQ': [
@@ -131,74 +133,44 @@ const modulesProgressMock = {
 		}
 	]
 }
-type Dataset = { x: string; y: number };
-type ChartDataType = ChartData<'line', Dataset[], string>;
+
 
 export const createTopicsProgressConfig = (
-	topics: ModuleTopic[],
-	progress: ProfileProgress[],
-	personalTasks?: PersonalTask[]
-): ChartConfiguration<'line', Dataset[], string> => {
-	const labels = [] as string[];
-	const datasets = [] as ChartDataset<'line', Dataset[]>[];
+	data: {
+		profile: TrainingProfileFull | null;
+		progress?: ProfileProgress[];
+		personalization?: Personalization[];
+	}[]
+): ChartConfiguration<'bar', number[], string> => {
+	let label = ''
+	if (data) {
+		label = data[0]?.profile?.training.course.title ?? ''
+	}
+	const datasets = [] as ChartDataset<'bar', number[]>[];
 
-	const topicProgress = progress.reduce((acc, profile) => {
-		acc.push(...profile.records);
-		return acc;
-	}, [] as ProfileProgressRecord[]);
+	console.log(data);
+	
+	data.forEach((item, i) => {
+		const { progress, profile, personalization } = item
 
-	const dates = topicProgress.map((record) => record.date) ?? [];
-	labels.push(...new Set(dates));
+		const profileScore = profile?.lastScore ?? 0
+		datasets.push({
+			data: [profileScore],
+			label: profile?.student.username,
+			backgroundColor: chartsColorsPallete[i],
+			hoverBackgroundColor: chartsColorsPalleteBright[i],
+			borderColor: chartsColorsPallete[i],
+			hoverBorderColor: chartsColorsPalleteDark[i],
+		})
+	})
 
-	topics.forEach((topic) => {
-		let topicTaskCounter = 0;
-		topic.practice?.tasks.forEach((task, i) => {
-			topicTaskCounter++;
-			const taskRecords = topicProgress.filter(
-				(record) => record.taskId === task.id
-			);
-			if (taskRecords && taskRecords.length > 0) {
-				datasets.push({
-					data: taskRecords.map((record) => {
-						return {
-							x: format(new Date(record.date), 'dd.MM HH:mm'),
-							y: record.mark ?? 0,
-						};
-					}),
-					label: `${topic.title} - задание ${topicTaskCounter}`,
-				});
-			}
-		});
-		const topicPersonalTasks = personalTasks?.filter(
-			(task) => task.topicId === topic.id
-		);
-		if (topicPersonalTasks && topicPersonalTasks.length > 0) {
-			topicPersonalTasks.forEach((personal) => {
-				topicTaskCounter++;
-				const taskRecords = topicProgress.filter(
-					(record) => record.taskId === personal.task.id
-				);
-				datasets.push({
-					data: taskRecords.map((record) => {
-						return {
-							x: format(new Date(record.date), 'dd.MM HH:mm'),
-							y: record.mark ?? 0,
-						};
-					}),
-					label: `${topic.title} - задание ${topicTaskCounter}`,
-				});
-			});
-		}
-	});
+	console.log(datasets);	
 
-	const formattedLabels = labels
-		.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
-		.map((timeString) => format(new Date(timeString), 'dd.MM HH:mm'));
 	return {
-		type: 'line',
+		type: 'bar',
 		data: {
 			datasets,
-			labels: formattedLabels,
+			labels: [label],
 		},
 	};
 };
@@ -207,7 +179,7 @@ export module DashboardCharts {
 
 	export const getTrainingProgressChartConfig = (topicsProgress: ProfileProgressTraining[]) => {
 		const progressRecords = topicsProgress
-			.map(topicProgress => {
+			.map((topicProgress) => {
 				const training = topicProgress.profile?.training;
 				if (!training) {
 					return null
@@ -271,12 +243,30 @@ export module DashboardCharts {
 			datasets: [
 				{
 					data: [current, done, overdue, coming],
+					backgroundColor: [
+						chartsColorsPallete[0],
+						chartsColorsPallete[1],
+						chartsColorsPallete[2],
+						chartsColorsPallete[3],
+					],
+					hoverBorderColor: [
+						chartsColorsPalleteDark[0],
+						chartsColorsPalleteDark[1],
+						chartsColorsPalleteDark[2],
+						chartsColorsPalleteDark[3],
+					],
+					hoverBackgroundColor: [
+						chartsColorsPalleteBright[0],
+						chartsColorsPalleteBright[1],
+						chartsColorsPalleteBright[2],
+						chartsColorsPalleteBright[3],
+					]
 				}
 			],
 			labels,
 		}
 
-		const config: ChartConfiguration<'doughnut', number[], string> = {
+		const config: any = {
 			data,
 			type: 'doughnut',
 		}
@@ -326,10 +316,16 @@ export module StudentCharts {
 				{
 					data: modulesIds.map(mId => tasksByModules[mId].reduce((acc, t) => acc + t.mark, 0)),
 					label: 'Текущий балл по модулю',
+					backgroundColor: chartsColorsPallete[0],
+					hoverBackgroundColor: chartsColorsPalleteBright[0],
+					hoverBorderColor: chartsColorsPalleteDark[0],
 				},
 				{
 					data: modulesIds.map(mId => tasksByModules[mId].reduce((acc, t) => acc + 100, 0)),
 					label: 'Максимальный балл',
+					backgroundColor: chartsColorsPallete[1],
+					hoverBackgroundColor: chartsColorsPalleteBright[1],
+					hoverBorderColor: chartsColorsPalleteDark[1],
 				}
 			]
 		}
@@ -379,10 +375,16 @@ export module StudentCharts {
 				{
 					data: topicsResults,
 					label: 'Прогресс по теме',
+					backgroundColor: chartsColorsPallete[0],
+					hoverBackgroundColor: chartsColorsPalleteBright[0],
+					hoverBorderColor: chartsColorsPalleteDark[0],
 				},
 				{
 					data: topicsMaxResults,
 					label: 'Максимальный балл',
+					backgroundColor: chartsColorsPallete[1],
+					hoverBackgroundColor: chartsColorsPalleteBright[1],
+					hoverBorderColor: chartsColorsPalleteDark[1],
 				},
 			]
 		}
@@ -463,26 +465,6 @@ export module StudentCharts {
 			}
 			return acc
 		}, 0)
-		
-		const courseTopicsByModules2 = [
-			[
-				100,
-				200
-			],
-			[
-				120,
-				240
-			],
-			[
-				80,
-				200,
-				150
-			],
-			[
-				200,
-				240
-			],
-		]
 
 		// const datasetsLength = courseTopicsByModules2.reduce((max, points) => points.length > max ? points.length : max, 0)
 		// console.log('datasetsLength', datasetsLength);
@@ -536,7 +518,10 @@ export module StudentCharts {
 			datasets: datasets.map((dataset, i) => ({
 					label: 'Тема ' + (i + 1),
 					data: dataset,
-					stack: 'stack 0'
+					stack: 'stack 0',
+					backgroundColor: chartsColorsPallete[i],
+					hoverBackgroundColor: chartsColorsPalleteBright[i],
+					hoverBorderColor: chartsColorsPalleteDark[i],
 			}))
 			// datasets: [
 			// 	...allPointsDatasets,
@@ -557,11 +542,19 @@ export module StudentCharts {
 
 		const topicLastProgress = getTopicRecordsLastResult(topicRecords).map(it => it.mark)
 
+		const backgroundColors = topicLastProgress.map((_, i) => chartsColorsPallete[i])
+		const hoverBackgroundColors = topicLastProgress.map((_, i) => chartsColorsPalleteBright[i])
+		const hoverBorderColors = topicLastProgress.map((_, i) => chartsColorsPalleteDark[i])
+
 		const data: ChartData<'polarArea', number[]> = {
 			labels: topicLastProgress.map((_, i) => `Задание №${i + 1}`),
 			datasets: [{
 				label: 'Выполненные задания',
-				data: topicLastProgress
+				data: topicLastProgress,
+				backgroundColor: backgroundColors,
+				hoverBackgroundColor: hoverBackgroundColors,
+				borderColor: 'transparent',
+				hoverBorderColor: hoverBorderColors
 			}]
 		}
 		
@@ -600,7 +593,6 @@ export module StudentCharts {
 
 			return acc;
 		}, {} as { [key: string]: Array<ProfileProgressRecord> })
-		console.log(tasksByModules);
 
 		const modulesIds = Object.keys(tasksByModules)
 
@@ -624,15 +616,16 @@ export module StudentCharts {
 		})
 		.map(rec => rec.reduce((acc, r) => acc + r.mark, 0))
 		.filter(Boolean)
-		
-		console.log(datasets);
-		
+				
 		const data: ChartData<'line', number[]> = {
 			labels: [...new Set(labels)],
 			datasets: datasets.map((ds, i) => {
 				return {
 					label: modulesLabels[i] ?? '',
-					data: [ds]
+					data: [ds],
+					backgroundColor: chartsColorsPallete[i],
+					hoverBackgroundColor: chartsColorsPalleteBright[i],
+					hoverBorderColor: chartsColorsPalleteDark[i],
 				}
 			})
 		}

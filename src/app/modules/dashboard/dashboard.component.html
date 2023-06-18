@@ -29,7 +29,7 @@
 					<ng-container *ngFor="let chart of dashboard.overallInfoCharts">
 						<div class="chart-card">
 							<span>
-								{{ chart.options.training.title }}
+								{{ chart.options.training.course.title }}
 							</span>
 							<app-training-completeness-chart
 								*ngIf="chart.config; else noChartData"

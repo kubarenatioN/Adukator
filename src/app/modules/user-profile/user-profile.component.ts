@@ -5,7 +5,7 @@ import { Observable, Subject, filter, map, switchMap, takeUntil, tap, throwError
 import { CenteredContainerDirective } from 'src/app/directives/centered-container.directive';
 import { StudentCoursesService } from 'src/app/services/student-courses.service';
 import { UserService } from 'src/app/services/user.service';
-import { User, UserTeacherPermsRequest, UserTrainingProfile } from 'src/app/typings/user.types';
+import { User, UserTeacherPermsRequest, UserTeacherPermsRequestStatus, UserTrainingProfile } from 'src/app/typings/user.types';
 import { BecomeTeacherModalComponent } from './modals/become-teacher-modal/become-teacher-modal.component';
 import { DATA_ENDPOINTS } from 'src/app/constants/network.constants';
 import { DataService } from 'src/app/services/data.service';
@@ -200,6 +200,20 @@ export class UserProfileComponent extends CenteredContainerDirective implements 
 	public logOut(): void {
 		this.userService.logout();
 		this.router.navigate(['/auth']);
+	}
+
+	public translateTeacherReqStatus(status: UserTeacherPermsRequestStatus) {
+		switch (status) {
+			case 'approved':
+				return 'Подтверждено'
+			case 'pending':
+				return 'В ожидании'
+			case 'rejected':
+				return 'Отклонено'
+			
+			default: 
+				return ''
+		}
 	}
 
 	private removeFiles(files: string[]) {

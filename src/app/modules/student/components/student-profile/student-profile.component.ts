@@ -54,36 +54,36 @@ export class StudentProfileComponent extends CenteredContainerDirective implemen
 			const profileId = params.get('id');
 			console.log('student profile page', profileId);
 			if (profileId) {
-				this.trainingService
-					.getProfile(profileId, {
-						include: ['progress', 'personalization'],
-					})
-					.subscribe((profileInfo) => {
-						const training = profileInfo.profile?.training
-							? new StudentTraining(profileInfo.profile.training)
-							: null;
-						const progress = profileInfo.progress;
-						const personalTasks = profileInfo.personalization
-							?.filter((pers) => pers.type === 'assignment')
-							.map((pers) => pers.task!);
+				// this.trainingService
+				// 	.getProfile(profileId, {
+				// 		include: ['progress', 'personalization'],
+				// 	})
+				// 	.subscribe((profileInfo) => {
+				// 		const training = profileInfo.profile?.training
+				// 			? new StudentTraining(profileInfo.profile.training)
+				// 			: null;
+				// 		const progress = profileInfo.progress;
+				// 		const personalTasks = profileInfo.personalization
+				// 			?.filter((pers) => pers.type === 'assignment')
+				// 			.map((pers) => pers.task!);
 
-						this.viewDataStore$.next({
-							...profileInfo,
-							training,
-							topicsProgress: progress,
-							mode: ViewMode.SingleProfile,
-							charts: {
-								topics:
-									training && progress
-										? createTopicsProgressConfig(
-												training.topics,
-												progress,
-												personalTasks
-										  )
-										: undefined,
-							},
-						});
-					});
+				// 		this.viewDataStore$.next({
+				// 			...profileInfo,
+				// 			training,
+				// 			topicsProgress: progress,
+				// 			mode: ViewMode.SingleProfile,
+				// 			charts: {
+				// 				topics:
+				// 					training && progress
+				// 						? createTopicsProgressConfig(
+				// 								training.topics,
+				// 								progress,
+				// 								personalTasks
+				// 						  )
+				// 						: undefined,
+				// 			},
+				// 		});
+				// 	});
 			} else {
 				this.viewDataStore$.next({
 					mode: ViewMode.ProfilesList,

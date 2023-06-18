@@ -65,6 +65,23 @@ export class TeacherTrainingService {
 		);
 	}
 
+	public getProfiles(
+		profiles: string[],
+		options?: { include?: ('progress' | 'personalization')[] }
+	) {
+		const body = {
+			profiles: profiles.map(p => {
+				return {
+					uuid: p
+				}
+			})
+		}
+		return this.trainingDataService.getProfiles(
+			body,
+			options
+		);
+	}
+
 	public getTrainingProfiles(
 		trainingId: string,
 		options?: { include?: 'personalization'[] }
